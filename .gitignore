@@ -1,0 +1,50 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# build outputs
+dist
+build
+out
+.next
+.expo
+.turbo
+*.tsbuildinfo
+
+# docs — synced from packages/icons for web “copy SVG” gallery
+apps/docs/public/arloui-icons
+
+# generated registry artifacts
+apps/www/public/r
+packages/registry/dist
+tooling/build-registry/dist
+
+# env
+.env
+.env.local
+.env.*.local
+
+# editor / os
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.recommended.json
+.idea
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# testing
+coverage
+
+# native
+ios/Pods
+android/.gradle
+android/build
+android/app/build
+*.keystore
+!debug.keystore

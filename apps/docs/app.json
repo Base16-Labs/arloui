@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Arlo UI Docs",
+    "slug": "arloui-docs",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "arloui",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.arloui.docs"
+    },
+    "android": {
+      "package": "dev.arloui.docs"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

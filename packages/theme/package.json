@@ -1,0 +1,36 @@
+{
+  "name": "@arloui/theme",
+  "version": "0.1.0",
+  "description": "Arlo UI theme provider — wraps the React tree with a token-aware context, exposes `useTheme`, and handles light/dark switching synced to the system color scheme.",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@arloui/tokens": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.74.0"
+  },
+  "devDependencies": {
+    "@arloui/eslint-config": "workspace:*",
+    "@arloui/tsconfig": "workspace:*",
+    "@types/react": "^18.3.11",
+    "react": "18.3.1",
+    "react-native": "0.76.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2"
+  }
+}

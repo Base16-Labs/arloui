@@ -1,0 +1,12 @@
+{
+  "name": "@arloui/skill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Arlo UI design skill — the AI agent skill (SKILL.md + references) that teaches Cursor / Claude Code / Codex the Arlo UI design language. Lives alongside the implementation so they can never drift.",
+  "license": "MIT",
+  "files": ["arloui"],
+  "scripts": {
+    "install:cursor": "node ../../scripts/install-skill.mjs cursor",
+    "install:claude": "node ../../scripts/install-skill.mjs claude"
+  }
+}

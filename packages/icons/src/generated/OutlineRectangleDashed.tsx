@@ -1,0 +1,5 @@
+import * as React from "react";
+import Svg, { Path } from "react-native-svg";
+import type { SvgProps } from "react-native-svg";
+const OutlineRectangleDashed = (props: SvgProps) => <Svg width={24} height={24} fill="none" {...props}><Path fill="currentColor" d="M7.5 4.5a.751.751 0 0 1-.75.75h-3v1.5a.751.751 0 0 1-1.5 0v-1.5c0-.4.158-.78.439-1.06s.663-.44 1.061-.44h3a.75.75 0 0 1 .75.75M3 14.25a.75.75 0 0 0 .75-.75v-3a.751.751 0 0 0-1.5 0v3a.751.751 0 0 0 .75.75m3.75 4.5h-3v-1.5a.751.751 0 0 0-1.5 0v1.5c0 .4.158.78.439 1.06s.663.44 1.061.44h3a.751.751 0 0 0 0-1.5m6.75 0h-3a.751.751 0 0 0 0 1.5h3a.751.751 0 0 0 0-1.5M21 16.5a.75.75 0 0 0-.75.75v1.5h-3a.751.751 0 0 0 0 1.5h3c.398 0 .779-.16 1.061-.44s.439-.66.439-1.06v-1.5a.751.751 0 0 0-.75-.75m0-6.75a.75.75 0 0 0-.75.75v3a.751.751 0 0 0 1.5 0v-3a.751.751 0 0 0-.75-.75m-.75-6h-3a.751.751 0 0 0 0 1.5h3v1.5a.751.751 0 0 0 1.5 0v-1.5c0-.4-.158-.78-.439-1.06a1.5 1.5 0 0 0-1.061-.44m-6.75 0h-3a.751.751 0 0 0 0 1.5h3a.751.751 0 0 0 0-1.5" /></Svg>;
+export { OutlineRectangleDashed as ReactComponent };

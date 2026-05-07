@@ -1,0 +1,5 @@
+import * as React from "react";
+import Svg, { Path } from "react-native-svg";
+import type { SvgProps } from "react-native-svg";
+const OutlineSuitcaseRolling = (props: SvgProps) => <Svg width={24} height={24} fill="none" {...props}><Path fill="currentColor" d="M9.75 8.625v9a.751.751 0 0 1-1.5 0v-9a.751.751 0 0 1 1.5 0m2.25-.75a.75.75 0 0 0-.75.75v9a.751.751 0 0 0 1.5 0v-9a.751.751 0 0 0-.75-.75m3 0a.75.75 0 0 0-.75.75v9a.751.751 0 0 0 1.5 0v-9a.751.751 0 0 0-.75-.75m4.5-1.5v13.5c0 .4-.158.78-.439 1.06s-.663.44-1.061.44h-1.5v1.5a.751.751 0 0 1-1.5 0v-1.5H9v1.5a.751.751 0 0 1-1.5 0v-1.5H6c-.398 0-.779-.16-1.061-.44a1.5 1.5 0 0 1-.439-1.06v-13.5c0-.4.158-.78.439-1.06s.663-.44 1.061-.44h2.25v-2.25c0-.6.237-1.17.659-1.59s.994-.66 1.591-.66h3c.597 0 1.169.24 1.591.66s.659.99.659 1.59v2.25H18c.398 0 .779.16 1.061.44s.439.66.439 1.06m-9.75-1.5h4.5v-2.25a.751.751 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75zm8.25 15v-13.5H6v13.5z" /></Svg>;
+export { OutlineSuitcaseRolling as ReactComponent };

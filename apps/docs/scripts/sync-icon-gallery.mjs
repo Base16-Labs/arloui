@@ -1,0 +1,46 @@
+/**
+ * Copies SVG sources into public/ for web fetch (HeroUI-style “copy SVG” gallery)
+ * and refreshes data/icon-names.json for the docs app.
+ *
+ * Run from repo root: pnpm --filter @arloui/docs sync-icons
+ */
+import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DOCS_ROOT = join(__dirname, '..');
+const REPO_ROOT = join(DOCS_ROOT, '../..');
+const SRC_SVG = join(REPO_ROOT, 'packages/icons/assets/svg');
+const OUT_PUBLIC = join(DOCS_ROOT, 'public/arloui-icons');
+const OUT_JSON = join(DOCS_ROOT, 'data/icon-names.json');
+
+async function main() {
+  const files = (await readdir(SRC_SVG))
+    .filter((f) => f.toLowerCase().endsWith('.svg'))
+    .sort((a, b) => a.localeCompare(b));
+
+  if (files.length === 0) {
+    console.warn('sync-icon-gallery: no SVGs in', SRC_SVG);
+    await writeFile(OUT_JSON, '[]\n');
+    return;
+  }
+
+  await rm(OUT_PUBLIC, { recursive: true, force: true });
+  await mkdir(OUT_PUBLIC, { recursive: true });
+  await mkdir(dirname(OUT_JSON), { recursive: true });
+
+  for (const file of files) {
+    await copyFile(join(SRC_SVG, file), join(OUT_PUBLIC, file));
+  }
+
+  const basenames = files.map((f) => f.replace(/\.svg$/i, ''));
+  await writeFile(OUT_JSON, JSON.stringify(basenames, null, 0) + '\n');
+
+  console.log(`sync-icon-gallery: ${files.length} icons → public/arloui-icons + data/icon-names.json`);
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

@@ -1,0 +1,14 @@
+{
+  "extends": "./packages/tsconfig/base.json",
+  "include": [],
+  "references": [
+    { "path": "./packages/tokens" },
+    { "path": "./packages/theme" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/icons" },
+    { "path": "./packages/registry" },
+    { "path": "./packages/cli" },
+    { "path": "./tooling/build-registry" },
+    { "path": "./tooling/build-icons" }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@arloui/build-registry",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Reads the registry manifest, snapshots each component's source files, and emits per-entry JSON files that the CLI fetches.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@arloui/registry": "workspace:*"
+  },
+  "devDependencies": {
+    "@arloui/tsconfig": "workspace:*",
+    "@types/node": "^20.16.10",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  }
+}
