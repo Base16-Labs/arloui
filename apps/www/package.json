@@ -2,11 +2,31 @@
   "name": "@arloui/www",
   "version": "0.0.0",
   "private": true,
-  "description": "Web-first documentation and copy surface for Arlo UI.",
-  "type": "module",
+  "description": "ArloUI documentation site — arloui.com",
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "start": "node scripts/dev.mjs",
-    "clean": "rm -rf .turbo"
+    "dev": "next dev --port 4321",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .next .turbo"
+  },
+  "dependencies": {
+    "next": "16.2.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "lucide-react": "^0.509.0",
+    "qrcode.react": "^4.2.0",
+    "fuse.js": "^7.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

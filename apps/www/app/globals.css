@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────
+   Font faces — PP Neue Montreal + Mono
+   Book (400) for body, Medium (500) for headings
+   ────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-Book.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-BookItalic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-MediumItalic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal Mono";
+  src: url("/fonts/PPNeueMontrealMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal Mono";
+  src: url("/fonts/PPNeueMontrealMono-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ──────────────────────────────────────────────
+   Design tokens — Color (light)
+   ────────────────────────────────────────────── */
+
+:root {
+  --font-sans: "Neue Montreal", system-ui, -apple-system, sans-serif;
+  --font-mono: "Neue Montreal Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Surfaces */
+  --canvas: #ffffff;
+  --surface: #fafafa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f4f4f5;
+
+  /* Text */
+  --ink: #18181b;
+  --ink-2: #52525b;
+  --ink-3: #a1a1aa;
+  --ink-4: #d4d4d8;
+
+  /* Lines */
+  --line: rgb(24 24 27 / 0.08);
+  --line-strong: rgb(24 24 27 / 0.14);
+
+  /* Overlays */
+  --scrim: rgb(24 24 27 / 0.40);
+
+  /* Glass */
+  --glass-bg: rgb(255 255 255 / 0.70);
+  --glass-border: rgb(24 24 27 / 0.06);
+  --glass-blur: 20px;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-pill: 9999px;
+
+  /* Motion — curves */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-morph: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Motion — durations */
+  --dur-instant: 80ms;
+  --dur-fast: 140ms;
+  --dur-base: 200ms;
+  --dur-slow: 280ms;
+  --dur-page: 220ms;
+}
+
+/* ──────────────────────────────────────────────
+   Design tokens — Color (dark)
+   ────────────────────────────────────────────── */
+
+.dark {
+  --canvas: #09090b;
+  --surface: #18181b;
+  --surface-raised: #27272a;
+  --surface-sunken: #09090b;
+
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --ink-4: #52525b;
+
+  --line: rgb(250 250 250 / 0.08);
+  --line-strong: rgb(250 250 250 / 0.14);
+
+  --scrim: rgb(0 0 0 / 0.55);
+
+  --glass-bg: rgb(24 24 27 / 0.70);
+  --glass-border: rgb(250 250 250 / 0.08);
+  --glass-blur: 20px;
+}
+
+/* ──────────────────────────────────────────────
+   Tailwind v4 theme extensions
+   ────────────────────────────────────────────── */
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-scrim: var(--scrim);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-pill: var(--radius-pill);
+}
+
+/* ──────────────────────────────────────────────
+   Base styles
+   ────────────────────────────────────────────── */
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+/* Tabular nums on anything that changes */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
