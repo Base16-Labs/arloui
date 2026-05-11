@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { Icon } from "@/components/ui/Icon";
 
 type PhoneFrameProps = {
   children?: React.ReactNode;
@@ -38,8 +39,8 @@ export function PreviewCard({
         <span className="flex items-center gap-1.5 rounded-full border border-line bg-canvas px-3 py-1.5 text-xs text-ink-2">
           ▦ Preview
         </span>
-        <button className="flex h-8 w-8 items-center justify-center rounded-md border border-line bg-canvas text-sm text-ink-2">
-          📱
+        <button className="flex h-8 w-8 items-center justify-center rounded-md border border-line bg-canvas text-ink-2">
+          <Icon name="qr-code" size={14} />
         </button>
       </div>
       {children}

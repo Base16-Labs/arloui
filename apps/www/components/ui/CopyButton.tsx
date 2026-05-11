@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { Icon } from "@/components/ui/Icon";
 
 type CopyButtonProps = {
   text: string;
@@ -30,7 +31,7 @@ export function CopyButton({
         className
       )}
     >
-      <span className="opacity-60">⌘</span>
+      <Icon name="command" size={12} className="opacity-60" />
       {copied ? "Copied" : label}
     </button>
   );

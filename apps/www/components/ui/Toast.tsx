@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 const STORAGE_KEY = "arlo:shortcuts-toast-dismissed";
 
@@ -45,7 +45,7 @@ export function ShortcutsToast() {
           for shortcuts
         </span>
         <button onClick={dismiss} className="ml-1.5 opacity-50 hover:opacity-100">
-          <X className="h-3.5 w-3.5" />
+          <Icon name="x" size={14} />
         </button>
       </div>
     </div>

@@ -1,44 +1,107 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 
-type CompanionProps = {
-  children: React.ReactNode;
-  caption?: string;
-};
+const ActiveSectionContext = createContext<string>("");
 
-export function EssaySection({
+export function CompanionLayout({
   children,
   className,
 }: {
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <div className={cn("relative", className)}>{children}</div>
-  );
-}
+  const [activeSection, setActiveSection] = useState("");
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-export function Companion({ children, caption }: CompanionProps) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const sections = container.querySelectorAll("[data-companion-section]");
+    if (sections.length === 0) return;
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = (entry.target as HTMLElement).dataset.companionSection;
+            if (id) setActiveSection(id);
+          }
+        }
+      },
+      { rootMargin: "-30% 0px -50% 0px" }
+    );
+
+    sections.forEach((s) => observerRef.current!.observe(s));
+    return () => observerRef.current?.disconnect();
+  }, []);
+
   return (
-    <div className="sticky top-[120px]">
-      <div className="flex flex-col items-center">
-        {children}
-        {caption && (
-          <p className="mt-4 max-w-[240px] text-center text-[13px] italic leading-snug text-ink-2">
-            {caption}
-          </p>
+    <ActiveSectionContext.Provider value={activeSection}>
+      <div
+        ref={containerRef}
+        className={cn(
+          "grid grid-cols-[1fr_48%] gap-12 lg:gap-16",
+          className
         )}
+      >
+        {children}
       </div>
-    </div>
+    </ActiveSectionContext.Provider>
   );
 }
 
-export function EssayLayout({ children }: { children: React.ReactNode }) {
+export function EssaySection({
+  id,
+  children,
+  className,
+}: {
+  id: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="grid max-w-[920px] grid-cols-[1fr_280px] gap-14">
+    <div data-companion-section={id} className={cn("relative", className)}>
       {children}
     </div>
+  );
+}
+
+export function CompanionPanel({
+  sections,
+}: {
+  sections: Record<string, React.ReactNode>;
+}) {
+  const activeSection = useContext(ActiveSectionContext);
+  const keys = Object.keys(sections);
+  const activeKey = activeSection && keys.includes(activeSection)
+    ? activeSection
+    : keys[0] || "";
+
+  return (
+    <aside className="relative">
+      <div className="sticky top-1/2 -translate-y-1/2">
+        {keys.map((key) => (
+          <div
+            key={key}
+            className={cn(
+              "transition-opacity",
+              activeKey === key
+                ? "opacity-100"
+                : "pointer-events-none absolute inset-0 opacity-0"
+            )}
+            style={{
+              transitionDuration: "var(--dur-base)",
+              transitionTimingFunction: "var(--ease-out)",
+            }}
+          >
+            {sections[key]}
+          </div>
+        ))}
+      </div>
+    </aside>
   );
 }

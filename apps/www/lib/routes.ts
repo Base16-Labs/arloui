@@ -14,10 +14,45 @@ export const docsSections = [
   { label: "Changelog", href: "/docs/changelog" },
 ] as const;
 
-export type ComponentGroup = {
+export type ItemGroup = {
   label: string;
   items: { label: string; slug: string }[];
 };
+
+export const primitiveItems = [
+  { label: "Tokens", slug: "tokens" },
+  { label: "Type", slug: "type" },
+  { label: "Color", slug: "color" },
+  { label: "Spacing", slug: "spacing" },
+  { label: "Motion", slug: "motion" },
+  { label: "Icons", slug: "icons" },
+] as const;
+
+export const archetypeItems = [
+  { label: "Question", slug: "question" },
+  { label: "Decision", slug: "decision" },
+  { label: "Status", slug: "status" },
+  { label: "Feed", slug: "feed" },
+  { label: "Detail", slug: "detail" },
+  { label: "Creation", slug: "creation" },
+  { label: "Settings", slug: "settings" },
+  { label: "Onboarding", slug: "onboarding" },
+  { label: "Empty", slug: "empty" },
+] as const;
+
+export const agentItems = [
+  { label: "Skill pack", slug: "skill-pack" },
+  { label: "MCP", slug: "mcp" },
+  { label: "Prompt cookbook", slug: "prompt-cookbook" },
+] as const;
+
+export const gettingStartedItems = [
+  { label: "Install", slug: "install" },
+  { label: "With AI", slug: "with-ai" },
+  { label: "First screen", slug: "first-screen" },
+] as const;
+
+export type ComponentGroup = ItemGroup;
 
 export const componentGroups: ComponentGroup[] = [
   {

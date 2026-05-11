@@ -22,7 +22,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("arlo:theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme:dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`,
+            __html: `(function(){try{var d=document.documentElement,t=localStorage.getItem("arlo:theme"),s=matchMedia("(prefers-color-scheme:dark)").matches;if(t==="dark"||(t!=="light"&&s)){d.classList.add("dark");d.style.colorScheme="dark"}else{d.style.colorScheme="light"}}catch(e){}})()`,
           }}
         />
       </head>

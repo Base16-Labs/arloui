@@ -6,12 +6,12 @@ export default function DocsLandingPage() {
       <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-3">
         Documentation
       </div>
-      <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
-        ArloUI Docs
+      <h1 className="mt-4 text-[56px] font-medium leading-[0.95] tracking-tight">
+        Building premium mobile apps.
       </h1>
-      <p className="mt-[18px] max-w-[600px] text-[22px] leading-relaxed text-ink-2">
-        A mobile-first component library with copy-paste primitives — like
-        shadcn for React Native.
+      <p className="mt-[18px] max-w-[600px] text-[14px] leading-relaxed text-ink-2">
+        ArloUI is a design system and component library built specifically for
+        React Native. It provides the foundations and primitives needed to ship
       </p>
 
       <div className="mt-12 grid gap-4 sm:grid-cols-2">
@@ -33,8 +33,18 @@ export default function DocsLandingPage() {
           },
           {
             label: "Components",
-            desc: "React Native components — the implementations.",
+            desc: "35 React Native components — copy-paste with strong defaults.",
             href: "/docs/components",
+          },
+          {
+            label: "Archetypes",
+            desc: "Nine screen-level patterns — the recipes that wire components together.",
+            href: "/docs/archetypes",
+          },
+          {
+            label: "Agents",
+            desc: "Skill pack, MCP server, prompt cookbook — AI-native affordances.",
+            href: "/docs/agents",
           },
         ].map((card) => (
           <Link

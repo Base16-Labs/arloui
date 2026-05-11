@@ -34,7 +34,7 @@ export function RightRail({ headings = [], actions = [] }: RightRailProps) {
   }, [headings]);
 
   return (
-    <aside className="hidden w-[240px] shrink-0 border-l border-line px-6 pt-10 lg:block">
+    <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[200px] shrink-0 overflow-y-auto overscroll-contain border-l border-line px-5 pt-10 lg:block">
       {headings.length > 0 && (
         <div className="mb-7">
           <div className="mb-2.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">

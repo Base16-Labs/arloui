@@ -12,7 +12,7 @@ export default function DocsLayout({
       <TopNav />
       <div className="flex min-h-[calc(100dvh-68px)]">
         <Sidebar />
-        <div className="flex flex-1 overflow-hidden">{children}</div>
+        <div className="flex flex-1">{children}</div>
       </div>
       <BottomPill />
     </>

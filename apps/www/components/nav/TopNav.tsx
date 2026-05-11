@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Search, Star } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { siteLinks } from "@/lib/routes";
+import { Icon } from "@/components/ui/Icon";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function TopNav() {
@@ -35,7 +35,6 @@ export function TopNav() {
       }}
     >
       <div className="mx-auto flex h-full max-w-[1440px] items-center gap-6 px-7">
-        {/* Wordmark + nav links */}
         <div className="flex items-center gap-7">
           <Link
             href="/"
@@ -63,18 +62,16 @@ export function TopNav() {
           </nav>
         </div>
 
-        {/* Search */}
         <div className="mx-auto w-full max-w-[520px]">
           <button
             className="flex h-[38px] w-full items-center gap-2.5 rounded-[10px] border border-line bg-surface-sunken px-3.5 text-sm text-ink-3"
             aria-label="Search"
           >
-            <Search className="h-3.5 w-3.5 shrink-0" />
+            <Icon name="magnifying-glass" size={14} />
             <span>Search components, archetypes, foundations…</span>
           </button>
         </div>
 
-        {/* Right cluster */}
         <div className="flex items-center gap-3.5">
           <a
             href="https://github.com/Base16-Labs/arloui"
@@ -82,15 +79,15 @@ export function TopNav() {
             rel="noopener noreferrer"
             className="tabular-nums flex items-center gap-1.5 rounded-md border border-line bg-canvas px-2.5 py-1 text-[13px] text-ink-2"
           >
-            <Star className="h-3.5 w-3.5" />
+            <Icon name="star" size={14} />
             <span>0</span>
           </a>
           <a
             href="#"
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-line bg-canvas text-[13px] text-ink-2"
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-line bg-canvas text-ink-2"
             aria-label="Figma"
           >
-            F
+            <Icon name="figma-logo" size={14} />
           </a>
           <ThemeToggle />
         </div>

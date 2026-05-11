@@ -3,10 +3,12 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-24">
-      <h1 className="text-[64px] font-medium leading-none tracking-tight text-ink">
-        ArloUI
+      <h1 className="mt-8 text-center text-[72px] font-medium leading-[0.9] tracking-tight">
+        A premium design system
+        <br />
+        for React Native.
       </h1>
-      <p className="mt-5 max-w-[480px] text-center text-[22px] leading-relaxed text-ink-2">
+      <p className="mt-5 max-w-[480px] text-center text-[14px] leading-relaxed text-ink-2">
         Copy-paste React Native components with strong defaults, full state
         coverage, and motion specs.
       </p>
