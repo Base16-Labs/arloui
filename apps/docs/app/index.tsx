@@ -1,92 +1,73 @@
-import { Link, Stack } from 'expo-router';
-import { ScrollView, Text, View } from 'react-native';
-import { Button, Card } from '@arloui/registry';
-import { useTokens } from '@arloui/registry';
+import { Stack } from 'expo-router';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTokens } from '@arloui/registry';
+import { Eyebrow } from '@/components/playground/eyebrow';
+import { PlaygroundHero } from '@/components/playground/playground-hero';
+import { ShowcaseCard } from '@/components/playground/showcase-card';
+import { ThemeToggle } from '@/components/playground/theme-toggle';
+import {
+  featuredPlaygroundItem,
+  playgroundCatalog,
+  playgroundCategories,
+} from '@/lib/catalog';
 
 export default function Index() {
   const t = useTokens();
+  const listItems = playgroundCatalog.filter((item) => !item.featured);
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Arlo UI' }} />
-      <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: t.colors.bg }}>
-        <ScrollView contentContainerStyle={{ padding: t.spacing[5], gap: t.spacing[6] }}>
-          <View style={{ gap: t.spacing[2] }}>
-            <Text
-              style={{
-                color: t.colors.textTertiary,
-                fontFamily: t.fontFamilies.mono,
-                fontSize: t.typography.label.fontSize,
-                letterSpacing: t.typography.label.letterSpacing,
-                textTransform: 'uppercase',
-              }}
-            >
-              arlo ui · v0.1.0
-            </Text>
-            <Text
-              style={{
-                color: t.colors.textPrimary,
-                fontFamily: t.fontFamilies.sans,
-                fontSize: t.typography.displayLg.fontSize,
-                lineHeight: t.typography.displayLg.lineHeight,
-                fontWeight: '600',
-              }}
-            >
-              Copy-paste UI for React Native.
-            </Text>
-            <Text
-              style={{
-                color: t.colors.textSecondary,
-                fontFamily: t.fontFamilies.sans,
-                fontSize: t.typography.body.fontSize,
-                lineHeight: t.typography.body.lineHeight,
-              }}
-            >
-              Premium primitives. Token-driven. Zero black boxes.
-            </Text>
-          </View>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1, backgroundColor: t.colors.bg }}>
+        <ScrollView
+          contentContainerStyle={{
+            paddingHorizontal: t.spacing[5],
+            paddingTop: t.spacing[5],
+            paddingBottom: t.spacing[10],
+            gap: t.spacing[7],
+          }}
+        >
+          <PlaygroundHero
+            eyebrow="Native · On device"
+            title="Arlo"
+            titleAccent="Playground"
+            lede="Touch real components built for AI-native mobile — not mockups in a browser."
+            trailing={<ThemeToggle />}
+          />
 
-          <Card>
-            <Card.Header>
-              <Card.Title>Button</Card.Title>
-              <Card.Subtitle>Variants and sizes</Card.Subtitle>
-            </Card.Header>
-            <Card.Body>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t.spacing[2] }}>
-                <Button label="Primary" />
-                <Button label="Secondary" variant="secondary" />
-                <Button label="Ghost" variant="ghost" />
-                <Button label="Danger" variant="danger" />
+          {featuredPlaygroundItem ? (
+            <View style={{ gap: t.spacing[3] }}>
+              <Eyebrow>Start here</Eyebrow>
+              <ShowcaseCard item={featuredPlaygroundItem} featured />
+            </View>
+          ) : null}
+
+          {playgroundCategories.map((category) => {
+            const items = listItems.filter((item) => item.category === category);
+            if (items.length === 0) return null;
+
+            return (
+              <View key={category} style={{ gap: t.spacing[3] }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[2] }}>
+                  <View
+                    style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: 3,
+                      backgroundColor: t.colors.accent,
+                    }}
+                  />
+                  <Eyebrow>{category}</Eyebrow>
+                </View>
+                <View style={{ gap: t.spacing[3] }}>
+                  {items.map((item) => (
+                    <ShowcaseCard key={item.slug} item={item} />
+                  ))}
+                </View>
               </View>
-            </Card.Body>
-          </Card>
-
-          <Card tone="raised">
-            <Card.Header>
-              <Card.Title>Icons</Card.Title>
-              <Card.Subtitle>Copy SVG or React usage (web gallery)</Card.Subtitle>
-            </Card.Header>
-            <Card.Body>
-              <Link href="/icons" asChild>
-                <Button label="Icon gallery →" variant="secondary" />
-              </Link>
-            </Card.Body>
-          </Card>
-
-          <Card tone="raised">
-            <Card.Header>
-              <Card.Title>Components</Card.Title>
-              <Card.Subtitle>Browse the registry</Card.Subtitle>
-            </Card.Header>
-            <Card.Body style={{ gap: t.spacing[2] }}>
-              <Link href="/button" asChild>
-                <Button label="Button showcase →" variant="secondary" />
-              </Link>
-              <Link href={'/input' as never} asChild>
-                <Button label="Input showcase →" variant="secondary" />
-              </Link>
-            </Card.Body>
-          </Card>
+            );
+          })}
         </ScrollView>
       </SafeAreaView>
     </>

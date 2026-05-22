@@ -2,9 +2,9 @@
  * Keeps the Arlo UI skill's machine-readable references in sync with the
  * implementation. Writes:
  *
- *   - packages/skill/arloui/references/tokens.json     (from @arloui/tokens)
- *   - packages/skill/arloui/references/registry.json   (from the registry manifest)
- *   - packages/skill/arloui/references/usage.md        (CLI usage cheat sheet)
+ *   - skills/references/tokens.json     (from @arloui/tokens)
+ *   - skills/references/registry.json   (from the registry manifest)
+ *   - skills/references/usage.md        (CLI usage cheat sheet)
  *
  * Hand-authored markdown (`tokens.md`, `components.md`, `platform-mapping.md`,
  * `SKILL.md`) is never touched — those are the design contract.
@@ -13,7 +13,7 @@
  * the implementation can never silently drift from what the agent reads.
  *
  * Override the destination with ARLOUI_SKILL_PATH (rarely needed):
- *   ARLOUI_SKILL_PATH=packages/skill/arloui pnpm skill:sync
+ *   ARLOUI_SKILL_PATH=skills pnpm skill:sync
  */
 import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -25,7 +25,7 @@ import { REGISTRY } from '../packages/registry/src/manifest';
 const ROOT = resolve(fileURLToPath(import.meta.url), '../..');
 const SKILL_PATH = resolve(
   ROOT,
-  process.env.ARLOUI_SKILL_PATH ?? 'packages/skill/arloui',
+  process.env.ARLOUI_SKILL_PATH ?? 'skills',
 );
 const REFS = join(SKILL_PATH, 'references');
 
@@ -37,7 +37,7 @@ async function main() {
   if (!existsSync(SKILL_PATH)) {
     console.error(
       `skill folder not found at ${SKILL_PATH}.\n` +
-        `Set ARLOUI_SKILL_PATH or check that packages/skill/arloui exists.`,
+        `Set ARLOUI_SKILL_PATH or check that skills/ exists (SKILL.md + references/).`,
     );
     process.exit(1);
   }

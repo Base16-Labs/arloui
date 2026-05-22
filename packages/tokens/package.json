@@ -19,8 +19,8 @@
     "clean": "rm -rf dist .turbo"
   },
   "devDependencies": {
-    "@arloui/eslint-config": "workspace:*",
-    "@arloui/tsconfig": "workspace:*",
+    "@arloui/eslint-config": "file:../eslint-config",
+    "@arloui/tsconfig": "file:../tsconfig",
     "tsup": "^8.3.0",
     "typescript": "^5.6.2"
   }

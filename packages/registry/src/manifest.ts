@@ -5,7 +5,7 @@
  *   1. Drop the source under `src/components/<name>/`.
  *   2. Add an entry below.
  *   3. Run `pnpm registry:build` — this regenerates `apps/www/public/r/<name>.json`.
- *   4. Run `pnpm skill:sync` — this mirrors metadata into the design skill repo.
+ *   4. Run `pnpm skill:sync` — this mirrors metadata into `skills/`.
  *
  * Conventions:
  *   - `target` paths are relative to the consumer's configured alias root

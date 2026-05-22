@@ -5,9 +5,10 @@ Thanks for wanting to make Arlo UI better. This guide covers the day-to-day work
 ## Setup
 
 ```bash
-# Node 20+, pnpm 9+ (corepack enable handles this for you)
-corepack enable
-pnpm install
+# Node 20+. Use pnpm, npm, Yarn, or Bun — root package.json defines npm workspaces.
+# CI uses: pnpm install --frozen-lockfile
+corepack enable   # optional; helps if you choose pnpm via Corepack
+pnpm install      # or: npm install | yarn | bun install
 ```
 
 ## Common scripts
@@ -19,7 +20,7 @@ pnpm typecheck        # tsc across the monorepo
 pnpm lint             # eslint across the monorepo
 pnpm registry:build   # regenerate apps/www/public/r/*.json
 pnpm icons:build      # SVG → packages/icons/src/generated (SVGR)
-pnpm skill:sync       # mirror tokens + manifest into packages/skill/arloui
+pnpm skill:sync       # mirror tokens + manifest into skills/references
 pnpm changeset        # record a release-affecting change
 ```
 
@@ -36,7 +37,7 @@ pnpm changeset        # record a release-affecting change
 4. Add an entry to `packages/registry/src/manifest.ts`. Declare `registryDependencies` for any other registry items it needs (most components depend on `tokens` and `theme-provider`).
 5. Add a showcase route in `apps/docs/app/components/<name>.tsx`.
 6. Run `pnpm registry:build` to confirm the JSON looks right.
-7. Run `pnpm skill:sync` to update the design skill.
+7. Run `pnpm skill:sync` to update `skills/references/` (generated files only).
 8. `pnpm changeset` if a published package changed.
 
 ## Editing tokens
@@ -44,25 +45,25 @@ pnpm changeset        # record a release-affecting change
 Tokens live in `packages/tokens/src/`. The registry's copy at `packages/registry/src/foundation/tokens.ts` is the consumer-facing copy-paste template — keep its values in lockstep with `packages/tokens/src/`. After editing tokens:
 
 ```bash
-pnpm skill:sync       # propagate to packages/skill/arloui/references/tokens.json
+pnpm skill:sync       # propagate to skills/references/tokens.json
 pnpm registry:build   # propagate to apps/www/public/r/*.json
 ```
 
-CI fails if `packages/skill/` is out of sync after `pnpm skill:sync`.
+CI fails if `skills/` is out of sync after `pnpm skill:sync`.
 
 ## Working with the design skill
 
-The skill lives in this repo at `packages/skill/arloui/`. There are two categories of files:
+The skill lives in this repo under **`skills/`** (`SKILL.md` + `references/`). There are two categories of files:
 
 | File                                           | Authored by | Edit?                            |
 | ---------------------------------------------- | ----------- | -------------------------------- |
-| `SKILL.md`                                     | designer    | yes (hand-authored)              |
-| `references/tokens.md`                         | designer    | yes (hand-authored)              |
-| `references/components.md`                     | designer    | yes (hand-authored)              |
-| `references/platform-mapping.md`               | designer    | yes (hand-authored)              |
-| `references/tokens.json`                       | machine     | **no** — `pnpm skill:sync`       |
-| `references/registry.json`                     | machine     | **no** — `pnpm skill:sync`       |
-| `references/usage.md`                          | machine     | **no** — `pnpm skill:sync`       |
+| `skills/SKILL.md`                              | designer    | yes (hand-authored)              |
+| `skills/references/tokens.md`                | designer    | yes (hand-authored)              |
+| `skills/references/components.md`            | designer    | yes (hand-authored)              |
+| `skills/references/platform-mapping.md`      | designer    | yes (hand-authored)              |
+| `skills/references/tokens.json`              | machine     | **no** — `pnpm skill:sync`       |
+| `skills/references/registry.json`            | machine     | **no** — `pnpm skill:sync`       |
+| `skills/references/usage.md`                 | machine     | **no** — `pnpm skill:sync`       |
 
 After any token or registry change, run `pnpm skill:sync` and commit the regenerated JSON/usage.md alongside your TS changes.
 
@@ -77,7 +78,7 @@ node scripts/install-skill.mjs claude --symlink
 
 1. Export SVGs from Figma into `packages/icons/assets/svg/` — one icon per file, `kebab-case` (e.g. `chevron-right.svg`).
 2. Run **`pnpm icons:build`** and commit both **`assets/svg/`** and **`packages/icons/src/generated/`**.
-3. Refresh the docs icon gallery (HeroUI-style “copy SVG”): **`pnpm --filter @arloui/docs sync-icons`** and commit **`apps/docs/data/icon-names.json`**. The folder **`apps/docs/public/arloui-icons/`** is gitignored and repopulated by that script (and automatically before **`pnpm --filter @arloui/docs web`** / **`build:web`**).
+3. Refresh the docs icon gallery (HeroUI-style “copy SVG”): **`npm run sync-icons -w @arloui/docs`** (or `pnpm --filter @arloui/docs sync-icons`, `yarn workspace @arloui/docs sync-icons`, etc.) and commit **`apps/docs/data/icon-names.json`**. The folder **`apps/docs/public/arloui-icons/`** is gitignored and repopulated by that script (and automatically before **`npm run web -w @arloui/docs`** / **`build:web`**).
 4. Release **`@arloui/icons`** via Changesets like any other public package. Consumers install `@arloui/icons` + `react-native-svg`.
 
 Details: [`packages/icons/README.md`](./packages/icons/README.md).
@@ -94,7 +95,7 @@ Details: [`packages/icons/README.md`](./packages/icons/README.md).
 - [ ] `pnpm typecheck` passes
 - [ ] `pnpm lint` passes
 - [ ] `pnpm registry:build` is reflected in `apps/www/public/r/`
-- [ ] `pnpm skill:sync` is reflected in `packages/skill/arloui/references/` (if tokens or registry changed)
+- [ ] `pnpm skill:sync` is reflected in `skills/references/` (if tokens or registry changed)
 - [ ] Changeset added (if a published package changed)
 - [ ] Docs page added (if a new component was added)
 

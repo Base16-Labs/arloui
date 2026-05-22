@@ -99,7 +99,7 @@ function iconPxForSize(size: Size, t: ReturnType<typeof useTokens>): number {
 }
 
 function DefaultGlyph({ provider, color, iconPx }: { provider: SocialAuthProvider; color: string; iconPx: number }) {
-  const fs = iconPx * (provider === 'facebook' ? 0.62 : 0.42);
+  const fs = iconPx * (provider === 'facebook' ? 0.62 : 0.58);
   if (provider === 'facebook') {
     return (
       <Text style={{ color, fontSize: fs, fontWeight: '700', fontFamily: 'System' }} allowFontScaling={false}>
@@ -108,7 +108,10 @@ function DefaultGlyph({ provider, color, iconPx }: { provider: SocialAuthProvide
     );
   }
   return (
-    <Text style={{ color, fontSize: fs * 1.05, fontWeight: '800', fontFamily: 'System' }} allowFontScaling={false}>
+    <Text
+      style={{ color, fontSize: fs, fontWeight: '900', fontFamily: 'System', letterSpacing: -0.5 }}
+      allowFontScaling={false}
+    >
       X
     </Text>
   );

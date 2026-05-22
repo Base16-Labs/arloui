@@ -33,9 +33,9 @@
     "ora": "^8.1.0"
   },
   "devDependencies": {
-    "@arloui/eslint-config": "workspace:*",
-    "@arloui/registry": "workspace:*",
-    "@arloui/tsconfig": "workspace:*",
+    "@arloui/eslint-config": "file:../eslint-config",
+    "@arloui/registry": "file:../registry",
+    "@arloui/tsconfig": "file:../tsconfig",
     "@types/node": "^20.16.10",
     "tsup": "^8.3.0",
     "typescript": "^5.6.2"

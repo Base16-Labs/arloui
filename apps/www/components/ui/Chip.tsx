@@ -10,6 +10,7 @@ type ChipProps = {
 export function Chip({ children, active, onClick, className }: ChipProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
         "rounded-full border px-3 py-[5px] text-xs",

@@ -7,7 +7,12 @@ export default defineConfig({
   },
   format: ['cjs'],
   target: 'node20',
-  dts: { entry: { index: 'src/index.ts' } },
+  dts: {
+    entry: { index: 'src/index.ts' },
+    compilerOptions: {
+      incremental: false,
+    },
+  },
   clean: true,
   sourcemap: true,
   splitting: false,

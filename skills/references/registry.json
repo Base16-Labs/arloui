@@ -32,7 +32,7 @@
       "name": "button",
       "kind": "primitive",
       "title": "Button",
-      "description": "Buttons: core action (`Button`: tone × appearance, sizes sm–xl, icons, icon-only, loading), OAuth rows (`SocialAuthButton`: Facebook / X, brand + neutral), circular FAB (`FabButton`: shadow rest, pressed darken, focus outline on web). Legacy `variant` on `Button` still supported.",
+      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.",
       "registryDependencies": [
         "tokens",
         "theme-provider"
@@ -48,7 +48,7 @@
       "name": "card",
       "kind": "primitive",
       "title": "Card",
-      "description": "Layered surface for grouping related content. Compound API: Card.Header, Card.Title, Card.Body, Card.Footer.",
+      "description": "A flexible surface for grouping related content with header, body, footer, and hierarchy options.",
       "registryDependencies": [
         "tokens",
         "theme-provider"
@@ -59,6 +59,22 @@
         "primitive"
       ],
       "figma": "Components/Card/Default"
+    },
+    {
+      "name": "input",
+      "kind": "primitive",
+      "title": "Input",
+      "description": "A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive"
+      ],
+      "figma": "Components/Text Input/Default"
     }
   ]
 }

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ──────────────────────────────────────────────
    Font faces — PP Neue Montreal + Mono
@@ -6,43 +6,43 @@
    ────────────────────────────────────────────── */
 
 @font-face {
-  font-family: "Neue Montreal";
-  src: url("/fonts/PPNeueMontreal-Book.woff2") format("woff2");
+  font-family: 'Neue Montreal';
+  src: url('/fonts/PPNeueMontreal-Book.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Neue Montreal";
-  src: url("/fonts/PPNeueMontreal-BookItalic.woff2") format("woff2");
+  font-family: 'Neue Montreal';
+  src: url('/fonts/PPNeueMontreal-BookItalic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: "Neue Montreal";
-  src: url("/fonts/PPNeueMontreal-Medium.woff2") format("woff2");
+  font-family: 'Neue Montreal';
+  src: url('/fonts/PPNeueMontreal-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Neue Montreal";
-  src: url("/fonts/PPNeueMontreal-MediumItalic.woff2") format("woff2");
+  font-family: 'Neue Montreal';
+  src: url('/fonts/PPNeueMontreal-MediumItalic.woff2') format('woff2');
   font-weight: 500;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: "Neue Montreal Mono";
-  src: url("/fonts/PPNeueMontrealMono-Regular.woff2") format("woff2");
+  font-family: 'Neue Montreal Mono';
+  src: url('/fonts/PPNeueMontrealMono-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Neue Montreal Mono";
-  src: url("/fonts/PPNeueMontrealMono-Medium.woff2") format("woff2");
+  font-family: 'Neue Montreal Mono';
+  src: url('/fonts/PPNeueMontrealMono-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -53,8 +53,8 @@
    ────────────────────────────────────────────── */
 
 :root {
-  --font-sans: "Neue Montreal", system-ui, -apple-system, sans-serif;
-  --font-mono: "Neue Montreal Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans: 'Neue Montreal', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Neue Montreal Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Surfaces */
   --canvas: #ffffff;
@@ -73,10 +73,10 @@
   --line-strong: rgb(24 24 27 / 0.14);
 
   /* Overlays */
-  --scrim: rgb(24 24 27 / 0.40);
+  --scrim: rgb(24 24 27 / 0.4);
 
   /* Glass */
-  --glass-bg: rgb(255 255 255 / 0.70);
+  --glass-bg: rgb(255 255 255 / 0.7);
   --glass-border: rgb(24 24 27 / 0.06);
   --glass-blur: 20px;
 
@@ -122,7 +122,7 @@
 
   --scrim: rgb(0 0 0 / 0.55);
 
-  --glass-bg: rgb(24 24 27 / 0.70);
+  --glass-bg: rgb(24 24 27 / 0.7);
   --glass-border: rgb(250 250 250 / 0.08);
   --glass-blur: 20px;
 }
@@ -168,7 +168,6 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Tabular nums on anything that changes */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
@@ -176,7 +175,7 @@ body {
 /* Pressable feedback — Emil's scale(0.97) on :active */
 button:active,
 a:active,
-[role="button"]:active {
+[role='button']:active {
   transform: scale(0.97);
   transition-property: transform;
   transition-duration: var(--dur-instant);
@@ -192,6 +191,82 @@ a:active,
   display: none;
 }
 
+@supports (view-transition-name: none) {
+  /* Avoid whole-page crossfade when only a named group animates */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  ::view-transition-group(bottom-pill) {
+    animation-duration: 260ms;
+    animation-timing-function: var(--ease-morph);
+    transform-origin: center bottom;
+    overflow: clip;
+    border-radius: 24px;
+  }
+
+  ::view-transition-image-pair(bottom-pill) {
+    overflow: clip;
+    border-radius: inherit;
+  }
+
+  ::view-transition-old(bottom-pill),
+  ::view-transition-new(bottom-pill) {
+    box-shadow: none;
+  }
+
+  ::view-transition-old(bottom-pill) {
+    animation: bottom-pill-out 70ms var(--ease-out) both;
+    transform-origin: center bottom;
+  }
+
+  ::view-transition-new(bottom-pill) {
+    animation: bottom-pill-in 170ms var(--ease-out) 55ms both;
+    transform-origin: center bottom;
+  }
+}
+
+html:has([data-pill-transition='closing']) ::view-transition-old(bottom-pill) {
+  animation-duration: 35ms;
+}
+
+html:has([data-pill-transition='closing']) ::view-transition-new(bottom-pill) {
+  animation-delay: 20ms;
+}
+
+@keyframes bottom-pill-out {
+  0% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+}
+
+@keyframes bottom-pill-in {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+}
+
+.bottom-pill-surface {
+  contain: layout paint;
+}
+
+.bottom-pill-shadow {
+  box-shadow:
+    0 18px 48px rgb(24 24 27 / 0.12),
+    0 4px 12px rgb(24 24 27 / 0.06);
+}
+
+.bottom-pill-surface button:active {
+  transform: none;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -199,5 +274,16 @@ a:active,
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+}
+
+/* Appended — wins over Tailwind preflight (`cursor: default` on `<button>`). */
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
   }
 }

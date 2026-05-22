@@ -20,20 +20,18 @@
     "clean": "rm -rf .turbo"
   },
   "dependencies": {
-    "@arloui/theme": "workspace:*",
-    "@arloui/tokens": "workspace:*",
-    "@arloui/utils": "workspace:*"
+    "@arloui/theme": "file:../theme",
+    "@arloui/tokens": "file:../tokens",
+    "@arloui/utils": "file:../utils"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.74.0"
   },
   "devDependencies": {
-    "@arloui/eslint-config": "workspace:*",
-    "@arloui/tsconfig": "workspace:*",
-    "@types/react": "^18.3.11",
-    "react": "18.3.1",
-    "react-native": "0.76.0",
+    "@arloui/eslint-config": "file:../eslint-config",
+    "@arloui/tsconfig": "file:../tsconfig",
+    "@types/react": "~19.1.10",
     "typescript": "^5.6.2"
   }
 }

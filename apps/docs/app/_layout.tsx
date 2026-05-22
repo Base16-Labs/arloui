@@ -1,46 +1,48 @@
+import 'react-native-gesture-handler';
 import { ThemeProvider, useTokens } from '@arloui/registry';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FontGate } from '@/providers/font-gate';
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <ThemeProvider defaultName="system">
-        <ThemedStack />
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <FontGate>
+      <SafeAreaProvider>
+        <ThemeProvider defaultName="light">
+          <ThemedStack />
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </FontGate>
   );
 }
 
 function ThemedStack() {
   const t = useTokens();
+  const isDark = t.name === 'dark';
+
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack
-        screenOptions={({ route }) => ({
+        screenOptions={{
           headerStyle: { backgroundColor: t.colors.bg },
           headerTintColor: t.colors.textPrimary,
+          headerShadowVisible: false,
+          headerBackTitle: 'Back',
           headerTitleStyle: {
-            fontFamily: t.fontFamilies.sans,
-            fontWeight: '600',
+            fontFamily: 'Space Grotesk SemiBold',
+            fontSize: 17,
           },
           contentStyle: { flex: 1, minHeight: 0, backgroundColor: t.colors.bg },
-          title:
-            route.name === 'index'
-              ? 'Arlo UI'
-              : route.name === 'icons'
-                ? 'Icons'
-                : route.name === 'button'
-                  ? 'Button'
-                  : route.name === 'input'
-                    ? 'Input'
-                    : route.name === 'components/button'
-                      ? 'Button'
-                      : undefined,
-        })}
-      />
+        }}
+      >
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="button" options={{ title: 'Button' }} />
+        <Stack.Screen name="input" options={{ title: 'Input' }} />
+        <Stack.Screen name="icons" options={{ title: 'Icons' }} />
+        <Stack.Screen name="components/button" options={{ headerShown: false }} />
+      </Stack>
     </>
   );
 }

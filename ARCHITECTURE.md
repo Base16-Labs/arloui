@@ -18,6 +18,10 @@ This document explains why Arlo UI is structured the way it is. Read it before a
 - A styling DSL. We use `StyleSheet.create` + tokens. NativeWind, Tamagui, Restyle are all great — they just aren't us.
 - Web-first. Components run on the web (via `react-native-web`) but are designed for mobile.
 
+## Package managers (monorepo)
+
+Root **`package.json`** defines npm **`workspaces`**, and **`pnpm-workspace.yaml`** lists the same globs for pnpm. Cross-package dependencies use **`file:../…`** (or **`file:../../packages/…`**) specifiers so **npm, Yarn, pnpm, and Bun** all link to local sources reliably. The root **`packageManager`** field targets **npm** because **Turborepo** uses it when spawning tasks; **`.npmrc`** sets **`package-manager-strict=false`** so **pnpm** is not blocked by that field. CI continues to run **`pnpm install --frozen-lockfile`** against **`pnpm-lock.yaml`**.
+
 ## Data flow
 
 The skill and the implementation live in the same repo and same PR. Hand-authored design intent (markdown) and engineer-authored implementation (TS) are checked in side-by-side; CI rebuilds the generated machine-readable views and fails on drift.
@@ -34,8 +38,8 @@ The skill and the implementation live in the same repo and same PR. Hand-authore
    │  Hand-authored DESIGN INTENT          Hand-authored IMPL       │
    │  (markdown — designer's domain)       (TS — engineer's domain) │
    │                                                                │
-   │  packages/skill/arloui/               packages/tokens/src      │
-   │   ├── SKILL.md                        packages/registry/src    │
+   │  skills/                              packages/tokens/src      │
+   │   ├── SKILL.md                       packages/registry/src    │
    │   └── references/                                              │
    │       ├── tokens.md                                            │
    │       ├── components.md                                        │
@@ -46,7 +50,7 @@ The skill and the implementation live in the same repo and same PR. Hand-authore
    │                       │                                        │
    │                       ▼                                        │
    │  Generated MACHINE REFS (do not edit)                          │
-   │  packages/skill/arloui/references/                             │
+   │  skills/references/                                          │
    │   ├── tokens.json                                              │
    │   ├── registry.json                                            │
    │   └── usage.md                                                 │
@@ -68,7 +72,7 @@ The skill and the implementation live in the same repo and same PR. Hand-authore
 
 Two simple rules govern every edit:
 
-1. **Markdown in `packages/skill/arloui/`** = design contract. Designer-domain. Engineers don't edit it.
+1. **Markdown in `skills/`** (`SKILL.md`, `references/*.md`) = design contract. Designer-domain. Engineers don't edit it.
 2. **TS in `packages/tokens` / `packages/registry`** = implementation. Engineer-domain. Run `pnpm skill:sync` after; CI fails if you don't.
 
 ## Package responsibilities
@@ -83,7 +87,7 @@ Two simple rules govern every edit:
 | `@arloui/registry`       | no      | Component source files + `manifest.ts`. Never published.                     |
 | `@arloui/build-registry` | no      | Reads manifest, writes per-entry JSON to `apps/www/public/r/`.               |
 | `@arloui/build-icons`    | no      | SVGR pipeline: `packages/icons/assets/svg` → `packages/icons/src/generated`. |
-| `@arloui/skill`          | no      | The Cursor / Claude / Codex skill. Hand-authored markdown + generated refs.  |
+| `skills/` (skill bundle) | no      | Cursor / Claude / Codex skill under `skills/` (same idea as [HeroUI `skills/*`](https://github.com/heroui-inc/heroui/tree/v3/skills), one skill per folder — ours is flat). Hand-authored markdown + generated refs. |
 | `@arloui/eslint-config`  | no      | Shared ESLint rules.                                                         |
 | `@arloui/tsconfig`       | no      | Shared TS configs (`base`, `react-native`, `node`).                          |
 | `@arloui/www`            | no      | Web-first docs and copy surface: registry code, icon SVG copy, CLI snippets. |
@@ -131,7 +135,7 @@ shadcn proved this model is the right one for design systems where consumers nee
 2. Add an entry to `packages/registry/src/manifest.ts`.
 3. Add a showcase route in `apps/docs/app/components/<name>.tsx`.
 4. Run `pnpm registry:build` and verify the JSON output.
-5. Run `pnpm skill:sync` to update the design skill repo.
+5. Run `pnpm skill:sync` to update `skills/references/` (generated JSON + `usage.md` only).
 6. Run `pnpm changeset` if any published package changes.
 
 ## Versioning model
@@ -144,11 +148,11 @@ shadcn proved this model is the right one for design systems where consumers nee
 
 The skill's `tokens.md` is hand-authored markdown for humans (designers and the AI). The skill's `tokens.json` is generated by `pnpm skill:sync` and read programmatically. They must agree.
 
-CI runs `pnpm skill:sync` and fails if `packages/skill/` changes — meaning the implementation drifted from the spec. Designers update `tokens.md`; engineers update `packages/tokens/src/*.ts`; the sync script catches mismatches.
+CI runs `pnpm skill:sync` and fails if `skills/` changes — meaning the implementation drifted from the spec. Designers update `tokens.md`; engineers update `packages/tokens/src/*.ts`; the sync script catches mismatches.
 
 ## Loading the skill into your local agent
 
-The skill folder (`packages/skill/arloui`) is the same shape Cursor / Claude Code / Codex expect. To use it locally:
+The content under **`skills/`** (`SKILL.md` + `references/`) is the same shape Cursor / Claude Code / Codex expect after install (they land in `…/arloui/` for the agent). To use it locally:
 
 ```bash
 # symlinked install — edits in the repo flow into the agent automatically
@@ -159,4 +163,4 @@ node scripts/install-skill.mjs claude --symlink
 node scripts/install-skill.mjs cursor
 ```
 
-For project-scoped installs and the full compatibility matrix, see [`packages/skill/README.md`](./packages/skill/README.md).
+For project-scoped installs and the full compatibility matrix, see [`skills/README.md`](./skills/README.md).

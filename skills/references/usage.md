@@ -32,8 +32,9 @@ npx arloui diff button
 
 ### primitive
 
-- **button** — Button. Buttons: core action (`Button`: tone × appearance, sizes sm–xl, icons, icon-only, loading), OAuth rows (`SocialAuthButton`: Facebook / X, brand + neutral), circular FAB (`FabButton`: shadow rest, pressed darken, focus outline on web). Legacy `variant` on `Button` still supported.
-- **card** — Card. Layered surface for grouping related content. Compound API: Card.Header, Card.Title, Card.Body, Card.Footer.
+- **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
+- **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
+- **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.
 
 ## Decision rule
 

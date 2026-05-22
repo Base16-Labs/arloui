@@ -44,8 +44,8 @@ jobs:
 
       - name: Detect skill drift
         run: |
-          if ! git diff --quiet --exit-code -- packages/skill; then
-            echo "::error::packages/skill is out of sync with the implementation. Run \`pnpm skill:sync\` and commit the result."
-            git --no-pager diff -- packages/skill
+          if ! git diff --quiet --exit-code -- skills; then
+            echo "::error::skills/ is out of sync with the implementation. Run skill:sync from the repo root (\`pnpm skill:sync\`, \`npm run skill:sync\`, etc.) and commit the result."
+            git --no-pager diff -- skills
             exit 1
           fi

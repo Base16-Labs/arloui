@@ -16,6 +16,7 @@ export function StateGrid({ states, onHover, onPin }: StateGridProps) {
     <div className="grid grid-cols-6 gap-2.5">
       {states.map((state) => (
         <button
+          type="button"
           key={state}
           onMouseEnter={() => onHover?.(state)}
           onMouseLeave={() => onHover?.(null)}

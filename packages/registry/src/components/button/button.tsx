@@ -1,7 +1,9 @@
 /**
  * Arlo UI — Button
  *
- * Matches Figma button kit: tone × appearance × size, optional icons, icon-only circle, loading.
+ * Matches Figma **Buttons/Button** frame: tone × appearance × size, optional icons, icon-only circle, loading.
+ * Default / pressed use semantic touch overlays (`touchFeedbackMain` filled, `interactiveTertiaryPressed` outline/ghost).
+ * Disabled matches Figma: muted fill or outline stroke + `textDisabled` for label/icons.
  *
  * **Legacy `variant`** (still supported):
  * - `primary` → tone primary + solid
@@ -13,8 +15,7 @@
  * - `tone`: primary | neutral | danger
  * - `appearance`: solid | soft | ghost | outline
  *
- * Radii: filled uses rounded rect (`radii.md` / `radii.lg`); ghost & outline use pill (`radii.full`).
- * Icon-only uses a circle (`minHeight` × `minHeight`). Solid buttons gain `shadows.md` while pressed.
+ * Radii: stadium pill (`minHeight / 2`) for all default sizes; icon-only is a circle.
  */
 import { forwardRef, useMemo, useRef, useState } from 'react';
 import {
@@ -22,6 +23,7 @@ import {
   Animated,
   Platform,
   Pressable,
+  StyleSheet,
   Text,
   View,
   type GestureResponderEvent,
@@ -124,14 +126,14 @@ function resolvePalette(
       case 'soft':
         return {
           bg: t.colors.interactiveSecondary,
-          fg: t.colors.textPrimary,
+          fg: t.colors.textInteractiveSecondary,
           border: 'transparent',
           borderWidth: 0,
         };
       case 'ghost':
         return {
           bg: 'transparent',
-          fg: t.colors.textPrimary,
+          fg: t.colors.textInteractiveSecondary,
           border: 'transparent',
           borderWidth: 0,
         };
@@ -174,6 +176,25 @@ function resolvePalette(
         borderWidth: 1,
       };
   }
+}
+
+function resolveDisabledPalette(
+  t: ReturnType<typeof useTokens>,
+  appearance: ButtonAppearance,
+): { bg: string; fg: string; border: string; borderWidth: number } {
+  const fg = t.colors.textDisabled;
+  if (appearance === 'outline') {
+    return { bg: 'transparent', fg, border: fg, borderWidth: 1 };
+  }
+  if (appearance === 'ghost') {
+    return { bg: 'transparent', fg, border: 'transparent', borderWidth: 0 };
+  }
+  return {
+    bg: t.colors.interactiveDisabled,
+    fg,
+    border: 'transparent',
+    borderWidth: 0,
+  };
 }
 
 function iconSlotPx(size: Size, t: ReturnType<typeof useTokens>): number {
@@ -225,7 +246,13 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     };
   }, [variant, toneProp, appearanceProp]);
 
-  const palette = useMemo(() => resolvePalette(t, tone, appearance), [t, tone, appearance]);
+  const isPressDisabled = disabled || loading;
+  const useDisabledVisual = disabled && !loading;
+
+  const palette = useMemo(() => {
+    if (useDisabledVisual) return resolveDisabledPalette(t, appearance);
+    return resolvePalette(t, tone, appearance);
+  }, [t, tone, appearance, useDisabledVisual]);
 
   const dims = useMemo(() => {
     switch (size) {
@@ -272,16 +299,14 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     [ipx],
   );
 
-  const cornerRadius = useMemo(() => {
-    if (iconOnly) return dims.minHeight / 2;
-    if (appearance === 'outline' || appearance === 'ghost') return t.radii.full;
-    return size === 'sm' || size === 'md' ? t.radii.md : t.radii.lg;
-  }, [appearance, dims.minHeight, iconOnly, size, t.radii]);
+  const cornerRadius = useMemo(() => dims.minHeight / 2, [dims.minHeight]);
 
-  const pressedElevation: ViewStyle = useMemo(() => {
-    if (appearance !== 'solid' || !pressed || disabled || loading) return t.shadows.none as unknown as ViewStyle;
-    return t.shadows.md as unknown as ViewStyle;
-  }, [appearance, disabled, loading, pressed, t.shadows]);
+  const feedbackOverlayColor = useMemo(() => {
+    if (appearance === 'outline' || appearance === 'ghost') return t.colors.interactiveTertiaryPressed;
+    return t.colors.touchFeedbackMain;
+  }, [appearance, t.colors.interactiveTertiaryPressed, t.colors.touchFeedbackMain]);
+
+  const showFeedbackOverlay = !disabled && (loading || pressed);
 
   const focusWebStyle: ViewStyle | undefined = useMemo(() => {
     if (Platform.OS !== 'web' || !focused) return undefined;
@@ -312,20 +337,27 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     transform: [
       { scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, t.motion.pressed.scale] }) },
     ],
-    opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, t.motion.pressed.opacity] }),
   };
 
-  const isDisabled = disabled || loading;
-
   const a11yLabel = accessibilityLabel ?? label;
+
+  const contentRowStyle: ViewStyle = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: iconOnly ? 0 : dims.gap,
+    minHeight: dims.minHeight,
+    paddingHorizontal: iconOnly ? 0 : dims.paddingX,
+    width: fullWidth ? '100%' : undefined,
+  };
 
   return (
     <Pressable
       ref={ref}
       accessibilityRole="button"
       accessibilityLabel={a11yLabel}
-      accessibilityState={{ disabled: isDisabled, busy: loading }}
-      disabled={isDisabled}
+      accessibilityState={{ disabled: isPressDisabled, busy: loading }}
+      disabled={isPressDisabled}
       onPressIn={handleIn}
       onPressOut={handleOut}
       onFocus={(e) => {
@@ -349,46 +381,51 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
             minHeight: dims.minHeight,
             minWidth: iconOnly ? dims.minHeight : undefined,
             width: iconOnly ? dims.minHeight : undefined,
-            paddingHorizontal: iconOnly ? 0 : dims.paddingX,
             paddingVertical: 0,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: iconOnly ? 0 : dims.gap,
-            opacity: isDisabled ? (appearance === 'ghost' ? 0.35 : 0.5) : 1,
+            overflow: 'hidden',
             alignSelf: fullWidth ? 'stretch' : 'flex-start',
           },
-          pressedElevation,
           focusWebStyle,
           animated,
           style,
         ]}
       >
-        {loading ? (
-          <View style={iconWrap}>
-            <ActivityIndicator color={palette.fg} size={size === 'sm' || size === 'md' ? 'small' : 'large'} />
-          </View>
-        ) : leadingIcon ? (
-          <View style={iconWrap}>{leadingIcon}</View>
-        ) : null}
-        {!iconOnly ? (
-          <Text
-            numberOfLines={1}
+        {showFeedbackOverlay ? (
+          <View
+            pointerEvents="none"
             style={[
-              {
-                color: palette.fg,
-                fontFamily: mono ? t.fontFamilies.mono : t.fontFamilies.sans,
-                fontSize: dims.type.fontSize,
-                lineHeight: dims.type.lineHeight,
-                fontWeight: '600',
-              },
-              labelStyle,
+              StyleSheet.absoluteFillObject,
+              { borderRadius: cornerRadius, backgroundColor: feedbackOverlayColor },
             ]}
-          >
-            {label}
-          </Text>
+          />
         ) : null}
-        {!iconOnly && trailingIcon ? <View style={iconWrap}>{trailingIcon}</View> : null}
+        <View style={contentRowStyle}>
+          {loading ? (
+            <View style={iconWrap}>
+              <ActivityIndicator color={palette.fg} size={size === 'sm' || size === 'md' ? 'small' : 'large'} />
+            </View>
+          ) : leadingIcon ? (
+            <View style={iconWrap}>{leadingIcon}</View>
+          ) : null}
+          {!iconOnly ? (
+            <Text
+              numberOfLines={1}
+              style={[
+                {
+                  color: palette.fg,
+                  fontFamily: mono ? t.fontFamilies.mono : t.fontFamilies.sans,
+                  fontSize: dims.type.fontSize,
+                  lineHeight: dims.type.lineHeight,
+                  fontWeight: '600',
+                },
+                labelStyle,
+              ]}
+            >
+              {label}
+            </Text>
+          ) : null}
+          {!iconOnly && trailingIcon ? <View style={iconWrap}>{trailingIcon}</View> : null}
+        </View>
       </Animated.View>
     </Pressable>
   );
