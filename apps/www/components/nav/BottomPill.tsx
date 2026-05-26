@@ -37,7 +37,6 @@ export function BottomPill() {
   const [transitionDirection, setTransitionDirection] = useState<'opening' | 'closing'>('opening');
 
   const isDocsPage = pathname.startsWith('/docs');
-  const isComponentPage = pathname.startsWith('/docs/components/');
 
   const pageLabel = pathname.split('/').pop() ?? 'docs';
   const displayLabel = pageLabel.charAt(0).toUpperCase() + pageLabel.slice(1);
@@ -81,38 +80,32 @@ export function BottomPill() {
       }}
     >
       {!menuOpen && (
-        <div className="bottom-pill-shadow rounded-full">
+        <div className="rounded-full">
           <div
-            className="bottom-pill-surface flex cursor-pointer items-center gap-3 rounded-full border border-glass-border bg-glass-bg px-3.5 py-2.5 backdrop-blur-[20px]"
+            className="bottom-pill-surface flex h-8 w-40 items-center justify-between rounded-full border border-[#E4E4E7] bg-[#FAFAFA] px-1 text-[#3F3F46] backdrop-blur-[40px] transition-colors hover:border-[#D4D4D8] hover:bg-white"
             style={morphStyle}
           >
             <button
               type="button"
-              onClick={openMenu}
-              className="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-full bg-ink/[0.06] text-ink"
-              aria-label="Open menu"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 px-1.5 text-left text-[12px] leading-none"
+              aria-label={`Scroll to top of ${displayLabel}`}
             >
-              <Icon name="list" size={14} />
+              <span className="h-2 w-2 shrink-0 rounded-full bg-[#71717A]" />
+              <span className="truncate">{displayLabel}</span>
             </button>
             <button
               type="button"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="cursor-pointer text-[13px] font-medium text-ink"
+              onClick={openMenu}
+              className="flex h-6 shrink-0 cursor-pointer items-center gap-2 rounded-full px-2 text-[12px] leading-none transition-colors hover:bg-zinc-100"
+              aria-label="Open menu"
             >
-              {displayLabel}
+              <span>Menu</span>
+              <span className="relative h-3.5 w-2.5 text-[#3F3F46]" aria-hidden="true">
+                <span className="absolute top-[2px] left-1/2 h-1.5 w-1.5 -translate-x-1/2 rotate-45 border-t border-l border-current" />
+                <span className="absolute bottom-[2px] left-1/2 h-1.5 w-1.5 -translate-x-1/2 rotate-45 border-r border-b border-current" />
+              </span>
             </button>
-            {isComponentPage && (
-              <>
-                <span className="text-ink-3">·</span>
-                <button
-                  type="button"
-                  className="flex h-[26px] w-[26px] cursor-pointer items-center justify-center rounded-full bg-ink/[0.06] text-ink"
-                  aria-label="Scan to preview"
-                >
-                  <Icon name="qr-code" size={14} />
-                </button>
-              </>
-            )}
           </div>
         </div>
       )}

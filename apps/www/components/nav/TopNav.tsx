@@ -29,13 +29,7 @@ export function TopNav() {
 
   return (
     <>
-      <header
-        className="sticky top-0 z-40 h-[68px] border-b border-line bg-canvas"
-        style={{
-          transitionDuration: 'var(--dur-slow)',
-          transitionTimingFunction: 'var(--ease-out)',
-        }}
-      >
+      <header className="relative z-40 h-[68px] border-b border-line bg-canvas">
         <div className="mx-auto flex h-full w-full max-w-[1440px] items-center gap-4 px-4 lg:gap-6 lg:px-7">
           <div className="flex items-center gap-4 lg:gap-7">
             <Link href="/" className="text-[22px] font-medium tracking-tight text-ink">
