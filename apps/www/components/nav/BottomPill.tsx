@@ -34,6 +34,7 @@ export function BottomPill() {
   const { resolved, setTheme } = useTheme();
   const [visible, setVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuHovered, setMenuHovered] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState<'opening' | 'closing'>('opening');
 
   const isDocsPage = pathname.startsWith('/docs');
@@ -82,7 +83,7 @@ export function BottomPill() {
       {!menuOpen && (
         <div className="rounded-full">
           <div
-            className="bottom-pill-surface flex h-8 w-40 items-center justify-between rounded-full border border-[#E4E4E7] bg-[#FAFAFA] px-1 text-[#3F3F46] backdrop-blur-[40px] transition-colors hover:border-[#D4D4D8] hover:bg-white"
+            className="bottom-pill-surface flex h-8 w-40 items-center justify-between rounded-[100px] border-[0.5px] border-[#E4E4E7] bg-[#FAFAFA] px-1 py-2.5 text-[#3F3F46] backdrop-blur-[40px] dark:border-glass-border dark:bg-glass-bg dark:text-ink"
             style={morphStyle}
           >
             <button
@@ -97,7 +98,18 @@ export function BottomPill() {
             <button
               type="button"
               onClick={openMenu}
-              className="flex h-6 shrink-0 cursor-pointer items-center gap-2 rounded-full px-2 text-[12px] leading-none transition-colors hover:bg-zinc-100"
+              onMouseEnter={() => setMenuHovered(true)}
+              onMouseLeave={() => setMenuHovered(false)}
+              onFocus={() => setMenuHovered(true)}
+              onBlur={() => setMenuHovered(false)}
+              className="flex h-6 w-[64px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full px-2 text-[12px] leading-none transition-colors"
+              style={{
+                backgroundColor: menuHovered
+                  ? resolved === 'dark'
+                    ? 'rgb(255 255 255 / 0.1)'
+                    : '#E4E4E7'
+                  : 'transparent',
+              }}
               aria-label="Open menu"
             >
               <span>Menu</span>

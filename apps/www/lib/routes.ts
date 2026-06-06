@@ -1,17 +1,17 @@
 export const siteLinks = [
-  { label: "Docs", href: "/docs" },
-  { label: "Showcase", href: "/showcase" },
-  { label: "Roadmap", href: "/roadmap" },
+  { label: 'Docs', href: '/docs' },
+  { label: 'Showcase', href: '/showcase' },
+  { label: 'Roadmap', href: '/roadmap' },
 ] as const;
 
 export const docsSections = [
-  { label: "Getting started", href: "/docs/getting-started" },
-  { label: "Foundations", href: "/docs/foundations" },
-  { label: "Primitives", href: "/docs/primitives" },
-  { label: "Components", href: "/docs/components" },
-  { label: "Archetypes", href: "/docs/archetypes" },
-  { label: "Agents", href: "/docs/agents" },
-  { label: "Changelog", href: "/docs/changelog" },
+  { label: 'Getting started', href: '/docs/getting-started' },
+  { label: 'Facets', href: '/docs/foundations' },
+  { label: 'Foundations', href: '/docs/primitives' },
+  { label: 'Components', href: '/docs/components' },
+  { label: 'Archetypes', href: '/docs/archetypes' },
+  { label: 'Agents', href: '/docs/agents' },
+  { label: 'Changelog', href: '/docs/changelog' },
 ] as const;
 
 export type ItemGroup = {
@@ -20,104 +20,104 @@ export type ItemGroup = {
 };
 
 export const primitiveItems = [
-  { label: "Tokens", slug: "tokens" },
-  { label: "Type", slug: "type" },
-  { label: "Color", slug: "color" },
-  { label: "Spacing", slug: "spacing" },
-  { label: "Motion", slug: "motion" },
-  { label: "Icons", slug: "icons" },
+  { label: 'Tokens', slug: 'tokens' },
+  { label: 'Type', slug: 'type' },
+  { label: 'Color', slug: 'color' },
+  { label: 'Spacing', slug: 'spacing' },
+  { label: 'Motion', slug: 'motion' },
+  { label: 'Icons', slug: 'icons' },
 ] as const;
 
 export const archetypeItems = [
-  { label: "Question", slug: "question" },
-  { label: "Decision", slug: "decision" },
-  { label: "Status", slug: "status" },
-  { label: "Feed", slug: "feed" },
-  { label: "Detail", slug: "detail" },
-  { label: "Creation", slug: "creation" },
-  { label: "Settings", slug: "settings" },
-  { label: "Onboarding", slug: "onboarding" },
-  { label: "Empty", slug: "empty" },
+  { label: 'Question', slug: 'question' },
+  { label: 'Decision', slug: 'decision' },
+  { label: 'Status', slug: 'status' },
+  { label: 'Feed', slug: 'feed' },
+  { label: 'Detail', slug: 'detail' },
+  { label: 'Creation', slug: 'creation' },
+  { label: 'Settings', slug: 'settings' },
+  { label: 'Onboarding', slug: 'onboarding' },
+  { label: 'Empty', slug: 'empty' },
 ] as const;
 
 export const agentItems = [
-  { label: "Skill pack", slug: "skill-pack" },
-  { label: "MCP", slug: "mcp" },
-  { label: "Prompt cookbook", slug: "prompt-cookbook" },
+  { label: 'Skill pack', slug: 'skill-pack' },
+  { label: 'MCP', slug: 'mcp' },
+  { label: 'Prompt cookbook', slug: 'prompt-cookbook' },
 ] as const;
 
 export const gettingStartedItems = [
-  { label: "Install", slug: "install" },
-  { label: "With AI", slug: "with-ai" },
-  { label: "First screen", slug: "first-screen" },
+  { label: 'Install', slug: 'install' },
+  { label: 'With AI', slug: 'with-ai' },
+  { label: 'First screen', slug: 'first-screen' },
 ] as const;
 
 export type ComponentGroup = ItemGroup;
 
 export const componentGroups: ComponentGroup[] = [
   {
-    label: "Layout & surface",
+    label: 'Layout & surface',
     items: [
-      { label: "Stack", slug: "stack" },
-      { label: "Group", slug: "group" },
-      { label: "Card", slug: "card" },
-      { label: "Sheet", slug: "sheet" },
-      { label: "Tray", slug: "tray" },
-      { label: "Scrim", slug: "scrim" },
-      { label: "SafeArea", slug: "safearea" },
+      { label: 'Stack', slug: 'stack' },
+      { label: 'Group', slug: 'group' },
+      { label: 'Card', slug: 'card' },
+      { label: 'Sheet', slug: 'sheet' },
+      { label: 'Tray', slug: 'tray' },
+      { label: 'Scrim', slug: 'scrim' },
+      { label: 'SafeArea', slug: 'safearea' },
     ],
   },
   {
-    label: "Type & content",
+    label: 'Type & content',
     items: [
-      { label: "Title", slug: "title" },
-      { label: "Body", slug: "body" },
-      { label: "Caption", slug: "caption" },
-      { label: "Stat", slug: "stat" },
-      { label: "Note", slug: "note" },
-      { label: "Eyebrow", slug: "eyebrow" },
+      { label: 'Title', slug: 'title' },
+      { label: 'Body', slug: 'body' },
+      { label: 'Caption', slug: 'caption' },
+      { label: 'Stat', slug: 'stat' },
+      { label: 'Note', slug: 'note' },
+      { label: 'Eyebrow', slug: 'eyebrow' },
     ],
   },
   {
-    label: "Controls",
+    label: 'Controls',
     items: [
-      { label: "Button", slug: "button" },
-      { label: "Pill", slug: "pill" },
-      { label: "Chip", slug: "chip" },
-      { label: "Tab", slug: "tab" },
-      { label: "Toggle", slug: "toggle" },
-      { label: "Stepper", slug: "stepper" },
-      { label: "Slider", slug: "slider" },
-      { label: "Field", slug: "field" },
-      { label: "Select", slug: "select" },
-      { label: "Picker", slug: "picker" },
+      { label: 'Button', slug: 'button' },
+      { label: 'Pill', slug: 'pill' },
+      { label: 'Chip', slug: 'chip' },
+      { label: 'Tab', slug: 'tab' },
+      { label: 'Toggle', slug: 'toggle' },
+      { label: 'Stepper', slug: 'stepper' },
+      { label: 'Slider', slug: 'slider' },
+      { label: 'Field', slug: 'field' },
+      { label: 'Select', slug: 'select' },
+      { label: 'Picker', slug: 'picker' },
     ],
   },
   {
-    label: "Lists & rows",
+    label: 'Lists & rows',
     items: [
-      { label: "List", slug: "list" },
-      { label: "Row", slug: "row" },
-      { label: "Divider", slug: "divider" },
+      { label: 'List', slug: 'list' },
+      { label: 'Row', slug: 'row' },
+      { label: 'Divider', slug: 'divider' },
     ],
   },
   {
-    label: "Feedback",
+    label: 'Feedback',
     items: [
-      { label: "Toast", slug: "toast" },
-      { label: "Banner", slug: "banner" },
-      { label: "Spinner", slug: "spinner" },
-      { label: "Progress", slug: "progress" },
-      { label: "Empty", slug: "empty" },
-      { label: "Loader", slug: "loader" },
+      { label: 'Toast', slug: 'toast' },
+      { label: 'Banner', slug: 'banner' },
+      { label: 'Spinner', slug: 'spinner' },
+      { label: 'Progress', slug: 'progress' },
+      { label: 'Empty', slug: 'empty' },
+      { label: 'Loader', slug: 'loader' },
     ],
   },
   {
-    label: "Navigation",
+    label: 'Navigation',
     items: [
-      { label: "Nav", slug: "nav" },
-      { label: "Header", slug: "header" },
-      { label: "Breadcrumb", slug: "breadcrumb" },
+      { label: 'Nav', slug: 'nav' },
+      { label: 'Header', slug: 'header' },
+      { label: 'Breadcrumb', slug: 'breadcrumb' },
     ],
   },
 ];

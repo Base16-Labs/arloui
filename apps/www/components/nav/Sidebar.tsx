@@ -21,12 +21,10 @@ export function Sidebar() {
     <aside className="sticky top-0 h-[calc(100dvh-68px)] w-[264px] shrink-0 overflow-hidden border-r border-line">
       {/* Top blur */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-10"
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
         style={{
           background:
-            'linear-gradient(to bottom, var(--canvas) 0%, var(--canvas) 20%, transparent 100%)',
-          maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+            'linear-gradient(to bottom, var(--canvas) 0%, var(--canvas) 34%, color-mix(in srgb, var(--canvas) 82%, transparent) 58%, transparent 100%)',
         }}
       />
 
@@ -90,7 +88,7 @@ export function Sidebar() {
 
         {pathname.startsWith('/docs/primitives') && (
           <SidebarGroup
-            title="Primitives"
+            title="Foundations"
             items={primitiveItems}
             basePath="/docs/primitives"
             pathname={pathname}
