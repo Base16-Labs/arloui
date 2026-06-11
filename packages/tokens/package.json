@@ -8,6 +8,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./raw": "./src/raw.ts",
+    "./paletteMain": "./src/paletteMain.ts",
+    "./paletteSecondary": "./src/paletteSecondary.ts",
+    "./semantic": "./src/semanticColors.ts",
     "./package.json": "./package.json"
   },
   "files": ["dist", "src"],

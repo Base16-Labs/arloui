@@ -40,14 +40,34 @@ export const FOUNDATION: RegistryEntry[] = [
 
 export const COMPONENTS: RegistryEntry[] = [
   {
+    name: 'animated-icons',
+    kind: 'icon',
+    title: 'Animated icons',
+    description:
+      'Six stateful SVG icon transitions for menu, playback, direction, disclosure, and completion.',
+    dependencies: ['react-native-svg', 'react-native-reanimated'],
+    files: [
+      {
+        source: 'components/animated-icon/animated-icon.tsx',
+        target: 'animated-icon.tsx',
+        type: 'component',
+      },
+    ],
+    meta: {
+      tags: ['icon', 'motion', 'animated', 'state'],
+    },
+  },
+  {
     name: 'button',
     kind: 'primitive',
     title: 'Button',
     description:
       'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.',
+    dependencies: ['@arloui/utils', 'expo-haptics', 'react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/button/button.tsx', target: 'button.tsx' },
+      { source: 'components/button/ghost-button.tsx', target: 'ghost-button.tsx' },
       { source: 'components/button/fab-button.tsx', target: 'fab-button.tsx' },
       { source: 'components/button/social-auth-button.tsx', target: 'social-auth-button.tsx' },
       { source: 'components/button/index.ts', target: 'button/index.ts' },

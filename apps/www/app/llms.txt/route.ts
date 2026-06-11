@@ -18,7 +18,7 @@ const CONTENT = `# ArloUI
 
 - 35 components across 6 groups: Layout & surface, Type & content, Controls, Lists & rows, Feedback, Navigation
 - 4 foundations (facets): Craft, Fluidity, Opinionated, Detailed
-- 6 primitives: Tokens, Type, Color, Spacing, Motion, Icons
+- 6 primitives: Tokens, Typography, Color, Spacing, Motion, Icons
 - 9 archetypes: Question, Decision, Status, Feed, Detail, Creation, Settings, Onboarding, Empty
 - AI-native: skill pack, MCP server, prompt cookbook
 

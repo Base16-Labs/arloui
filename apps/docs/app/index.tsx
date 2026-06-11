@@ -1,75 +1,189 @@
-import { Stack } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Stack, useRouter } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTokens } from '@arloui/registry';
-import { Eyebrow } from '@/components/playground/eyebrow';
-import { PlaygroundHero } from '@/components/playground/playground-hero';
-import { ShowcaseCard } from '@/components/playground/showcase-card';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
-import {
-  featuredPlaygroundItem,
-  playgroundCatalog,
-  playgroundCategories,
-} from '@/lib/catalog';
 
-export default function Index() {
+type IndexItem = {
+  title: string;
+  category: string;
+  href?: '/button' | '/input' | '/icons';
+};
+
+const COMPONENTS: IndexItem[] = [
+  { title: 'Button', category: 'Controls', href: '/button' },
+  { title: 'Card', category: 'Layout' },
+  { title: 'Chip', category: 'Controls' },
+  { title: 'Empty', category: 'Feedback' },
+  { title: 'Field', category: 'Controls', href: '/input' },
+  { title: 'Group', category: 'Layout' },
+  { title: 'Header', category: 'Nav' },
+  { title: 'Icons', category: 'Foundations', href: '/icons' },
+  { title: 'Input', category: 'Controls', href: '/input' },
+  { title: 'List', category: 'Lists' },
+  { title: 'Nav', category: 'Nav' },
+  { title: 'Note', category: 'Type' },
+  { title: 'Pill', category: 'Controls' },
+  { title: 'Row', category: 'Lists' },
+];
+
+export default function ComponentIndex() {
   const t = useTokens();
-  const listItems = playgroundCatalog.filter((item) => !item.featured);
+  const [query, setQuery] = useState('');
+  const items = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) return COMPONENTS;
+    return COMPONENTS.filter(
+      (item) =>
+        item.title.toLowerCase().includes(normalized) ||
+        item.category.toLowerCase().includes(normalized),
+    );
+  }, [query]);
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1, backgroundColor: t.colors.bg }}>
-        <ScrollView
-          contentContainerStyle={{
-            paddingHorizontal: t.spacing[5],
-            paddingTop: t.spacing[5],
-            paddingBottom: t.spacing[10],
-            gap: t.spacing[7],
+        <View
+          style={{
+            flex: 1,
+            paddingTop: 22,
           }}
         >
-          <PlaygroundHero
-            eyebrow="Native · On device"
-            title="Arlo"
-            titleAccent="Playground"
-            lede="Touch real components built for AI-native mobile — not mockups in a browser."
-            trailing={<ThemeToggle />}
-          />
+          <View
+            style={{
+              alignItems: 'flex-end',
+              paddingHorizontal: 20,
+            }}
+          >
+            <ThemeToggle />
+          </View>
 
-          {featuredPlaygroundItem ? (
-            <View style={{ gap: t.spacing[3] }}>
-              <Eyebrow>Start here</Eyebrow>
-              <ShowcaseCard item={featuredPlaygroundItem} featured />
-            </View>
-          ) : null}
+          <View
+            style={{
+              marginTop: 44,
+              marginHorizontal: 20,
+              height: 52,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              paddingHorizontal: 16,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: t.colors.border,
+              backgroundColor: t.colors.surfaceRaised,
+            }}
+          >
+            <Ionicons name="search-outline" size={21} color={t.colors.textTertiary} />
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search components"
+              placeholderTextColor={t.colors.textTertiary}
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={{
+                flex: 1,
+                color: t.colors.textPrimary,
+                fontFamily: 'Manrope',
+                fontSize: 15,
+                paddingVertical: 0,
+              }}
+            />
+            {query ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Clear search"
+                hitSlop={8}
+                onPress={() => setQuery('')}
+              >
+                <Ionicons name="close-circle" size={18} color={t.colors.textTertiary} />
+              </Pressable>
+            ) : null}
+          </View>
 
-          {playgroundCategories.map((category) => {
-            const items = listItems.filter((item) => item.category === category);
-            if (items.length === 0) return null;
-
-            return (
-              <View key={category} style={{ gap: t.spacing[3] }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[2] }}>
-                  <View
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: 3,
-                      backgroundColor: t.colors.accent,
-                    }}
-                  />
-                  <Eyebrow>{category}</Eyebrow>
-                </View>
-                <View style={{ gap: t.spacing[3] }}>
-                  {items.map((item) => (
-                    <ShowcaseCard key={item.slug} item={item} />
-                  ))}
-                </View>
+          <FlatList
+            data={items}
+            keyExtractor={(item) => item.title}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator
+            style={{ flex: 1, marginTop: 18 }}
+            contentContainerStyle={{
+              borderTopWidth: 1,
+              borderTopColor: t.colors.border,
+              paddingBottom: 36,
+            }}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: 1, backgroundColor: t.colors.border }} />
+            )}
+            renderItem={({ item }) => <IndexRow item={item} />}
+            ListEmptyComponent={
+              <View style={{ alignItems: 'center', paddingTop: 48 }}>
+                <Text
+                  style={{
+                    color: t.colors.textSecondary,
+                    fontFamily: 'Manrope',
+                    fontSize: 14,
+                  }}
+                >
+                  No matching components
+                </Text>
               </View>
-            );
-          })}
-        </ScrollView>
+            }
+          />
+        </View>
       </SafeAreaView>
     </>
+  );
+}
+
+function IndexRow({ item }: { item: IndexItem }) {
+  const t = useTokens();
+  const router = useRouter();
+
+  return (
+    <Pressable
+      disabled={!item.href}
+      onPress={() => {
+        if (item.href) router.push(item.href);
+      }}
+      style={({ pressed }) => ({
+        minHeight: 64,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: pressed ? t.colors.surfaceRaised : t.colors.bg,
+      })}
+    >
+      <Text
+        style={{
+          flex: 1,
+          color: t.colors.textPrimary,
+          fontFamily: 'Manrope Medium',
+          fontSize: 17,
+          lineHeight: 23,
+        }}
+      >
+        {item.title}
+      </Text>
+      <Text
+        style={{
+          flexShrink: 0,
+          marginLeft: 16,
+          color: t.colors.textTertiary,
+          fontFamily: 'Manrope SemiBold',
+          fontSize: 10,
+          lineHeight: 14,
+          letterSpacing: 1.1,
+          textAlign: 'right',
+          textTransform: 'uppercase',
+        }}
+      >
+        {item.category}
+      </Text>
+    </Pressable>
   );
 }

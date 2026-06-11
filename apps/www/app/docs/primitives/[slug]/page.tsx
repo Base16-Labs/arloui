@@ -1,11 +1,21 @@
 import { notFound } from 'next/navigation';
 import type { ComponentProps } from 'react';
+import { TailwindAlphaRamp, TailwindPaletteGrid } from '@/components/docs/tailwind-palette';
 import { Eyebrow } from '@/components/mdx/Eyebrow';
 import { Lede } from '@/components/mdx/Lede';
 import { RightRail } from '@/components/nav/RightRail';
 import { CodeBlock } from '@/components/ui/CodeBlock';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { Icon } from '@/components/ui/Icon';
+import { IconLibrary } from '@/components/icons/icon-library';
+import {
+  alphaRamp,
+  lightSemanticColors,
+  mainScales,
+  paletteBase,
+  paletteSecondary,
+} from '@/lib/color-tokens';
+import { getAnimatedIconSource, getIconNames } from '@/lib/icon-assets';
 import { primitiveItems } from '@/lib/routes';
 
 type IconName = ComponentProps<typeof Icon>['name'];
@@ -91,29 +101,40 @@ const primitiveDocs: Record<string, PrimitiveDoc> = {
     related: ['Color', 'Spacing', 'Motion'],
   },
   type: {
-    title: 'Type',
-    lede: 'The registry typography scale: Space Grotesk for UI, Space Mono for data, and Doto reserved for display moments.',
+    title: 'Typography',
+    lede: 'A Manrope type system for display, headings, body copy, labels, and button text across Arlo UI.',
     intro: [
-      'The registry exposes fontFamilies and typography from the same tokens.ts template components use.',
-      'Use Space Mono for prices, timestamps, percentages, status labels, and tabular data.',
-      'Reserve the display face for one hero element per screen.',
+      'The Figma foundation uses Manrope for every interface role.',
+      'Normal styles use 400 weight; emphasized and button styles use 600.',
+      'The registry exposes explicit display, heading, body, label, and button tokens from tokens.ts.',
     ],
     rules: [
-      'Use displayXl and displayLg sparingly in app screens.',
-      'Use title1 through title3 for section and component headings.',
-      'Use label for small uppercase metadata; it includes 0.66 letter spacing.',
+      'Use display styles for prominent screen-level content.',
+      'Use heading styles to establish hierarchy inside screens and components.',
+      'Use body, label, and button roles according to their intended interface context.',
     ],
     specs: [
-      { name: 'fontFamilies.sans', value: 'Space Grotesk', note: 'Default UI face' },
-      { name: 'fontFamilies.mono', value: 'Space Mono', note: 'Data and tabular text' },
-      { name: 'displayXl', value: '40 / 44 / 600', note: 'Large screen title' },
-      { name: 'title1', value: '24 / 30 / 600', note: 'Section title' },
-      { name: 'body', value: '15 / 21 / 400', note: 'Default body copy' },
-      { name: 'label', value: '11 / 14 / 500', note: 'Small labels with 0.66 tracking' },
+      { name: 'fontFamilies.sans', value: 'Manrope', note: 'All interface typography' },
+      { name: 'displayLarge', value: '34 / 125% / -2%', note: 'Normal and emphasized' },
+      { name: 'displayMedium', value: '28 / 125% / -2%', note: 'Normal and emphasized' },
+      { name: 'displaySmall', value: '24 / 125% / -2%', note: 'Normal and emphasized' },
+      { name: 'headingLarge', value: '20 / 130% / -1%', note: 'Normal and emphasized' },
+      { name: 'headingMedium', value: '17 / 130% / -1%', note: 'Normal and emphasized' },
+      { name: 'headingSmall', value: '14 / 130% / -1%', note: 'Normal and emphasized' },
+      { name: 'bodyLarge', value: '17 / 140% / 0%', note: 'Long-form and supporting copy' },
+      { name: 'bodyMedium', value: '14 / 140% / 0%', note: 'Default body copy' },
+      { name: 'bodySmall', value: '12 / 140% / 0%', note: 'Compact supporting copy' },
+      { name: 'labelLarge', value: '14 / 120% / 0%', note: 'Large interface label' },
+      { name: 'labelMedium', value: '12 / 120% / 0%', note: 'Default interface label' },
+      { name: 'labelSmall', value: '11 / 120% / 0%', note: 'Compact metadata' },
+      { name: 'buttonLarge', value: '20 / 110% / 0%', note: 'Large action label' },
+      { name: 'buttonMedium', value: '17 / 110% / 0%', note: 'Medium action label' },
+      { name: 'buttonSmall', value: '14 / 110% / 0%', note: 'Small action label' },
+      { name: 'buttonLabel', value: '12 / 110% / 0%', note: 'Compact button label' },
     ],
     snippet: `const styles = {
-  title: {
-    ...theme.typography.title1,
+  heading: {
+    ...theme.typography.headingLargeEmphasized,
     fontFamily: theme.fontFamilies.sans,
     color: theme.colors.textPrimary,
   },
@@ -152,7 +173,7 @@ const { theme } = useTheme();
     Label
   </Text>
 </View>`,
-    related: ['Tokens', 'Type', 'Icons'],
+    related: ['Tokens', 'Typography', 'Icons'],
   },
   spacing: {
     title: 'Spacing',
@@ -184,7 +205,7 @@ const { theme } = useTheme();
   <Text>Label</Text>
   <Input />
 </View>`,
-    related: ['Type', 'Tokens', 'Motion'],
+    related: ['Typography', 'Tokens', 'Motion'],
   },
   motion: {
     title: 'Motion',
@@ -257,6 +278,11 @@ export default async function PrimitivePage({ params }: { params: Promise<{ slug
 
   const doc = primitiveDocs[slug];
   if (!doc) notFound();
+
+  if (slug === 'icons') {
+    const [names, animatedSource] = await Promise.all([getIconNames(), getAnimatedIconSource()]);
+    return <IconLibrary names={names} animatedSource={animatedSource} />;
+  }
 
   const headings = [
     { id: 'preview', label: 'Preview' },
@@ -399,92 +425,520 @@ function TokensPreview() {
 
 function TypePreview() {
   const rows = [
-    ['displayXl', 'Build native screens faster', 'text-[40px]'],
-    ['title1', 'Input field', 'text-[24px]'],
-    ['body', 'Helper text keeps the next action clear.', 'text-[15px]'],
-    ['label', 'USERNAME TAKEN', 'text-[11px] uppercase tracking-[0.06em]'],
+    {
+      group: 'Display',
+      name: 'Large',
+      size: 34,
+      lineHeight: 1.25,
+      tracking: '-2%',
+      letterSpacing: '-0.02em',
+      emphasized: true,
+    },
+    {
+      group: 'Display',
+      name: 'Medium',
+      size: 28,
+      lineHeight: 1.25,
+      tracking: '-2%',
+      letterSpacing: '-0.02em',
+      emphasized: true,
+    },
+    {
+      group: 'Display',
+      name: 'Small',
+      size: 24,
+      lineHeight: 1.25,
+      tracking: '-2%',
+      letterSpacing: '-0.02em',
+      emphasized: true,
+    },
+    {
+      group: 'Heading',
+      name: 'Large',
+      size: 20,
+      lineHeight: 1.3,
+      tracking: '-1%',
+      letterSpacing: '-0.01em',
+      emphasized: true,
+    },
+    {
+      group: 'Heading',
+      name: 'Medium',
+      size: 17,
+      lineHeight: 1.3,
+      tracking: '-1%',
+      letterSpacing: '-0.01em',
+      emphasized: true,
+    },
+    {
+      group: 'Heading',
+      name: 'Small',
+      size: 14,
+      lineHeight: 1.3,
+      tracking: '-1%',
+      letterSpacing: '-0.01em',
+      emphasized: true,
+    },
+    { group: 'Body', name: 'Large', size: 17, lineHeight: 1.4, tracking: '0%' },
+    { group: 'Body', name: 'Medium', size: 14, lineHeight: 1.4, tracking: '0%' },
+    { group: 'Body', name: 'Small', size: 12, lineHeight: 1.4, tracking: '0%' },
+    { group: 'Label', name: 'Large', size: 14, lineHeight: 1.2, tracking: '0%' },
+    { group: 'Label', name: 'Medium', size: 12, lineHeight: 1.2, tracking: '0%' },
+    { group: 'Label', name: 'Small', size: 11, lineHeight: 1.2, tracking: '0%' },
+    { group: 'Button', name: 'Large', size: 20, lineHeight: 1.1, tracking: '0%', button: true },
+    { group: 'Button', name: 'Medium', size: 17, lineHeight: 1.1, tracking: '0%', button: true },
+    { group: 'Button', name: 'Small', size: 14, lineHeight: 1.1, tracking: '0%', button: true },
+    { group: 'Button', name: 'Label', size: 12, lineHeight: 1.1, tracking: '0%', button: true },
   ];
 
   return (
-    <div className="rounded-lg border border-line bg-surface p-5">
-      {rows.map(([label, sample, className]) => (
-        <div
-          key={label}
-          className="grid gap-3 border-b border-line py-4 first:pt-0 last:border-b-0 last:pb-0 sm:grid-cols-[120px_1fr]"
-        >
-          <div className="text-[12px] text-ink-3">{label}</div>
-          <div className={`${className} font-medium leading-tight text-ink`}>{sample}</div>
+    <div className="overflow-hidden rounded-lg border border-line bg-surface font-['Manrope']">
+      <div className="grid gap-8 border-b border-line p-5 sm:grid-cols-[1fr_1.15fr] sm:p-7">
+        <div>
+          <div className="text-[15px] font-medium text-ink">Manrope</div>
+          <div className="mt-6 text-[76px] font-normal leading-none tracking-[-0.04em] text-ink">
+            Ag
+          </div>
         </div>
-      ))}
+        <div className="self-start text-[20px] leading-[1.35] tracking-[-0.02em] text-ink sm:text-[22px]">
+          <div>ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+          <div>abcdefghijklmnopqrstuvwxyz</div>
+          <div>0123456789 !@#$%^&amp;*()</div>
+        </div>
+      </div>
+
+      <div className="divide-y divide-line">
+        {rows.map((row) => {
+          const lineHeightPercent = Math.round(row.lineHeight * 100);
+          const em = row.size / 16;
+          const label = `${row.group} ${row.name}`;
+
+          return (
+            <div
+              key={label}
+              className="grid gap-5 px-5 py-6 sm:grid-cols-[minmax(0,1fr)_minmax(240px,0.9fr)] sm:px-7"
+            >
+              <div
+                className="grid gap-5 sm:grid-cols-2"
+                style={{
+                  fontSize: row.size,
+                  lineHeight: row.lineHeight,
+                  letterSpacing: row.letterSpacing ?? '0',
+                }}
+              >
+                {!row.button ? (
+                  <div className="font-normal text-ink">
+                    {label}
+                    {row.emphasized ? <span className="block">Normal</span> : null}
+                  </div>
+                ) : null}
+                {row.emphasized ? (
+                  <div className="font-semibold text-ink">
+                    {label}
+                    <span className="block">Emphasized</span>
+                  </div>
+                ) : null}
+                {row.button ? <div className="font-semibold text-ink">{label}</div> : null}
+              </div>
+
+              <div className="self-center">
+                <div className="text-[12px] font-medium text-ink-2">{label}</div>
+                <div className="mt-2 font-mono text-[10px] leading-relaxed text-ink-3 sm:text-[11px]">
+                  Font size: {row.size}px / {Number(em.toFixed(4))}rem | Line height:{' '}
+                  {lineHeightPercent}% | Letter spacing: {row.tracking}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-function ColorPreview() {
-  const mainPalette = [
-    ['Base', '#FFFFFF', '#000000'],
-    ['Grey', '#F9FAFB', '#09090B'],
-    ['Primary', '#EFF6FF', '#155DFC'],
-    ['Success', '#F0FDF4', '#00C950'],
-    ['Warning', '#FFFBEB', '#E17100'],
-    ['Error', '#FEF2F2', '#FB2C36'],
-  ];
-  const secondaryPalette = [
-    ['Zinc', '#FAFAFA', '#E4E4E7', '#09090B'],
-    ['Slate', '#F8FAFC', '#64748B', '#020617'],
-    ['Emerald', '#ECFDF5', '#10B981', '#022C22'],
-    ['Sky', '#F0F9FF', '#0EA5E9', '#082F49'],
-    ['Violet', '#F5F3FF', '#8B5CF6', '#2E1065'],
-    ['Rose', '#FFF1F2', '#F43F5E', '#4C0519'],
-  ];
-  const utilityPalette = [
-    ['surfaceBackground', '#F9FAFB', '#09090B'],
-    ['surfaceInput', '#F3F4F6', '#1E2939'],
-    ['textPrimary', '#101828', '#F9FAFB'],
-    ['textSecondary', '#4A5565', '#99A1AF'],
-    ['interactivePrimary', '#155DFC', '#2B7FFF'],
-    ['borderError', '#FB2C36', '#FB2C36'],
-  ];
+type UtilitySemanticRow = {
+  token: string;
+  semanticKey: keyof typeof lightSemanticColors;
+  palette: string;
+  usage: string;
+};
 
+const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] = [
+  {
+    section: 'Surfaces & Backgrounds',
+    rows: [
+      {
+        token: 'surface-background',
+        semanticKey: 'surfaceBackground',
+        palette: 'Grey-50',
+        usage: 'Main app background',
+      },
+      {
+        token: 'surface-input*',
+        semanticKey: 'surfaceInput',
+        palette: 'Grey-100',
+        usage: 'Input backgrounds',
+      },
+      {
+        token: 'surface-elevated',
+        semanticKey: 'surfaceElevated',
+        palette: 'Base-White',
+        usage: 'Cards, sheets, modals (above background)',
+      },
+      {
+        token: 'surface-overlay',
+        semanticKey: 'surfaceOverlay',
+        palette: 'Grey-900 @ 40%',
+        usage: 'Overlays, backdrops, scrims',
+      },
+      {
+        token: 'surface-inverse',
+        semanticKey: 'surfaceInverse',
+        palette: 'Grey-900',
+        usage: 'Dark surfaces, tooltips',
+      },
+    ],
+  },
+  {
+    section: 'Text & Content',
+    rows: [
+      {
+        token: 'text-primary',
+        semanticKey: 'textPrimary',
+        palette: 'Grey-900',
+        usage: 'Main content, headlines',
+      },
+      {
+        token: 'text-secondary',
+        semanticKey: 'textSecondary',
+        palette: 'Grey-600',
+        usage: 'Supporting text, descriptions',
+      },
+      {
+        token: 'text-tertiary',
+        semanticKey: 'textTertiary',
+        palette: 'Grey-400',
+        usage: 'Captions, metadata',
+      },
+      {
+        token: 'text-disabled**',
+        semanticKey: 'textDisabled',
+        palette: 'Grey-900 @ 5%',
+        usage: 'Disabled states',
+      },
+      {
+        token: 'text-inverse',
+        semanticKey: 'textInverse',
+        palette: 'Base-White',
+        usage: 'Text on inverse backgrounds',
+      },
+      {
+        token: 'text-placeholder',
+        semanticKey: 'textPlaceholder',
+        palette: 'Grey-300',
+        usage: 'Input placeholders',
+      },
+      {
+        token: 'text-interactive-primary*',
+        semanticKey: 'textInteractivePrimary',
+        palette: 'Base-White',
+        usage: 'Text on primary interactive elements',
+      },
+      {
+        token: 'text-interactive-secondary*',
+        semanticKey: 'textInteractiveSecondary',
+        palette: 'Grey-700',
+        usage: 'Text on secondary interactive elements',
+      },
+      {
+        token: 'text-interactive-tertiary*',
+        semanticKey: 'textInteractiveTertiary',
+        palette: 'Primary-600',
+        usage: 'Text on tertiary interactive elements',
+      },
+      {
+        token: 'text-interactive-error*',
+        semanticKey: 'textInteractiveError',
+        palette: 'Error-600',
+        usage: 'Text for error states',
+      },
+    ],
+  },
+  {
+    section: 'Interactive Elements',
+    rows: [
+      {
+        token: 'interactive-primary**',
+        semanticKey: 'interactivePrimary',
+        palette: 'Primary-600',
+        usage: 'Main CTAs, primary buttons',
+      },
+      {
+        token: 'interactive-primary-pressed**',
+        semanticKey: 'interactivePrimaryPressed',
+        palette: 'Primary-700',
+        usage: 'Pressed state',
+      },
+      {
+        token: 'interactive-secondary',
+        semanticKey: 'interactiveSecondary',
+        palette: 'Grey-100',
+        usage: 'Secondary buttons, tabs',
+      },
+      {
+        token: 'interactive-secondary-pressed',
+        semanticKey: 'interactiveSecondaryPressed',
+        palette: 'Grey-200',
+        usage: 'Secondary hover state',
+      },
+      {
+        token: 'interactive-tertiary',
+        semanticKey: 'interactiveTertiary',
+        palette: 'Transparent',
+        usage: 'Ghost buttons, text links',
+      },
+      {
+        token: 'interactive-tertiary-pressed**',
+        semanticKey: 'interactiveTertiaryPressed',
+        palette: 'Grey-100 @ 40%',
+        usage: 'Tertiary hover state',
+      },
+      {
+        token: 'interactive-disabled',
+        semanticKey: 'interactiveDisabled',
+        palette: 'Grey-100',
+        usage: 'Disabled button (or action) backgrounds',
+      },
+      {
+        token: 'interactive-error*',
+        semanticKey: 'interactiveError',
+        palette: 'Error-500',
+        usage: 'Error state backgrounds',
+      },
+      {
+        token: 'focus-ring-main**',
+        semanticKey: 'focusRingMain',
+        palette: 'Primary-400',
+        usage: 'Accessibility focus indicators',
+      },
+      {
+        token: 'focus-ring-error*',
+        semanticKey: 'focusRingError',
+        palette: 'Error-300',
+        usage: 'Accessibility focus indicators for error states',
+      },
+      {
+        token: 'touch-feedback-main**',
+        semanticKey: 'touchFeedbackMain',
+        palette: 'Grey-900 @ 10%',
+        usage: 'Ripple, highlight, or haptic feedback overlays on saturated surfaces',
+      },
+      {
+        token: 'touch-feedback-light*',
+        semanticKey: 'touchFeedbackLight',
+        palette: 'Grey-100 @ 40%',
+        usage: 'Ripple, highlight, or haptic feedback overlays on main backgrounds',
+      },
+    ],
+  },
+  {
+    section: 'Borders & Dividers',
+    rows: [
+      {
+        token: 'border-primary',
+        semanticKey: 'borderPrimary',
+        palette: 'Grey-300',
+        usage: 'Input borders, strong dividers',
+      },
+      {
+        token: 'border-secondary',
+        semanticKey: 'borderSecondary',
+        palette: 'Grey-200',
+        usage: 'Subtle separators',
+      },
+      {
+        token: 'border-focus',
+        semanticKey: 'borderFocus',
+        palette: 'Primary-500',
+        usage: 'Active input borders',
+      },
+      {
+        token: 'border-error',
+        semanticKey: 'borderError',
+        palette: 'Error-500',
+        usage: 'Error state borders',
+      },
+    ],
+  },
+  {
+    section: 'Feedback States',
+    rows: [
+      {
+        token: 'feedback-success',
+        semanticKey: 'feedbackSuccess',
+        palette: 'Success-500',
+        usage: 'Success messages, confirmations',
+      },
+      {
+        token: 'feedback-success-bg',
+        semanticKey: 'feedbackSuccessBg',
+        palette: 'Success-50',
+        usage: 'Success background areas',
+      },
+      {
+        token: 'feedback-warning',
+        semanticKey: 'feedbackWarning',
+        palette: 'Warning-600',
+        usage: 'Warnings, important notices',
+      },
+      {
+        token: 'feedback-warning-bg',
+        semanticKey: 'feedbackWarningBg',
+        palette: 'Warning-50',
+        usage: 'Warning background areas',
+      },
+      {
+        token: 'feedback-error',
+        semanticKey: 'feedbackError',
+        palette: 'Error-500',
+        usage: 'Errors, validation issues',
+      },
+      {
+        token: 'feedback-error-bg',
+        semanticKey: 'feedbackErrorBg',
+        palette: 'Error-50',
+        usage: 'Error background areas',
+      },
+      {
+        token: 'feedback-info',
+        semanticKey: 'feedbackInfo',
+        palette: 'Primary-500',
+        usage: 'Information, neutral notices',
+      },
+      {
+        token: 'feedback-info-bg',
+        semanticKey: 'feedbackInfoBg',
+        palette: 'Primary-50',
+        usage: 'Info background areas',
+      },
+    ],
+  },
+  {
+    section: 'Navigation & UI Chrome',
+    rows: [
+      {
+        token: 'nav-background',
+        semanticKey: 'navBackground',
+        palette: 'Base-White',
+        usage: 'Tab bars, nav bars',
+      },
+      {
+        token: 'nav-border',
+        semanticKey: 'navBorder',
+        palette: 'Grey-200',
+        usage: 'Navigation separators',
+      },
+      {
+        token: 'nav-active',
+        semanticKey: 'navActive',
+        palette: 'Primary-500',
+        usage: 'Active nav items',
+      },
+      {
+        token: 'nav-inactive',
+        semanticKey: 'navInactive',
+        palette: 'Grey-400',
+        usage: 'Inactive nav items',
+      },
+      {
+        token: 'nav-indicator',
+        semanticKey: 'navIndicator',
+        palette: 'Primary-500',
+        usage: 'Tab indicators, progress',
+      },
+    ],
+  },
+  {
+    section: 'Gestures',
+    rows: [
+      {
+        token: 'pull-indicator',
+        semanticKey: 'pullIndicator',
+        palette: 'Grey-300',
+        usage: 'Pull-to-refresh indicators',
+      },
+    ],
+  },
+];
+
+function ColorPreview() {
   return (
     <div className="space-y-5">
       <PaletteBlock
         title="Main palette"
-        description="Base, Grey, Primary, Success, Warning, and Error from the Figma Main Palette frame."
+        description="Base, Grey, Primary, Success, Warning, and Error from @arloui/tokens paletteMain."
       >
-        <div className="grid gap-3 sm:grid-cols-2">
-          {mainPalette.map(([name, start, end]) => (
-            <ScaleRow key={name} name={name} values={[start, end]} />
-          ))}
-        </div>
+        <TailwindPaletteGrid
+          scales={mainScales}
+          includeBase={{ white: paletteBase.white, black: paletteBase.black }}
+        />
       </PaletteBlock>
 
       <PaletteBlock
         title="Secondary palette"
-        description="Extended hues used when a component or product surface needs a broader accent family."
+        description="Extended hues from @arloui/tokens paletteSecondary, plus alpha ramps for overlays and scrims."
       >
-        <div className="grid gap-3 sm:grid-cols-2">
-          {secondaryPalette.map(([name, start, middle, end]) => (
-            <ScaleRow key={name} name={name} values={[start, middle, end]} />
-          ))}
+        <div className="space-y-8">
+          <TailwindPaletteGrid scales={paletteSecondary} />
+          <div>
+            <div className="mb-4 text-[13px] font-medium text-ink">Alpha ramps</div>
+            <TailwindAlphaRamp
+              white={alphaRamp.white}
+              black={alphaRamp.black}
+              whiteBase={alphaRamp.whiteBase}
+              blackBase={alphaRamp.blackBase}
+            />
+          </div>
         </div>
       </PaletteBlock>
 
       <PaletteBlock
         title="Utility semantic palette"
-        description="The color names registry components consume through theme.colors."
+        description="Semantic roles mapped from the main palette. Swatches read from @arloui/tokens lightSemanticColors; components consume these through theme.colors in camelCase."
       >
         <div className="overflow-hidden rounded-md border border-line">
-          {utilityPalette.map(([name, light, dark]) => (
-            <div
-              key={name}
-              className="grid gap-3 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[minmax(0,1.35fr)_minmax(128px,0.85fr)_minmax(128px,0.85fr)]"
-            >
-              <div className="min-w-0 break-words font-mono text-[12px] leading-relaxed text-ink">
-                {name}
+          <div className="hidden border-b border-line bg-canvas px-3 py-2.5 md:grid md:grid-cols-[minmax(0,1.35fr)_minmax(140px,0.75fr)_minmax(0,1.4fr)] md:gap-4">
+            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+              Token
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+              Color (light)
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+              Usage
+            </div>
+          </div>
+          {utilitySemanticPalette.map((group) => (
+            <div key={group.section}>
+              <div className="border-b border-line bg-canvas px-3 py-2.5">
+                <div className="text-[12px] font-medium text-ink">{group.section}</div>
               </div>
-              <ColorValue label="Light" value={light} />
-              <ColorValue label="Dark" value={dark} />
+              {group.rows.map((row) => (
+                <div
+                  key={row.token}
+                  className="grid gap-2 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[minmax(0,1.35fr)_minmax(140px,0.75fr)_minmax(0,1.4fr)] md:items-center md:gap-4"
+                >
+                  <div className="min-w-0 break-words font-mono text-[12px] leading-relaxed text-ink">
+                    {row.token}
+                  </div>
+                  <PaletteRef
+                    label="Light"
+                    palette={row.palette}
+                    swatch={lightSemanticColors[row.semanticKey]}
+                  />
+                  <div className="text-[13px] leading-relaxed text-ink-3">{row.usage}</div>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -513,45 +967,38 @@ function PaletteBlock({
   );
 }
 
-function ScaleRow({ name, values }: { name: string; values: string[] }) {
-  return (
-    <div className="rounded-md border border-line bg-canvas p-3">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="text-[13px] text-ink">{name}</span>
-        <span className="font-mono text-[11px] text-ink-3">
-          {values.length === 2 ? '50 / 950' : '50 / 500 / 950'}
-        </span>
-      </div>
-      <div
-        className="grid h-8 overflow-hidden rounded-sm border border-line"
-        style={{ gridTemplateColumns: `repeat(${values.length}, minmax(0, 1fr))` }}
-      >
-        {values.map((value) => (
-          <div key={value} style={{ backgroundColor: value }} />
-        ))}
-      </div>
-      <div className="mt-2 flex justify-between gap-2">
-        {values.map((value) => (
-          <span key={value} className="font-mono text-[10.5px] text-ink-3">
-            {value}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
+function PaletteRef({
+  label,
+  palette,
+  swatch,
+}: {
+  label: string;
+  palette: string;
+  swatch: string;
+}) {
+  const isTransparent = swatch === 'transparent';
+  const checkerboard = {
+    backgroundImage:
+      'linear-gradient(45deg, #E5E7EB 25%, transparent 25%, transparent 75%, #E5E7EB 75%), linear-gradient(45deg, #E5E7EB 25%, transparent 25%, transparent 75%, #E5E7EB 75%)',
+    backgroundSize: '6px 6px',
+    backgroundPosition: '0 0, 3px 3px',
+  };
 
-function ColorValue({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex min-w-0 items-center justify-between gap-2">
-      <div className="flex min-w-0 items-center gap-2">
+    <div className="group relative flex min-w-0 items-center gap-2">
+      <span className="relative shrink-0">
         <span
-          className="size-4 shrink-0 rounded-full border border-line"
-          style={{ backgroundColor: value }}
+          className="block size-4 rounded-full border border-line"
+          style={isTransparent ? checkerboard : { backgroundColor: swatch }}
         />
-        <span className="text-[11px] text-ink-3">{label}</span>
+        <span className="pointer-events-none absolute bottom-[calc(100%+6px)] left-1/2 z-30 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink px-2 py-1 font-mono text-[10px] leading-none text-canvas opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+          {swatch}
+        </span>
+      </span>
+      <div className="min-w-0">
+        <span className="sr-only">{label}</span>
+        <span className="text-[12.5px] text-ink-2">{palette}</span>
       </div>
-      <span className="min-w-0 break-all text-right font-mono text-[11px] text-ink-2">{value}</span>
     </div>
   );
 }

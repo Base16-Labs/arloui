@@ -10,7 +10,7 @@ export function ThemeToggle() {
   const isLight = theme.name === 'light';
 
   const trackBg = isDark ? 'rgba(250,250,250,0.06)' : '#f4f4f5';
-  const activeBg = isDark ? t.colors.surfaceRaised : '#ffffff';
+  const activeBg = isDark ? '#18181B' : '#E4E4E7';
   const activeShadow = isLight
     ? {
         shadowColor: '#18181b',
@@ -39,7 +39,7 @@ export function ThemeToggle() {
         borderColor: t.colors.border,
         backgroundColor: trackBg,
         padding: 2,
-        gap: 2,
+        gap: 4,
       }}
     >
       <Pressable

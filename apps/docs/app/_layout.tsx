@@ -31,7 +31,7 @@ function ThemedStack() {
           headerShadowVisible: false,
           headerBackTitle: 'Back',
           headerTitleStyle: {
-            fontFamily: 'Space Grotesk SemiBold',
+            fontFamily: 'Manrope SemiBold',
             fontSize: 17,
           },
           contentStyle: { flex: 1, minHeight: 0, backgroundColor: t.colors.bg },

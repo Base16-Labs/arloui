@@ -1,140 +1,279 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
-import { Text, View } from 'react-native';
-import { Input, InputAction, useTokens } from '@arloui/registry';
-import { ShowcaseScreen } from '@/components/playground/showcase-screen';
-import { ShowcaseSection } from '@/components/playground/showcase-section';
+import { Stack, useRouter } from 'expo-router';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  Input,
+  InputAction,
+  useTokens,
+  type InputAppearance,
+  type InputProps,
+} from '@arloui/registry';
+import { CanvasPill } from '@/components/playground/canvas-pill';
+import { LiveBadge } from '@/components/playground/live-badge';
+import { ThemeToggle } from '@/components/playground/theme-toggle';
+import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
+import { VariantSheet } from '@/components/playground/variant-sheet';
 
-export default function InputShowcase() {
+type InputType = 'text' | 'email' | 'password' | 'search';
+type LabelMode = 'none' | 'above' | 'inset';
+type InputSize = 'md' | 'lg';
+type IconMode = 'none' | 'leading' | 'both';
+type ContentMode = 'empty' | 'filled';
+type FieldState = 'default' | 'helper' | 'error' | 'disabled';
+
+const TYPES: InputType[] = ['text', 'email', 'password', 'search'];
+const LABELS: LabelMode[] = ['none', 'above', 'inset'];
+const SIZES: InputSize[] = ['md', 'lg'];
+const ICONS: IconMode[] = ['none', 'leading', 'both'];
+const CONTENT: ContentMode[] = ['empty', 'filled'];
+const STATES: FieldState[] = ['default', 'helper', 'error', 'disabled'];
+const APPEARANCES: InputAppearance[] = ['filled', 'plain'];
+
+export default function InputCanvas() {
   const t = useTokens();
-  const [query, setQuery] = useState('Query');
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [type, setType] = useState<InputType>('text');
+  const [labelMode, setLabelMode] = useState<LabelMode>('inset');
+  const [size, setSize] = useState<InputSize>('lg');
+  const [icons, setIcons] = useState<IconMode>('both');
+  const [content, setContent] = useState<ContentMode>('filled');
+  const [state, setState] = useState<FieldState>('default');
+  const [appearance, setAppearance] = useState<InputAppearance>('filled');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const iconColor = t.colors.textSecondary;
-  const errorColor = t.colors.textInteractiveError;
+  const [value, setValue] = useState('Allan Thomas');
+  const previewOffset = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.spring(previewOffset, {
+      toValue: sheetOpen ? -122 : 0,
+      damping: 27,
+      stiffness: 300,
+      mass: 0.8,
+      useNativeDriver: true,
+    }).start();
+  }, [previewOffset, sheetOpen]);
+
+  useEffect(() => {
+    if (content === 'empty') {
+      setValue('');
+      return;
+    }
+
+    setValue(
+      type === 'email'
+        ? 'allan.thomas@atstudio.com'
+        : type === 'password'
+          ? 'Password'
+          : type === 'search'
+            ? 'Query'
+            : 'Allan Thomas',
+    );
+  }, [content, type]);
+
+  const iconColor = state === 'disabled' ? t.colors.textDisabled : t.colors.textSecondary;
+  const leadingName =
+    type === 'email' ? 'mail-outline' : type === 'search' ? 'search-outline' : 'person-outline';
+  const inputLabel =
+    type === 'email'
+      ? 'Email'
+      : type === 'password'
+        ? 'Password'
+        : type === 'search'
+          ? 'Search'
+          : 'Name';
+
+  const trailingAction = useMemo(() => {
+    if (icons !== 'both') return undefined;
+
+    if (type === 'password') {
+      return (
+        <InputAction
+          accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
+          onPress={() => setPasswordVisible((visible) => !visible)}
+        >
+          <Ionicons
+            name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
+            size={20}
+            color={iconColor}
+          />
+        </InputAction>
+      );
+    }
+
+    if (type === 'search' && value) {
+      return (
+        <InputAction accessibilityLabel="Clear input" onPress={() => setValue('')}>
+          <Ionicons name="close" size={21} color={iconColor} />
+        </InputAction>
+      );
+    }
+
+    return <Ionicons name="checkmark-circle-outline" size={20} color={iconColor} />;
+  }, [iconColor, icons, passwordVisible, type, value]);
+
+  const fieldProps: InputProps = {
+    value,
+    onChangeText: setValue,
+    size,
+    appearance,
+    label: labelMode === 'none' ? undefined : inputLabel,
+    insetLabel: labelMode === 'inset',
+    placeholder: inputLabel,
+    keyboardType: type === 'email' ? 'email-address' : 'default',
+    autoCapitalize: type === 'email' || type === 'search' ? 'none' : 'words',
+    secureTextEntry: type === 'password' && !passwordVisible,
+    editable: state !== 'disabled',
+    helperText: state === 'helper' ? 'Helper text' : undefined,
+    errorText: state === 'error' ? `${inputLabel} is invalid` : undefined,
+    leadingIcon:
+      icons === 'none' ? undefined : <Ionicons name={leadingName} size={20} color={iconColor} />,
+    trailingAction,
+    containerStyle: { width: '100%' },
+    inputStyle: { fontFamily: 'Manrope' },
+    helperStyle: { fontFamily: 'Manrope' },
+  };
 
   return (
-    <ShowcaseScreen
-      eyebrow="Controls"
-      title="Input"
-      subtitle="Labels, icons, actions, password, search, and validation states."
-      stackTitle="Input"
-      contentContainerStyle={{ gap: t.spacing[6] }}
-    >
-      <ShowcaseSection title="Default" subtitle="Name fields">
-        <Input placeholder="Name" />
-        <Input insetLabel label="Name" defaultValue="Allan Thomas" />
-      </ShowcaseSection>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: t.colors.bg }}>
+        <View style={{ flex: 1 }}>
+          <View
+            style={{
+              position: 'absolute',
+              top: 22,
+              left: 20,
+              right: 20,
+              zIndex: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <LiveBadge />
+            <ThemeToggle />
+          </View>
 
-      <ShowcaseSection title="Leading icon" subtitle="Email with mail icon">
-        <Input
-          placeholder="Email"
-          leadingIcon={<Ionicons name="mail-outline" size={20} color={t.colors.textTertiary} />}
-        />
-        <Input
-          insetLabel
-          label="Email"
-          defaultValue="allan.thomas@atstudio.com"
-          leadingIcon={<Ionicons name="mail-outline" size={20} color={iconColor} />}
-        />
-      </ShowcaseSection>
+          <Animated.View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 20,
+              transform: [{ translateY: previewOffset }],
+            }}
+          >
+            <View style={{ width: '100%', maxWidth: 360 }}>
+              <Input {...fieldProps} />
+            </View>
+          </Animated.View>
 
-      <ShowcaseSection title="Leading action" subtitle="Country code + phone">
-        <PhoneRow t={t} iconColor={iconColor} />
-        <PhoneRow t={t} iconColor={iconColor} filled />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Password" subtitle="Show / hide and error">
-        <Input
-          placeholder="Password"
-          secureTextEntry={!passwordVisible}
-          trailingAction={
-            <InputAction
-              accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
-              onPress={() => setPasswordVisible((v) => !v)}
+          {!sheetOpen ? (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: Math.max(insets.bottom, 14),
+                left: 0,
+                right: 0,
+                alignItems: 'center',
+              }}
             >
-              <Ionicons
-                name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
-                size={20}
-                color={iconColor}
+              <CanvasPill
+                componentName="Input"
+                open={false}
+                onComponentPress={() => router.replace('/')}
+                onMenuPress={() => setSheetOpen(true)}
               />
-            </InputAction>
-          }
-        />
-        <Input
-          defaultValue="Password"
-          secureTextEntry
-          errorText="Incorrect Password"
-          trailingAction={
-            <InputAction accessibilityLabel="Show password">
-              <Ionicons name="eye-off-outline" size={20} color={iconColor} />
-            </InputAction>
-          }
-          helperStyle={{ color: errorColor }}
-        />
-      </ShowcaseSection>
+            </View>
+          ) : null}
 
-      <ShowcaseSection title="Helper text" subtitle="Username availability">
-        <Input label="Username" placeholder="Username" />
-        <Input insetLabel label="Username" defaultValue="@allanthomas" errorText="Username taken" />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Search" subtitle="Leading icon and clear action">
-        <Input
-          placeholder="Search"
-          leadingIcon={<Ionicons name="search-outline" size={20} color={t.colors.textTertiary} />}
-        />
-        <Input
-          value={query}
-          onChangeText={setQuery}
-          leadingIcon={<Ionicons name="search-outline" size={20} color={iconColor} />}
-          trailingAction={
-            query ? (
-              <InputAction accessibilityLabel="Clear query" onPress={() => setQuery('')}>
-                <Ionicons name="close" size={22} color={iconColor} />
-              </InputAction>
-            ) : undefined
-          }
-        />
-      </ShowcaseSection>
-
-      <ShowcaseSection title="Field states" subtitle="Helper, error, and disabled">
-        <Input label="Label" placeholder="Label" helperText="Helper text" />
-        <Input insetLabel label="Label" defaultValue="Content" helperText="Helper text" />
-        <Input insetLabel label="Label" defaultValue="Content" errorText="Helper text" />
-        <Input defaultValue="Content" helperText="Helper text" editable={false} />
-      </ShowcaseSection>
-    </ShowcaseScreen>
-  );
-}
-
-function PhoneRow({
-  t,
-  iconColor,
-  filled,
-}: {
-  t: ReturnType<typeof useTokens>;
-  iconColor: string;
-  filled?: boolean;
-}) {
-  return (
-    <View style={{ flexDirection: 'row', gap: t.spacing[2] }}>
-      <InputAction
-        accessibilityLabel="Select country code"
-        style={{
-          minHeight: 52,
-          paddingHorizontal: t.spacing[3],
-          gap: t.spacing[1],
-          flexDirection: 'row',
-        }}
-      >
-        <Text style={{ fontFamily: t.fontFamilies.sans, color: t.colors.textPrimary }}>+447</Text>
-        <Ionicons name="chevron-down" size={16} color={iconColor} />
-      </InputAction>
-      {filled ? (
-        <Input containerStyle={{ flex: 1 }} insetLabel label="Phone" defaultValue="020-293-9393" keyboardType="phone-pad" />
-      ) : (
-        <Input containerStyle={{ flex: 1 }} placeholder="Phone" />
-      )}
-    </View>
+          <VariantSheet
+            visible={sheetOpen}
+            previous="Button"
+            next="Icons"
+            onClose={() => setSheetOpen(false)}
+            onPrevious={() => router.replace('/button')}
+            onNext={() => router.replace('/icons')}
+          >
+            <View style={{ gap: 14 }}>
+              <VariantControlRow label="Type">
+                {TYPES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={type === option}
+                    onPress={() => setType(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Style">
+                {APPEARANCES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option === 'plain' ? 'no bg' : option}
+                    active={appearance === option}
+                    onPress={() => setAppearance(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Label">
+                {LABELS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={labelMode === option}
+                    onPress={() => setLabelMode(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Size">
+                {SIZES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={size === option}
+                    onPress={() => setSize(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Icons">
+                {ICONS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={icons === option}
+                    onPress={() => setIcons(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Content">
+                {CONTENT.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={content === option}
+                    onPress={() => setContent(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="State">
+                {STATES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={state === option}
+                    onPress={() => setState(option)}
+                  />
+                ))}
+              </VariantControlRow>
+            </View>
+          </VariantSheet>
+        </View>
+      </SafeAreaView>
+    </>
   );
 }

@@ -45,7 +45,7 @@ A great hero with an unconsidered empty state is not a great component.
 ### Tokens
 Raw values — radii, shadows, durations — that every component references.
 
-### Type
+### Typography
 PP Neue Montreal. Book 400 for body, Medium 500 for headings.
 
 ### Color

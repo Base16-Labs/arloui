@@ -1,14 +1,15 @@
 /**
  * Arlo UI typography scale (mobile-first).
  *
- * Use Space Mono for prices, timestamps, percentages, status labels, and tabular data.
- * Reserve the optional display face for one hero element per screen.
+ * Manrope scale from the Arlo UI Figma type foundation.
+ * Compatibility aliases keep existing copied components working while they
+ * migrate to the explicit display / heading / body / label / button names.
  */
 
 export const fontFamilies = {
-  sans: 'Space Grotesk',
+  sans: 'Manrope',
   mono: 'Space Mono',
-  display: 'Doto',
+  display: 'Manrope',
 } as const;
 
 export const fontWeights = {
@@ -18,18 +19,132 @@ export const fontWeights = {
 } as const;
 
 export const typography = {
-  displayXl: { fontSize: 40, lineHeight: 44, fontWeight: fontWeights.semibold },
-  displayLg: { fontSize: 32, lineHeight: 36, fontWeight: fontWeights.semibold },
-  title1: { fontSize: 24, lineHeight: 30, fontWeight: fontWeights.semibold },
-  title2: { fontSize: 20, lineHeight: 26, fontWeight: fontWeights.semibold },
-  title3: { fontSize: 17, lineHeight: 22, fontWeight: fontWeights.medium },
-  body: { fontSize: 15, lineHeight: 21, fontWeight: fontWeights.regular },
-  bodySm: { fontSize: 13, lineHeight: 18, fontWeight: fontWeights.regular },
+  displayLarge: {
+    fontSize: 34,
+    lineHeight: 42.5,
+    fontWeight: fontWeights.regular,
+    letterSpacing: -0.68,
+  },
+  displayLargeEmphasized: {
+    fontSize: 34,
+    lineHeight: 42.5,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.68,
+  },
+  displayMedium: {
+    fontSize: 28,
+    lineHeight: 35,
+    fontWeight: fontWeights.regular,
+    letterSpacing: -0.56,
+  },
+  displayMediumEmphasized: {
+    fontSize: 28,
+    lineHeight: 35,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.56,
+  },
+  displaySmall: {
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: fontWeights.regular,
+    letterSpacing: -0.48,
+  },
+  displaySmallEmphasized: {
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.48,
+  },
+  headingLarge: {
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeights.regular,
+    letterSpacing: -0.2,
+  },
+  headingLargeEmphasized: {
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.2,
+  },
+  headingMedium: {
+    fontSize: 17,
+    lineHeight: 22.1,
+    fontWeight: fontWeights.regular,
+    letterSpacing: -0.17,
+  },
+  headingMediumEmphasized: {
+    fontSize: 17,
+    lineHeight: 22.1,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.17,
+  },
+  headingSmall: {
+    fontSize: 14,
+    lineHeight: 18.2,
+    fontWeight: fontWeights.regular,
+    letterSpacing: -0.14,
+  },
+  headingSmallEmphasized: {
+    fontSize: 14,
+    lineHeight: 18.2,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.14,
+  },
+  bodyLarge: { fontSize: 17, lineHeight: 23.8, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  bodyMedium: { fontSize: 14, lineHeight: 19.6, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  bodySmall: { fontSize: 12, lineHeight: 16.8, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  labelMedium: {
+    fontSize: 12,
+    lineHeight: 14.4,
+    fontWeight: fontWeights.regular,
+    letterSpacing: 0,
+  },
+  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  buttonLarge: { fontSize: 20, lineHeight: 22, fontWeight: fontWeights.semibold, letterSpacing: 0 },
+  buttonMedium: {
+    fontSize: 17,
+    lineHeight: 18.7,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: 0,
+  },
+  buttonSmall: {
+    fontSize: 14,
+    lineHeight: 15.4,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: 0,
+  },
+  buttonLabel: {
+    fontSize: 12,
+    lineHeight: 13.2,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: 0,
+  },
+
+  // Compatibility aliases for existing registry components.
+  displayXl: {
+    fontSize: 34,
+    lineHeight: 42.5,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.68,
+  },
+  displayLg: {
+    fontSize: 28,
+    lineHeight: 35,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: -0.56,
+  },
+  title1: { fontSize: 24, lineHeight: 30, fontWeight: fontWeights.semibold, letterSpacing: -0.48 },
+  title2: { fontSize: 20, lineHeight: 26, fontWeight: fontWeights.semibold, letterSpacing: -0.2 },
+  title3: { fontSize: 17, lineHeight: 22.1, fontWeight: fontWeights.medium, letterSpacing: -0.17 },
+  body: { fontSize: 14, lineHeight: 19.6, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  bodySm: { fontSize: 12, lineHeight: 16.8, fontWeight: fontWeights.regular, letterSpacing: 0 },
   label: {
     fontSize: 11,
-    lineHeight: 14,
+    lineHeight: 13.2,
     fontWeight: fontWeights.medium,
-    letterSpacing: 0.66, // 0.06em at 11pt
+    letterSpacing: 0,
   },
 } as const;
 

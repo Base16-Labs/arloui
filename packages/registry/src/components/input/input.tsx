@@ -2,8 +2,9 @@
  * Arlo UI — Input
  *
  * Token-driven text input primitive matching the Figma text-input kit:
- * filled background, optional leading/trailing slots, helper/error text, compact
- * inner label mode, secure/password entry, disabled state, and web focus ring.
+ * filled or plain background treatment, optional leading/trailing slots,
+ * helper/error text, compact inner label mode, secure/password entry, disabled
+ * state, and web focus ring.
  */
 import { forwardRef, useMemo, useState } from 'react';
 import {
@@ -24,6 +25,7 @@ import { useTokens } from '../../foundation/theme-provider';
 
 type InputSize = 'md' | 'lg';
 type InputState = 'default' | 'error';
+type InputAppearance = 'filled' | 'plain';
 
 export type InputActionProps = Omit<PressableProps, 'children' | 'style'> & {
   children: React.ReactNode;
@@ -36,6 +38,8 @@ export type InputProps = Omit<TextInputProps, 'style'> & {
   helperText?: string;
   errorText?: string;
   state?: InputState;
+  /** `plain` removes the field surface, border, and horizontal inset. */
+  appearance?: InputAppearance;
   size?: InputSize;
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
@@ -87,6 +91,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
     helperText,
     errorText,
     state,
+    appearance = 'filled',
     size = 'md',
     leadingIcon,
     trailingIcon,
@@ -117,6 +122,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
       : defaultValue != null && String(defaultValue).length > 0;
   const hasError = state === 'error' || Boolean(errorText);
   const supportingText = errorText ?? helperText;
+  const isPlain = appearance === 'plain';
 
   const dims = useMemo(() => {
     if (size === 'lg') {
@@ -146,9 +152,9 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
       : 'transparent';
 
   const focusWebStyle: ViewStyle | undefined = useMemo(() => {
-    if (Platform.OS !== 'web' || !focused) return undefined;
+    if (isPlain || Platform.OS !== 'web' || !focused) return undefined;
     return { boxShadow: hasError ? t.focusRing.error : t.focusRing.main } as ViewStyle;
-  }, [focused, hasError, t.focusRing.error, t.focusRing.main]);
+  }, [focused, hasError, isPlain, t.focusRing.error, t.focusRing.main]);
 
   const handleFocus = (event: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setFocused(true);
@@ -185,11 +191,11 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
         style={[
           {
             minHeight: dims.minHeight,
-            borderRadius: t.radii.md,
-            backgroundColor: t.colors.surfaceInput,
-            borderWidth: hasError || focused ? 1 : 0,
+            borderRadius: isPlain ? 0 : t.radii.md,
+            backgroundColor: isPlain ? 'transparent' : t.colors.surfaceInput,
+            borderWidth: !isPlain && (hasError || focused) ? 1 : 0,
             borderColor,
-            paddingHorizontal: dims.paddingX,
+            paddingHorizontal: isPlain ? 0 : dims.paddingX,
             paddingVertical: dims.paddingY,
             flexDirection: 'row',
             alignItems: 'center',
@@ -199,7 +205,9 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
           focusWebStyle,
         ]}
       >
-        {leadingAction ? <View style={{ marginLeft: -dims.paddingX }}>{leadingAction}</View> : null}
+        {leadingAction ? (
+          <View style={{ marginLeft: isPlain ? 0 : -dims.paddingX }}>{leadingAction}</View>
+        ) : null}
         {!leadingAction && leadingIcon ? (
           <View style={{ width: t.sizing.icon.md, alignItems: 'center', justifyContent: 'center' }}>
             {leadingIcon}
@@ -276,4 +284,4 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   );
 });
 
-export type { InputSize, InputState };
+export type { InputAppearance, InputSize, InputState };

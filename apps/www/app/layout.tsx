@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { ThemeProvider } from "@/lib/theme";
+import type { Metadata } from 'next';
+import '@fontsource-variable/manrope';
+import './globals.css';
+import { ThemeProvider } from '@/lib/theme';
 
 export const metadata: Metadata = {
   title: {
-    default: "ArloUI",
-    template: "%s — ArloUI",
+    default: 'ArloUI',
+    template: '%s — ArloUI',
   },
   description:
-    "Copy-paste React Native components with strong defaults, full state coverage, and motion specs.",
-  metadataBase: new URL("https://arloui.com"),
+    'Copy-paste React Native components with strong defaults, full state coverage, and motion specs.',
+  metadataBase: new URL('https://arloui.com'),
 };
 
 export default function RootLayout({

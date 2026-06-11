@@ -21,7 +21,7 @@ export type ItemGroup = {
 
 export const primitiveItems = [
   { label: 'Tokens', slug: 'tokens' },
-  { label: 'Type', slug: 'type' },
+  { label: 'Typography', slug: 'type' },
   { label: 'Color', slug: 'color' },
   { label: 'Spacing', slug: 'spacing' },
   { label: 'Motion', slug: 'motion' },
