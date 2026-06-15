@@ -4,11 +4,12 @@
 import { darkColors, darkSemanticColors, lightColors, lightSemanticColors } from './colors';
 import { fontFamilies, fontWeights, typography } from './typography';
 import { motion } from './motion';
+import { blur, blurs, materials } from './effects';
 import { paletteMain } from './paletteMain';
 import { alphaRamp, paletteSecondary } from './paletteSecondary';
 import { focusRingByScheme } from './focusRing';
 import { radii } from './radii';
-import { shadowsMeta } from './shadowSpec';
+import { darkShadowsMeta, shadowsMeta } from './shadowSpec';
 import { sizing } from './sizing';
 import { spacing } from './spacing';
 
@@ -33,6 +34,10 @@ export const raw = {
   sizing,
   motion,
   shadows: shadowsMeta,
+  shadowsByScheme: { light: shadowsMeta, dark: darkShadowsMeta },
+  blur,
+  blurs,
+  materials,
   focusRing: focusRingByScheme,
 } as const;
 

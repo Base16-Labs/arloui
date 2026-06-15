@@ -139,6 +139,14 @@ export const fontFamilies = {
   display: 'Manrope',
 } as const;
 
+export const fontWeights = {
+  normal: '400',
+  emphasized: '600',
+  regular: '400',
+  medium: '500',
+  semibold: '600',
+} as const;
+
 export const typography = {
   displayLarge: {
     fontSize: 34,
@@ -240,6 +248,7 @@ export const sizing = {
   icon: { xs: 16, sm: 20, md: 24, lg: 32 },
   avatar: { xs: 16, sm: 24, md: 32, lg: 40 },
   buttonHeight: { sm: 36, md: 40, lg: 48, xl: 52 },
+  touchTarget: { minimum: 44, comfortable: 48 },
 } as const;
 
 export const motion = {
@@ -287,6 +296,109 @@ export const shadows = {
   },
 } as const;
 
+export const darkShadows = {
+  none: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+  },
+  sm: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.18,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 2,
+  },
+  md: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.22,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 4,
+  },
+  lg: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 8,
+  },
+  xl: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.34,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 12,
+  },
+} as const;
+
+export const blurs = {
+  none: 0,
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 40,
+} as const;
+
+/** @deprecated Prefer `blurs`. */
+export const blur = blurs;
+
+/**
+ * Translucent surface fallbacks for glass-like navigation and controls.
+ * A platform-native Liquid Glass treatment can replace the surface on supported
+ * iOS versions without changing the surrounding component contract.
+ */
+export const materials = {
+  glassSmall: {
+    blur: blurs.sm,
+    lightOverlay: 'rgba(255,255,255,0.64)',
+    darkOverlay: 'rgba(16,24,40,0.64)',
+    lightBorder: 'rgba(255,255,255,0.56)',
+    darkBorder: 'rgba(255,255,255,0.12)',
+  },
+  glassMedium: {
+    blur: blurs.lg,
+    lightOverlay: 'rgba(255,255,255,0.72)',
+    darkOverlay: 'rgba(16,24,40,0.72)',
+    lightBorder: 'rgba(255,255,255,0.64)',
+    darkBorder: 'rgba(255,255,255,0.14)',
+  },
+  glassLarge: {
+    blur: blurs.xl,
+    lightOverlay: 'rgba(255,255,255,0.82)',
+    darkOverlay: 'rgba(16,24,40,0.82)',
+    lightBorder: 'rgba(255,255,255,0.72)',
+    darkBorder: 'rgba(255,255,255,0.16)',
+  },
+  /** @deprecated Prefer `glassSmall`. */
+  glassThin: {
+    blur: blurs.sm,
+    lightOverlay: 'rgba(255,255,255,0.64)',
+    darkOverlay: 'rgba(16,24,40,0.64)',
+    lightBorder: 'rgba(255,255,255,0.56)',
+    darkBorder: 'rgba(255,255,255,0.12)',
+  },
+  /** @deprecated Prefer `glassMedium`. */
+  glassRegular: {
+    blur: blurs.lg,
+    lightOverlay: 'rgba(255,255,255,0.72)',
+    darkOverlay: 'rgba(16,24,40,0.72)',
+    lightBorder: 'rgba(255,255,255,0.64)',
+    darkBorder: 'rgba(255,255,255,0.14)',
+  },
+  /** @deprecated Prefer `glassLarge`. */
+  glassThick: {
+    blur: blurs.xl,
+    lightOverlay: 'rgba(255,255,255,0.82)',
+    darkOverlay: 'rgba(16,24,40,0.82)',
+    lightBorder: 'rgba(255,255,255,0.72)',
+    darkBorder: 'rgba(255,255,255,0.16)',
+  },
+} as const;
+
 /** CSS box-shadow strings for `:focus-visible` on web — RN consumers use borders if needed. */
 export const focusRing = {
   light: {
@@ -304,24 +416,32 @@ export const themes = {
     name: 'dark' as const,
     colors: darkColors,
     fontFamilies,
+    fontWeights,
     typography,
     spacing,
     radii,
     sizing,
     motion,
-    shadows,
+    shadows: darkShadows,
+    blur,
+    blurs,
+    materials,
     focusRing: focusRing.dark,
   },
   light: {
     name: 'light' as const,
     colors: lightColors,
     fontFamilies,
+    fontWeights,
     typography,
     spacing,
     radii,
     sizing,
     motion,
     shadows,
+    blur,
+    blurs,
+    materials,
     focusRing: focusRing.light,
   },
 };

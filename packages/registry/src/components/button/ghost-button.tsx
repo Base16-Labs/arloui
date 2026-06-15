@@ -3,6 +3,7 @@
  *
  * Chromeless action: no background container, no border, no horizontal padding.
  * Heights reflect text line-height only (sm/md: 24px, lg: 28px, xl: 40px).
+ * The pressable area expands beyond the visible label to meet the minimum touch target.
  * Three types: primary (brand blue), neutral (grey text), destructive (red text).
  */
 import { forwardRef, useMemo, useRef, useState } from 'react';
@@ -39,6 +40,11 @@ export type GhostButtonProps = Omit<PressableProps, 'style' | 'children'> & {
 };
 
 type GhostDims = { height: number; type: { fontSize: number; lineHeight: number }; gap: number; iconSize: number };
+
+function touchTargetInset(visualSize: number, minimumSize: number) {
+  const vertical = Math.max(0, Math.ceil((minimumSize - visualSize) / 2));
+  return { top: vertical, bottom: vertical, left: 12, right: 12 };
+}
 
 function resolveGhostDims(size: GhostButtonSize, t: ReturnType<typeof useTokens>): GhostDims {
   switch (size) {
@@ -87,6 +93,10 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
 
   const isPressDisabled = disabled || loading;
   const dims = useMemo(() => resolveGhostDims(size, t), [size, t]);
+  const hitSlop = useMemo(
+    () => touchTargetInset(dims.height, t.sizing.touchTarget.minimum),
+    [dims.height, t.sizing.touchTarget.minimum],
+  );
   const textColor = useMemo(() => resolveTextColor(t, type, disabled), [t, type, disabled]);
 
   const iconWrap = useMemo(
@@ -135,7 +145,7 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
       disabled={isPressDisabled}
       onPressIn={handleIn}
       onPressOut={handleOut}
-      hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }}
+      hitSlop={hitSlop}
       {...rest}
     >
       <Animated.View

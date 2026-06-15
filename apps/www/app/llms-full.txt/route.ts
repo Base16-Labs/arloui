@@ -46,7 +46,7 @@ A great hero with an unconsidered empty state is not a great component.
 Raw values — radii, shadows, durations — that every component references.
 
 ### Typography
-PP Neue Montreal. Book 400 for body, Medium 500 for headings.
+Font-agnostic type scale with 16 roles across display, heading, body, label, and button. Manrope is the default; swap \`fontFamilies.sans\` once and adjust \`fontWeights.emphasized\` when the replacement face needs a different bold weight.
 
 ### Color
 Semantic palette with surface hierarchy. Full dark mode support.
@@ -56,6 +56,9 @@ Semantic palette with surface hierarchy. Full dark mode support.
 
 ### Motion
 Easing curves, durations, spring configs. Never animate from scale(0). Pressables respond instantly.
+
+### Effects
+Five shadow levels (none/sm/md/lg/xl), two focus rings (main/error with a two-layer spread), five blur levels (4–40 px), and experimental iOS 26 Liquid Glass with cross-platform fallbacks. Use the lightest elevation that works, drop shadows on press, and reserve live blur for functional layers.
 
 ### Icons
 Phosphor-based set — 2,980 glyphs via react-native-svg.

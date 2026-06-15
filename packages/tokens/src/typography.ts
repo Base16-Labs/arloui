@@ -13,6 +13,8 @@ export const fontFamilies = {
 } as const;
 
 export const fontWeights = {
+  normal: '400',
+  emphasized: '600',
   regular: '400',
   medium: '500',
   semibold: '600',

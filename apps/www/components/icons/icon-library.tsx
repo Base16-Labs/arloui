@@ -13,6 +13,14 @@ type GalleryTab = 'outline' | 'solid' | 'animated';
 
 const animatedNames = Object.keys(animatedIconDefinitions) as AnimatedIconName[];
 const PAGE_SIZE = 240;
+const ONE_SHOT_DURATIONS: Partial<Record<AnimatedIconName, number>> = {
+  'copy-check': 1500,
+  'spinner-check': 1400,
+  'spinner-x': 1400,
+  'circle-progress-check': 1600,
+  'bell-shake': 800,
+  'dot-pulse': 1200,
+};
 
 function componentName(fileBase: string) {
   return fileBase
@@ -80,8 +88,8 @@ export function IconLibrary({
               Icons
             </h1>
             <p className="mt-4 max-w-[680px] text-[15px] leading-relaxed text-ink-2">
-              Browse the complete Arlo icon set or copy a stateful animated icon into a React Native
-              project.
+              Browse the complete Arlo icon set. For animated icons, preview the interaction first,
+              then copy the component into your React Native project.
             </p>
           </div>
           <div className="text-[12.5px] text-ink-3">
@@ -216,16 +224,17 @@ function AnimatedGrid({
 }
 
 function AnimatedCard({ name, onSelect }: { name: AnimatedIconName; onSelect: () => void }) {
-  const [active, setActive] = useState(false);
+  const { active, isOneShot, preview } = useAnimatedIconPreview(name);
   const definition = animatedIconDefinitions[name];
+  const currentLabel = active ? definition.labels[1] : definition.labels[0];
 
   return (
-    <div className="group grid min-h-40 grid-cols-[88px_1fr] items-center gap-4 rounded-md border border-line bg-surface p-4 transition-colors hover:border-line-strong">
+    <div className="group grid min-h-44 grid-cols-[88px_1fr] items-center gap-4 rounded-md border border-line bg-surface p-4 transition-colors hover:border-line-strong">
       <button
         type="button"
-        onClick={() => setActive((value) => !value)}
+        onClick={preview}
         className="flex size-[88px] items-center justify-center rounded-md border border-line bg-canvas text-ink transition-colors hover:border-line-strong hover:bg-canvas/70"
-        aria-label={`Toggle ${definition.labels[0]} to ${definition.labels[1]}`}
+        aria-label={`Preview ${definition.labels[0]} to ${definition.labels[1]} animation`}
       >
         <AnimatedIconPreview name={name} active={active} size={40} />
       </button>
@@ -234,14 +243,24 @@ function AnimatedCard({ name, onSelect }: { name: AnimatedIconName; onSelect: ()
           {definition.labels[0]} → {definition.labels[1]}
         </span>
         <span className="mt-1 block font-mono text-[11px] text-ink-3">{name}</span>
-        <span className="mt-5 flex items-center justify-between gap-3 text-[12px] text-ink-3">
-          <span>Click preview to morph</span>
+        <span className="mt-3 block text-[11px] text-ink-3" aria-live="polite">
+          {isOneShot ? (active ? 'Playing animation' : 'Ready to preview') : `Current: ${currentLabel}`}
+        </span>
+        <span className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={preview}
+            className="h-8 rounded-md border border-line-strong bg-canvas px-3 text-[11.5px] font-medium text-ink-2 transition-colors hover:bg-line"
+          >
+            {isOneShot && active ? 'Replay animation' : 'Preview animation'}
+          </button>
           <button
             type="button"
             onClick={onSelect}
-            className="text-ink-2 underline decoration-line-strong underline-offset-4"
+            className="h-8 rounded-md bg-ink px-3 text-[11.5px] font-medium text-canvas transition-opacity hover:opacity-90"
+            aria-label={`Use ${definition.labels[0]} to ${definition.labels[1]} icon`}
           >
-            Copy
+            Use this icon
           </button>
         </span>
       </div>
@@ -294,10 +313,30 @@ function AnimatedIconDialog({
   source: string;
   onClose: () => void;
 }) {
-  const [active, setActive] = useState(false);
+  const { active, isOneShot, preview } = useAnimatedIconPreview(name);
   const [copied, setCopied] = useState<'source' | 'usage' | null>(null);
   const definition = animatedIconDefinitions[name];
-  const usage = `const [active, setActive] = useState(false);
+  const resetAfter = ONE_SHOT_DURATIONS[name];
+  const usage = isOneShot
+    ? `import { useState } from 'react';
+import { Pressable } from 'react-native';
+import { AnimatedIcon } from '@/components/ui/animated-icon';
+
+const [active, setActive] = useState(false);
+
+<Pressable onPress={() => setActive(true)}>
+  <AnimatedIcon
+    name="${name}"
+    active={active}
+    autoResetAfter={${resetAfter}}
+    onAutoReset={() => setActive(false)}
+  />
+</Pressable>`
+    : `import { useState } from 'react';
+import { Pressable } from 'react-native';
+import { AnimatedIcon } from '@/components/ui/animated-icon';
+
+const [active, setActive] = useState(false);
 
 <Pressable onPress={() => setActive((value) => !value)}>
   <AnimatedIcon name="${name}" active={active} />
@@ -305,17 +344,26 @@ function AnimatedIconDialog({
 
   return (
     <DialogShell title={`${definition.labels[0]} → ${definition.labels[1]}`} onClose={onClose}>
-      <button
-        type="button"
-        onClick={() => setActive((value) => !value)}
-        className="flex h-48 w-full items-center justify-center rounded-md border border-line bg-surface text-ink"
-      >
+      <div className="flex h-48 w-full items-center justify-center rounded-md border border-line bg-surface text-ink">
         <AnimatedIconPreview name={name} active={active} size={72} />
-      </button>
+      </div>
       <div className="flex items-center justify-between gap-3 text-[12px] text-ink-3">
-        <span>Tap preview to toggle</span>
+        <span aria-live="polite">
+          {isOneShot
+            ? active
+              ? 'Playing animation'
+              : 'Ready to preview'
+            : `Current: ${active ? definition.labels[1] : definition.labels[0]}`}
+        </span>
         <span>react-native-svg · reanimated</span>
       </div>
+      <button
+        type="button"
+        onClick={preview}
+        className="h-10 w-full rounded-md border border-line-strong bg-surface px-3 text-[12.5px] font-medium text-ink transition-colors hover:bg-line"
+      >
+        {isOneShot && active ? 'Replay animation' : 'Preview animation'}
+      </button>
       <div className="grid grid-cols-2 gap-2">
         <DialogButton
           onClick={async () => {
@@ -323,7 +371,7 @@ function AnimatedIconDialog({
             setCopied('source');
           }}
         >
-          {copied === 'source' ? 'Copied' : 'Copy component'}
+          {copied === 'source' ? 'Component copied' : 'Copy component source'}
         </DialogButton>
         <DialogButton
           onClick={async () => {
@@ -331,7 +379,7 @@ function AnimatedIconDialog({
             setCopied('usage');
           }}
         >
-          {copied === 'usage' ? 'Copied' : 'Copy usage'}
+          {copied === 'usage' ? 'Example copied' : 'Copy usage example'}
         </DialogButton>
       </div>
       <code className="block rounded-md border border-line bg-surface px-3 py-2.5 font-mono text-[11px] text-ink-2">
@@ -339,6 +387,30 @@ function AnimatedIconDialog({
       </code>
     </DialogShell>
   );
+}
+
+function useAnimatedIconPreview(name: AnimatedIconName) {
+  const [active, setActive] = useState(false);
+  const resetAfter = ONE_SHOT_DURATIONS[name];
+  const isOneShot = resetAfter !== undefined;
+
+  useEffect(() => {
+    if (!active || resetAfter === undefined) return;
+    const timer = window.setTimeout(() => setActive(false), resetAfter);
+    return () => window.clearTimeout(timer);
+  }, [active, resetAfter]);
+
+  function preview() {
+    if (!isOneShot) {
+      setActive((value) => !value);
+      return;
+    }
+
+    setActive(false);
+    window.requestAnimationFrame(() => setActive(true));
+  }
+
+  return { active, isOneShot, preview };
 }
 
 function DialogShell({

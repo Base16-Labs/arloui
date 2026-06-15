@@ -5,9 +5,10 @@ import { primitiveItems } from '@/lib/routes';
 
 const descriptions: Record<string, string> = {
   tokens: 'The raw values — radii, shadows, durations — that every component references.',
-  type: 'PP Neue Montreal, the type scale, and the rules for using it.',
+  type: 'Font-agnostic scale, Manrope default, weights, specimens, and usage rules.',
   color: 'Semantic palette, surface hierarchy, and dark mode.',
   spacing: 'The 4 px grid, named steps, and when to break the grid.',
+  effects: 'Shadows, focus rings, blurs, and glass materials.',
   motion: 'Easing curves, durations, spring configs, and the Fluidity contract.',
   icons: 'Phosphor-based icon set — 2,980 glyphs, React Native SVG.',
 };
@@ -18,8 +19,8 @@ export default function PrimitivesIndexPage() {
       <Eyebrow>Primitives</Eyebrow>
       <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">Primitives</h1>
       <Lede>
-        Tokens, type scale, color, spacing, motion, icons — the raw materials every component is
-        built from.
+        Tokens, type scale, color, spacing, motion, effects, icons — the raw ingredients every
+        component is built from.
       </Lede>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">

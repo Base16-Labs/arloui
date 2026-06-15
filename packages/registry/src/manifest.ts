@@ -21,7 +21,7 @@ export const FOUNDATION: RegistryEntry[] = [
     kind: 'foundation',
     title: 'Design tokens',
     description:
-      'Color, typography, spacing, radius, and motion tokens. Single source of truth for the visual system.',
+      'Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.',
     files: [{ source: 'foundation/tokens.ts', target: 'tokens.ts', type: 'tokens' }],
     meta: { tags: ['foundation', 'tokens'] },
   },
@@ -44,7 +44,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'icon',
     title: 'Animated icons',
     description:
-      'Six stateful SVG icon transitions for menu, playback, direction, disclosure, and completion.',
+      'Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.',
     dependencies: ['react-native-svg', 'react-native-reanimated'],
     files: [
       {

@@ -1,6 +1,8 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import type { ComponentProps } from 'react';
 import { TailwindAlphaRamp, TailwindPaletteGrid } from '@/components/docs/tailwind-palette';
+import { EffectsDoc } from '@/components/docs/effects-doc';
+import { TypographyDoc } from '@/components/docs/typography-doc';
 import { Eyebrow } from '@/components/mdx/Eyebrow';
 import { Lede } from '@/components/mdx/Lede';
 import { RightRail } from '@/components/nav/RightRail';
@@ -177,16 +179,19 @@ const { theme } = useTheme();
   },
   spacing: {
     title: 'Spacing',
-    lede: 'A 4 px grid from the registry spacing scale, shared by layout rhythm, component padding, and control gaps.',
+    lede: 'A memorable base-4 scale for visual rhythm, component sizing, and accessible touch ergonomics.',
     intro: [
-      'The spacing object uses numeric keys where spacing[4] equals 16 px.',
+      'ArloUI uses a base-4 spacing scale where spacing[4] equals 16 px.',
       'Keys are the suffix of the Figma token name, so space-4 maps to spacing[4].',
-      'Use spacing with sizing and radii instead of hard-coding component dimensions.',
+      'Sizing tokens keep components, icons, avatars, and containers consistent without magic numbers.',
+      'A control may look smaller than 44 pt while hitSlop expands its interactive area.',
     ],
     rules: [
       'Use spacing[4] to spacing[5] for common horizontal gutters.',
       'Use spacing[1] and spacing[2] for icon, label, and compact control gaps.',
       'Use sizing tokens for fixed component dimensions such as buttons and icons.',
+      'Give every interactive element at least a 44 × 44 pt touch target; prefer 48 × 48 pt for comfortable primary actions.',
+      'Keep enough separation between adjacent touch targets to prevent accidental activation.',
     ],
     specs: [
       { name: 'spacing.0', value: '0', note: 'No gap' },
@@ -196,16 +201,87 @@ const { theme } = useTheme();
       { name: 'spacing.6', value: '24', note: 'Section rhythm' },
       { name: 'spacing.24', value: '96', note: 'Large screen spacing' },
       { name: 'sizing.icon.md', value: '24', note: 'Default icon size' },
-      { name: 'sizing.buttonHeight.md', value: '40', note: 'Default button height' },
+      { name: 'sizing.buttonHeight.md', value: '40', note: 'Default visual button height' },
+      { name: 'sizing.touchTarget.minimum', value: '44', note: 'Minimum interactive area' },
+      { name: 'sizing.touchTarget.comfortable', value: '48', note: 'Preferred primary-action area' },
     ],
-    snippet: `<View style={{
+    snippet: `const touchInset =
+  (theme.sizing.touchTarget.minimum - theme.sizing.buttonHeight.md) / 2;
+
+<View style={{
   paddingHorizontal: theme.spacing[4],
   gap: theme.spacing[2],
 }}>
   <Text>Label</Text>
-  <Input />
+  <Pressable hitSlop={touchInset}>
+    <View style={{ height: theme.sizing.buttonHeight.md }}>
+      <Text>Action</Text>
+    </View>
+  </Pressable>
 </View>`,
     related: ['Typography', 'Tokens', 'Motion'],
+  },
+  effects: {
+    title: 'Effects',
+    lede: 'Shadow, elevation, blur, and translucent-surface presets for functional depth without visual noise.',
+    intro: [
+      'Elevation communicates which surfaces are interactive, floating, or modal.',
+      'Blur preserves context behind navigation, sheets, and overlays while separating the active layer.',
+      'Liquid Glass is progressive enhancement: supported iOS experiences can use a native treatment while every other platform receives blur, tint, and a subtle border.',
+      'Material presets are starting points for polish, not a requirement to add depth to every surface.',
+    ],
+    rules: [
+      'Use glass only for functional layers such as navigation bars, tab bars, sidebars, sheets, and key controls.',
+      'Do not use translucent materials as general content backgrounds or repeated card decoration.',
+      'Pair glass surfaces with high-contrast, vibrant semantic label and icon colors.',
+      'Test over light, dark, photographic, and scrolling content before shipping.',
+      'Test on real devices and older hardware; reduce blur strength or use the overlay-only fallback if scrolling or gestures become janky.',
+    ],
+    specs: [
+      { name: 'shadows.sm', value: '0 / 2 / 6%', note: 'Floating controls and subtle lift' },
+      { name: 'shadows.md', value: '1 / 6 / 8%', note: 'Menus and compact overlays' },
+      { name: 'shadows.lg', value: '2 / 12 / 10%', note: 'Sheets and elevated navigation' },
+      { name: 'shadows.xl', value: '4 / 28 / 12%', note: 'Modal surfaces only' },
+      { name: 'blur.sm', value: '8', note: 'Thin navigation material' },
+      { name: 'blur.md', value: '16', note: 'Compact overlays' },
+      { name: 'blur.lg', value: '24', note: 'Default glass surface' },
+      { name: 'blur.xl', value: '40', note: 'Dense modal material' },
+      { name: 'materials.glassRegular', value: '24 + overlay', note: 'Cross-platform glass fallback' },
+    ],
+    snippet: `import { Platform, StyleSheet, View, useColorScheme } from 'react-native';
+import { BlurView } from 'expo-blur';
+
+const scheme = useColorScheme() ?? 'light';
+const material = theme.materials.glassRegular;
+const overlay =
+  scheme === 'dark' ? material.darkOverlay : material.lightOverlay;
+const border =
+  scheme === 'dark' ? material.darkBorder : material.lightBorder;
+
+const styles = StyleSheet.create({
+  material: {
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderRadius: theme.radii.xl,
+  },
+});
+
+<View style={[styles.material, { borderColor: border }]}>
+  <BlurView
+    intensity={material.blur}
+    tint={scheme}
+    style={StyleSheet.absoluteFill}
+  />
+  <View
+    pointerEvents="none"
+    style={[
+      StyleSheet.absoluteFill,
+      { backgroundColor: Platform.OS === 'ios' ? 'transparent' : overlay },
+    ]}
+  />
+  <NavigationContent />
+</View>`,
+    related: ['Color', 'Spacing', 'Motion'],
   },
   motion: {
     title: 'Motion',
@@ -274,6 +350,7 @@ export function generateStaticParams() {
 
 export default async function PrimitivePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (slug === 'materials') redirect('/docs/primitives/effects');
   if (!slugs.includes(slug)) notFound();
 
   const doc = primitiveDocs[slug];
@@ -283,6 +360,9 @@ export default async function PrimitivePage({ params }: { params: Promise<{ slug
     const [names, animatedSource] = await Promise.all([getIconNames(), getAnimatedIconSource()]);
     return <IconLibrary names={names} animatedSource={animatedSource} />;
   }
+
+  if (slug === 'type') return <TypographyPage />;
+  if (slug === 'effects') return <EffectsPage />;
 
   const headings = [
     { id: 'preview', label: 'Preview' },
@@ -332,6 +412,17 @@ export default async function PrimitivePage({ params }: { params: Promise<{ slug
               </ul>
             </div>
           </div>
+          {slug === 'effects' ? (
+            <a
+              href="https://developer.apple.com/design/human-interface-guidelines/materials"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 flex items-center justify-between gap-4 rounded-lg border border-line bg-surface px-4 py-3 text-[13px] text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+            >
+              <span>Apple Human Interface Guidelines: Materials</span>
+              <span aria-hidden="true">Open</span>
+            </a>
+          ) : null}
         </Section>
 
         <Section id="specs" title="Specs">
@@ -376,6 +467,150 @@ export default async function PrimitivePage({ params }: { params: Promise<{ slug
   );
 }
 
+function TypographyPage() {
+  const headings = [
+    { id: 'font-configuration', label: 'Font configuration' },
+    { id: 'type-scale', label: 'Type scale' },
+    { id: 'weight-system', label: 'Weight system' },
+    { id: 'button-typography', label: 'Button typography' },
+    { id: 'specimen', label: 'Type specimen' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens used' },
+    { id: 'rules', label: 'Rules' },
+    { id: 'do-dont', label: 'Do · Don’t' },
+    { id: 'related', label: 'Related' },
+  ];
+  const actions = [
+    {
+      label: 'Figma',
+      href: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=74-4376',
+    },
+    {
+      label: 'Source',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/tokens/src/typography.ts',
+    },
+  ];
+
+  return (
+    <>
+      <main className="max-w-[820px] flex-1 px-8 pt-10 pb-20 sm:px-14">
+        <Eyebrow>Primitives</Eyebrow>
+        <h1 className="mt-3.5 text-[44px] font-medium leading-none tracking-tight sm:text-[56px]">
+          Typography
+        </h1>
+        <Lede>
+          A scale, not a font. Swap your typeface in one line — the sizes, rhythm, and hierarchy
+          stay.
+        </Lede>
+
+        <div className="flex flex-wrap gap-2">
+          {actions.map((action) => (
+            <a
+              key={action.label}
+              href={action.href}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-line bg-surface px-3 py-1.5 text-[12px] text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+            >
+              {action.label}
+            </a>
+          ))}
+        </div>
+
+        <TypographyDoc />
+
+        <section id="related" className="scroll-mt-10 pt-12">
+          <h2 className="text-[24px] font-medium leading-tight text-ink">Related</h2>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {['Tokens', 'Color', 'Spacing'].map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-line bg-surface px-3 py-1.5 text-[12.5px] text-ink-2"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <RightRail headings={headings} actions={actions} />
+    </>
+  );
+}
+
+function EffectsPage() {
+  const headings = [
+    { id: 'shadows', label: 'Shadows' },
+    { id: 'focus-rings', label: 'Focus rings' },
+    { id: 'blur-levels', label: 'Blur levels' },
+    { id: 'liquid-glass', label: 'Liquid Glass' },
+    { id: 'dark-mode', label: 'Dark mode' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens used' },
+    { id: 'rules', label: 'Rules' },
+    { id: 'do-dont', label: 'Do · Don’t' },
+    { id: 'related', label: 'Related' },
+  ];
+  const actions = [
+    {
+      label: 'Figma',
+      href: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=238-2275',
+    },
+    {
+      label: 'Source',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/tokens/src/effects.ts',
+    },
+  ];
+
+  return (
+    <>
+      <main className="max-w-[820px] flex-1 px-8 pt-10 pb-20 sm:px-14">
+        <Eyebrow>Primitives</Eyebrow>
+        <h1 className="mt-3.5 text-[44px] font-medium leading-none tracking-tight sm:text-[56px]">
+          Effects
+        </h1>
+        <Lede>
+          Depth comes from layering and spacing first, not shadows. When you do reach for
+          elevation, use the lightest option that works.
+        </Lede>
+
+        <div className="flex flex-wrap gap-2">
+          {actions.map((action) => (
+            <a
+              key={action.label}
+              href={action.href}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-line bg-surface px-3 py-1.5 text-[12px] text-ink-2 transition-colors hover:border-line-strong hover:text-ink"
+            >
+              {action.label}
+            </a>
+          ))}
+        </div>
+
+        <EffectsDoc />
+
+        <section id="related" className="scroll-mt-10 pt-12">
+          <h2 className="text-[24px] font-medium leading-tight text-ink">Related</h2>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {['Color', 'Spacing', 'Motion'].map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-line bg-surface px-3 py-1.5 text-[12.5px] text-ink-2"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <RightRail headings={headings} actions={actions} />
+    </>
+  );
+}
+
 function Section({
   id,
   title,
@@ -397,6 +632,7 @@ function PrimitivePreview({ slug }: { slug: string }) {
   if (slug === 'type') return <TypePreview />;
   if (slug === 'color') return <ColorPreview />;
   if (slug === 'spacing') return <SpacingPreview />;
+  if (slug === 'effects') return <MaterialsPreview />;
   if (slug === 'motion') return <MotionPreview />;
   if (slug === 'icons') return <IconsPreview />;
   return <TokensPreview />;
@@ -1016,15 +1252,140 @@ function SpacingPreview() {
   ];
 
   return (
-    <div className="rounded-lg border border-line bg-surface p-5">
-      <div className="space-y-3">
-        {steps.map(([key, value]) => (
-          <div key={key} className="grid grid-cols-[72px_1fr_44px] items-center gap-4">
-            <div className="font-mono text-[12px] text-ink-3">spacing.{key}</div>
-            <div className="h-6 rounded-full bg-ink" style={{ width: value * 2 }} />
-            <div className="text-right font-mono text-[12px] text-ink-2">{value}px</div>
+    <div className="space-y-3">
+      <div className="rounded-lg border border-line bg-surface p-5">
+        <div className="space-y-3">
+          {steps.map(([key, value]) => (
+            <div key={key} className="grid grid-cols-[72px_1fr_44px] items-center gap-4">
+              <div className="font-mono text-[12px] text-ink-3">spacing.{key}</div>
+              <div className="h-6 rounded-full bg-ink" style={{ width: value * 2 }} />
+              <div className="text-right font-mono text-[12px] text-ink-2">{value}px</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-lg border border-line bg-surface p-5">
+          <div className="text-[12px] font-medium uppercase tracking-[0.1em] text-ink-3">
+            Sizing scale
+          </div>
+          <div className="mt-5 flex items-end gap-4">
+            {[16, 24, 32, 40].map((size) => (
+              <div key={size} className="text-center">
+                <div
+                  className="mx-auto rounded-md border border-line-strong bg-canvas"
+                  style={{ width: size, height: size }}
+                />
+                <div className="mt-2 font-mono text-[10px] text-ink-3">{size}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 text-[12.5px] leading-relaxed text-ink-2">
+            Named presets replace one-off dimensions for icons, avatars, and controls.
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-line bg-surface p-5">
+          <div className="text-[12px] font-medium uppercase tracking-[0.1em] text-ink-3">
+            Touch target
+          </div>
+          <div className="mt-5 flex items-center gap-4">
+            <div className="flex size-11 items-center justify-center rounded-md border border-dashed border-line-strong">
+              <div className="size-10 rounded-full bg-ink" />
+            </div>
+            <div>
+              <div className="font-mono text-[12px] text-ink">44pt minimum</div>
+              <div className="mt-1 text-[11.5px] text-ink-3">40pt visible control + 2pt inset</div>
+            </div>
+          </div>
+          <div className="mt-4 text-[12.5px] leading-relaxed text-ink-2">
+            The interaction area can be larger than the visible component.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MaterialsPreview() {
+  const shadowLevels = [
+    ['sm', 'Control', '0 0 2px rgba(16,24,40,0.06)'],
+    ['md', 'Menu', '0 1px 6px rgba(16,24,40,0.08)'],
+    ['lg', 'Sheet', '0 2px 12px rgba(16,24,40,0.10)'],
+    ['xl', 'Modal', '0 4px 28px rgba(16,24,40,0.12)'],
+  ] as const;
+
+  return (
+    <div className="space-y-3">
+      <div className="grid gap-4 rounded-lg border border-line bg-[#D1D5DC] p-5 sm:grid-cols-2 lg:grid-cols-4">
+        {shadowLevels.map(([level, role, shadow]) => (
+          <div
+            key={level}
+            className="flex min-h-36 flex-col justify-between rounded-lg border border-black/5 bg-white p-4 text-[#101828]"
+            style={{ boxShadow: shadow }}
+          >
+            <div className="font-mono text-[11px] text-[#6A7282]">shadows.{level}</div>
+            <div>
+              <div className="text-[14px] font-medium">{role}</div>
+              <div className="mt-1 text-[11.5px] text-[#6A7282]">
+                Increasing spatial priority
+              </div>
+            </div>
           </div>
         ))}
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="relative min-h-64 overflow-hidden rounded-lg border border-line bg-[#155DFC] p-5">
+          <div className="absolute top-8 right-8 size-24 rounded-lg bg-[#FB2C36]" />
+          <div className="absolute bottom-7 left-10 h-16 w-36 rounded-lg bg-[#00C950]" />
+          <div className="relative z-10 flex h-full min-h-54 items-end">
+            <div className="w-full rounded-lg border border-white/60 bg-white/70 p-4 text-[#101828] shadow-lg backdrop-blur-[24px] dark:border-white/15 dark:bg-[#101828]/75 dark:text-white">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <div className="text-[12px] font-medium uppercase tracking-[0.1em] opacity-60">
+                    Glass regular
+                  </div>
+                  <div className="mt-1 text-[15px] font-medium">Functional navigation layer</div>
+                </div>
+                <div className="flex gap-2">
+                  <span className="size-8 rounded-full bg-[#155DFC]" />
+                  <span className="size-8 rounded-full border border-current/20 bg-white/40 dark:bg-white/10" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-line bg-surface p-5">
+          <div className="text-[12px] font-medium uppercase tracking-[0.1em] text-ink-3">
+            Blur presets
+          </div>
+          <div className="mt-5 space-y-4">
+            {[
+              ['sm', 8],
+              ['md', 16],
+              ['lg', 24],
+              ['xl', 40],
+            ].map(([name, value]) => (
+              <div key={name} className="grid grid-cols-[54px_1fr_38px] items-center gap-3">
+                <div className="font-mono text-[11px] text-ink-3">blur.{name}</div>
+                <div className="h-2 rounded-full bg-line">
+                  <div
+                    className="h-2 rounded-full bg-ink"
+                    style={{ width: `${(Number(value) / 40) * 100}%` }}
+                  />
+                </div>
+                <div className="text-right font-mono text-[11px] text-ink-2">{value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 border-t border-line pt-4 text-[12.5px] leading-relaxed text-ink-2">
+            Begin with overlay, border, and contrast. Add blur only when it improves context and
+            remains smooth on-device.
+          </div>
+        </div>
       </div>
     </div>
   );

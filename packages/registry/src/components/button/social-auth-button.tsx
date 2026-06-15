@@ -97,6 +97,11 @@ function resolveDisabledPalette(t: ReturnType<typeof useTokens>): SocialPalette 
 
 type SocialDims = { minHeight: number; paddingX: number; type: { fontSize: number; lineHeight: number }; gap: number; iconPx: number };
 
+function touchTargetInset(visualSize: number, minimumSize: number) {
+  const inset = Math.max(0, Math.ceil((minimumSize - visualSize) / 2));
+  return inset > 0 ? { top: inset, bottom: inset, left: inset, right: inset } : undefined;
+}
+
 function resolveSocialDims(size: Size, t: ReturnType<typeof useTokens>): SocialDims {
   switch (size) {
     case 'sm':
@@ -182,6 +187,10 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
   }, [t, platform, type, useDisabledVisual]);
 
   const dims = useMemo(() => resolveSocialDims(size, t), [size, t]);
+  const hitSlop = useMemo(
+    () => touchTargetInset(dims.minHeight, t.sizing.touchTarget.minimum),
+    [dims.minHeight, t.sizing.touchTarget.minimum],
+  );
 
   const iconWrap = useMemo(
     () => ({ width: dims.iconPx, height: dims.iconPx, alignItems: 'center', justifyContent: 'center' }) as const,
@@ -233,7 +242,7 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
       onPressOut={handleOut}
       onFocus={(e) => { setFocused(true); onFocus?.(e); }}
       onBlur={(e) => { setFocused(false); onBlur?.(e); }}
-      hitSlop={size === 'sm' ? { top: 4, bottom: 4, left: 4, right: 4 } : undefined}
+      hitSlop={hitSlop}
       {...rest}
     >
       <Animated.View

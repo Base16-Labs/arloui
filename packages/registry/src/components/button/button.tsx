@@ -3,7 +3,7 @@
  *
  * Four appearances (solid · soft · ghost · outline) × three tones (primary · neutral · danger).
  * All main Button appearances use radii.full to match the Figma and WWW pill shape.
- * All sizes ≥44pt touch target (sm expands via hitSlop).
+ * Visual sizes stay faithful to the design while sm/md expand to a ≥44pt touch target.
  *
  * **Preferred API:** `tone` + `appearance` + `children` as text label.
  *
@@ -142,6 +142,11 @@ function iconSizePx(size: ButtonSize, t: ReturnType<typeof useTokens>): number {
 
 type ButtonDims = { minHeight: number; paddingX: number; type: { fontSize: number; lineHeight: number }; gap: number };
 
+function touchTargetInset(visualSize: number, minimumSize: number) {
+  const inset = Math.max(0, Math.ceil((minimumSize - visualSize) / 2));
+  return inset > 0 ? { top: inset, bottom: inset, left: inset, right: inset } : undefined;
+}
+
 function ButtonSpinner({ color, size }: { color: string; size: number }) {
   const rotation = useRef(new Animated.Value(0)).current;
 
@@ -247,6 +252,10 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   }, [t, tone, appearance, useDisabledVisual]);
 
   const dims = useMemo(() => resolveButtonDims(size, t), [size, t]);
+  const hitSlop = useMemo(
+    () => touchTargetInset(dims.minHeight, t.sizing.touchTarget.minimum),
+    [dims.minHeight, t.sizing.touchTarget.minimum],
+  );
 
   const ipx = iconSizePx(size, t);
   const iconWrap = useMemo(
@@ -309,7 +318,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       onPressOut={handleOut}
       onFocus={(e) => { setFocused(true); onFocus?.(e); }}
       onBlur={(e) => { setFocused(false); onBlur?.(e); }}
-      hitSlop={size === 'sm' ? { top: 4, bottom: 4, left: 4, right: 4 } : undefined}
+      hitSlop={hitSlop}
       {...rest}
     >
       <Animated.View

@@ -25,6 +25,7 @@ export const primitiveItems = [
   { label: 'Color', slug: 'color' },
   { label: 'Spacing', slug: 'spacing' },
   { label: 'Motion', slug: 'motion' },
+  { label: 'Effects', slug: 'effects' },
   { label: 'Icons', slug: 'icons' },
 ] as const;
 

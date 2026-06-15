@@ -18,7 +18,9 @@ const CONTENT = `# ArloUI
 
 - 35 components across 6 groups: Layout & surface, Type & content, Controls, Lists & rows, Feedback, Navigation
 - 4 foundations (facets): Craft, Fluidity, Opinionated, Detailed
-- 6 primitives: Tokens, Typography, Color, Spacing, Motion, Icons
+- 7 primitives: Tokens, Typography, Color, Spacing, Motion, Effects, Icons
+- Typography: font-agnostic type scale, 16 tokens across display/heading/body/label/button, Manrope default, one-line family swap
+- Effects: 5 shadow levels (none/sm/md/lg/xl), 2 two-layer focus rings (main/error), 5 blur levels (4-40px), and experimental iOS 26 Liquid Glass fallbacks
 - 9 archetypes: Question, Decision, Status, Feed, Detail, Creation, Settings, Onboarding, Empty
 - AI-native: skill pack, MCP server, prompt cookbook
 
