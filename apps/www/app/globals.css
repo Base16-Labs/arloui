@@ -1,60 +1,14 @@
 @import 'tailwindcss';
 
-/* ──────────────────────────────────────────────
-   Font faces — PP Neue Montreal + Mono
-   Book (400) for body, Medium (500) for headings
-   ────────────────────────────────────────────── */
-
-@font-face {
-  font-family: 'Neue Montreal';
-  src: url('/fonts/PPNeueMontreal-Book.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Neue Montreal';
-  src: url('/fonts/PPNeueMontreal-BookItalic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Neue Montreal';
-  src: url('/fonts/PPNeueMontreal-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Neue Montreal';
-  src: url('/fonts/PPNeueMontreal-MediumItalic.woff2') format('woff2');
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Neue Montreal Mono';
-  src: url('/fonts/PPNeueMontrealMono-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Neue Montreal Mono';
-  src: url('/fonts/PPNeueMontrealMono-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+/* Manrope is loaded from @fontsource-variable/manrope in app/layout.tsx. */
 
 /* ──────────────────────────────────────────────
    Design tokens — Color (light)
    ────────────────────────────────────────────── */
 
 :root {
-  --font-sans: 'Neue Montreal', system-ui, -apple-system, sans-serif;
-  --font-mono: 'Neue Montreal Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-sans: 'Manrope Variable', Manrope, system-ui, -apple-system, sans-serif;
+  --font-mono: 'Manrope Variable', Manrope, system-ui, -apple-system, sans-serif;
 
   /* Surfaces */
   --canvas: #ffffff;

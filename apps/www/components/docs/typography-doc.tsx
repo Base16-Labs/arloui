@@ -68,7 +68,7 @@ export function TypographyDoc() {
 
   const fontFamily =
     font === 'manrope'
-      ? 'Manrope, sans-serif'
+      ? '"Manrope Variable", Manrope, sans-serif'
       : font === 'inter'
         ? 'Inter, system-ui, sans-serif'
         : 'Georgia, serif';

@@ -88,8 +88,9 @@ export function IconLibrary({
               Icons
             </h1>
             <p className="mt-4 max-w-[680px] text-[15px] leading-relaxed text-ink-2">
-              Browse the complete Arlo icon set. For animated icons, preview the interaction first,
-              then copy the component into your React Native project.
+              Static icons use Phosphor. Animated icons are curated Arlo motion variants drawn to
+              match Phosphor&apos;s 24px rounded outline style, then copied into your React Native
+              project.
             </p>
           </div>
           <div className="text-[12.5px] text-ink-3">
@@ -355,7 +356,7 @@ const [active, setActive] = useState(false);
               : 'Ready to preview'
             : `Current: ${active ? definition.labels[1] : definition.labels[0]}`}
         </span>
-        <span>react-native-svg · reanimated</span>
+        <span>Phosphor-style · react-native-svg · reanimated</span>
       </div>
       <button
         type="button"

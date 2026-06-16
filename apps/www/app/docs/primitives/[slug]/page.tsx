@@ -12,6 +12,7 @@ import { Icon } from '@/components/ui/Icon';
 import { IconLibrary } from '@/components/icons/icon-library';
 import {
   alphaRamp,
+  darkSemanticColors,
   lightSemanticColors,
   mainScales,
   paletteBase,
@@ -728,7 +729,7 @@ function TypePreview() {
   ];
 
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-surface font-['Manrope']">
+    <div className="overflow-hidden rounded-lg border border-line bg-surface font-sans">
       <div className="grid gap-8 border-b border-line p-5 sm:grid-cols-[1fr_1.15fr] sm:p-7">
         <div>
           <div className="text-[15px] font-medium text-ink">Manrope</div>
@@ -796,6 +797,7 @@ type UtilitySemanticRow = {
   token: string;
   semanticKey: keyof typeof lightSemanticColors;
   palette: string;
+  darkPalette: string;
   usage: string;
 };
 
@@ -807,30 +809,35 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'surface-background',
         semanticKey: 'surfaceBackground',
         palette: 'Grey-50',
+        darkPalette: 'Grey-950',
         usage: 'Main app background',
       },
       {
         token: 'surface-input*',
         semanticKey: 'surfaceInput',
         palette: 'Grey-100',
+        darkPalette: 'Grey-800',
         usage: 'Input backgrounds',
       },
       {
         token: 'surface-elevated',
         semanticKey: 'surfaceElevated',
         palette: 'Base-White',
+        darkPalette: 'Grey-900',
         usage: 'Cards, sheets, modals (above background)',
       },
       {
         token: 'surface-overlay',
         semanticKey: 'surfaceOverlay',
         palette: 'Grey-900 @ 40%',
+        darkPalette: 'Grey-900 @ 70%',
         usage: 'Overlays, backdrops, scrims',
       },
       {
         token: 'surface-inverse',
         semanticKey: 'surfaceInverse',
         palette: 'Grey-900',
+        darkPalette: 'Grey-50',
         usage: 'Dark surfaces, tooltips',
       },
     ],
@@ -842,60 +849,70 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'text-primary',
         semanticKey: 'textPrimary',
         palette: 'Grey-900',
+        darkPalette: 'Grey-50',
         usage: 'Main content, headlines',
       },
       {
         token: 'text-secondary',
         semanticKey: 'textSecondary',
         palette: 'Grey-600',
+        darkPalette: 'Grey-400',
         usage: 'Supporting text, descriptions',
       },
       {
         token: 'text-tertiary',
         semanticKey: 'textTertiary',
         palette: 'Grey-400',
+        darkPalette: 'Grey-500',
         usage: 'Captions, metadata',
       },
       {
         token: 'text-disabled**',
         semanticKey: 'textDisabled',
         palette: 'Grey-900 @ 5%',
+        darkPalette: 'Grey-50 @ 12%',
         usage: 'Disabled states',
       },
       {
         token: 'text-inverse',
         semanticKey: 'textInverse',
         palette: 'Base-White',
+        darkPalette: 'Grey-900',
         usage: 'Text on inverse backgrounds',
       },
       {
         token: 'text-placeholder',
         semanticKey: 'textPlaceholder',
         palette: 'Grey-300',
+        darkPalette: 'Grey-600',
         usage: 'Input placeholders',
       },
       {
         token: 'text-interactive-primary*',
         semanticKey: 'textInteractivePrimary',
         palette: 'Base-White',
+        darkPalette: 'Base-White',
         usage: 'Text on primary interactive elements',
       },
       {
         token: 'text-interactive-secondary*',
         semanticKey: 'textInteractiveSecondary',
         palette: 'Grey-700',
+        darkPalette: 'Grey-200',
         usage: 'Text on secondary interactive elements',
       },
       {
         token: 'text-interactive-tertiary*',
         semanticKey: 'textInteractiveTertiary',
         palette: 'Primary-600',
+        darkPalette: 'Primary-400',
         usage: 'Text on tertiary interactive elements',
       },
       {
         token: 'text-interactive-error*',
         semanticKey: 'textInteractiveError',
         palette: 'Error-600',
+        darkPalette: 'Error-400',
         usage: 'Text for error states',
       },
     ],
@@ -907,72 +924,84 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'interactive-primary**',
         semanticKey: 'interactivePrimary',
         palette: 'Primary-600',
+        darkPalette: 'Primary-500',
         usage: 'Main CTAs, primary buttons',
       },
       {
         token: 'interactive-primary-pressed**',
         semanticKey: 'interactivePrimaryPressed',
         palette: 'Primary-700',
+        darkPalette: 'Primary-600',
         usage: 'Pressed state',
       },
       {
         token: 'interactive-secondary',
         semanticKey: 'interactiveSecondary',
         palette: 'Grey-100',
+        darkPalette: 'Grey-800',
         usage: 'Secondary buttons, tabs',
       },
       {
         token: 'interactive-secondary-pressed',
         semanticKey: 'interactiveSecondaryPressed',
         palette: 'Grey-200',
+        darkPalette: 'Grey-700',
         usage: 'Secondary hover state',
       },
       {
         token: 'interactive-tertiary',
         semanticKey: 'interactiveTertiary',
         palette: 'Transparent',
+        darkPalette: 'Transparent',
         usage: 'Ghost buttons, text links',
       },
       {
         token: 'interactive-tertiary-pressed**',
         semanticKey: 'interactiveTertiaryPressed',
         palette: 'Grey-100 @ 40%',
+        darkPalette: 'Grey-800 @ 55%',
         usage: 'Tertiary hover state',
       },
       {
         token: 'interactive-disabled',
         semanticKey: 'interactiveDisabled',
         palette: 'Grey-100',
+        darkPalette: 'Grey-800',
         usage: 'Disabled button (or action) backgrounds',
       },
       {
         token: 'interactive-error*',
         semanticKey: 'interactiveError',
         palette: 'Error-500',
+        darkPalette: 'Error-500',
         usage: 'Error state backgrounds',
       },
       {
         token: 'focus-ring-main**',
         semanticKey: 'focusRingMain',
         palette: 'Primary-400',
+        darkPalette: 'Primary-400',
         usage: 'Accessibility focus indicators',
       },
       {
         token: 'focus-ring-error*',
         semanticKey: 'focusRingError',
         palette: 'Error-300',
+        darkPalette: 'Error-400',
         usage: 'Accessibility focus indicators for error states',
       },
       {
         token: 'touch-feedback-main**',
         semanticKey: 'touchFeedbackMain',
         palette: 'Grey-900 @ 10%',
+        darkPalette: 'Grey-50 @ 8%',
         usage: 'Ripple, highlight, or haptic feedback overlays on saturated surfaces',
       },
       {
         token: 'touch-feedback-light*',
         semanticKey: 'touchFeedbackLight',
         palette: 'Grey-100 @ 40%',
+        darkPalette: 'Grey-800 @ 50%',
         usage: 'Ripple, highlight, or haptic feedback overlays on main backgrounds',
       },
     ],
@@ -984,24 +1013,28 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'border-primary',
         semanticKey: 'borderPrimary',
         palette: 'Grey-300',
+        darkPalette: 'Grey-700',
         usage: 'Input borders, strong dividers',
       },
       {
         token: 'border-secondary',
         semanticKey: 'borderSecondary',
         palette: 'Grey-200',
+        darkPalette: 'Grey-800',
         usage: 'Subtle separators',
       },
       {
         token: 'border-focus',
         semanticKey: 'borderFocus',
         palette: 'Primary-500',
+        darkPalette: 'Primary-400',
         usage: 'Active input borders',
       },
       {
         token: 'border-error',
         semanticKey: 'borderError',
         palette: 'Error-500',
+        darkPalette: 'Error-500',
         usage: 'Error state borders',
       },
     ],
@@ -1013,48 +1046,56 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'feedback-success',
         semanticKey: 'feedbackSuccess',
         palette: 'Success-500',
+        darkPalette: 'Success-400',
         usage: 'Success messages, confirmations',
       },
       {
         token: 'feedback-success-bg',
         semanticKey: 'feedbackSuccessBg',
         palette: 'Success-50',
+        darkPalette: 'Success-950',
         usage: 'Success background areas',
       },
       {
         token: 'feedback-warning',
         semanticKey: 'feedbackWarning',
         palette: 'Warning-600',
+        darkPalette: 'Warning-400',
         usage: 'Warnings, important notices',
       },
       {
         token: 'feedback-warning-bg',
         semanticKey: 'feedbackWarningBg',
         palette: 'Warning-50',
+        darkPalette: 'Warning-950',
         usage: 'Warning background areas',
       },
       {
         token: 'feedback-error',
         semanticKey: 'feedbackError',
         palette: 'Error-500',
+        darkPalette: 'Error-500',
         usage: 'Errors, validation issues',
       },
       {
         token: 'feedback-error-bg',
         semanticKey: 'feedbackErrorBg',
         palette: 'Error-50',
+        darkPalette: 'Error-950',
         usage: 'Error background areas',
       },
       {
         token: 'feedback-info',
         semanticKey: 'feedbackInfo',
         palette: 'Primary-500',
+        darkPalette: 'Primary-400',
         usage: 'Information, neutral notices',
       },
       {
         token: 'feedback-info-bg',
         semanticKey: 'feedbackInfoBg',
         palette: 'Primary-50',
+        darkPalette: 'Primary-950',
         usage: 'Info background areas',
       },
     ],
@@ -1066,30 +1107,35 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'nav-background',
         semanticKey: 'navBackground',
         palette: 'Base-White',
+        darkPalette: 'Grey-900',
         usage: 'Tab bars, nav bars',
       },
       {
         token: 'nav-border',
         semanticKey: 'navBorder',
         palette: 'Grey-200',
+        darkPalette: 'Grey-800',
         usage: 'Navigation separators',
       },
       {
         token: 'nav-active',
         semanticKey: 'navActive',
         palette: 'Primary-500',
+        darkPalette: 'Primary-400',
         usage: 'Active nav items',
       },
       {
         token: 'nav-inactive',
         semanticKey: 'navInactive',
         palette: 'Grey-400',
+        darkPalette: 'Grey-500',
         usage: 'Inactive nav items',
       },
       {
         token: 'nav-indicator',
         semanticKey: 'navIndicator',
         palette: 'Primary-500',
+        darkPalette: 'Primary-400',
         usage: 'Tab indicators, progress',
       },
     ],
@@ -1101,6 +1147,7 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'pull-indicator',
         semanticKey: 'pullIndicator',
         palette: 'Grey-300',
+        darkPalette: 'Grey-600',
         usage: 'Pull-to-refresh indicators',
       },
     ],
@@ -1140,15 +1187,18 @@ function ColorPreview() {
 
       <PaletteBlock
         title="Utility semantic palette"
-        description="Semantic roles mapped from the main palette. Swatches read from @arloui/tokens lightSemanticColors; components consume these through theme.colors in camelCase."
+        description="Semantic roles mapped from the main palette. Swatches read from @arloui/tokens lightSemanticColors and darkSemanticColors; components consume these through theme.colors in camelCase."
       >
         <div className="overflow-hidden rounded-md border border-line">
-          <div className="hidden border-b border-line bg-canvas px-3 py-2.5 md:grid md:grid-cols-[minmax(0,1.35fr)_minmax(140px,0.75fr)_minmax(0,1.4fr)] md:gap-4">
+          <div className="hidden border-b border-line bg-canvas px-3 py-2.5 md:grid md:grid-cols-[minmax(0,1.15fr)_minmax(112px,0.7fr)_minmax(112px,0.7fr)_minmax(0,1.2fr)] md:gap-4">
             <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
               Token
             </div>
             <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
               Color (light)
+            </div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+              Color (dark)
             </div>
             <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
               Usage
@@ -1162,7 +1212,7 @@ function ColorPreview() {
               {group.rows.map((row) => (
                 <div
                   key={row.token}
-                  className="grid gap-2 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[minmax(0,1.35fr)_minmax(140px,0.75fr)_minmax(0,1.4fr)] md:items-center md:gap-4"
+                  className="grid gap-2 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[minmax(0,1.15fr)_minmax(112px,0.7fr)_minmax(112px,0.7fr)_minmax(0,1.2fr)] md:items-center md:gap-4"
                 >
                   <div className="min-w-0 break-words font-mono text-[12px] leading-relaxed text-ink">
                     {row.token}
@@ -1171,6 +1221,11 @@ function ColorPreview() {
                     label="Light"
                     palette={row.palette}
                     swatch={lightSemanticColors[row.semanticKey]}
+                  />
+                  <PaletteRef
+                    label="Dark"
+                    palette={row.darkPalette}
+                    swatch={darkSemanticColors[row.semanticKey]}
                   />
                   <div className="text-[13px] leading-relaxed text-ink-3">{row.usage}</div>
                 </div>

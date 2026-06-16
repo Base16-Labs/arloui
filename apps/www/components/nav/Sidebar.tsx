@@ -18,7 +18,7 @@ export function Sidebar() {
   const currentSection = docsSections.find((s) => pathname.startsWith(s.href));
 
   return (
-    <aside className="sticky top-0 h-[calc(100dvh-68px)] w-[264px] shrink-0 overflow-hidden border-r border-line">
+    <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[264px] shrink-0 self-start overflow-hidden border-r border-line lg:block">
       {/* Top blur */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
