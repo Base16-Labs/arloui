@@ -266,19 +266,45 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
       </View>
 
       {supportingText ? (
-        <Text
-          style={[
-            {
-              color: hasError ? t.colors.textInteractiveError : t.colors.textSecondary,
-              fontFamily: t.fontFamilies.sans,
-              fontSize: t.typography.bodySm.fontSize,
-              lineHeight: t.typography.bodySm.lineHeight,
-            },
-            helperStyle,
-          ]}
-        >
-          {supportingText}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[1] }}>
+          <View
+            style={{
+              width: 13,
+              height: 13,
+              borderRadius: 999,
+              borderWidth: 1,
+              borderColor: hasError ? t.colors.textInteractiveError : t.colors.textSecondary,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text
+              style={{
+                color: hasError ? t.colors.textInteractiveError : t.colors.textSecondary,
+                fontFamily: t.fontFamilies.sans,
+                fontSize: 9,
+                lineHeight: 11,
+                fontWeight: '600',
+              }}
+            >
+              i
+            </Text>
+          </View>
+          <Text
+            style={[
+              {
+                flexShrink: 1,
+                color: hasError ? t.colors.textInteractiveError : t.colors.textSecondary,
+                fontFamily: t.fontFamilies.sans,
+                fontSize: t.typography.bodySm.fontSize,
+                lineHeight: t.typography.bodySm.lineHeight,
+              },
+              helperStyle,
+            ]}
+          >
+            {supportingText}
+          </Text>
+        </View>
       ) : null}
     </View>
   );

@@ -89,7 +89,7 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Toggle', slug: 'toggle' },
       { label: 'Stepper', slug: 'stepper' },
       { label: 'Slider', slug: 'slider' },
-      { label: 'Field', slug: 'field' },
+      { label: 'Input', slug: 'input' },
       { label: 'Select', slug: 'select' },
       { label: 'Picker', slug: 'picker' },
     ],

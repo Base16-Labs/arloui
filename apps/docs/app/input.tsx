@@ -19,14 +19,14 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 type InputType = 'text' | 'email' | 'password' | 'search';
 type LabelMode = 'none' | 'above' | 'inset';
 type InputSize = 'md' | 'lg';
-type IconMode = 'none' | 'leading' | 'both';
+type IconMode = 'none' | 'leading' | 'trailing' | 'both';
 type ContentMode = 'empty' | 'filled';
 type FieldState = 'default' | 'helper' | 'error' | 'disabled';
 
 const TYPES: InputType[] = ['text', 'email', 'password', 'search'];
 const LABELS: LabelMode[] = ['none', 'above', 'inset'];
 const SIZES: InputSize[] = ['md', 'lg'];
-const ICONS: IconMode[] = ['none', 'leading', 'both'];
+const ICONS: IconMode[] = ['none', 'leading', 'trailing', 'both'];
 const CONTENT: ContentMode[] = ['empty', 'filled'];
 const STATES: FieldState[] = ['default', 'helper', 'error', 'disabled'];
 const APPEARANCES: InputAppearance[] = ['filled', 'plain'];
@@ -37,12 +37,12 @@ export default function InputCanvas() {
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [type, setType] = useState<InputType>('text');
-  const [labelMode, setLabelMode] = useState<LabelMode>('inset');
+  const [labelMode, setLabelMode] = useState<LabelMode>('none');
   const [size, setSize] = useState<InputSize>('lg');
-  const [icons, setIcons] = useState<IconMode>('both');
+  const [icons, setIcons] = useState<IconMode>('trailing');
   const [content, setContent] = useState<ContentMode>('filled');
-  const [state, setState] = useState<FieldState>('default');
-  const [appearance, setAppearance] = useState<InputAppearance>('filled');
+  const [state, setState] = useState<FieldState>('helper');
+  const [appearance, setAppearance] = useState<InputAppearance>('plain');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [value, setValue] = useState('Allan Thomas');
   const previewOffset = useRef(new Animated.Value(0)).current;
@@ -70,9 +70,11 @@ export default function InputCanvas() {
           ? 'Password'
           : type === 'search'
             ? 'Query'
-            : 'Allan Thomas',
+            : appearance === 'plain'
+              ? 'Content'
+              : 'Allan Thomas',
     );
-  }, [content, type]);
+  }, [appearance, content, type]);
 
   const iconColor = state === 'disabled' ? t.colors.textDisabled : t.colors.textSecondary;
   const leadingName =
@@ -87,7 +89,7 @@ export default function InputCanvas() {
           : 'Name';
 
   const trailingAction = useMemo(() => {
-    if (icons !== 'both') return undefined;
+    if (icons !== 'trailing' && icons !== 'both') return undefined;
 
     if (type === 'password') {
       return (
@@ -112,7 +114,11 @@ export default function InputCanvas() {
       );
     }
 
-    return <Ionicons name="checkmark-circle-outline" size={20} color={iconColor} />;
+    return (
+      <InputAction accessibilityLabel="Copy input value" onPress={() => undefined}>
+        <Ionicons name="copy-outline" size={20} color={iconColor} />
+      </InputAction>
+    );
   }, [iconColor, icons, passwordVisible, type, value]);
 
   const fieldProps: InputProps = {
@@ -130,7 +136,9 @@ export default function InputCanvas() {
     helperText: state === 'helper' ? 'Helper text' : undefined,
     errorText: state === 'error' ? `${inputLabel} is invalid` : undefined,
     leadingIcon:
-      icons === 'none' ? undefined : <Ionicons name={leadingName} size={20} color={iconColor} />,
+      icons === 'leading' || icons === 'both' ? (
+        <Ionicons name={leadingName} size={20} color={iconColor} />
+      ) : undefined,
     trailingAction,
     containerStyle: { width: '100%' },
     inputStyle: { fontFamily: 'Manrope' },

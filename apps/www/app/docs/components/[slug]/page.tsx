@@ -9,6 +9,7 @@ import { CodeBlock } from "@/components/ui/CodeBlock";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { PhoneFrame, PreviewCard } from "@/components/ui/PhoneFrame";
 import { ButtonDocPlayground } from "@/components/docs/button-doc-playground";
+import { InputDocPlayground } from "@/components/docs/input-doc-playground";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
 import {
   DocAppleMark,
@@ -108,6 +109,58 @@ const buttonData = {
   ],
 } as const;
 
+const inputData = {
+  slug: "input",
+  category: "Controls",
+  title: "Input",
+  lede:
+    "A token-driven text input for forms, search, passwords, and compact no-background fields. Use filled inputs when the field needs a clear touch surface; use plain inputs when the surrounding layout already provides structure.",
+  figma: "#",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input",
+  states: [
+    "empty",
+    "filled",
+    "focused",
+    "helper",
+    "error",
+    "disabled",
+    "password",
+    "search",
+    "leading icon",
+    "trailing action",
+    "plain / no bg",
+    "dark mode",
+  ],
+  tokens: [
+    "surfaceInput",
+    "textPrimary",
+    "textTertiary",
+    "textInteractiveError",
+    "borderFocus",
+    "borderError",
+    "sizing.icon",
+    "radii.md",
+    "typography.body",
+    "typography.bodySm",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input" },
+    { label: "Open playground ↗", href: "http://localhost:8081/input" },
+  ],
+} as const;
+
 export function generateStaticParams() {
   return componentGroups.flatMap((g) =>
     g.items.map((item) => ({ slug: item.slug }))
@@ -126,6 +179,10 @@ export default async function ComponentPage({
 
   if (slug === "button") {
     return <ButtonDocPage />;
+  }
+
+  if (slug === "input") {
+    return <InputDocPage />;
   }
 
   if (slug !== "sheet") {
@@ -256,6 +313,239 @@ import { Sheet } from "@arloui/sheet";
 
       <RightRail headings={sheetData.headings} actions={sheetData.actions} />
     </>
+  );
+}
+
+function InputDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text="" label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{inputData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {inputData.title}
+        </h1>
+        <Lede>{inputData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={inputData.figma}>
+            ◆ Figma <span className="opacity-50">↗</span>
+          </Pill>
+          <Pill as="a" href={inputData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <PreviewCard className="mb-12">
+          <PhoneFrame>
+            <div className="flex h-full flex-col justify-center gap-6 overflow-hidden bg-[#F9FAFB] px-5 py-8 dark:bg-[#09090B]">
+              <div className="space-y-3">
+                <InputPreviewRow label="Name" value="Allan Thomas" />
+                <InputPreviewRow label="Password" value="••••••••" icon="eye" state="error" helper="Incorrect password" />
+              </div>
+
+              <div className="rounded-xl bg-[#09090B] px-5 py-5 dark:bg-black">
+                <div className="space-y-5">
+                  <InputPreviewRow appearance="plain" value="Content" icon="copy" helper="Helper text" />
+                  <InputPreviewRow appearance="plain" value="••••••••" icon="eye" helper="Helper text" focused />
+                </div>
+              </div>
+            </div>
+          </PhoneFrame>
+        </PreviewCard>
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="Named slots map directly to the registry Input props."
+        >
+          <div className="flex h-[220px] items-center justify-center rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] font-mono text-xs text-ink-3 dark:bg-surface-raised">
+            label · leadingIcon · leadingAction · TextInput · trailingAction · helper/error text
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Choose the surface treatment based on layout context.">
+          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+            <li>Use <code className="font-mono text-[13px]">filled</code> for standalone form rows, settings screens, and search inputs that need a visible hit area.</li>
+            <li>Use <code className="font-mono text-[13px]">plain</code> for no-background fields inside dense forms, table-like layouts, or surfaces that already frame the content.</li>
+            <li>Use inset labels when the field needs to keep context after a value is entered.</li>
+          </ul>
+        </Section>
+
+        <InputDocPlayground states={[...inputData.states]} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <CodeBlock language="tsx">{`npx arloui add input
+
+import { Input, InputAction } from "@/components/ui/input";
+
+<Input
+  label="Email"
+  placeholder="Email"
+  value={email}
+  onChangeText={setEmail}
+  keyboardType="email-address"
+/>
+
+<Input
+  appearance="plain"
+  value="Content"
+  helperText="Helper text"
+  trailingAction={
+    <InputAction accessibilityLabel="Copy input value" onPress={copyValue}>
+      <CopyIcon />
+    </InputAction>
+  }
+/>
+
+<Input
+  label="Password"
+  insetLabel
+  secureTextEntry={!visible}
+  errorText={hasError ? "Incorrect password" : undefined}
+/>`}</CodeBlock>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="These are the tokens that make the filled and no-bg treatments consistent.">
+          <div className="flex flex-wrap gap-2">
+            {inputData.tokens.map((t) => (
+              <span
+                key={t}
+                className="rounded-md border border-line bg-[#f8f6ef] px-2.5 py-[5px] font-mono text-xs text-ink-2 dark:bg-surface-raised"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Input semantics should survive every visual variant.">
+          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+            <li>Pass a visible label or an accessibility label for fields without on-screen labels.</li>
+            <li>Use helper text for guidance and error text for validation feedback; errors use semantic error color tokens.</li>
+            <li>Trailing actions use <code className="font-mono text-[13px]">InputAction</code> so touch targets stay large enough.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Common pitfalls, paired.">
+          <DoDont
+            pairs={[
+              {
+                do: "Use plain/no-bg inputs when the parent surface already creates enough structure.",
+                dont: "Stack filled input boxes inside another heavy card when the layout already feels framed.",
+              },
+              {
+                do: "Keep helper text short and tied to the field state.",
+                dont: "Use helper text as a paragraph of instructions under every field.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Complements and alternatives.">
+          <div className="flex flex-wrap gap-2">
+            {["Button", "Search", "Form row", "Sheet", "Picker"].map((r) => (
+              <Chip key={r}>→ {r}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...inputData.headings]} actions={[...inputData.actions]} />
+    </>
+  );
+}
+
+function InputPreviewRow({
+  appearance = "filled",
+  label,
+  value,
+  icon,
+  helper,
+  state,
+  focused = false,
+  disabled = false,
+  muted = false,
+}: {
+  appearance?: "filled" | "plain";
+  label?: string;
+  value: string;
+  icon?: "copy" | "eye" | "mail";
+  helper?: string;
+  state?: "error";
+  focused?: boolean;
+  disabled?: boolean;
+  muted?: boolean;
+}) {
+  const isPlain = appearance === "plain";
+  const tone = state === "error" ? "text-[#FB2C36]" : isPlain ? "text-[#65758B]" : "text-[#6A7282]";
+  const textTone = muted ? "text-[#D1D5DC]" : state === "error" ? "text-[#FB2C36]" : isPlain ? "text-[#D1D5DC]" : "text-[#364153]";
+
+  return (
+    <div className={isPlain ? "min-w-0" : "space-y-1.5"}>
+      <div
+        className={
+          isPlain
+            ? "flex min-h-8 items-center gap-2 bg-transparent"
+            : `flex min-h-[54px] items-center gap-2 rounded-md bg-[#F3F4F6] px-3.5 ${
+                state === "error" ? "ring-1 ring-[#FB2C36]" : focused ? "ring-1 ring-[#155DFC]" : ""
+              }`
+        }
+      >
+        {icon === "mail" ? <MailGlyph className={`size-4 shrink-0 ${tone}`} /> : null}
+        <div className="min-w-0 flex-1">
+          {label ? (
+            <div className={`text-[11px] leading-4 ${state === "error" ? "text-[#FB2C36]" : "text-[#99A1AF]"}`}>
+              {label}
+            </div>
+          ) : null}
+          <div className={`truncate text-[15px] font-medium leading-5 ${textTone} ${disabled ? "opacity-35" : ""}`}>
+            {value}
+            {focused ? <span className="ml-0.5 text-[#155DFC]">|</span> : null}
+          </div>
+        </div>
+        {icon === "copy" ? <CopyGlyph className={`size-4 shrink-0 ${tone} ${disabled ? "opacity-35" : ""}`} /> : null}
+        {icon === "eye" ? <EyeOffGlyph className={`size-4 shrink-0 ${tone} ${disabled ? "opacity-35" : ""}`} /> : null}
+      </div>
+      {helper ? (
+        <div className={`mt-1 flex items-center gap-1 text-[10px] leading-3 ${state === "error" ? "text-[#FB2C36]" : "text-[#65758B]"}`}>
+          <span className="flex size-3 items-center justify-center rounded-full border border-current text-[8px] font-semibold">
+            i
+          </span>
+          <span>{helper}</span>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function CopyGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M8 8h10v10H8z" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M5 15V5h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function EyeOffGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M4 4l16 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M6.5 7.5C4.2 9 3 12 3 12s3 6 9 6c1.7 0 3.1-.5 4.3-1.1M10 6.2A9.8 9.8 0 0 1 12 6c6 0 9 6 9 6s-.7 1.5-2.1 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function MailGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M4 6h16v12H4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
