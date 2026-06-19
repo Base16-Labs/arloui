@@ -7,18 +7,14 @@ import { Pill } from "@/components/ui/Pill";
 import { Chip } from "@/components/ui/Chip";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 import { CopyButton } from "@/components/ui/CopyButton";
-import { PhoneFrame, PreviewCard } from "@/components/ui/PhoneFrame";
 import { ButtonDocPlayground } from "@/components/docs/button-doc-playground";
+import { ButtonPhonePreview } from "@/components/docs/button-phone-preview";
 import { InputDocPlayground } from "@/components/docs/input-doc-playground";
+import { InputPhonePreview } from "@/components/docs/input-phone-preview";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
 import {
-  DocAppleMark,
-  DocFacebookMark,
-  DocGoogleMark,
   DocIconArrowRight,
   DocIconLock,
-  DocXMark,
-  pillRowClass,
 } from "@/components/docs/button-preview-icons";
 import { componentGroups } from "@/lib/routes";
 
@@ -59,8 +55,9 @@ const buttonData = {
   category: "Controls",
   title: "Button",
   lede:
-    "Hierarchy comes from tone, appearance, and size. From there, add icons or an icon-only control, plus loading and disabled where your screen calls for them. Measurements and states follow the Figma Buttons/Button component and the semantic tokens on this page.",
-  figma: "#",
+    "The primary commitment surface on a mobile screen — strong defaults across three tones and four appearances, with press feedback that earns the tap.",
+  figma:
+    "https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=266-4982",
   source:
     "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/button",
   states: [
@@ -71,23 +68,46 @@ const buttonData = {
     "focus",
     "icon-only",
     "reduced motion",
-    "dark mode",
-    "light mode",
     "RTL",
     "dynamic type",
   ],
   tokens: [
-    "sizing.buttonHeight",
-    "sizing.icon",
-    "interactivePrimary",
-    "interactiveError",
-    "interactiveSecondary",
-    "interactiveDisabled",
-    "textDisabled",
-    "touchFeedbackMain",
-    "interactiveTertiaryPressed",
-    "motion.duration.press",
-    "motion.pressed.scale",
+    "colors.interactivePrimary",
+    "colors.feedbackError",
+    "colors.feedbackErrorBg",
+    "colors.feedbackInfoBg",
+    "colors.textInteractivePrimary",
+    "colors.textInteractiveError",
+    "colors.textInteractiveTertiary",
+    "colors.textPrimary",
+    "colors.textSecondary",
+    "colors.textInverse",
+    "colors.textTertiary",
+    "colors.surfaceInput",
+    "colors.interactiveDisabled",
+    "colors.interactiveTertiaryPressed",
+    "colors.touchFeedbackMain",
+    "colors.borderPrimary",
+    "colors.borderError",
+    "colors.borderSecondary",
+    "sizing.buttonHeight.sm",
+    "sizing.buttonHeight.md",
+    "sizing.buttonHeight.lg",
+    "sizing.buttonHeight.xl",
+    "sizing.icon.xs",
+    "sizing.icon.sm",
+    "sizing.icon.md",
+    "sizing.touchTarget.minimum",
+    "radii.full",
+    "focusRing.main",
+    "focusRing.error",
+    "spacing.3",
+    "spacing.4",
+    "spacing.5",
+    "spacing.6",
+    "typography.body",
+    "typography.bodySm",
+    "typography.title3",
   ],
   headings: [
     { id: "anatomy", label: "Anatomy" },
@@ -129,7 +149,6 @@ const inputData = {
     "search",
     "leading icon",
     "trailing action",
-    "plain / no bg",
     "dark mode",
   ],
   tokens: [
@@ -339,31 +358,52 @@ function InputDocPage() {
           </Pill>
         </div>
 
-        <PreviewCard className="mb-12">
-          <PhoneFrame>
-            <div className="flex h-full flex-col justify-center gap-6 overflow-hidden bg-[#F9FAFB] px-5 py-8 dark:bg-[#09090B]">
-              <div className="space-y-3">
-                <InputPreviewRow label="Name" value="Allan Thomas" />
-                <InputPreviewRow label="Password" value="••••••••" icon="eye" state="error" helper="Incorrect password" />
-              </div>
-
-              <div className="rounded-xl bg-[#09090B] px-5 py-5 dark:bg-black">
-                <div className="space-y-5">
-                  <InputPreviewRow appearance="plain" value="Content" icon="copy" helper="Helper text" />
-                  <InputPreviewRow appearance="plain" value="••••••••" icon="eye" helper="Helper text" focused />
-                </div>
-              </div>
-            </div>
-          </PhoneFrame>
-        </PreviewCard>
+        <InputPhonePreview />
 
         <Section
           id="anatomy"
           title="Anatomy"
-          sub="Named slots map directly to the registry Input props."
+          sub="Named slots map directly to the registry Input props — sized, spaced, and coloured from tokens."
         >
-          <div className="flex h-[220px] items-center justify-center rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] font-mono text-xs text-ink-3 dark:bg-surface-raised">
-            label · leadingIcon · leadingAction · TextInput · trailingAction · helper/error text
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[320px]">
+              <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                <span>leadingIcon</span>
+                <span>label · value</span>
+                <span>trailingAction</span>
+              </div>
+              <div className="flex items-center gap-2 rounded-md bg-[#F3F4F6] px-3 py-2">
+                <span className="size-4 shrink-0 rounded-sm border border-line-strong" aria-hidden />
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] leading-4 text-[#99A1AF]">Username</div>
+                  <div className="text-[14px] font-medium leading-5 text-[#364153]">@allanthomas</div>
+                </div>
+                <span className="size-4 shrink-0 rounded-sm border border-line-strong" aria-hidden />
+              </div>
+              <div className="mt-1.5 px-1 text-[11px] text-[#6A7282]">Helper / error text</div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Inset label", "typography.bodySm / label"],
+                ["Value text", "typography.body · textPrimary"],
+                ["Placeholder", "colors.textTertiary"],
+                ["Leading / trailing icon", "sizing.icon.xs–sm"],
+                ["Container fill", "colors.surfaceInput"],
+                ["Corner radius", "radii.md (filled) · 0 (plain)"],
+                ["Padding", "spacing.3 horizontal · spacing.1–2 vertical"],
+                ["Focus / error border", "colors.borderFocus / borderError"],
+                ["Helper / error text", "colors.textSecondary / textInteractiveError"],
+              ].map(([name, token]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                </div>
+              ))}
+            </div>
           </div>
         </Section>
 
@@ -459,96 +499,6 @@ import { Input, InputAction } from "@/components/ui/input";
   );
 }
 
-function InputPreviewRow({
-  appearance = "filled",
-  label,
-  value,
-  icon,
-  helper,
-  state,
-  focused = false,
-  disabled = false,
-  muted = false,
-}: {
-  appearance?: "filled" | "plain";
-  label?: string;
-  value: string;
-  icon?: "copy" | "eye" | "mail";
-  helper?: string;
-  state?: "error";
-  focused?: boolean;
-  disabled?: boolean;
-  muted?: boolean;
-}) {
-  const isPlain = appearance === "plain";
-  const tone = state === "error" ? "text-[#FB2C36]" : isPlain ? "text-[#65758B]" : "text-[#6A7282]";
-  const textTone = muted ? "text-[#D1D5DC]" : state === "error" ? "text-[#FB2C36]" : isPlain ? "text-[#D1D5DC]" : "text-[#364153]";
-
-  return (
-    <div className={isPlain ? "min-w-0" : "space-y-1.5"}>
-      <div
-        className={
-          isPlain
-            ? "flex min-h-8 items-center gap-2 bg-transparent"
-            : `flex min-h-[54px] items-center gap-2 rounded-md bg-[#F3F4F6] px-3.5 ${
-                state === "error" ? "ring-1 ring-[#FB2C36]" : focused ? "ring-1 ring-[#155DFC]" : ""
-              }`
-        }
-      >
-        {icon === "mail" ? <MailGlyph className={`size-4 shrink-0 ${tone}`} /> : null}
-        <div className="min-w-0 flex-1">
-          {label ? (
-            <div className={`text-[11px] leading-4 ${state === "error" ? "text-[#FB2C36]" : "text-[#99A1AF]"}`}>
-              {label}
-            </div>
-          ) : null}
-          <div className={`truncate text-[15px] font-medium leading-5 ${textTone} ${disabled ? "opacity-35" : ""}`}>
-            {value}
-            {focused ? <span className="ml-0.5 text-[#155DFC]">|</span> : null}
-          </div>
-        </div>
-        {icon === "copy" ? <CopyGlyph className={`size-4 shrink-0 ${tone} ${disabled ? "opacity-35" : ""}`} /> : null}
-        {icon === "eye" ? <EyeOffGlyph className={`size-4 shrink-0 ${tone} ${disabled ? "opacity-35" : ""}`} /> : null}
-      </div>
-      {helper ? (
-        <div className={`mt-1 flex items-center gap-1 text-[10px] leading-3 ${state === "error" ? "text-[#FB2C36]" : "text-[#65758B]"}`}>
-          <span className="flex size-3 items-center justify-center rounded-full border border-current text-[8px] font-semibold">
-            i
-          </span>
-          <span>{helper}</span>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function CopyGlyph({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="M8 8h10v10H8z" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M5 15V5h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function EyeOffGlyph({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="M4 4l16 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M6.5 7.5C4.2 9 3 12 3 12s3 6 9 6c1.7 0 3.1-.5 4.3-1.1M10 6.2A9.8 9.8 0 0 1 12 6c6 0 9 6 9 6s-.7 1.5-2.1 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function MailGlyph({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d="M4 6h16v12H4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function ButtonDocPage() {
   return (
     <>
@@ -570,115 +520,53 @@ function ButtonDocPage() {
           </Pill>
         </div>
 
-        <PreviewCard className="mb-12">
-          <PhoneFrame>
-            <div className="relative flex h-full flex-col items-center overflow-y-auto bg-[#f4f4f2] px-4 py-5">
-              <div className="flex w-full max-w-[220px] flex-col items-center gap-3">
-                <div className="flex w-full flex-col items-center gap-2">
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} bg-[#155DFC] text-white shadow-sm`}
-                  >
-                    <DocIconLock className="size-[18px] shrink-0 opacity-95" />
-                    <span className="whitespace-nowrap">Button</span>
-                    <DocIconArrowRight className="size-[18px] shrink-0 opacity-95" />
-                  </button>
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} bg-[#F3F4F6] text-[#364153]`}
-                  >
-                    <DocIconLock className="size-[18px] shrink-0 text-[#364153]" />
-                    <span className="whitespace-nowrap">Button</span>
-                    <DocIconArrowRight className="size-[18px] shrink-0 text-[#364153]" />
-                  </button>
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} border border-[#155DFC] bg-transparent text-[#155DFC]`}
-                  >
-                    <DocIconLock className="size-[18px] shrink-0" />
-                    <span className="whitespace-nowrap">Button</span>
-                    <DocIconArrowRight className="size-[18px] shrink-0" />
-                  </button>
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} bg-[#FB2C36] text-white`}
-                  >
-                    <DocIconLock className="size-[18px] shrink-0 opacity-95" />
-                    <span className="whitespace-nowrap">Button</span>
-                    <DocIconArrowRight className="size-[18px] shrink-0 opacity-95" />
-                  </button>
-                </div>
-
-                <div className="flex justify-center gap-2 pt-0.5">
-                  <button
-                    type="button"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#155DFC] text-white shadow-sm"
-                    aria-label="Icon only, primary"
-                  >
-                    <DocIconLock className="size-[18px]" />
-                  </button>
-                  <button
-                    type="button"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#F3F4F6] text-[#364153]"
-                    aria-label="Icon only, neutral"
-                  >
-                    <DocIconLock className="size-[18px]" />
-                  </button>
-                  <button
-                    type="button"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[#155DFC] bg-transparent text-[#155DFC]"
-                    aria-label="Icon only, outline"
-                  >
-                    <DocIconLock className="size-[18px]" />
-                  </button>
-                </div>
-
-                <div className="flex w-full flex-col items-center gap-2 border-t border-black/5 pt-3">
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} border border-[#DADCE0] bg-white text-[#1F1F1F]`}
-                  >
-                    <DocGoogleMark className="size-[18px] shrink-0" />
-                    <span className="min-w-0 shrink truncate">Continue with Google</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} bg-[#1877F2] text-white`}
-                  >
-                    <DocFacebookMark className="size-[18px] shrink-0 text-white" />
-                    <span className="min-w-0 shrink truncate">
-                      Continue with Facebook
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} bg-black text-white`}
-                  >
-                    <DocXMark className="size-[18px] shrink-0 text-white" />
-                    <span className="min-w-0 shrink truncate">Continue with X</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`${pillRowClass()} bg-black text-white`}
-                  >
-                    <DocAppleMark className="size-[18px] shrink-0 text-white" />
-                    <span className="min-w-0 shrink truncate">
-                      Continue with Apple
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </PhoneFrame>
-        </PreviewCard>
+        <ButtonPhonePreview />
 
         <Section
           id="anatomy"
           title="Anatomy"
-          sub="Layout slots mirror the registry component — label, optional icons, and pressed/loading overlays."
+          sub="Every Button is the same slots — an optional leading icon, the label, an optional trailing icon — sized and spaced entirely from tokens."
         >
-          <div className="flex h-[220px] items-center justify-center rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] font-mono text-xs text-ink-3 dark:bg-surface-raised">
-            label · leadingIcon · trailingIcon · press overlay · focus ring · minHeight (pill radius)
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="flex flex-col items-center gap-3">
+              <div className="mb-1 flex w-full max-w-[300px] justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                <span>leadingIcon</span>
+                <span>label</span>
+                <span>trailingIcon</span>
+              </div>
+              <div className="relative">
+                <div className="pointer-events-none absolute -inset-2.5 rounded-[22px] border border-dashed border-line-strong" />
+                <div className="relative flex items-center gap-2 rounded-full bg-[#155DFC] px-4 py-2.5 text-white shadow-sm">
+                  <DocIconLock className="size-[18px] opacity-95" aria-hidden />
+                  <span className="text-[14px] font-semibold leading-none">Button</span>
+                  <DocIconArrowRight className="size-[18px] opacity-95" aria-hidden />
+                </div>
+              </div>
+              <span className="font-mono text-[10px] text-ink-3">
+                dashed bound = 44pt touch target (hitSlop)
+              </span>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Label", "typography.body · weight 600"],
+                ["Leading / trailing icon", "sizing.icon.xs–md"],
+                ["Height", "sizing.buttonHeight.sm–xl · 36–52"],
+                ["Corner radius", "radii.full (pill)"],
+                ["Horizontal padding", "spacing.3–6 by size"],
+                ["Icon ↔ label gap", "spacing.1–3 by size"],
+                ["Pressed overlay", "colors.touchFeedbackMain"],
+                ["Focus ring (web)", "focusRing.main / error"],
+              ].map(([name, token]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                </div>
+              ))}
+            </div>
           </div>
         </Section>
 
@@ -705,19 +593,18 @@ function ButtonDocPage() {
           title="Social auth"
           sub={
             <>
-              Full-width pills with a provider mark and label, the way the{" "}
+              Full-width pills with a provider mark and fixed label, the way the{" "}
               <span className="font-medium text-ink-2">Social</span> frame lays
-              them out. Facebook and X are implemented as{" "}
+              them out. All four providers — Google, Apple, Facebook, and X — ship in{" "}
               <code className="font-mono text-[12px] text-ink-2">
                 SocialAuthButton
-              </code>
-              . For Google or Apple, it&apos;s usually a{" "}
-              <code className="font-mono text-[12px] text-ink-2">Button</code>{" "}
-              and whatever artwork you pass through{" "}
-              <code className="font-mono text-[12px] text-ink-2">
-                renderLeading
-              </code>
-              .
+              </code>{" "}
+              via{" "}
+              <code className="font-mono text-[12px] text-ink-2">platform</code>{" "}
+              and{" "}
+              <code className="font-mono text-[12px] text-ink-2">type</code>{" "}
+              (<code className="font-mono text-[12px] text-ink-2">fill</code> or{" "}
+              <code className="font-mono text-[12px] text-ink-2">secondary</code>).
             </>
           }
         >
@@ -741,16 +628,35 @@ function ButtonDocPage() {
         </Section>
 
         <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
-          <CodeBlock language="tsx">{`npx arloui add button
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add button
 
-import { Button, SocialAuthButton } from "@/components/ui/button";
+import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/button";`}</CodeBlock>
 
-<Button label="Continue" tone="primary" appearance="solid" />
-<Button label="Cancel" tone="neutral" appearance="outline" />
-<Button label="Remove" tone="danger" appearance="solid" />
+            <CodeBlock language="tsx">{`// Tone x appearance
+<Button tone="primary" appearance="solid">Continue</Button>
+<Button tone="neutral" appearance="soft">Cancel</Button>
+<Button tone="neutral" appearance="outline">Skip</Button>
+<Button tone="danger" appearance="solid">Delete</Button>
 
-<SocialAuthButton provider="facebook" appearance="brandSolid" />
-<SocialAuthButton provider="x" appearance="brandSolid" />`}</CodeBlock>
+// Icons, icon-only, loading, full width
+<Button leadingIcon={<ArrowLeft />}>Back</Button>
+<Button trailingIcon={<ChevronRight />}>Next</Button>
+<Button iconOnly accessibilityLabel="Settings" leadingIcon={<Settings />} />
+<Button loading>Submit</Button>
+<Button fullWidth>Continue</Button>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`// Ghost - chromeless, low emphasis
+<GhostButton type="primary">Learn more</GhostButton>
+<GhostButton type="destructive">Remove</GhostButton>
+
+// FAB - floating action, requires accessibilityLabel
+<FAB tone="primary" icon={<Plus />} accessibilityLabel="Add item" onPress={handleAdd} />
+
+// Social auth - fixed provider styling, four platforms
+<SocialAuthButton platform="google" type="fill" onPress={handleGoogle} />
+<SocialAuthButton platform="apple" type="secondary" onPress={handleApple} />`}</CodeBlock>
+          </div>
         </Section>
 
         <Section id="tokens" title="Tokens used" sub="Click any to jump to its definition in /docs/primitives/tokens.">
@@ -766,11 +672,14 @@ import { Button, SocialAuthButton } from "@/components/ui/button";
           </div>
         </Section>
 
-        <Section id="accessibility" title="Accessibility" sub="Semantics, focus, and loading.">
+        <Section id="accessibility" title="Accessibility" sub="Semantics, focus, hit targets, and motion.">
           <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
-            <li>Exposes accessibilityRole &quot;button&quot; with label from props or explicit accessibilityLabel.</li>
-            <li>Web focus uses the design-system focus ring tokens (primary vs danger).</li>
-            <li>Loading sets accessibilityState busy; interaction is disabled until the action completes.</li>
+            <li>Exposes accessibilityRole &quot;button&quot; with the label from children or an explicit accessibilityLabel.</li>
+            <li>icon-only buttons and FAB require accessibilityLabel — without it the control announces nothing useful.</li>
+            <li>Loading sets accessibilityState busy and blocks interaction until the action resolves.</li>
+            <li>Web focus draws the design-system focus ring (primary, or error for the danger tone).</li>
+            <li>The sm (36px) and md (40px) sizes expand to a 44pt touch target via hitSlop.</li>
+            <li>prefers-reduced-motion replaces the press scale with an opacity dim to 0.85, and the loading spinner runs at reduced speed.</li>
           </ul>
         </Section>
 

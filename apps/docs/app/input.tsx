@@ -17,15 +17,15 @@ import { VariantChip, VariantControlRow } from '@/components/playground/variant-
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type InputType = 'text' | 'email' | 'password' | 'search';
-type LabelMode = 'none' | 'above' | 'inset';
-type InputSize = 'md' | 'lg';
+type LabelMode = 'none' | 'inset';
+type InputSize = 'sm' | 'md';
 type IconMode = 'none' | 'leading' | 'trailing' | 'both';
 type ContentMode = 'empty' | 'filled';
 type FieldState = 'default' | 'helper' | 'error' | 'disabled';
 
 const TYPES: InputType[] = ['text', 'email', 'password', 'search'];
-const LABELS: LabelMode[] = ['none', 'above', 'inset'];
-const SIZES: InputSize[] = ['md', 'lg'];
+const LABELS: LabelMode[] = ['none', 'inset'];
+const SIZES: InputSize[] = ['sm', 'md'];
 const ICONS: IconMode[] = ['none', 'leading', 'trailing', 'both'];
 const CONTENT: ContentMode[] = ['empty', 'filled'];
 const STATES: FieldState[] = ['default', 'helper', 'error', 'disabled'];
@@ -38,18 +38,18 @@ export default function InputCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [type, setType] = useState<InputType>('text');
   const [labelMode, setLabelMode] = useState<LabelMode>('none');
-  const [size, setSize] = useState<InputSize>('lg');
+  const [size, setSize] = useState<InputSize>('md');
   const [icons, setIcons] = useState<IconMode>('trailing');
   const [content, setContent] = useState<ContentMode>('filled');
-  const [state, setState] = useState<FieldState>('helper');
-  const [appearance, setAppearance] = useState<InputAppearance>('plain');
+  const [state, setState] = useState<FieldState>('default');
+  const [appearance, setAppearance] = useState<InputAppearance>('filled');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [value, setValue] = useState('Allan Thomas');
   const previewOffset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -122 : 0,
+      toValue: sheetOpen ? -170 : 0,
       damping: 27,
       stiffness: 300,
       mass: 0.8,
@@ -77,6 +77,7 @@ export default function InputCanvas() {
   }, [appearance, content, type]);
 
   const iconColor = state === 'disabled' ? t.colors.textDisabled : t.colors.textSecondary;
+  const iconSize = size === 'sm' ? 16 : 20;
   const leadingName =
     type === 'email' ? 'mail-outline' : type === 'search' ? 'search-outline' : 'person-outline';
   const inputLabel =
@@ -99,7 +100,7 @@ export default function InputCanvas() {
         >
           <Ionicons
             name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
-            size={20}
+            size={iconSize}
             color={iconColor}
           />
         </InputAction>
@@ -109,14 +110,14 @@ export default function InputCanvas() {
     if (type === 'search' && value) {
       return (
         <InputAction accessibilityLabel="Clear input" onPress={() => setValue('')}>
-          <Ionicons name="close" size={21} color={iconColor} />
+          <Ionicons name="close" size={iconSize} color={iconColor} />
         </InputAction>
       );
     }
 
     return (
       <InputAction accessibilityLabel="Copy input value" onPress={() => undefined}>
-        <Ionicons name="copy-outline" size={20} color={iconColor} />
+        <Ionicons name="copy-outline" size={iconSize} color={iconColor} />
       </InputAction>
     );
   }, [iconColor, icons, passwordVisible, type, value]);
@@ -133,14 +134,15 @@ export default function InputCanvas() {
     autoCapitalize: type === 'email' || type === 'search' ? 'none' : 'words',
     secureTextEntry: type === 'password' && !passwordVisible,
     editable: state !== 'disabled',
+    state: state === 'error' ? 'error' : 'default',
     helperText: state === 'helper' ? 'Helper text' : undefined,
     errorText: state === 'error' ? `${inputLabel} is invalid` : undefined,
     leadingIcon:
       icons === 'leading' || icons === 'both' ? (
-        <Ionicons name={leadingName} size={20} color={iconColor} />
+        <Ionicons name={leadingName} size={iconSize} color={iconColor} />
       ) : undefined,
     trailingAction,
-    containerStyle: { width: '100%' },
+    containerStyle: appearance === 'plain' ? { alignSelf: 'center' } : { width: '100%' },
     inputStyle: { fontFamily: 'Manrope' },
     helperStyle: { fontFamily: 'Manrope' },
   };
@@ -175,7 +177,14 @@ export default function InputCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
-            <View style={{ width: '100%', maxWidth: 360 }}>
+            <View
+              style={{
+                width: '100%',
+                maxWidth: 350,
+                paddingVertical: 32,
+                alignItems: appearance === 'plain' ? 'center' : 'stretch',
+              }}
+            >
               <Input {...fieldProps} />
             </View>
           </Animated.View>

@@ -99,6 +99,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Input',
     description:
       'A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.',
+    dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/input/input.tsx', target: 'input.tsx' },

@@ -5,9 +5,10 @@
  * Shadow on rest, no shadow on press. Reduced opacity (~28%) when disabled.
  * Export `FAB` is the canonical name; `FabButton` kept for backward compatibility.
  */
-import { forwardRef, useMemo, useRef, useState, type ReactNode } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { haptic as triggerHaptic } from '@arloui/utils';
 import {
+  AccessibilityInfo,
   Animated,
   Easing,
   Platform,
@@ -19,6 +20,25 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+
+/** Tracks the OS "reduce motion" accessibility setting. */
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
+      if (mounted) setReduced(value);
+    });
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
+      setReduced(value);
+    });
+    return () => {
+      mounted = false;
+      sub?.remove?.();
+    };
+  }, []);
+  return reduced;
+}
 
 export type FabTone = 'primary' | 'neutral';
 
@@ -60,6 +80,7 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
   const press = useRef(new Animated.Value(0)).current;
   const [pressed, setPressed] = useState(false);
   const [focused, setFocused] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const content = icon ?? children;
 
@@ -108,9 +129,9 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
     onPressOut?.(e);
   };
 
-  const animated = {
-    transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }],
-  };
+  const animated = reduceMotion
+    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
+    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
 
   const bg = pressed ? palette.pressed : palette.rest;
 

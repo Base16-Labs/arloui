@@ -42,7 +42,7 @@ export default function ButtonCanvas() {
 
   useEffect(() => {
     Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -122 : 0,
+      toValue: sheetOpen ? -170 : 0,
       damping: 27,
       stiffness: 300,
       mass: 0.8,

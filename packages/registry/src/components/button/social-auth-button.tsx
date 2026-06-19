@@ -5,9 +5,10 @@
  * Two types: `fill` (brand background, white text) and `secondary` (outlined, brand icon, text-primary label).
  * Labels are not customizable per spec: "Sign in with {Platform}".
  */
-import { forwardRef, useMemo, useRef, useState, type ReactNode } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { haptic as triggerHaptic } from '@arloui/utils';
 import {
+  AccessibilityInfo,
   ActivityIndicator,
   Animated,
   Easing,
@@ -21,6 +22,25 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+
+/** Tracks the OS "reduce motion" accessibility setting. */
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
+      if (mounted) setReduced(value);
+    });
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
+      setReduced(value);
+    });
+    return () => {
+      mounted = false;
+      sub?.remove?.();
+    };
+  }, []);
+  return reduced;
+}
 
 const BRAND_COLORS = {
   google: '#4285F4',
@@ -174,6 +194,7 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
   const press = useRef(new Animated.Value(0)).current;
   const [pressed, setPressed] = useState(false);
   const [focused, setFocused] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const platform = platformProp ?? (provider as SocialPlatform) ?? 'google';
   const type: SocialAuthType = typeProp ?? (appearance ? mapLegacyAppearance(appearance) : 'fill');
@@ -225,9 +246,9 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
     onPressOut?.(e);
   };
 
-  const animated = {
-    transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }],
-  };
+  const animated = reduceMotion
+    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
+    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
 
   const label = LABELS[platform];
 

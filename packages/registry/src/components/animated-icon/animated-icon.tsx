@@ -255,8 +255,8 @@ const definitions: Record<LineAnimatedIconName, TransitionDefinition> = {
     },
     to: {
       lines: [[9, 4, 9, 4, 0], [9, 20, 9, 20, 0], [4, 12, 4, 12, 0], [20, 12, 20, 12, 0], [6, 6, 6, 6, 0], [18, 18, 18, 18, 0], [18, 6, 18, 6, 0], [6, 18, 6, 18, 0], [7, 5, 18, 18]],
+      rotation: 18,
     },
-    rotation: 18,
   },
   'grid-list': {
     fromLabel: 'Grid',
@@ -290,8 +290,7 @@ const definitions: Record<LineAnimatedIconName, TransitionDefinition> = {
     fromLabel: 'Send',
     toLabel: 'Loading',
     from: { lines: [[3.5, 5, 21, 12], [21, 12, 3.5, 19], [3.5, 19, 8.5, 12], [8.5, 12, 3.5, 5]] },
-    to: { lines: [[12, 4, 18, 7], [18, 7, 20, 12], [20, 12, 17, 17], [17, 17, 12, 20]] },
-    rotation: 180,
+    to: { lines: [[12, 4, 18, 7], [18, 7, 20, 12], [20, 12, 17, 17], [17, 17, 12, 20]], rotation: 180 },
   },
   'copy-check': {
     fromLabel: 'Copy',

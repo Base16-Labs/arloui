@@ -10,6 +10,8 @@ import {
   Text,
   useWindowDimensions,
   View,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -42,6 +44,9 @@ export function VariantSheet({
   const closing = useRef(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mounted, setMounted] = useState(visible);
+  const [scrollY, setScrollY] = useState(0);
+  const [scrollHeight, setScrollHeight] = useState(0);
+  const [scrollViewportHeight, setScrollViewportHeight] = useState(0);
 
   const open = () => {
     closing.current = false;
@@ -135,11 +140,13 @@ export function VariantSheet({
 
   if (!mounted) return null;
 
-  const overlayOpacity = translateY.interpolate({
-    inputRange: [0, sheetHeight],
-    outputRange: [0.2, 0],
-    extrapolate: 'clamp',
-  });
+  const canScroll = scrollHeight > scrollViewportHeight + 8;
+  const canScrollDown = canScroll && scrollY < scrollHeight - scrollViewportHeight - 12;
+  const canScrollUp = canScroll && scrollY > 8;
+
+  function handleScroll(event: NativeSyntheticEvent<NativeScrollEvent>) {
+    setScrollY(event.nativeEvent.contentOffset.y);
+  }
 
   return (
     <View
@@ -154,30 +161,6 @@ export function VariantSheet({
         justifyContent: 'flex-end',
       }}
     >
-      <Animated.View
-        pointerEvents="none"
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          backgroundColor: '#09090B',
-          opacity: overlayOpacity,
-        }}
-      />
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Close variant menu"
-        onPress={dismiss}
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: sheetHeight,
-          left: 0,
-        }}
-      />
       <Animated.View
         style={{
           height: sheetHeight + bottomBleed,
@@ -225,16 +208,80 @@ export function VariantSheet({
           VARIANTS
         </Text>
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 24,
-            paddingTop: 17,
-            paddingBottom: 22,
-          }}
-        >
-          {children}
-        </ScrollView>
+        <View style={{ flex: 1, position: 'relative' }}>
+          <ScrollView
+            style={{ flex: 1 }}
+            showsVerticalScrollIndicator
+            persistentScrollbar
+            indicatorStyle="white"
+            scrollEventThrottle={16}
+            onScroll={handleScroll}
+            onLayout={(event) => setScrollViewportHeight(event.nativeEvent.layout.height)}
+            onContentSizeChange={(_, height) => setScrollHeight(height)}
+            contentContainerStyle={{
+              paddingHorizontal: 24,
+              paddingTop: 17,
+              paddingBottom: 42,
+            }}
+          >
+            {children}
+          </ScrollView>
+
+          {canScrollUp ? (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                left: 0,
+                height: 20,
+                borderTopWidth: 1,
+                borderTopColor: 'rgba(250,250,250,0.08)',
+                backgroundColor: 'rgba(39,39,42,0.92)',
+              }}
+            >
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 16,
+                  width: 26,
+                  height: 26,
+                  borderRadius: 999,
+                  borderWidth: 1,
+                  borderColor: '#3F3F46',
+                  backgroundColor: '#303033',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Ionicons name="chevron-up" size={14} color="#D4D4D8" />
+              </View>
+            </View>
+          ) : null}
+
+          {canScrollDown ? (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                right: 16,
+                bottom: 8,
+                width: 26,
+                height: 26,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: '#3F3F46',
+                backgroundColor: '#303033',
+              }}
+            >
+              <Ionicons name="chevron-down" size={14} color="#D4D4D8" />
+            </View>
+          ) : null}
+        </View>
 
         <View
           style={{

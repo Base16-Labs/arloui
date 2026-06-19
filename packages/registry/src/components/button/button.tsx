@@ -16,6 +16,7 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { haptic as triggerHaptic } from '@arloui/utils';
 import {
+  AccessibilityInfo,
   Animated,
   Easing,
   Platform,
@@ -31,6 +32,25 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+
+/** Tracks the OS "reduce motion" accessibility setting. */
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
+      if (mounted) setReduced(value);
+    });
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
+      setReduced(value);
+    });
+    return () => {
+      mounted = false;
+      sub?.remove?.();
+    };
+  }, []);
+  return reduced;
+}
 
 export type ButtonTone = 'primary' | 'neutral' | 'danger';
 export type ButtonAppearance = 'solid' | 'soft' | 'ghost' | 'outline';
@@ -147,21 +167,29 @@ function touchTargetInset(visualSize: number, minimumSize: number) {
   return inset > 0 ? { top: inset, bottom: inset, left: inset, right: inset } : undefined;
 }
 
-function ButtonSpinner({ color, size }: { color: string; size: number }) {
+function ButtonSpinner({
+  color,
+  size,
+  reduceMotion,
+}: {
+  color: string;
+  size: number;
+  reduceMotion?: boolean;
+}) {
   const rotation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const animation = Animated.loop(
       Animated.timing(rotation, {
         toValue: 1,
-        duration: 800,
+        duration: reduceMotion ? 1600 : 800,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
     );
     animation.start();
     return () => animation.stop();
-  }, [rotation]);
+  }, [rotation, reduceMotion]);
 
   return (
     <Animated.View
@@ -233,6 +261,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   const press = useRef(new Animated.Value(0)).current;
   const [pressed, setPressed] = useState(false);
   const [focused, setFocused] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const { tone, appearance } = useMemo(() => {
     if (variant != null) return mapLegacyVariant(variant);
@@ -301,9 +330,9 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     onPressOut?.(e);
   };
 
-  const animated = {
-    transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }],
-  };
+  const animated = reduceMotion
+    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
+    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
 
   const a11yLabel = accessibilityLabel ?? (iconOnly ? undefined : text);
 
@@ -357,12 +386,12 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
         >
           {loading ? (
             <View style={iconWrap}>
-              <ButtonSpinner color={palette.fg} size={ipx} />
+              <ButtonSpinner color={palette.fg} size={ipx} reduceMotion={reduceMotion} />
             </View>
           ) : leadingIcon ? (
             <View style={iconWrap}>{leadingIcon}</View>
           ) : null}
-          {!iconOnly ? (
+          {!loading && !iconOnly ? (
             <Text
               numberOfLines={1}
               style={[

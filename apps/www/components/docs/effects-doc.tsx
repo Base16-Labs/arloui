@@ -118,7 +118,9 @@ export function EffectsDoc() {
             const opacity =
               shadowMode === 'dark' ? shadow.darkOpacity : shadow.lightOpacity;
             const color = shadowMode === 'dark' ? '81, 162, 255' : '16, 24, 40';
+            const hexColor = shadowMode === 'dark' ? '#51A2FF' : '#101828';
             const css = `0 ${shadow.offset}px ${shadow.blur}px rgba(${color}, ${opacity})`;
+            const rn = `{ shadowColor: '${hexColor}', shadowOffset: { width: 0, height: ${shadow.offset} }, shadowOpacity: ${opacity}, shadowRadius: ${shadow.blur}, elevation: ${shadow.elevation} }`;
 
             return (
               <div
@@ -158,6 +160,12 @@ export function EffectsDoc() {
                     <dt>CSS</dt>
                     <dd>{css}</dd>
                   </div>
+                  <div className="col-span-2 break-all">
+                    <dt>React Native</dt>
+                    <dd>
+                      theme.shadows.{shadow.name} = {rn}
+                    </dd>
+                  </div>
                 </dl>
               </div>
             );
@@ -175,17 +183,19 @@ export function EffectsDoc() {
             label="Main"
             description="Primary-400 outer ring"
             ring="0 0 0 2px var(--canvas), 0 0 0 4px #51A2FF"
+            radius="rounded-full"
           >
-            <button className="h-10 rounded-full bg-[#155DFC] px-5 text-[13px] font-medium text-white">
+            <button className="flex h-10 items-center rounded-full bg-[#155DFC] px-5 text-[13px] font-medium text-white">
               Continue
             </button>
           </FocusExample>
           <FocusExample
             label="Error"
-            description="Error-500 outer ring"
-            ring="0 0 0 2px var(--canvas), 0 0 0 4px #FB2C36"
+            description="Error-300 outer ring"
+            ring="0 0 0 2px var(--canvas), 0 0 0 4px #FFA2A2"
+            radius="rounded-md"
           >
-            <div className="h-11 w-full rounded-md border border-[#FB2C36] bg-canvas px-3 py-2 text-[13px] text-[#FB2C36]">
+            <div className="h-11 w-44 rounded-md border border-[#FB2C36] bg-canvas px-3 py-2 text-[13px] text-[#FB2C36]">
               Invalid value
             </div>
           </FocusExample>
@@ -237,7 +247,12 @@ export function EffectsDoc() {
           <div className="grid min-h-64 items-end gap-4 sm:grid-cols-3">
             <GlassSample name="Large" use="Nav and tab bars" className="min-h-36" />
             <GlassSample name="Medium" use="Overlays and sheets" className="min-h-28" />
-            <GlassSample name="Small" use="Buttons and chips" className="min-h-20" />
+            <GlassSample
+              name="Small"
+              use="Buttons and chips"
+              className="min-h-20"
+              states={['Default', 'Preferred']}
+            />
           </div>
         </div>
       </EffectSection>
@@ -264,7 +279,7 @@ export function EffectsDoc() {
       </EffectSection>
 
       <EffectSection id="tokens" title="Tokens used">
-        <div className="overflow-hidden rounded-lg border border-line">
+        <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
           {[
             ['theme.shadows.none–xl', 'React Native shadow objects and Android elevation'],
             ['focusRing.light.main/error', 'Two-layer web focus ring strings'],
@@ -339,17 +354,19 @@ function FocusExample({
   label,
   description,
   ring,
+  radius,
   children,
 }: {
   label: string;
   description: string;
   ring: string;
+  radius: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="rounded-lg border border-line bg-surface p-5">
       <div className="flex min-h-24 items-center justify-center rounded-md bg-canvas p-5">
-        <div className="w-full max-w-44 rounded-md" style={{ boxShadow: ring }}>
+        <div className={cn('inline-flex', radius)} style={{ boxShadow: ring }}>
           {children}
         </div>
       </div>
@@ -363,10 +380,12 @@ function GlassSample({
   name,
   use,
   className,
+  states,
 }: {
   name: string;
   use: string;
   className?: string;
+  states?: string[];
 }) {
   return (
     <div
@@ -377,6 +396,18 @@ function GlassSample({
     >
       <div className="text-[15px] font-medium">{name}</div>
       <div className="mt-1 text-[11.5px] text-[#4A5565]">{use}</div>
+      {states ? (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {states.map((state) => (
+            <span
+              key={state}
+              className="rounded-full border border-white/60 bg-white/45 px-2 py-0.5 text-[10px] font-medium text-[#101828] backdrop-blur-[24px]"
+            >
+              {state}
+            </span>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

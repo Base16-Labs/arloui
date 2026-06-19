@@ -246,7 +246,7 @@ export function TypographyDoc() {
             <div className="text-[21px] leading-[1.35] text-ink">
               <div>ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
               <div>abcdefghijklmnopqrstuvwxyz</div>
-              <div className="font-variant-numeric-tabular">0123456789 !@#$%^&amp;*()</div>
+              <div className="tabular-nums">0123456789 !@#$%^&amp;*()</div>
             </div>
           </div>
           <div className="divide-y divide-line">
@@ -279,7 +279,7 @@ export function TypographyDoc() {
       </TypeSection>
 
       <TypeSection id="tokens" title="Tokens used">
-        <div className="overflow-hidden rounded-lg border border-line">
+        <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
           {[
             'fontFamilies.sans',
             'fontFamilies.mono',

@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Chip } from "@/components/ui/Chip";
-import { StateGrid } from "@/components/mdx/StateGrid";
 import { cn } from "@/lib/cn";
 import {
   DocCircleNotch,
@@ -140,12 +139,15 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
   return (
     <>
       <section id="variants" className="border-t border-line py-9">
-        <h2 className="text-[26px] font-semibold tracking-tight">Variants</h2>
-        <p className="mt-1.5 mb-5 text-[13px] text-ink-3">
-          Tone × appearance × size. All token-driven in the registry — tap to
-          update the live sample in <strong className="font-medium">States</strong>.
+        <h2 className="text-[26px] font-semibold tracking-tight">Variants &amp; states</h2>
+        <p className="mt-1.5 mb-6 text-[13px] text-ink-3">
+          Tone × appearance × size, all token-driven in the registry. Pick a
+          variant and hover or pin a state — the sample updates live beside the
+          controls.
         </p>
-        <div className="grid grid-cols-[100px_1fr] items-center gap-x-[18px] gap-y-3">
+        <div className="grid gap-6 md:grid-cols-[1fr_minmax(0,240px)] md:items-start">
+          <div className="min-w-0 space-y-7 md:order-1">
+            <div className="grid grid-cols-[100px_1fr] items-center gap-x-[18px] gap-y-3">
           <span className="text-[11px] font-medium uppercase tracking-widest text-ink-3">
             Tone
           </span>
@@ -194,30 +196,46 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
               </Chip>
             ))}
           </div>
-        </div>
-      </section>
+            </div>
 
-      <section id="states" className="border-t border-line py-9">
-        <h2 className="text-[26px] font-semibold tracking-tight">States</h2>
-        <p className="mt-1.5 mb-5 text-[13px] text-ink-3">
-          Hover any cell to preview; click to pin. The sample reflects your
-          variant picks and the active state.
-        </p>
-        <StateGrid states={[...states]} onHover={setHovered} onPin={setPinned} />
-        <p className="mt-4 text-[12px] text-ink-3">
-          Active:{" "}
-          <span className="font-mono text-[11px] text-ink-2">
-            {docState}
-            {pinned ? " (pinned)" : ""}
-          </span>
-        </p>
-        <div
-          className={cn(
-            "mt-5 flex min-h-[120px] items-center justify-center rounded-xl border border-line-strong bg-[#f8f6ef] p-6 dark:bg-surface-raised",
-            darkChrome && "border-zinc-700 bg-zinc-900"
-          )}
-          dir={rtl ? "rtl" : "ltr"}
-        >
+            <div id="states" className="scroll-mt-24 border-t border-line pt-6">
+              <h3 className="text-[12px] font-semibold uppercase tracking-widest text-ink-2">
+                States
+              </h3>
+              <p className="mt-1 mb-3 text-[12px] text-ink-3">
+                Hover to preview, click to pin.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[...states].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onMouseEnter={() => setHovered(s)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={() => setPinned(pinned === s ? null : s)}
+                    className={cn(
+                      "rounded-full border px-3 py-1.5 text-[11.5px] capitalize transition-colors",
+                      pinned === s
+                        ? "border-ink bg-ink text-canvas"
+                        : "border-line bg-surface text-ink-2 hover:border-ink-3 hover:text-ink"
+                    )}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="order-first md:order-2">
+            <div className="sticky top-3">
+              <div
+                className={cn(
+                  "flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-[#f8f6ef] p-6 dark:bg-surface-raised",
+                  darkChrome && "border-zinc-700 bg-zinc-900"
+                )}
+                dir={rtl ? "rtl" : "ltr"}
+              >
           <div
             className={cn(
               "relative inline-flex",
@@ -314,6 +332,16 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
                 />
               )}
             </button>
+          </div>
+              </div>
+              <p className="mt-3 text-center text-[12px] text-ink-3">
+                Active:{" "}
+                <span className="font-mono text-[11px] text-ink-2">
+                  {docState}
+                  {pinned ? " (pinned)" : ""}
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </section>

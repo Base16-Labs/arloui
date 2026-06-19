@@ -4,7 +4,6 @@ import { Lede } from '@/components/mdx/Lede';
 import { primitiveItems } from '@/lib/routes';
 
 const descriptions: Record<string, string> = {
-  tokens: 'The raw values — radii, shadows, durations — that every component references.',
   type: 'Font-agnostic scale, Manrope default, weights, specimens, and usage rules.',
   color: 'Semantic palette, surface hierarchy, and dark mode.',
   spacing: 'The 4 px grid, named steps, and when to break the grid.',

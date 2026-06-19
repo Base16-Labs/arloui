@@ -6,9 +6,10 @@
  * The pressable area expands beyond the visible label to meet the minimum touch target.
  * Three types: primary (brand blue), neutral (grey text), destructive (red text).
  */
-import { forwardRef, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { haptic as triggerHaptic } from '@arloui/utils';
 import {
+  AccessibilityInfo,
   ActivityIndicator,
   Animated,
   Easing,
@@ -22,6 +23,25 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+
+/** Tracks the OS "reduce motion" accessibility setting. */
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    let mounted = true;
+    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
+      if (mounted) setReduced(value);
+    });
+    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
+      setReduced(value);
+    });
+    return () => {
+      mounted = false;
+      sub?.remove?.();
+    };
+  }, []);
+  return reduced;
+}
 
 export type GhostButtonType = 'primary' | 'neutral' | 'destructive';
 export type GhostButtonSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -90,6 +110,7 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
   const t = useTokens();
   const press = useRef(new Animated.Value(0)).current;
   const [pressed, setPressed] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const isPressDisabled = disabled || loading;
   const dims = useMemo(() => resolveGhostDims(size, t), [size, t]);
@@ -132,9 +153,9 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
     onPressOut?.(e);
   };
 
-  const animated = {
-    transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }],
-  };
+  const animated = reduceMotion
+    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
+    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
 
   return (
     <Pressable
