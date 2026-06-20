@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* Drive the `dark:` variant from the `.dark` class set by the in-app theme
+   toggle, not the OS `prefers-color-scheme`. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Manrope is loaded from @fontsource-variable/manrope in app/layout.tsx. */
 
 /* ──────────────────────────────────────────────

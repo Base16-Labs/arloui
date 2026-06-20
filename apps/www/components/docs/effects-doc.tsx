@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CodeBlock } from '@/components/ui/CodeBlock';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { cn } from '@/lib/cn';
+import { useTheme } from '@/lib/theme';
 
 const shadows = [
   {
@@ -13,6 +15,7 @@ const shadows = [
     lightOpacity: 0.06,
     darkOpacity: 0.18,
     elevation: 2,
+    darkSurface: '#1f1f23',
   },
   {
     name: 'md',
@@ -22,6 +25,7 @@ const shadows = [
     lightOpacity: 0.08,
     darkOpacity: 0.22,
     elevation: 4,
+    darkSurface: '#27272b',
   },
   {
     name: 'lg',
@@ -31,6 +35,7 @@ const shadows = [
     lightOpacity: 0.1,
     darkOpacity: 0.28,
     elevation: 8,
+    darkSurface: '#313137',
   },
   {
     name: 'xl',
@@ -40,6 +45,7 @@ const shadows = [
     lightOpacity: 0.12,
     darkOpacity: 0.34,
     elevation: 12,
+    darkSurface: '#3b3b42',
   },
 ] as const;
 
@@ -79,46 +85,31 @@ import { blurs } from '@arloui/tokens';
 </BlurView>`;
 
 export function EffectsDoc() {
-  const [shadowMode, setShadowMode] = useState<'light' | 'dark'>('light');
+  const { resolved } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolved === 'dark';
 
   return (
     <>
       <EffectSection id="shadows" title="Shadows">
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <p className="max-w-[560px] text-[13.5px] leading-relaxed text-ink-2">
-            Use the lightest level that separates the surface. Switch modes to inspect the stronger,
-            blue-shifted treatment needed against dark backgrounds.
-          </p>
-          <div className="inline-flex shrink-0 rounded-md border border-line bg-surface p-1">
-            {(['light', 'dark'] as const).map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                onClick={() => setShadowMode(mode)}
-                className={cn(
-                  'h-7 rounded-sm px-3 text-[12px] capitalize transition-colors',
-                  shadowMode === mode ? 'bg-ink text-canvas' : 'text-ink-2 hover:text-ink',
-                )}
-              >
-                {mode}
-              </button>
-            ))}
-          </div>
-        </div>
+        <p className="mb-4 max-w-[560px] text-[13.5px] leading-relaxed text-ink-2">
+          Use the lightest level that separates the surface. Each level resolves to a stronger
+          treatment against dark backgrounds.
+        </p>
 
         <div
           className={cn(
             'space-y-5 rounded-lg border p-6 transition-colors',
-            shadowMode === 'dark'
-              ? 'border-[#1E2939] bg-[#101828]'
+            isDark
+              ? 'border-white/10 bg-[#18181b]'
               : 'border-[#D1D5DC] bg-[#E5E7EB]',
           )}
         >
           {shadows.map((shadow) => {
-            const opacity =
-              shadowMode === 'dark' ? shadow.darkOpacity : shadow.lightOpacity;
-            const color = shadowMode === 'dark' ? '81, 162, 255' : '16, 24, 40';
-            const hexColor = shadowMode === 'dark' ? '#51A2FF' : '#101828';
+            const opacity = isDark ? shadow.darkOpacity : shadow.lightOpacity;
+            const color = isDark ? '0, 0, 0' : '16, 24, 40';
+            const hexColor = isDark ? '#000000' : '#101828';
             const css = `0 ${shadow.offset}px ${shadow.blur}px rgba(${color}, ${opacity})`;
             const rn = `{ shadowColor: '${hexColor}', shadowOffset: { width: 0, height: ${shadow.offset} }, shadowOpacity: ${opacity}, shadowRadius: ${shadow.blur}, elevation: ${shadow.elevation} }`;
 
@@ -127,11 +118,11 @@ export function EffectsDoc() {
                 key={shadow.name}
                 className={cn(
                   'grid gap-4 rounded-lg border p-5 sm:grid-cols-[1fr_1.15fr] sm:items-center',
-                  shadowMode === 'dark'
-                    ? 'border-white/10 bg-[#1E2939] text-white'
+                  isDark
+                    ? 'border-white/10 text-white'
                     : 'border-black/5 bg-white text-[#101828]',
                 )}
-                style={{ boxShadow: css }}
+                style={{ boxShadow: css, ...(isDark ? { backgroundColor: shadow.darkSurface } : null) }}
               >
                 <div>
                   <div className="font-mono text-[11px] opacity-55">
@@ -215,13 +206,13 @@ export function EffectsDoc() {
           {blurLevels.map(([name, value, use]) => (
             <div
               key={name}
-              className="relative min-h-56 border-b border-white/25 bg-[url('/demos/effects-blur-bg.jpg')] bg-cover bg-center last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0"
+              className="relative min-h-56 border-b border-white/10 bg-[url('/demos/effects-blur-bg.jpg')] bg-cover bg-center last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0"
             >
               <div
-                className="absolute inset-0 bg-white/15"
-                style={{ backdropFilter: `blur(${value}px)` }}
+                className="absolute inset-0 bg-white/8"
+                style={{ backdropFilter: `blur(${value}px)`, WebkitBackdropFilter: `blur(${value}px)` }}
               />
-              <div className="absolute inset-x-3 bottom-3 rounded-md border border-white/35 bg-black/45 p-3 text-white backdrop-blur-sm">
+              <div className="absolute inset-x-0 bottom-0 border-t border-white/15 bg-black/35 px-3 py-2.5 text-white backdrop-blur-md">
                 <div className="font-mono text-[11px]">blurs.{name}</div>
                 <div className="mt-1 text-[13px] font-medium">{value}px</div>
                 <div className="mt-1 text-[10.5px] leading-snug text-white/70">{use}</div>
@@ -229,16 +220,19 @@ export function EffectsDoc() {
             </div>
           ))}
         </div>
-        <div className="mt-3 rounded-lg border border-[#E17100]/30 bg-[#E17100]/10 px-4 py-3 text-[12.5px] leading-relaxed text-ink-2">
+        <StatusBadge
+          tone="changes"
+          className="mt-3 min-h-0 w-full items-start justify-start rounded-lg px-4 py-3 text-left text-[12.5px] leading-relaxed"
+        >
           Blur is GPU-intensive. Test scrolling, gestures, and sheets on low-end Android hardware;
           use the semi-transparent tint without live blur when frame rate drops.
-        </div>
+        </StatusBadge>
       </EffectSection>
 
       <EffectSection id="liquid-glass" title="Liquid Glass">
-        <div className="mb-4 inline-flex rounded-full border border-[#51A2FF]/40 bg-[#51A2FF]/10 px-3 py-1 text-[11px] font-medium uppercase text-[#2B7FFF]">
+        <StatusBadge tone="draft" className="mb-4 min-h-0 rounded-full py-1 text-[11px] uppercase">
           Experimental · iOS 26+
-        </div>
+        </StatusBadge>
         <p className="mb-5 text-[13.5px] leading-relaxed text-ink-2">
           Treat native Liquid Glass as progressive enhancement. Non-supported platforms should use
           the matching blur, surface tint, and border preset rather than losing hierarchy.
@@ -424,12 +418,16 @@ function RuleCard({ title, text }: { title: string; text: string }) {
 function DoDont({ doText, dontText }: { doText: string; dontText: string }) {
   return (
     <div className="grid overflow-hidden rounded-lg border border-line sm:grid-cols-2">
-      <div className="bg-[#00C950]/8 p-4">
-        <div className="text-[11px] font-medium uppercase text-[#008A37]">Do</div>
+      <div className="bg-[#DDFBE8] p-4 dark:bg-emerald-500/10">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[#166534] dark:text-emerald-300">
+          Do
+        </div>
         <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{doText}</div>
       </div>
-      <div className="border-t border-line bg-[#FB2C36]/8 p-4 sm:border-t-0 sm:border-l">
-        <div className="text-[11px] font-medium uppercase text-[#E7000B]">Don’t</div>
+      <div className="border-t border-line bg-[#FFE4E6] p-4 sm:border-t-0 sm:border-l dark:bg-rose-500/10">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[#9F1D1D] dark:text-rose-300">
+          Don’t
+        </div>
         <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{dontText}</div>
       </div>
     </div>

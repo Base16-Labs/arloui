@@ -81,9 +81,9 @@ export function BottomPill() {
       }}
     >
       {!menuOpen && (
-        <div className="rounded-full">
+        <div className="rounded-full shadow-[0_6px_20px_rgb(24_24_27/0.14),0_2px_6px_rgb(24_24_27/0.08)] dark:shadow-none">
           <div
-            className="bottom-pill-surface flex h-8 w-40 items-center justify-between rounded-[100px] border-[0.5px] border-[#E4E4E7] bg-[#FAFAFA] px-1 py-2.5 text-[#3F3F46] backdrop-blur-[40px] dark:border-glass-border dark:bg-glass-bg dark:text-ink"
+            className="bottom-pill-surface flex h-8 w-40 items-center justify-between rounded-[100px] border-[0.5px] border-[#D4D4D8] bg-[#FAFAFA] px-1 py-2.5 text-[#3F3F46] backdrop-blur-[40px] dark:border-glass-border dark:bg-glass-bg dark:text-ink"
             style={morphStyle}
           >
             <button

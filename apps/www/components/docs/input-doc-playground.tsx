@@ -94,9 +94,9 @@ export function InputDocPlayground({ states }: PlaygroundProps) {
             </div>
           </div>
 
-          <div className="order-first md:order-2">
+          <div className="order-first md:order-2 md:self-center">
             <div className="sticky top-3">
-              <div className="flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-[#f8f6ef] p-6">
+              <div className="flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-[#f8f6ef] p-6 dark:bg-surface-raised">
                 <InputStateSample
                   appearance={appearance}
                   size={size}
@@ -189,7 +189,7 @@ function InputStateSample({
     <div
       className={cn(
         "w-full max-w-[360px] rounded-xl p-5",
-        darkMode ? "bg-[#09090B]" : isPlain ? "bg-transparent" : "bg-white/45",
+        darkMode ? "bg-[#09090B]" : "bg-transparent",
       )}
     >
       <div className={cn("space-y-2", dynamicType && "scale-110 transform-gpu")}>

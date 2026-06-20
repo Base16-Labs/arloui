@@ -227,7 +227,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
             </div>
           </div>
 
-          <div className="order-first md:order-2">
+          <div className="order-first md:order-2 md:self-center">
             <div className="sticky top-3">
               <div
                 className={cn(

@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "@/lib/theme";
 import { PhoneFrame, PreviewCard } from "@/components/ui/PhoneFrame";
-import { PreviewThemeToggle } from "@/components/docs/preview-theme-toggle";
 
 export function InputPhonePreview() {
-  const [mode, setMode] = useState<"light" | "dark">("light");
-  const dark = mode === "dark";
+  const { resolved } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const dark = mounted && resolved === "dark";
 
   return (
     <PreviewCard className="mb-12">
-      <PreviewThemeToggle mode={mode} onChange={setMode} />
       <PhoneFrame>
         <div
           className="flex h-full flex-col justify-center gap-6 overflow-hidden px-5 py-8"

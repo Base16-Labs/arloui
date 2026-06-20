@@ -4,24 +4,20 @@ type DoDontProps = {
 
 export function DoDont({ pairs }: DoDontProps) {
   return (
-    <div className="grid grid-cols-2 gap-3.5">
+    <div className="space-y-3">
       {pairs.map((pair, i) => (
-        <div key={i} className="contents">
-          <div className="relative h-[170px] rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] p-4 dark:bg-surface-raised">
-            <span className="absolute top-3 left-3.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
+        <div key={i} className="grid overflow-hidden rounded-lg border border-line sm:grid-cols-2">
+          <div className="bg-[#DDFBE8] p-4 dark:bg-emerald-500/10">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-[#166534] dark:text-emerald-300">
               Do
-            </span>
-            <p className="mt-9 text-[13px] leading-relaxed text-ink-2">
-              {pair.do}
-            </p>
+            </div>
+            <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{pair.do}</div>
           </div>
-          <div className="relative h-[170px] rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] p-4 dark:bg-surface-raised">
-            <span className="absolute top-3 left-3.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
+          <div className="border-t border-line bg-[#FFE4E6] p-4 sm:border-t-0 sm:border-l dark:bg-rose-500/10">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-[#9F1D1D] dark:text-rose-300">
               Don&apos;t
-            </span>
-            <p className="mt-9 text-[13px] leading-relaxed text-ink-2">
-              {pair.dont}
-            </p>
+            </div>
+            <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{pair.dont}</div>
           </div>
         </div>
       ))}

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
+import { useTheme } from "@/lib/theme";
 import { PhoneFrame, PreviewCard } from "@/components/ui/PhoneFrame";
-import { PreviewThemeToggle } from "@/components/docs/preview-theme-toggle";
 import {
   DocAppleMark,
   DocFacebookMark,
@@ -15,8 +15,10 @@ import {
 } from "@/components/docs/button-preview-icons";
 
 export function ButtonPhonePreview() {
-  const [mode, setMode] = useState<"light" | "dark">("light");
-  const dark = mode === "dark";
+  const { resolved } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const dark = mounted && resolved === "dark";
 
   const screenBg = dark ? "#0c0c0e" : "#f4f4f2";
   const soft = dark ? { bg: "#262b36", fg: "#E5E7EB" } : { bg: "#F3F4F6", fg: "#364153" };
@@ -30,7 +32,6 @@ export function ButtonPhonePreview() {
 
   return (
     <PreviewCard className="mb-12">
-      <PreviewThemeToggle mode={mode} onChange={setMode} />
       <PhoneFrame>
         <div
           className="relative flex h-full flex-col items-center overflow-y-auto px-4 py-5"

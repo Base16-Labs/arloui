@@ -254,7 +254,7 @@ export default async function ComponentPage({
 
         {/* When to use */}
         <Section id="when-to-use" title="When to use" sub="Three rules.">
-          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>For a secondary task that should not interrupt the parent context.</li>
             <li>When the input or selection list is short enough to fit a natural-content detent.</li>
             <li>When dismissal should be available via gesture, not just a button.</li>
@@ -283,21 +283,18 @@ import { Sheet } from "@arloui/sheet";
 
         {/* Tokens used */}
         <Section id="tokens" title="Tokens used" sub="Click any to jump to its definition in /docs/primitives/tokens.">
-          <div className="flex flex-wrap gap-2">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {sheetData.tokens.map((t) => (
-              <span
-                key={t}
-                className="rounded-md border border-line bg-[#f8f6ef] px-2.5 py-[5px] font-mono text-xs text-ink-2 dark:bg-surface-raised"
-              >
-                {t}
-              </span>
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
             ))}
           </div>
         </Section>
 
         {/* Accessibility */}
         <Section id="accessibility" title="Accessibility" sub="Screen reader semantics, focus, dismissal.">
-          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>VoiceOver / TalkBack announces as a modal sheet.</li>
             <li>Focus traps inside the sheet; Esc / hardware back dismisses.</li>
             <li>Respects prefers-reduced-motion — fades instead of slides.</li>
@@ -408,7 +405,7 @@ function InputDocPage() {
         </Section>
 
         <Section id="when-to-use" title="When to use" sub="Choose the surface treatment based on layout context.">
-          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>Use <code className="font-mono text-[13px]">filled</code> for standalone form rows, settings screens, and search inputs that need a visible hit area.</li>
             <li>Use <code className="font-mono text-[13px]">plain</code> for no-background fields inside dense forms, table-like layouts, or surfaces that already frame the content.</li>
             <li>Use inset labels when the field needs to keep context after a value is entered.</li>
@@ -450,20 +447,17 @@ import { Input, InputAction } from "@/components/ui/input";
         </Section>
 
         <Section id="tokens" title="Tokens used" sub="These are the tokens that make the filled and no-bg treatments consistent.">
-          <div className="flex flex-wrap gap-2">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {inputData.tokens.map((t) => (
-              <span
-                key={t}
-                className="rounded-md border border-line bg-[#f8f6ef] px-2.5 py-[5px] font-mono text-xs text-ink-2 dark:bg-surface-raised"
-              >
-                {t}
-              </span>
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
             ))}
           </div>
         </Section>
 
         <Section id="accessibility" title="Accessibility" sub="Input semantics should survive every visual variant.">
-          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>Pass a visible label or an accessibility label for fields without on-screen labels.</li>
             <li>Use helper text for guidance and error text for validation feedback; errors use semantic error color tokens.</li>
             <li>Trailing actions use <code className="font-mono text-[13px]">InputAction</code> so touch targets stay large enough.</li>
@@ -571,7 +565,7 @@ function ButtonDocPage() {
         </Section>
 
         <Section id="when-to-use" title="When to use" sub="Three rules.">
-          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>Use the primary solid button for the single highest-commitment action on the surface.</li>
             <li>Use neutral soft or outline for secondary actions that should stay visible but quieter.</li>
             <li>Reserve danger tone for destructive or irreversible actions — keep copy explicit.</li>
@@ -608,7 +602,7 @@ function ButtonDocPage() {
             </>
           }
         >
-          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>
               Implementation:{" "}
               <a
@@ -660,20 +654,17 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
         </Section>
 
         <Section id="tokens" title="Tokens used" sub="Click any to jump to its definition in /docs/primitives/tokens.">
-          <div className="flex flex-wrap gap-2">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {buttonData.tokens.map((t) => (
-              <span
-                key={t}
-                className="rounded-md border border-line bg-[#f8f6ef] px-2.5 py-[5px] font-mono text-xs text-ink-2 dark:bg-surface-raised"
-              >
-                {t}
-              </span>
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
             ))}
           </div>
         </Section>
 
         <Section id="accessibility" title="Accessibility" sub="Semantics, focus, hit targets, and motion.">
-          <ul className="ml-5 space-y-1 text-[15px] leading-relaxed text-ink-2">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>Exposes accessibilityRole &quot;button&quot; with the label from children or an explicit accessibilityLabel.</li>
             <li>icon-only buttons and FAB require accessibilityLabel — without it the control announces nothing useful.</li>
             <li>Loading sets accessibilityState busy and blocks interaction until the action resolves.</li>

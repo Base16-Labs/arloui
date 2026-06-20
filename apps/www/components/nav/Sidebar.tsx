@@ -15,8 +15,6 @@ import {
 export function Sidebar() {
   const pathname = usePathname();
 
-  const currentSection = docsSections.find((s) => pathname.startsWith(s.href));
-
   return (
     <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[264px] shrink-0 self-start overflow-hidden border-r border-line lg:block">
       {/* Top blur */}
@@ -35,14 +33,16 @@ export function Sidebar() {
           Sections
         </div>
         {docsSections.map((section) => {
-          const active = pathname.startsWith(section.href);
+          const active = pathname === section.href;
           return (
             <Link
               key={section.href}
               href={section.href}
               className={cn(
                 'block rounded-sm px-2.5 py-1.5 text-[13.5px] font-medium leading-snug',
-                active ? 'bg-surface-sunken text-ink' : 'text-ink hover:bg-surface-sunken/50',
+                active
+                  ? 'bg-surface-sunken text-ink dark:bg-surface'
+                  : 'text-ink hover:bg-surface-sunken/50',
               )}
             >
               {section.label}
@@ -132,7 +132,9 @@ function SidebarLink({ href, label, active }: { href: string; label: string; act
       href={href}
       className={cn(
         'block rounded-sm px-2.5 py-1.5 text-[13.5px] leading-snug',
-        active ? 'bg-ink font-medium text-canvas' : 'text-ink-2 hover:bg-surface-sunken/50',
+        active
+          ? 'bg-surface-sunken font-medium text-ink dark:bg-surface'
+          : 'text-ink-2 hover:bg-surface-sunken/50',
       )}
     >
       {label}

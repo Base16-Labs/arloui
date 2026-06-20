@@ -15,8 +15,8 @@ const descriptions: Record<string, string> = {
 export default function PrimitivesIndexPage() {
   return (
     <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
-      <Eyebrow>Primitives</Eyebrow>
-      <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">Primitives</h1>
+      <Eyebrow>Foundations</Eyebrow>
+      <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">Foundations</h1>
       <Lede>
         Tokens, type scale, color, spacing, motion, effects, icons — the raw ingredients every
         component is built from.

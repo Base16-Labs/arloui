@@ -809,7 +809,7 @@ function SizingBlock({
     <div className="rounded-lg border border-line bg-surface p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="text-[13px] font-medium text-ink">{title}</div>
-        <code className="font-mono text-[10.5px] text-ink-3">{pathPrefix}.*</code>
+        <code className="font-mono text-[10.5px] text-ink-3">{pathPrefix}</code>
       </div>
       <div className="mt-5">{children}</div>
     </div>
@@ -1117,12 +1117,16 @@ function PrimitiveRuleCard({ title, text }: { title: string; text: string }) {
 function PrimitiveDoDont({ doText, dontText }: { doText: string; dontText: string }) {
   return (
     <div className="grid overflow-hidden rounded-lg border border-line sm:grid-cols-2">
-      <div className="bg-[#00C950]/8 p-4">
-        <div className="text-[11px] font-medium uppercase text-[#008A37]">Do</div>
+      <div className="bg-[#DDFBE8] p-4 dark:bg-emerald-500/10">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[#166534] dark:text-emerald-300">
+          Do
+        </div>
         <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{doText}</div>
       </div>
-      <div className="border-t border-line bg-[#FB2C36]/8 p-4 sm:border-t-0 sm:border-l">
-        <div className="text-[11px] font-medium uppercase text-[#E7000B]">Don’t</div>
+      <div className="border-t border-line bg-[#FFE4E6] p-4 sm:border-t-0 sm:border-l dark:bg-rose-500/10">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[#9F1D1D] dark:text-rose-300">
+          Don’t
+        </div>
         <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{dontText}</div>
       </div>
     </div>

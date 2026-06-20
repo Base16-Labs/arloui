@@ -141,15 +141,29 @@ export function TypographyDoc() {
           </div>
           <label className="flex h-9 items-center gap-2 rounded-md border border-line bg-surface px-3 text-[11.5px] text-ink-3">
             Sort
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value as typeof sort)}
-              className="bg-transparent text-ink outline-none"
-            >
-              <option value="scale">Scale order</option>
-              <option value="size-desc">Largest first</option>
-              <option value="size-asc">Smallest first</option>
-            </select>
+            <div className="relative flex items-center">
+              <select
+                value={sort}
+                onChange={(event) => setSort(event.target.value as typeof sort)}
+                className="appearance-none bg-transparent pr-5 text-ink outline-none"
+              >
+                <option value="scale">Scale order</option>
+                <option value="size-desc">Largest first</option>
+                <option value="size-asc">Smallest first</option>
+              </select>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 right-0 size-3.5 -translate-y-1/2 text-ink-3"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </div>
           </label>
         </div>
 
@@ -451,12 +465,16 @@ function RuleCard({ title, text }: { title: string; text: string }) {
 function DoDont({ doText, dontText }: { doText: string; dontText: string }) {
   return (
     <div className="grid overflow-hidden rounded-lg border border-line sm:grid-cols-2">
-      <div className="bg-[#00C950]/8 p-4">
-        <div className="text-[11px] font-medium uppercase text-[#008A37]">Do</div>
+      <div className="bg-[#DDFBE8] p-4 dark:bg-emerald-500/10">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[#166534] dark:text-emerald-300">
+          Do
+        </div>
         <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{doText}</div>
       </div>
-      <div className="border-t border-line bg-[#FB2C36]/8 p-4 sm:border-t-0 sm:border-l">
-        <div className="text-[11px] font-medium uppercase text-[#E7000B]">Don’t</div>
+      <div className="border-t border-line bg-[#FFE4E6] p-4 sm:border-t-0 sm:border-l dark:bg-rose-500/10">
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-[#9F1D1D] dark:text-rose-300">
+          Don’t
+        </div>
         <div className="mt-2 text-[12.5px] leading-relaxed text-ink-2">{dontText}</div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { darkSemanticColors, lightSemanticColors } from "@/lib/color-tokens";
+import { StatusBadge, type StatusIcon, type StatusTone } from "@/components/ui/StatusBadge";
 
 const FG_TOKENS = [
   "textPrimary",
@@ -57,44 +58,88 @@ function contrastRatio(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-function verdict(ratio: number): { text: string; cls: string } {
+function verdict(ratio: number): { text: string; tone: StatusTone; icon: StatusIcon } {
   if (ratio >= 7) {
     return {
       text: "Excellent — passes AAA. Legible at any text size.",
-      cls: "bg-[#00C950]/8 text-[#008A37]",
+      tone: "approved",
+      icon: "check",
     };
   }
   if (ratio >= 4.5) {
     return {
       text: "Good — passes AA for body text (and AAA for large text).",
-      cls: "bg-[#00C950]/8 text-[#008A37]",
+      tone: "approved",
+      icon: "check",
     };
   }
   if (ratio >= 3) {
     return {
       text: "Large text only — passes AA for headings/large text, but fails for body text.",
-      cls: "bg-[#E17100]/10 text-[#9A5B00]",
+      tone: "changes",
+      icon: "warning",
     };
   }
   return {
     text: "Too low — not enough contrast for text. Use only for decorative or non-essential elements.",
-    cls: "bg-[#FB2C36]/8 text-[#E7000B]",
+    tone: "danger",
+    icon: "warning",
   };
 }
 
 function Badge({ label, pass }: { label: string; pass: boolean }) {
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between rounded-md border px-3 py-2 text-[12px]",
-        pass
-          ? "border-[#00C950]/30 bg-[#00C950]/8 text-[#008A37]"
-          : "border-[#FB2C36]/30 bg-[#FB2C36]/8 text-[#E7000B]",
-      )}
+    <StatusBadge
+      tone={pass ? "approved" : "danger"}
+      icon={pass ? "check" : "warning"}
+      className="min-h-10 w-full justify-between rounded-lg text-[12px]"
     >
-      <span className="font-medium">{label}</span>
+      <span>{label}</span>
       <span className="font-mono">{pass ? "Pass" : "Fail"}</span>
-    </div>
+    </StatusBadge>
+  );
+}
+
+function TokenSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: readonly string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="flex flex-col gap-1.5">
+      <span className="text-[11px] font-medium uppercase tracking-widest text-ink-3">{label}</span>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-9 w-full appearance-none rounded-md border border-line bg-canvas py-0 pr-9 pl-2.5 font-mono text-[11.5px] text-ink outline-none"
+        >
+          {options.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1/2 right-3 size-3.5 -translate-y-1/2 text-ink-3"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </div>
+    </label>
   );
 }
 
@@ -161,45 +206,29 @@ export function ContrastChecker() {
           <span>{bgHex}</span>
         </div>
 
-        <div className={cn("mt-4 rounded-md px-3 py-2 text-[12.5px] leading-relaxed", v.cls)}>
+        <StatusBadge
+          tone={v.tone}
+          icon={v.icon}
+          className="mt-4 min-h-0 items-start rounded-lg px-3 py-2 text-[12.5px] leading-relaxed"
+        >
           {v.text}
-        </div>
+        </StatusBadge>
       </div>
 
       <div className="rounded-lg border border-line bg-surface p-5">
         <div className="grid gap-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-medium uppercase tracking-widest text-ink-3">
-              Text
-            </span>
-            <select
-              value={fg}
-              onChange={(e) => setFg(e.target.value as FgToken)}
-              className="h-9 rounded-md border border-line bg-canvas px-2 font-mono text-[11.5px] text-ink outline-none"
-            >
-              {FG_TOKENS.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-medium uppercase tracking-widest text-ink-3">
-              Surface
-            </span>
-            <select
-              value={bg}
-              onChange={(e) => setBg(e.target.value as BgToken)}
-              className="h-9 rounded-md border border-line bg-canvas px-2 font-mono text-[11.5px] text-ink outline-none"
-            >
-              {BG_TOKENS.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </label>
+          <TokenSelect
+            label="Text"
+            value={fg}
+            options={FG_TOKENS}
+            onChange={(v) => setFg(v as FgToken)}
+          />
+          <TokenSelect
+            label="Surface"
+            value={bg}
+            options={BG_TOKENS}
+            onChange={(v) => setBg(v as BgToken)}
+          />
         </div>
 
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
