@@ -653,7 +653,7 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
           </div>
         </Section>
 
-        <Section id="tokens" title="Tokens used" sub="Click any to jump to its definition in /docs/primitives/tokens.">
+        <Section id="tokens" title="Tokens used" sub="Semantic tokens that drive tone, size, spacing, and interaction states.">
           <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {buttonData.tokens.map((t) => (
               <div key={t} className="border-b border-line px-4 py-3 last:border-0">
