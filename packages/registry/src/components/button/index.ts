@@ -11,6 +11,7 @@ export {
   GhostButton,
   type GhostButtonProps,
   type GhostButtonSize,
+  type GhostButtonTone,
   type GhostButtonType,
 } from './ghost-button';
 export {

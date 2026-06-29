@@ -15,6 +15,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { motion } from '../../foundation/tokens';
 
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 const AnimatedGroup = Animated.createAnimatedComponent(G);
@@ -471,7 +472,7 @@ function SpecialAnimatedIcon({
         reduceMotion ? 0 :
         name === 'circle-progress-check' && active ? 650 :
         name === 'bell-shake' ? 420 : duration,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
+      easing: Easing.bezier(...motion.easing.easeOut),
     });
 
     if (!reduceMotion && ((name === 'spinner-check' || name === 'spinner-x') && !active)) {
@@ -601,7 +602,7 @@ function MorphingAnimatedIcon({
   size = 24,
   color = '#18181B',
   strokeWidth = 1.5,
-  duration = 200,
+  duration = motion.duration.fast,
   accessibilityLabel,
 }: AnimatedIconProps & { name: LineAnimatedIconName }) {
   const definition = definitions[name];
@@ -614,7 +615,7 @@ function MorphingAnimatedIcon({
     loop.value = 0;
     progress.value = withTiming(active ? 1 : 0, {
       duration: reduceMotion ? 0 : duration,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
+      easing: Easing.bezier(...motion.easing.easeOut),
     });
     if (!reduceMotion && name === 'send-loading' && active) {
       loop.value = withRepeat(withTiming(1, { duration: 760, easing: Easing.linear }), -1, false);
@@ -665,7 +666,7 @@ export function AnimatedIcon(props: AnimatedIconProps) {
     size = 24,
     color = '#18181B',
     strokeWidth = 1.5,
-    duration = 200,
+    duration = motion.duration.fast,
     accessibilityLabel,
     autoResetAfter,
     onAutoReset,

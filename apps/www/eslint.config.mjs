@@ -13,6 +13,15 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // This app was previously unlinted (`next lint` broke under Next 16). These newly
+  // introduced strict rules surface pre-existing patterns; keep them visible as
+  // warnings for now and ratchet back to "error" after a dedicated cleanup pass.
+  {
+    rules: {
+      "react-hooks/set-state-in-effect": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
 ]);
 
 export default eslintConfig;

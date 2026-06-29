@@ -355,7 +355,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
         <div className="grid grid-cols-2 gap-3">
           <div className="flex min-h-[130px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] px-4 py-5 dark:bg-surface-raised">
             <span className="text-center font-mono text-[11px] text-ink-3">
-              motion.duration.press · motion.pressed.scale
+              motion.duration.instant · motion.pressed.scale
             </span>
             <button
               type="button"

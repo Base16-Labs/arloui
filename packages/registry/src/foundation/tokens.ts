@@ -251,10 +251,29 @@ export const sizing = {
   touchTarget: { minimum: 44, comfortable: 48 },
 } as const;
 
+/**
+ * Motion is spatial information, not decoration. Curves and durations are the tokens.
+ * Default ease is `easeOut`; never use `ease-in` for UI. Springs are for gesture-driven
+ * or playful elements. Never animate from `scale(0)`.
+ */
 export const motion = {
-  duration: { press: 140, state: 200, sheet: 280 },
-  easing: { easeOut: [0.16, 1, 0.3, 1] as const },
-  pressed: { scale: 0.98, opacity: 0.92 },
+  easing: {
+    easeOut: [0.23, 1, 0.32, 1] as const, // entrances, exits, pressable return
+    easeInOut: [0.77, 0, 0.175, 1] as const, // moving or morphing in place
+    easeSheet: [0.32, 0.72, 0, 1] as const, // sheet and drawer gestures
+  },
+  duration: {
+    instant: 130, // 100–160 — press feedback, micro-interactions
+    fast: 200, // 180–220 — tooltips, small popovers, toggles
+    base: 280, // 220–320 — sheets, drawers, modals, content swaps
+    slow: 400, // 320–480 — shared-element transitions, complex morphs
+  },
+  spring: {
+    snappy: { stiffness: 400, damping: 30, mass: 1 }, // pressable snap-back, toggle bounce
+    gentle: { stiffness: 150, damping: 20, mass: 1 }, // sheet settle, card reposition
+    heavy: { stiffness: 300, damping: 40, mass: 1.2 }, // drag-to-dismiss commit, large surface
+  },
+  pressed: { scale: 0.97, opacity: 0.85 },
 } as const;
 
 /** Grey-900 tint shadows — mirrors `@arloui/tokens` shadow scale (RN shadow props). */

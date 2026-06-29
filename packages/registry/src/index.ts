@@ -16,8 +16,11 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Field,
   Input,
   InputAction,
+  type FieldActionProps,
+  type FieldProps,
   type InputActionProps,
   type InputAppearance,
   type InputProps,

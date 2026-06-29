@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useState, type CSSProperties } from 'react';
 import { flushSync } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { useTheme } from '@/lib/theme';
+import { markdownForPath } from '@/lib/docs-markdown';
 
 const MORPH_NAME = 'bottom-pill' as const;
 const GITHUB_URL = 'https://github.com/Base16-Labs/arloui';
@@ -41,6 +42,29 @@ export function BottomPill() {
 
   const pageLabel = pathname.split('/').pop() ?? 'docs';
   const displayLabel = pageLabel.charAt(0).toUpperCase() + pageLabel.slice(1);
+
+  const pageMarkdown = markdownForPath(pathname);
+  const [copied, setCopied] = useState(false);
+
+  const copyMarkdown = useCallback(() => {
+    if (!pageMarkdown) return;
+    void navigator.clipboard.writeText(pageMarkdown);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }, [pageMarkdown]);
+
+  // ⌘⇧C / Ctrl+Shift+C copies the current page's markdown.
+  useEffect(() => {
+    if (!pageMarkdown) return;
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        copyMarkdown();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [pageMarkdown, copyMarkdown]);
 
   useEffect(() => {
     function onScroll() {
@@ -159,15 +183,23 @@ export function BottomPill() {
               </div>
             ))}
 
-            <div className="my-2 h-px bg-line" />
+            {pageMarkdown ? (
+              <>
+                <div className="my-2 h-px bg-line" />
 
-            <div className="mx-1.5 mt-3.5 mb-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
-              This page
-            </div>
-            <div className="flex items-center justify-between rounded-md px-2.5 py-2 text-[13.5px] text-ink hover:bg-ink/[0.04]">
-              <span>Copy markdown</span>
-              <span className="text-xs text-ink-3">⌘</span>
-            </div>
+                <div className="mx-1.5 mt-3.5 mb-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
+                  This page
+                </div>
+                <button
+                  type="button"
+                  onClick={copyMarkdown}
+                  className="flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-[13.5px] text-ink hover:bg-ink/[0.04]"
+                >
+                  <span>{copied ? 'Copied' : 'Copy markdown'}</span>
+                  <span className="text-xs text-ink-3">⇧⌘C</span>
+                </button>
+              </>
+            ) : null}
 
             <div className="mt-3 flex items-center justify-between">
               <div className="flex items-center gap-1.5">

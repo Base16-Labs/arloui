@@ -27,7 +27,7 @@ npx arloui diff button
 
 ### foundation
 
-- **tokens** — Design tokens. Color, typography, spacing, radius, and motion tokens. Single source of truth for the visual system.
+- **tokens** — Design tokens. Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.
 - **theme-provider** — Theme provider. React context that exposes tokens and follows the system color scheme.
 
 ### primitive
@@ -35,6 +35,10 @@ npx arloui diff button
 - **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
 - **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
 - **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.
+
+### icon
+
+- **animated-icons** — Animated icons. Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.
 
 ## Decision rule
 

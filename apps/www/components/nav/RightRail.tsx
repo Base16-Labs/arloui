@@ -60,17 +60,20 @@ export function RightRail({ headings = [], actions = [] }: RightRailProps) {
           <div className="mb-2.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
             Actions
           </div>
-          {actions.map((a) => (
-            <a
-              key={a.href}
-              href={a.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block py-1.5 text-[12.5px] text-ink-2 hover:text-ink"
-            >
-              {a.label}
-            </a>
-          ))}
+          {actions.map((a) => {
+            const external = a.href.startsWith("http");
+            return (
+              <a
+                key={a.href}
+                href={a.href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                className="block py-1.5 text-[12.5px] text-ink-2 hover:text-ink"
+              >
+                {a.label}
+              </a>
+            );
+          })}
         </div>
       )}
     </aside>

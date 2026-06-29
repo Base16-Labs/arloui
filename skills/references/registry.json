@@ -6,7 +6,7 @@
       "name": "tokens",
       "kind": "foundation",
       "title": "Design tokens",
-      "description": "Color, typography, spacing, radius, and motion tokens. Single source of truth for the visual system.",
+      "description": "Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.",
       "registryDependencies": [],
       "dependencies": [],
       "tags": [
@@ -29,6 +29,25 @@
       ]
     },
     {
+      "name": "animated-icons",
+      "kind": "icon",
+      "title": "Animated icons",
+      "description": "Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.",
+      "registryDependencies": [
+        "tokens"
+      ],
+      "dependencies": [
+        "react-native-svg",
+        "react-native-reanimated"
+      ],
+      "tags": [
+        "icon",
+        "motion",
+        "animated",
+        "state"
+      ]
+    },
+    {
       "name": "button",
       "kind": "primitive",
       "title": "Button",
@@ -37,7 +56,11 @@
         "tokens",
         "theme-provider"
       ],
-      "dependencies": [],
+      "dependencies": [
+        "@arloui/utils",
+        "expo-haptics",
+        "react-native-svg"
+      ],
       "tags": [
         "action",
         "primitive"
@@ -69,7 +92,9 @@
         "tokens",
         "theme-provider"
       ],
-      "dependencies": [],
+      "dependencies": [
+        "react-native-svg"
+      ],
       "tags": [
         "form",
         "primitive"

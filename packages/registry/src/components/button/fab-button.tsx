@@ -5,42 +5,30 @@
  * Shadow on rest, no shadow on press. Reduced opacity (~28%) when disabled.
  * Export `FAB` is the canonical name; `FabButton` kept for backward compatibility.
  */
-import { forwardRef, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { haptic as triggerHaptic } from '@arloui/utils';
+import { forwardRef, useMemo, useState, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
-  Easing,
   Platform,
   Pressable,
   View,
-  type GestureResponderEvent,
   type PressableProps,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { usePressFeedback, type ButtonHaptic } from './press-feedback';
 
-/** Tracks the OS "reduce motion" accessibility setting. */
-function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    let mounted = true;
-    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
-      if (mounted) setReduced(value);
-    });
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
-      setReduced(value);
-    });
-    return () => {
-      mounted = false;
-      sub?.remove?.();
-    };
-  }, []);
-  return reduced;
-}
+type Tokens = ReturnType<typeof useTokens>;
 
 export type FabTone = 'primary' | 'neutral';
+
+/** Single source of truth for the FAB's rest/pressed background per tone. */
+function fabVariants(t: Tokens): Record<FabTone, { rest: string; pressed: string }> {
+  return {
+    primary: { rest: t.colors.interactivePrimary, pressed: t.colors.interactivePrimaryPressed },
+    neutral: { rest: t.colors.surfaceElevated, pressed: t.colors.interactiveSecondaryPressed },
+  };
+}
 
 export type FABProps = Omit<PressableProps, 'style' | 'children'> & {
   icon: ReactNode;
@@ -48,7 +36,7 @@ export type FABProps = Omit<PressableProps, 'style' | 'children'> & {
   children?: ReactNode;
   tone?: FabTone;
   disabled?: boolean;
-  haptic?: 'light' | 'medium' | 'none';
+  haptic?: ButtonHaptic;
   accessibilityLabel: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -77,19 +65,15 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
   ref,
 ) {
   const t = useTokens();
-  const press = useRef(new Animated.Value(0)).current;
-  const [pressed, setPressed] = useState(false);
+  const palette = useMemo(() => fabVariants(t)[tone], [t, tone]);
+  const { pressed, animatedStyle, onPressIn: pressIn, onPressOut: pressOut } = usePressFeedback({
+    haptic,
+    onPressIn,
+    onPressOut,
+  });
   const [focused, setFocused] = useState(false);
-  const reduceMotion = useReducedMotion();
 
   const content = icon ?? children;
-
-  const palette = useMemo(() => {
-    if (tone === 'primary') {
-      return { rest: t.colors.interactivePrimary, pressed: t.colors.interactivePrimaryPressed };
-    }
-    return { rest: t.colors.surfaceElevated, pressed: t.colors.interactiveSecondaryPressed };
-  }, [t.colors, tone]);
 
   const shadow = useMemo(() => {
     if (disabled || pressed) return t.shadows.none as unknown as ViewStyle;
@@ -106,33 +90,6 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
     } as ViewStyle;
   }, [disabled, focused, t.colors.focusRingMain]);
 
-  const handleIn = (e: GestureResponderEvent) => {
-    setPressed(true);
-    if (haptic !== 'none') void triggerHaptic(haptic);
-    Animated.timing(press, {
-      toValue: 1,
-      duration: 120,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressIn?.(e);
-  };
-
-  const handleOut = (e: GestureResponderEvent) => {
-    setPressed(false);
-    Animated.timing(press, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressOut?.(e);
-  };
-
-  const animated = reduceMotion
-    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
-    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
-
   const bg = pressed ? palette.pressed : palette.rest;
 
   return (
@@ -142,8 +99,8 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled }}
       disabled={disabled}
-      onPressIn={handleIn}
-      onPressOut={handleOut}
+      onPressIn={pressIn}
+      onPressOut={pressOut}
       onFocus={(e) => { setFocused(true); onFocus?.(e); }}
       onBlur={(e) => { setFocused(false); onBlur?.(e); }}
       {...rest}
@@ -161,7 +118,7 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
           },
           shadow,
           focusOutline,
-          animated,
+          animatedStyle,
           style,
         ]}
       >

@@ -46,6 +46,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.',
     dependencies: ['react-native-svg', 'react-native-reanimated'],
+    registryDependencies: ['tokens'],
     files: [
       {
         source: 'components/animated-icon/animated-icon.tsx',
@@ -70,6 +71,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/button/ghost-button.tsx', target: 'ghost-button.tsx' },
       { source: 'components/button/fab-button.tsx', target: 'fab-button.tsx' },
       { source: 'components/button/social-auth-button.tsx', target: 'social-auth-button.tsx' },
+      { source: 'components/button/press-feedback.tsx', target: 'press-feedback.tsx' },
       { source: 'components/button/index.ts', target: 'button/index.ts' },
     ],
     meta: {
@@ -102,6 +104,7 @@ export const COMPONENTS: RegistryEntry[] = [
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
+      { source: 'components/input/field.tsx', target: 'field.tsx' },
       { source: 'components/input/input.tsx', target: 'input.tsx' },
       { source: 'components/input/index.ts', target: 'input/index.ts' },
     ],

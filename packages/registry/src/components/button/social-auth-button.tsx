@@ -5,42 +5,22 @@
  * Two types: `fill` (brand background, white text) and `secondary` (outlined, brand icon, text-primary label).
  * Labels are not customizable per spec: "Sign in with {Platform}".
  */
-import { forwardRef, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { haptic as triggerHaptic } from '@arloui/utils';
+import { forwardRef, useMemo, useState, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   ActivityIndicator,
   Animated,
-  Easing,
   Platform,
   Pressable,
   Text,
   View,
-  type GestureResponderEvent,
   type PressableProps,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { usePressFeedback, type ButtonHaptic } from './press-feedback';
 
-/** Tracks the OS "reduce motion" accessibility setting. */
-function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    let mounted = true;
-    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
-      if (mounted) setReduced(value);
-    });
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
-      setReduced(value);
-    });
-    return () => {
-      mounted = false;
-      sub?.remove?.();
-    };
-  }, []);
-  return reduced;
-}
+type Tokens = ReturnType<typeof useTokens>;
 
 const BRAND_COLORS = {
   google: '#4285F4',
@@ -78,61 +58,48 @@ export type SocialAuthButtonProps = Omit<PressableProps, 'style' | 'children'> &
   loading?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
-  haptic?: 'light' | 'medium' | 'none';
+  haptic?: ButtonHaptic;
   /** Replace the default platform glyph (e.g. SVG asset). */
   renderLeading?: (color: string, iconPx: number) => ReactNode;
   style?: StyleProp<ViewStyle>;
 };
 
 type SocialPalette = { bg: string; fg: string; iconFg: string; border: string; borderWidth: number };
+type SocialDims = { minHeight: number; paddingX: number; type: { fontSize: number; lineHeight: number }; gap: number; iconPx: number };
 
-function resolveSocialPalette(
-  t: ReturnType<typeof useTokens>,
+/**
+ * Single source of truth for the SocialAuthButton's looks. The palette mixes the
+ * per-platform brand color with the `fill`/`secondary` type; sizes are a flat map.
+ */
+function socialPalette(
+  t: Tokens,
   platform: SocialPlatform,
   type: SocialAuthType,
+  disabled: boolean,
 ): SocialPalette {
+  if (disabled) {
+    return { bg: t.colors.interactiveDisabled, fg: t.colors.textTertiary, iconFg: t.colors.textTertiary, border: 'transparent', borderWidth: 0 };
+  }
   const brand = BRAND_COLORS[platform];
   if (type === 'fill') {
     return { bg: brand, fg: '#FFFFFF', iconFg: '#FFFFFF', border: 'transparent', borderWidth: 0 };
   }
   // secondary: outlined, brand icon, text-primary label
-  return {
-    bg: 'transparent',
-    fg: t.colors.textPrimary,
-    iconFg: brand,
-    border: t.colors.borderPrimary,
-    borderWidth: 1,
-  };
+  return { bg: 'transparent', fg: t.colors.textPrimary, iconFg: brand, border: t.colors.borderPrimary, borderWidth: 1 };
 }
 
-function resolveDisabledPalette(t: ReturnType<typeof useTokens>): SocialPalette {
+function socialSizes(t: Tokens): Record<Size, SocialDims> {
   return {
-    bg: t.colors.interactiveDisabled,
-    fg: t.colors.textTertiary,
-    iconFg: t.colors.textTertiary,
-    border: 'transparent',
-    borderWidth: 0,
+    sm: { minHeight: t.sizing.buttonHeight.sm, paddingX: t.spacing[3], type: t.typography.bodySm, gap: t.spacing[1], iconPx: t.sizing.icon.xs },
+    md: { minHeight: t.sizing.buttonHeight.md, paddingX: t.spacing[4], type: t.typography.body, gap: t.spacing[2], iconPx: t.sizing.icon.sm },
+    lg: { minHeight: t.sizing.buttonHeight.lg, paddingX: t.spacing[5], type: t.typography.title3, gap: t.spacing[2], iconPx: t.sizing.icon.sm },
+    xl: { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[6], type: t.typography.title3, gap: t.spacing[3], iconPx: t.sizing.icon.md },
   };
 }
-
-type SocialDims = { minHeight: number; paddingX: number; type: { fontSize: number; lineHeight: number }; gap: number; iconPx: number };
 
 function touchTargetInset(visualSize: number, minimumSize: number) {
   const inset = Math.max(0, Math.ceil((minimumSize - visualSize) / 2));
   return inset > 0 ? { top: inset, bottom: inset, left: inset, right: inset } : undefined;
-}
-
-function resolveSocialDims(size: Size, t: ReturnType<typeof useTokens>): SocialDims {
-  switch (size) {
-    case 'sm':
-      return { minHeight: t.sizing.buttonHeight.sm, paddingX: t.spacing[3], type: t.typography.bodySm, gap: t.spacing[1], iconPx: t.sizing.icon.xs };
-    case 'lg':
-      return { minHeight: t.sizing.buttonHeight.lg, paddingX: t.spacing[5], type: t.typography.title3, gap: t.spacing[2], iconPx: t.sizing.icon.sm };
-    case 'xl':
-      return { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[6], type: t.typography.title3, gap: t.spacing[3], iconPx: t.sizing.icon.md };
-    default:
-      return { minHeight: t.sizing.buttonHeight.md, paddingX: t.spacing[4], type: t.typography.body, gap: t.spacing[2], iconPx: t.sizing.icon.sm };
-  }
 }
 
 function mapLegacyAppearance(appearance: SocialAuthAppearance): SocialAuthType {
@@ -191,10 +158,12 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
   ref,
 ) {
   const t = useTokens();
-  const press = useRef(new Animated.Value(0)).current;
-  const [pressed, setPressed] = useState(false);
+  const { animatedStyle, onPressIn: pressIn, onPressOut: pressOut } = usePressFeedback({
+    haptic,
+    onPressIn,
+    onPressOut,
+  });
   const [focused, setFocused] = useState(false);
-  const reduceMotion = useReducedMotion();
 
   const platform = platformProp ?? (provider as SocialPlatform) ?? 'google';
   const type: SocialAuthType = typeProp ?? (appearance ? mapLegacyAppearance(appearance) : 'fill');
@@ -202,12 +171,12 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
   const isPressDisabled = disabled || loading;
   const useDisabledVisual = disabled && !loading;
 
-  const palette = useMemo(() => {
-    if (useDisabledVisual) return resolveDisabledPalette(t);
-    return resolveSocialPalette(t, platform, type);
-  }, [t, platform, type, useDisabledVisual]);
+  const palette = useMemo(
+    () => socialPalette(t, platform, type, useDisabledVisual),
+    [t, platform, type, useDisabledVisual],
+  );
 
-  const dims = useMemo(() => resolveSocialDims(size, t), [size, t]);
+  const dims = useMemo(() => socialSizes(t)[size], [size, t]);
   const hitSlop = useMemo(
     () => touchTargetInset(dims.minHeight, t.sizing.touchTarget.minimum),
     [dims.minHeight, t.sizing.touchTarget.minimum],
@@ -223,33 +192,6 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
     return { boxShadow: t.focusRing.main } as ViewStyle;
   }, [focused, t.focusRing.main]);
 
-  const handleIn = (e: GestureResponderEvent) => {
-    setPressed(true);
-    if (haptic !== 'none') void triggerHaptic(haptic);
-    Animated.timing(press, {
-      toValue: 1,
-      duration: 120,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressIn?.(e);
-  };
-
-  const handleOut = (e: GestureResponderEvent) => {
-    setPressed(false);
-    Animated.timing(press, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressOut?.(e);
-  };
-
-  const animated = reduceMotion
-    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
-    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
-
   const label = LABELS[platform];
 
   return (
@@ -259,8 +201,8 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
       accessibilityLabel={label}
       accessibilityState={{ disabled: isPressDisabled, busy: loading }}
       disabled={isPressDisabled}
-      onPressIn={handleIn}
-      onPressOut={handleOut}
+      onPressIn={pressIn}
+      onPressOut={pressOut}
       onFocus={(e) => { setFocused(true); onFocus?.(e); }}
       onBlur={(e) => { setFocused(false); onBlur?.(e); }}
       hitSlop={hitSlop}
@@ -283,7 +225,7 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
             alignSelf: fullWidth ? 'stretch' : 'flex-start',
           },
           focusWebStyle,
-          animated,
+          animatedStyle,
           style,
         ]}
       >

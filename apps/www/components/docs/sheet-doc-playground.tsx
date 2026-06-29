@@ -172,7 +172,7 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
         <div className="grid grid-cols-2 gap-3">
           <div className="flex min-h-[130px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] px-4 py-5 dark:bg-surface-raised">
             <span className="text-center font-mono text-[11px] text-ink-3">
-              motion.ease-sheet · motion.duration-sheet
+              motion.easing.easeSheet · motion.duration.base
             </span>
             <button
               type="button"

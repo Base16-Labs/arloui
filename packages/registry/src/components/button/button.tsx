@@ -12,11 +12,12 @@
  * - `secondary` → tone neutral + soft
  * - `ghost` → tone neutral + ghost
  * - `danger` → tone danger + solid
+ *
+ * Every visual decision lives in `buttonVariants` below — edit colors, sizes, and
+ * spacing there in one place.
  */
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
-import { haptic as triggerHaptic } from '@arloui/utils';
 import {
-  AccessibilityInfo,
   Animated,
   Easing,
   Platform,
@@ -24,7 +25,6 @@ import {
   StyleSheet,
   Text,
   View,
-  type GestureResponderEvent,
   type PressableProps,
   type StyleProp,
   type TextStyle,
@@ -32,30 +32,14 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import { usePressFeedback, type ButtonHaptic } from './press-feedback';
 
-/** Tracks the OS "reduce motion" accessibility setting. */
-function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    let mounted = true;
-    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
-      if (mounted) setReduced(value);
-    });
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
-      setReduced(value);
-    });
-    return () => {
-      mounted = false;
-      sub?.remove?.();
-    };
-  }, []);
-  return reduced;
-}
+type Tokens = ReturnType<typeof useTokens>;
 
 export type ButtonTone = 'primary' | 'neutral' | 'danger';
 export type ButtonAppearance = 'solid' | 'soft' | 'ghost' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
-export type ButtonHaptic = 'light' | 'medium' | 'none';
+export type { ButtonHaptic };
 
 /** @deprecated Prefer `tone` + `appearance`. */
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -83,84 +67,62 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   labelStyle?: StyleProp<TextStyle>;
 };
 
-function mapLegacyVariant(v: ButtonVariant): { tone: ButtonTone; appearance: ButtonAppearance } {
-  switch (v) {
-    case 'primary': return { tone: 'primary', appearance: 'solid' };
-    case 'secondary': return { tone: 'neutral', appearance: 'soft' };
-    case 'ghost': return { tone: 'neutral', appearance: 'ghost' };
-    case 'danger': return { tone: 'danger', appearance: 'solid' };
-  }
-}
-
 type Palette = { bg: string; fg: string; border: string; borderWidth: number };
+type Dims = { minHeight: number; paddingX: number; type: { fontSize: number; lineHeight: number }; gap: number; iconSize: number };
 
-function resolvePalette(
-  t: ReturnType<typeof useTokens>,
-  tone: ButtonTone,
-  appearance: ButtonAppearance,
-): Palette {
-  if (tone === 'primary') {
-    switch (appearance) {
-      case 'solid':
-        return { bg: t.colors.interactivePrimary, fg: t.colors.textInteractivePrimary, border: 'transparent', borderWidth: 0 };
-      case 'soft':
-        return { bg: t.colors.feedbackInfoBg, fg: t.colors.interactivePrimary, border: 'transparent', borderWidth: 0 };
-      case 'ghost':
-        return { bg: 'transparent', fg: t.colors.textInteractiveTertiary, border: 'transparent', borderWidth: 0 };
-      case 'outline':
-        return { bg: 'transparent', fg: t.colors.interactivePrimary, border: t.colors.borderPrimary, borderWidth: 1 };
-    }
-  }
-  if (tone === 'neutral') {
-    switch (appearance) {
-      case 'solid':
-        return { bg: t.colors.textSecondary, fg: t.colors.textInverse, border: 'transparent', borderWidth: 0 };
-      case 'soft':
-        return { bg: t.colors.surfaceInput, fg: t.colors.textPrimary, border: 'transparent', borderWidth: 0 };
-      case 'ghost':
-        return { bg: 'transparent', fg: t.colors.textPrimary, border: 'transparent', borderWidth: 0 };
-      case 'outline':
-        return { bg: 'transparent', fg: t.colors.interactivePrimary, border: t.colors.borderPrimary, borderWidth: 1 };
-    }
-  }
-  // danger
-  switch (appearance) {
-    case 'solid':
-      return { bg: t.colors.feedbackError, fg: t.colors.textInteractivePrimary, border: 'transparent', borderWidth: 0 };
-    case 'soft':
-      return { bg: t.colors.feedbackErrorBg, fg: t.colors.textInteractiveError, border: 'transparent', borderWidth: 0 };
-    case 'ghost':
-      return { bg: 'transparent', fg: t.colors.textInteractiveError, border: 'transparent', borderWidth: 0 };
-    case 'outline':
-      return { bg: 'transparent', fg: t.colors.feedbackError, border: t.colors.borderError, borderWidth: 1 };
-  }
+/**
+ * Single source of truth for the Button's looks. Each tone × appearance resolves to a
+ * palette; each size resolves to its dimensions. Want a different primary fill or more
+ * padding on `md`? It's all right here.
+ */
+function buttonVariants(t: Tokens): {
+  tone: Record<ButtonTone, Record<ButtonAppearance, Palette>>;
+  disabled: Record<ButtonAppearance, Palette>;
+  size: Record<ButtonSize, Dims>;
+} {
+  const transparent = (fg: string): Palette => ({ bg: 'transparent', fg, border: 'transparent', borderWidth: 0 });
+  return {
+    tone: {
+      primary: {
+        solid: { bg: t.colors.interactivePrimary, fg: t.colors.textInteractivePrimary, border: 'transparent', borderWidth: 0 },
+        soft: { bg: t.colors.feedbackInfoBg, fg: t.colors.interactivePrimary, border: 'transparent', borderWidth: 0 },
+        ghost: transparent(t.colors.textInteractiveTertiary),
+        outline: { bg: 'transparent', fg: t.colors.interactivePrimary, border: t.colors.borderPrimary, borderWidth: 1 },
+      },
+      neutral: {
+        solid: { bg: t.colors.textSecondary, fg: t.colors.textInverse, border: 'transparent', borderWidth: 0 },
+        soft: { bg: t.colors.surfaceInput, fg: t.colors.textPrimary, border: 'transparent', borderWidth: 0 },
+        ghost: transparent(t.colors.textPrimary),
+        outline: { bg: 'transparent', fg: t.colors.interactivePrimary, border: t.colors.borderPrimary, borderWidth: 1 },
+      },
+      danger: {
+        solid: { bg: t.colors.feedbackError, fg: t.colors.textInteractivePrimary, border: 'transparent', borderWidth: 0 },
+        soft: { bg: t.colors.feedbackErrorBg, fg: t.colors.textInteractiveError, border: 'transparent', borderWidth: 0 },
+        ghost: transparent(t.colors.textInteractiveError),
+        outline: { bg: 'transparent', fg: t.colors.feedbackError, border: t.colors.borderError, borderWidth: 1 },
+      },
+    },
+    disabled: {
+      solid: { bg: t.colors.interactiveDisabled, fg: t.colors.textTertiary, border: 'transparent', borderWidth: 0 },
+      soft: { bg: t.colors.interactiveDisabled, fg: t.colors.textTertiary, border: 'transparent', borderWidth: 0 },
+      ghost: transparent(t.colors.textTertiary),
+      outline: { bg: 'transparent', fg: t.colors.textTertiary, border: t.colors.borderSecondary, borderWidth: 1 },
+    },
+    size: {
+      sm: { minHeight: t.sizing.buttonHeight.sm, paddingX: t.spacing[3], type: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.xs },
+      md: { minHeight: t.sizing.buttonHeight.md, paddingX: t.spacing[4], type: t.typography.body, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
+      lg: { minHeight: t.sizing.buttonHeight.lg, paddingX: t.spacing[5], type: t.typography.title3, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
+      xl: { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[6], type: t.typography.title3, gap: t.spacing[3], iconSize: t.sizing.icon.md },
+    },
+  };
 }
 
-function resolveDisabledPalette(
-  t: ReturnType<typeof useTokens>,
-  appearance: ButtonAppearance,
-): Palette {
-  const fg = t.colors.textTertiary;
-  if (appearance === 'outline') {
-    return { bg: 'transparent', fg, border: t.colors.borderSecondary, borderWidth: 1 };
-  }
-  if (appearance === 'ghost') {
-    return { bg: 'transparent', fg, border: 'transparent', borderWidth: 0 };
-  }
-  return { bg: t.colors.interactiveDisabled, fg, border: 'transparent', borderWidth: 0 };
-}
-
-function iconSizePx(size: ButtonSize, t: ReturnType<typeof useTokens>): number {
-  switch (size) {
-    case 'sm': return t.sizing.icon.xs;
-    case 'md': return t.sizing.icon.sm;
-    case 'lg': return t.sizing.icon.sm;
-    case 'xl': return t.sizing.icon.md;
-    default: return t.sizing.icon.sm;
-  }
-}
-
-type ButtonDims = { minHeight: number; paddingX: number; type: { fontSize: number; lineHeight: number }; gap: number };
+const LEGACY_VARIANT: Record<ButtonVariant, { tone: ButtonTone; appearance: ButtonAppearance }> = {
+  primary: { tone: 'primary', appearance: 'solid' },
+  secondary: { tone: 'neutral', appearance: 'soft' },
+  ghost: { tone: 'neutral', appearance: 'ghost' },
+  danger: { tone: 'danger', appearance: 'solid' },
+};
 
 function touchTargetInset(visualSize: number, minimumSize: number) {
   const inset = Math.max(0, Math.ceil((minimumSize - visualSize) / 2));
@@ -217,19 +179,6 @@ function ButtonSpinner({
   );
 }
 
-function resolveButtonDims(size: ButtonSize, t: ReturnType<typeof useTokens>): ButtonDims {
-  switch (size) {
-    case 'sm':
-      return { minHeight: t.sizing.buttonHeight.sm, paddingX: t.spacing[3], type: t.typography.bodySm, gap: t.spacing[1] };
-    case 'lg':
-      return { minHeight: t.sizing.buttonHeight.lg, paddingX: t.spacing[5], type: t.typography.title3, gap: t.spacing[2] };
-    case 'xl':
-      return { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[6], type: t.typography.title3, gap: t.spacing[3] };
-    default:
-      return { minHeight: t.sizing.buttonHeight.md, paddingX: t.spacing[4], type: t.typography.body, gap: t.spacing[2] };
-  }
-}
-
 export const Button = forwardRef<View, ButtonProps>(function Button(
   {
     children,
@@ -258,13 +207,13 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   ref,
 ) {
   const t = useTokens();
-  const press = useRef(new Animated.Value(0)).current;
-  const [pressed, setPressed] = useState(false);
+  const variants = useMemo(() => buttonVariants(t), [t]);
+  const { pressed, reduceMotion, animatedStyle, onPressIn: pressIn, onPressOut: pressOut } =
+    usePressFeedback({ haptic, onPressIn, onPressOut });
   const [focused, setFocused] = useState(false);
-  const reduceMotion = useReducedMotion();
 
   const { tone, appearance } = useMemo(() => {
-    if (variant != null) return mapLegacyVariant(variant);
+    if (variant != null) return LEGACY_VARIANT[variant];
     return {
       tone: toneProp ?? 'primary',
       appearance: appearanceProp ?? 'solid',
@@ -275,18 +224,15 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   const isPressDisabled = disabled || loading;
   const useDisabledVisual = disabled && !loading;
 
-  const palette = useMemo(() => {
-    if (useDisabledVisual) return resolveDisabledPalette(t, appearance);
-    return resolvePalette(t, tone, appearance);
-  }, [t, tone, appearance, useDisabledVisual]);
+  const palette = useDisabledVisual ? variants.disabled[appearance] : variants.tone[tone][appearance];
+  const dims = variants.size[size];
 
-  const dims = useMemo(() => resolveButtonDims(size, t), [size, t]);
   const hitSlop = useMemo(
     () => touchTargetInset(dims.minHeight, t.sizing.touchTarget.minimum),
     [dims.minHeight, t.sizing.touchTarget.minimum],
   );
 
-  const ipx = iconSizePx(size, t);
+  const ipx = dims.iconSize;
   const iconWrap = useMemo(
     () => ({ width: ipx, height: ipx, alignItems: 'center', justifyContent: 'center' }) as const,
     [ipx],
@@ -307,33 +253,6 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     return { boxShadow: ring } as ViewStyle;
   }, [focused, t.focusRing, tone]);
 
-  const handleIn = (e: GestureResponderEvent) => {
-    setPressed(true);
-    if (haptic !== 'none') void triggerHaptic(haptic);
-    Animated.timing(press, {
-      toValue: 1,
-      duration: 120,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressIn?.(e);
-  };
-
-  const handleOut = (e: GestureResponderEvent) => {
-    setPressed(false);
-    Animated.timing(press, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressOut?.(e);
-  };
-
-  const animated = reduceMotion
-    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
-    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
-
   const a11yLabel = accessibilityLabel ?? (iconOnly ? undefined : text);
 
   return (
@@ -343,8 +262,8 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       accessibilityLabel={a11yLabel}
       accessibilityState={{ disabled: isPressDisabled, busy: loading }}
       disabled={isPressDisabled}
-      onPressIn={handleIn}
-      onPressOut={handleOut}
+      onPressIn={pressIn}
+      onPressOut={pressOut}
       onFocus={(e) => { setFocused(true); onFocus?.(e); }}
       onBlur={(e) => { setFocused(false); onBlur?.(e); }}
       hitSlop={hitSlop}
@@ -363,7 +282,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
             alignSelf: fullWidth ? 'stretch' : 'flex-start',
           },
           focusWebStyle,
-          animated,
+          animatedStyle,
           style,
         ]}
       >

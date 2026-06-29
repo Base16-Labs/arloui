@@ -17,168 +17,12 @@ import {
   DocIconLock,
 } from "@/components/docs/button-preview-icons";
 import { componentGroups } from "@/lib/routes";
-
-const sheetData = {
-  slug: "sheet",
-  category: "Layout & surface",
-  title: "Sheet",
-  lede: "A bottom-anchored surface with detents — the most-used navigation primitive on mobile, and the moment to demonstrate Fluidity in your UI.",
-  figma: "#",
-  source: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet",
-  states: [
-    "default", "presented", "peek", "dragging", "full", "dismissing",
-    "disabled", "loading", "error", "empty", "long content", "RTL",
-    "dynamic-type", "reduced motion", "dark mode", "light mode",
-  ],
-  tokens: ["radius.sheet", "color.scrim", "motion.ease-sheet", "motion.duration-sheet", "space.sheet-pad"],
-  headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "archetypes", label: "Archetypes" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "motion", label: "Motion" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
-  ],
-  actions: [
-    { label: "View as markdown ↗", href: "/docs/components/sheet.md" },
-    { label: "Edit on GitHub ↗", href: "https://github.com/Base16-Labs/arloui" },
-  ],
-};
-
-const buttonData = {
-  slug: "button",
-  category: "Controls",
-  title: "Button",
-  lede:
-    "The primary commitment surface on a mobile screen — strong defaults across three tones and four appearances, with press feedback that earns the tap.",
-  figma:
-    "https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=266-4982",
-  source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/button",
-  states: [
-    "default",
-    "pressed",
-    "loading",
-    "disabled",
-    "focus",
-    "icon-only",
-    "reduced motion",
-    "RTL",
-    "dynamic type",
-  ],
-  tokens: [
-    "colors.interactivePrimary",
-    "colors.feedbackError",
-    "colors.feedbackErrorBg",
-    "colors.feedbackInfoBg",
-    "colors.textInteractivePrimary",
-    "colors.textInteractiveError",
-    "colors.textInteractiveTertiary",
-    "colors.textPrimary",
-    "colors.textSecondary",
-    "colors.textInverse",
-    "colors.textTertiary",
-    "colors.surfaceInput",
-    "colors.interactiveDisabled",
-    "colors.interactiveTertiaryPressed",
-    "colors.touchFeedbackMain",
-    "colors.borderPrimary",
-    "colors.borderError",
-    "colors.borderSecondary",
-    "sizing.buttonHeight.sm",
-    "sizing.buttonHeight.md",
-    "sizing.buttonHeight.lg",
-    "sizing.buttonHeight.xl",
-    "sizing.icon.xs",
-    "sizing.icon.sm",
-    "sizing.icon.md",
-    "sizing.touchTarget.minimum",
-    "radii.full",
-    "focusRing.main",
-    "focusRing.error",
-    "spacing.3",
-    "spacing.4",
-    "spacing.5",
-    "spacing.6",
-    "typography.body",
-    "typography.bodySm",
-    "typography.title3",
-  ],
-  headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "archetypes", label: "Archetypes" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "motion", label: "Motion" },
-    { id: "social-auth", label: "Social auth" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
-  ],
-  actions: [
-    { label: "View as markdown ↗", href: "/docs/components/button.md" },
-    { label: "Edit on GitHub ↗", href: "https://github.com/Base16-Labs/arloui" },
-  ],
-} as const;
-
-const inputData = {
-  slug: "input",
-  category: "Controls",
-  title: "Input",
-  lede:
-    "A token-driven text input for forms, search, passwords, and compact no-background fields. Use filled inputs when the field needs a clear touch surface; use plain inputs when the surrounding layout already provides structure.",
-  figma: "#",
-  source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input",
-  states: [
-    "empty",
-    "filled",
-    "focused",
-    "helper",
-    "error",
-    "disabled",
-    "password",
-    "search",
-    "leading icon",
-    "trailing action",
-    "dark mode",
-  ],
-  tokens: [
-    "surfaceInput",
-    "textPrimary",
-    "textTertiary",
-    "textInteractiveError",
-    "borderFocus",
-    "borderError",
-    "sizing.icon",
-    "radii.md",
-    "typography.body",
-    "typography.bodySm",
-  ],
-  headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
-  ],
-  actions: [
-    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input" },
-    { label: "Open playground ↗", href: "http://localhost:8081/input" },
-  ],
-} as const;
+import {
+  buttonData,
+  docDataToMarkdown,
+  inputData,
+  sheetData,
+} from "@/lib/docs-markdown";
 
 export function generateStaticParams() {
   return componentGroups.flatMap((g) =>
@@ -224,7 +68,7 @@ export default async function ComponentPage({
       <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
         {/* Page-level copy markdown */}
         <div className="absolute top-10 right-14">
-          <CopyButton text="" label="Copy markdown" />
+          <CopyButton text={docDataToMarkdown(sheetData)} label="Copy markdown" />
         </div>
 
         <Eyebrow>{sheetData.category}</Eyebrow>
@@ -337,7 +181,7 @@ function InputDocPage() {
     <>
       <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
         <div className="absolute top-10 right-14">
-          <CopyButton text="" label="Copy markdown" />
+          <CopyButton text={docDataToMarkdown(inputData)} label="Copy markdown" />
         </div>
 
         <Eyebrow>{inputData.category}</Eyebrow>
@@ -498,7 +342,7 @@ function ButtonDocPage() {
     <>
       <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
         <div className="absolute top-10 right-14">
-          <CopyButton text="" label="Copy markdown" />
+          <CopyButton text={docDataToMarkdown(buttonData)} label="Copy markdown" />
         </div>
 
         <Eyebrow>{buttonData.category}</Eyebrow>

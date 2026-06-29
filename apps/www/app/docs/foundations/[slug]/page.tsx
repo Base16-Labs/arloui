@@ -9,6 +9,7 @@ import {
   EssaySection,
 } from "@/components/mdx/Companion";
 import { Icon } from "@/components/ui/Icon";
+import { ESSAYS } from "@/lib/docs-markdown";
 
 const foundationSlugs = ["craft", "fluidity", "opinionated", "detailed"];
 
@@ -202,7 +203,7 @@ export default async function FoundationPage({
                 Fluidity
               </h1>
               <div className="pt-2">
-                <CopyButton text="" label="Copy markdown" />
+                <CopyButton text={ESSAYS.fluidity} label="Copy markdown" />
               </div>
             </div>
             <p className="mt-[22px] mb-12 max-w-[560px] text-[14px] leading-relaxed text-ink">

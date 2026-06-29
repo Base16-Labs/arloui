@@ -4,94 +4,89 @@
  * Chromeless action: no background container, no border, no horizontal padding.
  * Heights reflect text line-height only (sm/md: 24px, lg: 28px, xl: 40px).
  * The pressable area expands beyond the visible label to meet the minimum touch target.
- * Three types: primary (brand blue), neutral (grey text), destructive (red text).
+ * Three tones (matching Button): primary (brand blue), neutral (grey text), danger (red text).
+ *
+ * Every visual decision lives in `ghostVariants` below.
  */
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
-import { haptic as triggerHaptic } from '@arloui/utils';
+import { forwardRef, useMemo } from 'react';
 import {
-  AccessibilityInfo,
   ActivityIndicator,
   Animated,
-  Easing,
   Pressable,
   Text,
   View,
-  type GestureResponderEvent,
   type PressableProps,
   type StyleProp,
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { usePressFeedback, type ButtonHaptic } from './press-feedback';
 
-/** Tracks the OS "reduce motion" accessibility setting. */
-function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    let mounted = true;
-    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
-      if (mounted) setReduced(value);
-    });
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
-      setReduced(value);
-    });
-    return () => {
-      mounted = false;
-      sub?.remove?.();
-    };
-  }, []);
-  return reduced;
-}
+type Tokens = ReturnType<typeof useTokens>;
 
-export type GhostButtonType = 'primary' | 'neutral' | 'destructive';
+export type GhostButtonTone = 'primary' | 'neutral' | 'danger';
 export type GhostButtonSize = 'sm' | 'md' | 'lg' | 'xl';
+
+/** @deprecated Use `GhostButtonTone` (`destructive` is now `danger`). */
+export type GhostButtonType = 'primary' | 'neutral' | 'destructive';
 
 export type GhostButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   children: string;
+  tone?: GhostButtonTone;
+  /** @deprecated Use `tone`. `destructive` maps to `danger`. */
   type?: GhostButtonType;
   size?: GhostButtonSize;
   loading?: boolean;
   disabled?: boolean;
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
-  haptic?: 'light' | 'medium' | 'none';
+  haptic?: ButtonHaptic;
   style?: StyleProp<ViewStyle>;
   labelStyle?: StyleProp<TextStyle>;
 };
 
+type ToneStyle = { fg: string; pressedBg: string };
 type GhostDims = { height: number; type: { fontSize: number; lineHeight: number }; gap: number; iconSize: number };
+
+/** Single source of truth for the GhostButton's looks. */
+function ghostVariants(t: Tokens): {
+  tone: Record<GhostButtonTone, ToneStyle>;
+  size: Record<GhostButtonSize, GhostDims>;
+  disabledFg: string;
+} {
+  return {
+    tone: {
+      primary: { fg: t.colors.textInteractiveTertiary, pressedBg: t.colors.touchFeedbackMain },
+      neutral: { fg: t.colors.textPrimary, pressedBg: t.colors.touchFeedbackMain },
+      danger: { fg: t.colors.feedbackError, pressedBg: t.colors.feedbackErrorBg },
+    },
+    size: {
+      sm: { height: 24, type: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.xs },
+      md: { height: 24, type: t.typography.body, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
+      lg: { height: 28, type: t.typography.title3, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
+      xl: { height: 40, type: t.typography.title2, gap: t.spacing[3], iconSize: t.sizing.icon.md },
+    },
+    disabledFg: t.colors.textTertiary,
+  };
+}
+
+const LEGACY_TONE: Record<GhostButtonType, GhostButtonTone> = {
+  primary: 'primary',
+  neutral: 'neutral',
+  destructive: 'danger',
+};
 
 function touchTargetInset(visualSize: number, minimumSize: number) {
   const vertical = Math.max(0, Math.ceil((minimumSize - visualSize) / 2));
   return { top: vertical, bottom: vertical, left: 12, right: 12 };
 }
 
-function resolveGhostDims(size: GhostButtonSize, t: ReturnType<typeof useTokens>): GhostDims {
-  switch (size) {
-    case 'sm':
-      return { height: 24, type: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
-    case 'lg':
-      return { height: 28, type: t.typography.title3, gap: t.spacing[2], iconSize: t.sizing.icon.sm };
-    case 'xl':
-      return { height: 40, type: t.typography.title2, gap: t.spacing[3], iconSize: t.sizing.icon.md };
-    default:
-      return { height: 24, type: t.typography.body, gap: t.spacing[2], iconSize: t.sizing.icon.sm };
-  }
-}
-
-function resolveTextColor(t: ReturnType<typeof useTokens>, type: GhostButtonType, disabled: boolean): string {
-  if (disabled) return t.colors.textTertiary;
-  switch (type) {
-    case 'primary': return t.colors.textInteractiveTertiary;
-    case 'neutral': return t.colors.textPrimary;
-    case 'destructive': return t.colors.feedbackError;
-  }
-}
-
 export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButton(
   {
     children,
-    type = 'neutral',
+    tone: toneProp,
+    type,
     size = 'md',
     loading = false,
     disabled = false,
@@ -108,54 +103,27 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
   ref,
 ) {
   const t = useTokens();
-  const press = useRef(new Animated.Value(0)).current;
-  const [pressed, setPressed] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const variants = useMemo(() => ghostVariants(t), [t]);
+  const { pressed, animatedStyle, onPressIn: pressIn, onPressOut: pressOut } = usePressFeedback({
+    haptic,
+    onPressIn,
+    onPressOut,
+  });
 
+  const tone = toneProp ?? (type != null ? LEGACY_TONE[type] : 'neutral');
   const isPressDisabled = disabled || loading;
-  const dims = useMemo(() => resolveGhostDims(size, t), [size, t]);
+  const dims = variants.size[size];
   const hitSlop = useMemo(
     () => touchTargetInset(dims.height, t.sizing.touchTarget.minimum),
     [dims.height, t.sizing.touchTarget.minimum],
   );
-  const textColor = useMemo(() => resolveTextColor(t, type, disabled), [t, type, disabled]);
+  const textColor = disabled ? variants.disabledFg : variants.tone[tone].fg;
+  const pressedBg = variants.tone[tone].pressedBg;
 
   const iconWrap = useMemo(
     () => ({ width: dims.iconSize, height: dims.iconSize, alignItems: 'center', justifyContent: 'center' }) as const,
     [dims.iconSize],
   );
-
-  const pressedBg = useMemo(() => {
-    if (type === 'destructive') return t.colors.feedbackErrorBg;
-    return t.colors.touchFeedbackMain;
-  }, [type, t.colors]);
-
-  const handleIn = (e: GestureResponderEvent) => {
-    setPressed(true);
-    if (haptic !== 'none') void triggerHaptic(haptic);
-    Animated.timing(press, {
-      toValue: 1,
-      duration: 120,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressIn?.(e);
-  };
-
-  const handleOut = (e: GestureResponderEvent) => {
-    setPressed(false);
-    Animated.timing(press, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.bezier(0.16, 1, 0.3, 1),
-      useNativeDriver: true,
-    }).start();
-    onPressOut?.(e);
-  };
-
-  const animated = reduceMotion
-    ? { opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.85] }) }
-    : { transform: [{ scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) }] };
 
   return (
     <Pressable
@@ -164,8 +132,8 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
       accessibilityLabel={accessibilityLabel ?? children}
       accessibilityState={{ disabled: isPressDisabled, busy: loading }}
       disabled={isPressDisabled}
-      onPressIn={handleIn}
-      onPressOut={handleOut}
+      onPressIn={pressIn}
+      onPressOut={pressOut}
       hitSlop={hitSlop}
       {...rest}
     >
@@ -180,7 +148,7 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
             borderRadius: t.radii.sm,
             backgroundColor: !disabled && pressed ? pressedBg : 'transparent',
           },
-          animated,
+          animatedStyle,
           style,
         ]}
       >
