@@ -34,7 +34,7 @@ Rules:
 
 ## Color
 
-Canonical values live in **`packages/tokens`** (main palette, secondary palette, semantic + legacy flat maps). Run `pnpm skill:sync` after token changes to refresh `references/tokens.json`.
+Canonical values live in **`packages/tokens`** (main palette, secondary palette, semantic + legacy flat maps). Run `npm run skill:sync` after token changes to refresh `references/tokens.json`.
 
 ### Main palette (Figma)
 

@@ -42,6 +42,10 @@ pnpm-debug.log*
 # testing
 coverage
 
+# local editor / agent settings
+.claude/settings.local.json
+.vscode/*.local
+
 # native
 ios/Pods
 android/.gradle

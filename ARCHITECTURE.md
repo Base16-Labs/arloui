@@ -18,9 +18,9 @@ This document explains why Arlo UI is structured the way it is. Read it before a
 - A styling DSL. We use `StyleSheet.create` + tokens. NativeWind, Tamagui, Restyle are all great — they just aren't us.
 - Web-first. Components run on the web (via `react-native-web`) but are designed for mobile.
 
-## Package managers (monorepo)
+## Package manager (monorepo)
 
-Root **`package.json`** defines npm **`workspaces`**, and **`pnpm-workspace.yaml`** lists the same globs for pnpm. Cross-package dependencies use **`file:../…`** (or **`file:../../packages/…`**) specifiers so **npm, Yarn, pnpm, and Bun** all link to local sources reliably. The root **`packageManager`** field targets **npm** because **Turborepo** uses it when spawning tasks; **`.npmrc`** sets **`package-manager-strict=false`** so **pnpm** is not blocked by that field. CI continues to run **`pnpm install --frozen-lockfile`** against **`pnpm-lock.yaml`**.
+This repo is **npm-managed**. Root **`package.json`** defines npm **`workspaces`**, the lockfile is **`package-lock.json`**, and the root **`packageManager`** field pins **npm** (used by **Turborepo** when spawning tasks). Cross-package dependencies use **`file:../…`** (or **`file:../../packages/…`**) specifiers so workspace packages link to local sources. **`.npmrc`** sets **`legacy-peer-deps=true`** and **`install-strategy=nested`** to keep resolution predictable for the pinned React / React Native versions. CI runs **`npm ci`** against the committed **`package-lock.json`**.
 
 ## Data flow
 
@@ -46,7 +46,7 @@ The skill and the implementation live in the same repo and same PR. Hand-authore
    │       └── platform-mapping.md                                  │
    │                       │                       │                │
    │                       │                       │                │
-   │       pnpm skill:sync ◀───────────────────────┘                │
+   │     npm run skill:sync ◀──────────────────────┘                │
    │                       │                                        │
    │                       ▼                                        │
    │  Generated MACHINE REFS (do not edit)                          │
@@ -55,7 +55,7 @@ The skill and the implementation live in the same repo and same PR. Hand-authore
    │   ├── registry.json                                            │
    │   └── usage.md                                                 │
    │                                                                │
-   │                       │   pnpm registry:build                  │
+   │                       │   npm run registry:build               │
    │                       │           │                            │
    │                       ▼           ▼                            │
    │  Cursor / Claude /        apps/www/public/r/*.json             │
@@ -73,32 +73,32 @@ The skill and the implementation live in the same repo and same PR. Hand-authore
 Two simple rules govern every edit:
 
 1. **Markdown in `skills/`** (`SKILL.md`, `references/*.md`) = design contract. Designer-domain. Engineers don't edit it.
-2. **TS in `packages/tokens` / `packages/registry`** = implementation. Engineer-domain. Run `pnpm skill:sync` after; CI fails if you don't.
+2. **TS in `packages/tokens` / `packages/registry`** = implementation. Engineer-domain. Run `npm run skill:sync` after; CI fails if you don't.
 
 ## Package responsibilities
 
-| Package                  | Public? | Responsibility                                                               |
-| ------------------------ | ------- | ---------------------------------------------------------------------------- |
-| `@arloui/tokens`         | yes     | Color, type, spacing, radius, motion, shadows. Plain TS objects + raw JSON.  |
-| `@arloui/theme`          | yes     | `ThemeProvider`, `useTheme`, `useTokens`, `createStyles`.                    |
-| `@arloui/utils`          | yes     | `cn`, `pick`, `usePressableScale`, `haptic`. Tiny, no internal abstractions. |
-| `@arloui/icons`          | yes     | First-party SVG icons → `react-native-svg` components. Named exports.        |
-| `arloui` (`@arloui/cli`) | yes     | The user-facing CLI binary.                                                  |
-| `@arloui/registry`       | no      | Component source files + `manifest.ts`. Never published.                     |
-| `@arloui/build-registry` | no      | Reads manifest, writes per-entry JSON to `apps/www/public/r/`.               |
-| `@arloui/build-icons`    | no      | SVGR pipeline: `packages/icons/assets/svg` → `packages/icons/src/generated`. |
+| Package                  | Public? | Responsibility                                                                                                                                                                                                       |
+| ------------------------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@arloui/tokens`         | yes     | Color, type, spacing, radius, motion, shadows. Plain TS objects + raw JSON.                                                                                                                                          |
+| `@arloui/theme`          | yes     | `ThemeProvider`, `useTheme`, `useTokens`, `createStyles`.                                                                                                                                                            |
+| `@arloui/utils`          | yes     | `cn`, `pick`, `usePressableScale`, `haptic`. Tiny, no internal abstractions.                                                                                                                                         |
+| `@arloui/icons`          | yes     | First-party SVG icons → `react-native-svg` components. Named exports.                                                                                                                                                |
+| `arloui` (`@arloui/cli`) | yes     | The user-facing CLI binary.                                                                                                                                                                                          |
+| `@arloui/registry`       | no      | Component source files + `manifest.ts`. Never published.                                                                                                                                                             |
+| `@arloui/build-registry` | no      | Reads manifest, writes per-entry JSON to `apps/www/public/r/`.                                                                                                                                                       |
+| `@arloui/build-icons`    | no      | SVGR pipeline: `packages/icons/assets/svg` → `packages/icons/src/generated`.                                                                                                                                         |
 | `skills/` (skill bundle) | no      | Cursor / Claude / Codex skill under `skills/` (same idea as [HeroUI `skills/*`](https://github.com/heroui-inc/heroui/tree/v3/skills), one skill per folder — ours is flat). Hand-authored markdown + generated refs. |
-| `@arloui/eslint-config`  | no      | Shared ESLint rules.                                                         |
-| `@arloui/tsconfig`       | no      | Shared TS configs (`base`, `react-native`, `node`).                          |
-| `@arloui/www`            | no      | Web-first docs and copy surface: registry code, icon SVG copy, CLI snippets. |
-| `@arloui/docs`           | no      | Expo playground/showcase for validating React Native behavior.               |
+| `@arloui/eslint-config`  | no      | Shared ESLint rules.                                                                                                                                                                                                 |
+| `@arloui/tsconfig`       | no      | Shared TS configs (`base`, `react-native`, `node`).                                                                                                                                                                  |
+| `@arloui/www`            | no      | Web-first docs and copy surface: registry code, icon SVG copy, CLI snippets.                                                                                                                                         |
+| `@arloui/docs`           | no      | Expo playground/showcase for validating React Native behavior.                                                                                                                                                       |
 
 ## Icons (`@arloui/icons`)
 
 Custom Arlo icons are **not** copied per-app like Button or Card. They are a **versioned package** plus a **single native dependency**:
 
 - **Consumers** add `@arloui/icons` and `react-native-svg`, then `import { MyIcon } from '@arloui/icons'`.
-- **Maintainers** drop SVG exports from Figma into `packages/icons/assets/svg/` (kebab-case filenames), run **`pnpm icons:build`**, and commit **`assets/svg/`** plus the generated **`src/generated/`** output from SVGR (`tooling/build-icons`).
+- **Maintainers** drop SVG exports from Figma into `packages/icons/assets/svg/` (kebab-case filenames), run **`npm run icons:build`**, and commit **`assets/svg/`** plus the generated **`src/generated/`** output from SVGR (`tooling/build-icons`).
 
 Registry primitives take `ReactNode` slots (`leadingIcon`, etc.) so you compose `<ArloFlag />` from `@arloui/icons` without forking the primitive.
 
@@ -117,7 +117,7 @@ components stay RN-only; the docs shell does not have to be.
 
 The registry's `foundation/tokens.ts` contains the same values as `packages/tokens/src/`. That looks like duplication, but it's intentional: registry source files are templates that get copy-pasted into consumer projects, where they must work without `@arloui/tokens` as a dependency.
 
-`pnpm skill:sync` and a CI check verify the two files stay numerically aligned. Designers edit the one in `packages/tokens` (the canonical TS source); the registry one is regenerated on release.
+`npm run skill:sync` and a CI check verify the two files stay numerically aligned. Designers edit the one in `packages/tokens` (the canonical TS source); the registry one is regenerated on release.
 
 ## Why `StyleSheet`, not Tailwind/NativeWind
 
@@ -134,9 +134,9 @@ shadcn proved this model is the right one for design systems where consumers nee
 1. Create `packages/registry/src/components/<name>/<name>.tsx` and an `index.ts`.
 2. Add an entry to `packages/registry/src/manifest.ts`.
 3. Add a showcase route in `apps/docs/app/components/<name>.tsx`.
-4. Run `pnpm registry:build` and verify the JSON output.
-5. Run `pnpm skill:sync` to update `skills/references/` (generated JSON + `usage.md` only).
-6. Run `pnpm changeset` if any published package changes.
+4. Run `npm run registry:build` and verify the JSON output.
+5. Run `npm run skill:sync` to update `skills/references/` (generated JSON + `usage.md` only).
+6. Run `npm run changeset` if any published package changes.
 
 ## Versioning model
 
@@ -146,9 +146,9 @@ shadcn proved this model is the right one for design systems where consumers nee
 
 ## Tokens contract with the design skill
 
-The skill's `tokens.md` is hand-authored markdown for humans (designers and the AI). The skill's `tokens.json` is generated by `pnpm skill:sync` and read programmatically. They must agree.
+The skill's `tokens.md` is hand-authored markdown for humans (designers and the AI). The skill's `tokens.json` is generated by `npm run skill:sync` and read programmatically. They must agree.
 
-CI runs `pnpm skill:sync` and fails if `skills/` changes — meaning the implementation drifted from the spec. Designers update `tokens.md`; engineers update `packages/tokens/src/*.ts`; the sync script catches mismatches.
+CI runs `npm run skill:sync` and fails if `skills/` changes — meaning the implementation drifted from the spec. Designers update `tokens.md`; engineers update `packages/tokens/src/*.ts`; the sync script catches mismatches.
 
 ## Loading the skill into your local agent
 

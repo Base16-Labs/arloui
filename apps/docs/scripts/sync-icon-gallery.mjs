@@ -2,7 +2,7 @@
  * Copies SVG sources into public/ for web fetch (HeroUI-style “copy SVG” gallery)
  * and refreshes data/icon-names.json + lib/icon-registry.ts for the docs app.
  *
- * Run from repo root: npm run sync-icons -w @arloui/docs  (or pnpm/yarn/bun equivalent)
+ * Run from repo root: npm run sync-icons -w @arloui/docs
  */
 import { copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';

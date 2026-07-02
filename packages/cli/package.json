@@ -10,19 +10,32 @@
   "bin": {
     "arloui": "./dist/cli.cjs"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "homepage": "https://arloui.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/arlo-ui/arloui.git",
     "directory": "packages/cli"
   },
-  "keywords": ["react-native", "expo", "ui", "components", "design-system", "shadcn", "tailwind-ui"],
+  "keywords": [
+    "react-native",
+    "expo",
+    "ui",
+    "components",
+    "design-system",
+    "shadcn",
+    "tailwind-ui"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "clean": "rm -rf dist .turbo",
     "start": "node dist/cli.cjs"
   },
@@ -30,7 +43,8 @@
     "@clack/prompts": "^0.7.0",
     "commander": "^12.1.0",
     "kleur": "^4.1.5",
-    "ora": "^8.1.0"
+    "ora": "^8.1.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@arloui/eslint-config": "file:../eslint-config",
@@ -38,6 +52,7 @@
     "@arloui/tsconfig": "file:../tsconfig",
     "@types/node": "^20.16.10",
     "tsup": "^8.3.0",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.9"
   }
 }

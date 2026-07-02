@@ -57,14 +57,14 @@ export const lightSemanticColors = {
 
 export const darkSemanticColors = {
   surfaceBackground: '#09090B',
-  surfaceInput: '#1E2939',
-  surfaceElevated: '#101828',
+  surfaceInput: '#101828',
+  surfaceElevated: '#1E2939',
   surfaceOverlay: 'rgba(16,24,40,0.7)',
   surfaceInverse: '#F9FAFB',
   textPrimary: '#F9FAFB',
   textSecondary: '#99A1AF',
   textTertiary: '#6A7282',
-  textDisabled: 'rgba(249,250,251,0.12)',
+  textDisabled: 'rgba(249,250,251,0.38)',
   textInverse: '#101828',
   textPlaceholder: '#4A5565',
   textInteractivePrimary: '#FFFFFF',

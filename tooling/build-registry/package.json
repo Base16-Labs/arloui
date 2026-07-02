@@ -11,6 +11,8 @@
     "emit": "tsc -p tsconfig.json && tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
@@ -20,6 +22,7 @@
     "@arloui/tsconfig": "file:../../packages/tsconfig",
     "@types/node": "^20.16.10",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.9"
   }
 }

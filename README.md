@@ -50,19 +50,19 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full data flow.
 
 ## Quickstart (this repo)
 
-Requires **Node 20+**. This monorepo uses npm `workspaces` in the root `package.json` plus `pnpm-workspace.yaml`, so you can install with **pnpm**, **npm**, **Yarn**, or **Bun**. Root scripts wrap **Turbo** and stay the same regardless of which tool you used to install.
+Requires **Node 20+**. This monorepo is **npm-managed** — npm `workspaces` in the root `package.json`, a committed `package-lock.json`, and a root `packageManager` field pinned to npm. Root scripts wrap **Turbo**.
 
-| Tool | Install        | Run scripts (examples)                              |
-| ---- | -------------- | --------------------------------------------------- |
-| pnpm | `pnpm install` | `pnpm build`, `pnpm --filter @arloui/www dev`       |
-| npm  | `npm install`  | `npm run build`, `npm run dev -w @arloui/www`       |
-| Yarn | `yarn install` | `yarn build`, `yarn workspace @arloui/www dev`      |
-| Bun  | `bun install`  | `bun run build`, `bun run --filter @arloui/www dev` |
+| Task            | Command                      |
+| --------------- | ---------------------------- |
+| Install         | `npm install`                |
+| Build all       | `npm run build`              |
+| Dev (docs site) | `npm run dev -w @arloui/www` |
+| Test            | `npm test`                   |
 
-The root `packageManager` field is set to **npm** so Turborepo can always resolve workspace tasks; `.npmrc` sets `package-manager-strict=false` so **pnpm** still works. Repo-level `.npmrc` also sets `legacy-peer-deps=true` (npm) and `install-strategy=nested` so resolution stays close to pnpm’s layout. **CI** on GitHub continues to use pnpm with a frozen `pnpm-lock.yaml`.
+The repo-level `.npmrc` sets `legacy-peer-deps=true` and `install-strategy=nested` so workspace resolution stays predictable for the pinned React / React Native versions. **CI** on GitHub runs `npm ci` against the committed `package-lock.json`.
 
 ```bash
-npm install             # or: pnpm install | yarn | bun install
+npm install
 npm run icons:build     # SVG in packages/icons/assets/svg → src/generated (SVGR)
 npm run registry:build  # generates apps/www/public/r/*.json
 npm run dev -w @arloui/www
@@ -108,7 +108,7 @@ export default function RootLayout() {
 Install icons (first-party Arlo set — separate package from copy-paste primitives):
 
 ```bash
-pnpm add @arloui/icons react-native-svg
+npm install @arloui/icons react-native-svg
 ```
 
 Use a component:
@@ -143,7 +143,7 @@ After install, the skill activates whenever you ask Cursor / Claude for Arlo UI 
 The CLI, tokens, theme, and utils packages publish to npm via Changesets:
 
 ```bash
-pnpm changeset
+npm run changeset
 git commit -am "chore: changeset"
 # CI takes it from here
 ```

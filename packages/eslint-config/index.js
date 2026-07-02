@@ -51,4 +51,31 @@ module.exports = [
       ],
     },
   },
+  {
+    // Test files: provide Jest globals (Vitest tests import their globals
+    // explicitly, so this block only matters for the Jest-based RN suites).
+    files: ['**/*.test.{ts,tsx,js,jsx}', '**/*.spec.{ts,tsx,js,jsx}', '**/__tests__/**'],
+    languageOptions: {
+      globals: {
+        jest: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        global: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+        __dirname: 'readonly',
+        require: 'readonly',
+      },
+    },
+    rules: {
+      // Inline wrapper components (e.g. RNTL `wrapper`) don't need display names.
+      'react/display-name': 'off',
+    },
+  },
 ];
