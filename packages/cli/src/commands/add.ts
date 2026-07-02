@@ -1,8 +1,8 @@
-import { resolve } from 'node:path';
+import { relative } from 'node:path';
 import * as p from '@clack/prompts';
 import kleur from 'kleur';
-import { loadConfig, type ArloConfig } from '../config';
-import { fileExists, writeFileEnsuringDir } from '../fs-utils';
+import { aliasFor, loadConfig, type ArloConfig } from '../config';
+import { fileExists, resolveWithin, writeFileEnsuringDir } from '../fs-utils';
 import { RegistryClient, type ResolvedRegistryEntry } from '../registry-client';
 
 type Options = {
@@ -17,9 +17,7 @@ export async function add({ cwd, names, yes, overwrite }: Options): Promise<void
 
   const config = await loadConfig(cwd);
   if (!config) {
-    p.log.error(
-      `No ${kleur.cyan('arlo.json')} found. Run ${kleur.cyan('npx arloui init')} first.`,
-    );
+    p.log.error(`No ${kleur.cyan('arlo.json')} found. Run ${kleur.cyan('npx arloui init')} first.`);
     process.exit(1);
   }
 
@@ -71,7 +69,11 @@ export async function add({ cwd, names, yes, overwrite }: Options): Promise<void
 
   const lines: string[] = [kleur.green('Done.')];
   if (npmDeps.size > 0) {
-    lines.push('', `Install npm dependencies:`, `  ${kleur.cyan(`npm i ${[...npmDeps].join(' ')}`)}`);
+    lines.push(
+      '',
+      `Install npm dependencies:`,
+      `  ${kleur.cyan(`npm i ${[...npmDeps].join(' ')}`)}`,
+    );
   }
   if (nativeDeps.length > 0) {
     lines.push('', `Native modules:`);
@@ -97,7 +99,7 @@ export async function writeComponent({
 }): Promise<void> {
   for (const file of entry.files) {
     const aliasRoot = aliasFor(config, file.type);
-    const target = resolve(cwd, aliasRoot, file.target);
+    const target = resolveWithin(cwd, aliasRoot, file.target);
 
     if ((await fileExists(target)) && !overwrite) {
       if (yes) {
@@ -119,19 +121,6 @@ export async function writeComponent({
   }
 }
 
-function aliasFor(config: ArloConfig, type: string | undefined): string {
-  switch (type) {
-    case 'tokens':
-      return config.aliases.tokens;
-    case 'theme':
-      return config.aliases.theme;
-    case 'utility':
-      return config.aliases.lib;
-    default:
-      return config.aliases.components;
-  }
-}
-
 function rel(from: string, to: string): string {
-  return to.startsWith(from) ? to.slice(from.length + 1) : to;
+  return relative(from, to) || to;
 }

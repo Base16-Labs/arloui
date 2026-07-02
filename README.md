@@ -16,7 +16,7 @@ That's it. Primitives live in your `components/ui/` folder. **Icons** ship as a 
 - **Mobile-first by design.** Built around the Arlo design system (mobile, dark-first, premium).
 - **`StyleSheet`-native.** No NativeWind, no Tamagui, no styling DSL. Just `StyleSheet.create` + a `useTokens()` hook. Drops into any Expo or bare RN app cleanly.
 - **Tokens are the source of truth.** Color, type, spacing, radius, motion — all live in one place and flow into Figma, code, and the design skill in lockstep.
-- **AI-friendly.** Ships with a built-in design skill (`packages/skill`) that teaches Cursor / Claude Code / Codex the rules of the system, the component inventory, and how to use the CLI. The skill and the implementation live in the same repo so they can never drift.
+- **AI-friendly.** Ships with a built-in design skill under [`skills/`](./skills) (`SKILL.md` + `references/`) that teaches Cursor / Claude Code / Codex the rules of the system, the component inventory, and how to use the CLI. The skill and the implementation live in the same repo so they can never drift.
 
 ## Repo layout
 
@@ -25,6 +25,9 @@ arloui/
 ├── apps/
 │   ├── www/                   Web-first docs + copy surface
 │   └── docs/                  Expo playground/showcase for RN behavior
+├── skills/
+│   ├── SKILL.md               Design skill entry (agent-facing)
+│   └── references/            Tokens, components, platform mapping + generated JSON
 ├── packages/
 │   ├── tokens/                Source of truth for all design tokens
 │   ├── theme/                 ThemeProvider + useTheme + createStyles
@@ -32,14 +35,13 @@ arloui/
 │   ├── icons/                 First-party SVG → react-native-svg (`@arloui/icons`)
 │   ├── registry/              Component source files (Button, Card, …)
 │   ├── cli/                   The `arloui` command
-│   ├── skill/                 The Arlo UI design skill (SKILL.md + references)
 │   ├── tsconfig/              Shared TS configs
 │   └── eslint-config/         Shared ESLint configs
 ├── tooling/
 │   ├── build-registry/        Compiles registry source → JSON for the CLI
 │   └── build-icons/           SVG → RN components for `@arloui/icons`
 ├── scripts/
-│   ├── sync-skill.ts          Mirrors tokens + manifest into packages/skill
+│   ├── sync-skill.ts          Mirrors tokens + manifest into skills/references
 │   └── install-skill.mjs      Installs the skill into your local Cursor/Claude
 └── …
 ```
@@ -48,13 +50,22 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full data flow.
 
 ## Quickstart (this repo)
 
-Requires Node 20+ and pnpm 9+ (`corepack enable` will set this up automatically).
+Requires **Node 20+**. This monorepo is **npm-managed** — npm `workspaces` in the root `package.json`, a committed `package-lock.json`, and a root `packageManager` field pinned to npm. Root scripts wrap **Turbo**.
+
+| Task            | Command                      |
+| --------------- | ---------------------------- |
+| Install         | `npm install`                |
+| Build all       | `npm run build`              |
+| Dev (docs site) | `npm run dev -w @arloui/www` |
+| Test            | `npm test`                   |
+
+The repo-level `.npmrc` sets `legacy-peer-deps=true` and `install-strategy=nested` so workspace resolution stays predictable for the pinned React / React Native versions. **CI** on GitHub runs `npm ci` against the committed `package-lock.json`.
 
 ```bash
-pnpm install
-pnpm icons:build          # SVG in packages/icons/assets/svg → src/generated (SVGR)
-pnpm registry:build      # generates apps/www/public/r/*.json
-pnpm --filter @arloui/www dev
+npm install
+npm run icons:build     # SVG in packages/icons/assets/svg → src/generated (SVGR)
+npm run registry:build  # generates apps/www/public/r/*.json
+npm run dev -w @arloui/www
 ```
 
 Open the web-first copy surface at `http://localhost:4321`. It serves raw icons from
@@ -64,9 +75,10 @@ from `apps/www/public/r`.
 Use the Expo playground when you need to verify actual React Native rendering:
 
 ```bash
-pnpm --filter @arloui/docs run web
-pnpm --filter @arloui/docs run ios
-pnpm --filter @arloui/docs run android
+npm run playground          # starts Expo on LAN and shows a QR code for Expo Go
+npm run playground:tunnel   # use this if LAN scanning fails
+npm run playground:ios
+npm run playground:android
 ```
 
 ## Quickstart (consumer app)
@@ -96,7 +108,7 @@ export default function RootLayout() {
 Install icons (first-party Arlo set — separate package from copy-paste primitives):
 
 ```bash
-pnpm add @arloui/icons react-native-svg
+npm install @arloui/icons react-native-svg
 ```
 
 Use a component:
@@ -124,14 +136,14 @@ node scripts/install-skill.mjs cursor --symlink
 node scripts/install-skill.mjs claude --symlink
 ```
 
-After install, the skill activates whenever you ask Cursor / Claude for Arlo UI work. See [`packages/skill/README.md`](./packages/skill/README.md) for project-level installs and the full compatibility matrix.
+After install, the skill activates whenever you ask Cursor / Claude for Arlo UI work. See [`skills/README.md`](./skills/README.md) for project-level installs and the full compatibility matrix.
 
 ## Releasing
 
 The CLI, tokens, theme, and utils packages publish to npm via Changesets:
 
 ```bash
-pnpm changeset
+npm run changeset
 git commit -am "chore: changeset"
 # CI takes it from here
 ```

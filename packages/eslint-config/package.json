@@ -4,14 +4,20 @@
   "private": true,
   "license": "MIT",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./react-native": "./react-native.js",
+    "./node": "./node.js"
+  },
   "files": ["index.js", "react-native.js", "node.js"],
   "dependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.1",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-native": "^4.1.0"
+    "eslint-plugin-react-hooks": "^5.0.0"
   },
   "peerDependencies": {
     "eslint": "^9.0.0"

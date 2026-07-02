@@ -3,6 +3,7 @@ export {
   FabButton,
   SocialAuthButton,
   type ButtonAppearance,
+  type ButtonHaptic,
   type ButtonProps,
   type ButtonSize,
   type ButtonTone,
@@ -15,9 +16,13 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Field,
   Input,
   InputAction,
+  type FieldActionProps,
+  type FieldProps,
   type InputActionProps,
+  type InputAppearance,
   type InputProps,
   type InputSize,
   type InputState,

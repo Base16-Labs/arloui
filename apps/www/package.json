@@ -3,20 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "description": "ArloUI documentation site — arloui.com",
+  "packageManager": "npm@10.9.2",
   "scripts": {
     "dev": "next dev --port 4321",
-    "build": "next build",
+    "build": "NEXT_IGNORE_INCORRECT_LOCKFILE=1 next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf .next .turbo"
   },
   "dependencies": {
+    "@arloui/tokens": "file:../../packages/tokens",
+    "@fontsource-variable/manrope": "^5.2.8",
+    "fuse.js": "^7.1.0",
     "next": "16.2.6",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
     "qrcode.react": "^4.2.0",
-    "fuse.js": "^7.1.0"
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "sugar-high": "^1.2.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

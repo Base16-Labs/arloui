@@ -17,23 +17,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
+      - run: npm ci
+      - run: npm run build
 
       - uses: changesets/action@v1
         with:
-          publish: pnpm release
-          version: pnpm version
+          publish: npm run release
+          version: npm run version
           commit: 'chore: release packages'
           title: 'chore: release packages'
         env:

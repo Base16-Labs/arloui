@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Arlo UI Docs",
-    "slug": "arloui-docs",
+    "name": "Arlo UI Playground",
+    "slug": "arloui-playground",
     "version": "0.1.0",
     "orientation": "portrait",
     "scheme": "arloui",
@@ -9,10 +9,10 @@
     "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "dev.arloui.docs"
+      "bundleIdentifier": "dev.arloui.playground"
     },
     "android": {
-      "package": "dev.arloui.docs"
+      "package": "dev.arloui.playground"
     },
     "web": {
       "bundler": "metro",
@@ -20,7 +20,8 @@
     },
     "plugins": ["expo-router"],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "autolinkingModuleResolution": true
     }
   }
 }

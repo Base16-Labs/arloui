@@ -15,6 +15,7 @@ out
 
 # docs — synced from packages/icons for web “copy SVG” gallery
 apps/docs/public/arloui-icons
+apps/www/public/arloui-icons
 
 # generated registry artifacts
 apps/www/public/r
@@ -40,6 +41,10 @@ pnpm-debug.log*
 
 # testing
 coverage
+
+# local editor / agent settings
+.claude/settings.local.json
+.vscode/*.local
 
 # native
 ios/Pods

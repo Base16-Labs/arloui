@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/cn";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/cn';
 import {
   docsSections,
   componentGroups,
@@ -10,19 +10,21 @@ import {
   archetypeItems,
   agentItems,
   gettingStartedItems,
-} from "@/lib/routes";
+} from '@/lib/routes';
 
 export function Sidebar() {
   const pathname = usePathname();
 
-  const currentSection = docsSections.find((s) =>
-    pathname.startsWith(s.href)
-  );
-
   return (
-    <aside className="sticky top-[68px] h-[calc(100dvh-68px)] w-[264px] shrink-0 overflow-hidden border-r border-line">
+    <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[264px] shrink-0 self-start overflow-hidden border-r border-line lg:block">
       {/* Top blur */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-10" style={{ background: "linear-gradient(to bottom, var(--canvas) 0%, var(--canvas) 20%, transparent 100%)", maskImage: "linear-gradient(to bottom, black 0%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 100%)" }} />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
+        style={{
+          background:
+            'linear-gradient(to bottom, var(--canvas) 0%, var(--canvas) 34%, color-mix(in srgb, var(--canvas) 82%, transparent) 58%, transparent 100%)',
+        }}
+      />
 
       {/* Scroll container */}
       <div className="h-full overflow-y-auto overscroll-contain px-[18px] py-7 scrollbar-none">
@@ -31,16 +33,16 @@ export function Sidebar() {
           Sections
         </div>
         {docsSections.map((section) => {
-          const active = pathname.startsWith(section.href);
+          const active = pathname === section.href;
           return (
             <Link
               key={section.href}
               href={section.href}
               className={cn(
-                "block rounded-sm px-2.5 py-1.5 text-[13.5px] font-medium leading-snug",
+                'block rounded-sm px-2.5 py-1.5 text-[13.5px] font-medium leading-snug',
                 active
-                  ? "bg-surface-sunken text-ink"
-                  : "text-ink hover:bg-surface-sunken/50"
+                  ? 'bg-surface-sunken text-ink dark:bg-surface'
+                  : 'text-ink hover:bg-surface-sunken/50',
               )}
             >
               {section.label}
@@ -52,7 +54,7 @@ export function Sidebar() {
         <hr className="mx-2 my-[18px] border-line" />
 
         {/* Contextual sub-navigation */}
-        {pathname.startsWith("/docs/components") && (
+        {pathname.startsWith('/docs/components') && (
           <>
             <div className="mb-2 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
               Components
@@ -75,7 +77,7 @@ export function Sidebar() {
           </>
         )}
 
-        {pathname.startsWith("/docs/getting-started") && (
+        {pathname.startsWith('/docs/getting-started') && (
           <SidebarGroup
             title="Getting started"
             items={gettingStartedItems}
@@ -84,16 +86,16 @@ export function Sidebar() {
           />
         )}
 
-        {pathname.startsWith("/docs/primitives") && (
+        {pathname.startsWith('/docs/primitives') && (
           <SidebarGroup
-            title="Primitives"
+            title="Foundations"
             items={primitiveItems}
             basePath="/docs/primitives"
             pathname={pathname}
           />
         )}
 
-        {pathname.startsWith("/docs/archetypes") && (
+        {pathname.startsWith('/docs/archetypes') && (
           <SidebarGroup
             title="Archetypes"
             items={archetypeItems}
@@ -102,7 +104,7 @@ export function Sidebar() {
           />
         )}
 
-        {pathname.startsWith("/docs/agents") && (
+        {pathname.startsWith('/docs/agents') && (
           <SidebarGroup
             title="Agents"
             items={agentItems}
@@ -113,28 +115,26 @@ export function Sidebar() {
       </div>
 
       {/* Bottom blur */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-10" style={{ background: "linear-gradient(to top, var(--canvas) 0%, var(--canvas) 20%, transparent 100%)", maskImage: "linear-gradient(to top, black 0%, transparent 100%)", WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 100%)" }} />
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24"
+        style={{
+          background:
+            'linear-gradient(to top, var(--canvas) 0%, var(--canvas) 34%, color-mix(in srgb, var(--canvas) 82%, transparent) 58%, transparent 100%)',
+        }}
+      />
     </aside>
   );
 }
 
-function SidebarLink({
-  href,
-  label,
-  active,
-}: {
-  href: string;
-  label: string;
-  active: boolean;
-}) {
+function SidebarLink({ href, label, active }: { href: string; label: string; active: boolean }) {
   return (
     <Link
       href={href}
       className={cn(
-        "block rounded-sm px-2.5 py-1.5 text-[13.5px] leading-snug",
+        'block rounded-sm px-2.5 py-1.5 text-[13.5px] leading-snug',
         active
-          ? "bg-ink font-medium text-canvas"
-          : "text-ink-2 hover:bg-surface-sunken/50"
+          ? 'bg-surface-sunken font-medium text-ink dark:bg-surface'
+          : 'text-ink-2 hover:bg-surface-sunken/50',
       )}
     >
       {label}

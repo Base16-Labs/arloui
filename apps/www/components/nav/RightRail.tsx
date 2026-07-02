@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/cn";
+import { useEffect, useState } from 'react';
+import { cn } from '@/lib/cn';
 
 type RightRailProps = {
   headings?: { id: string; label: string }[];
@@ -9,7 +9,7 @@ type RightRailProps = {
 };
 
 export function RightRail({ headings = [], actions = [] }: RightRailProps) {
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
     if (headings.length === 0) return;
@@ -22,7 +22,7 @@ export function RightRail({ headings = [], actions = [] }: RightRailProps) {
           }
         }
       },
-      { rootMargin: "-80px 0px -60% 0px" }
+      { rootMargin: '-80px 0px -60% 0px' },
     );
 
     for (const h of headings) {
@@ -34,7 +34,7 @@ export function RightRail({ headings = [], actions = [] }: RightRailProps) {
   }, [headings]);
 
   return (
-    <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[200px] shrink-0 overflow-y-auto overscroll-contain border-l border-line px-5 pt-10 lg:block">
+    <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[220px] shrink-0 overflow-y-auto overscroll-contain px-6 pt-10 min-[1280px]:block">
       {headings.length > 0 && (
         <div className="mb-7">
           <div className="mb-2.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
@@ -45,10 +45,8 @@ export function RightRail({ headings = [], actions = [] }: RightRailProps) {
               key={h.id}
               href={`#${h.id}`}
               className={cn(
-                "block py-1.5 text-[12.5px] leading-snug",
-                activeId === h.id
-                  ? "font-medium text-ink"
-                  : "text-ink-2 hover:text-ink"
+                'block py-1.5 text-[12.5px] leading-snug',
+                activeId === h.id ? 'font-medium text-ink' : 'text-ink-2 hover:text-ink',
               )}
             >
               {h.label}
@@ -62,17 +60,20 @@ export function RightRail({ headings = [], actions = [] }: RightRailProps) {
           <div className="mb-2.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
             Actions
           </div>
-          {actions.map((a) => (
-            <a
-              key={a.href}
-              href={a.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block py-1.5 text-[12.5px] text-ink-2 hover:text-ink"
-            >
-              {a.label}
-            </a>
-          ))}
+          {actions.map((a) => {
+            const external = a.href.startsWith("http");
+            return (
+              <a
+                key={a.href}
+                href={a.href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                className="block py-1.5 text-[12.5px] text-ink-2 hover:text-ink"
+              >
+                {a.label}
+              </a>
+            );
+          })}
         </div>
       )}
     </aside>

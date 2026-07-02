@@ -15,6 +15,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
 import { useTokens } from '@arloui/registry';
+import { IconThumbnail } from '@/components/playground/icon-thumbnail';
+import { ThemeToggle } from '@/components/playground/theme-toggle';
 import iconNames from '@/data/icon-names.json';
 import {
   filterIconsByTab,
@@ -150,7 +152,16 @@ function IconDetailOverlay(props: DetailOverlayProps) {
               <WebSvgImg name={active} size={56} />
             </View>
           ) : (
-            prefetchedXml && <SvgXml xml={prefetchedXml} width={48} height={48} />
+            <View
+              style={{
+                alignItems: 'center',
+                padding: t.spacing[4],
+                backgroundColor: t.colors.surface,
+                borderRadius: t.radii.md,
+              }}
+            >
+              <IconThumbnail name={active} size={48} color={t.colors.textPrimary} />
+            </View>
           )}
 
           <View style={{ gap: t.spacing[2] }}>
@@ -220,7 +231,10 @@ export default function IconsGalleryScreen() {
   const t = useTokens();
   const { width: winWidth } = useWindowDimensions();
   const width = Math.max(winWidth || 0, 360);
-  const cols = width >= 900 ? 4 : width >= 600 ? 3 : 2;
+  const ICON_SIZE = 20;
+  const iconSlot = ICON_SIZE + t.spacing[3];
+  const labelLine = 10;
+  const cols = width >= 720 ? 6 : width >= 480 ? 5 : 4;
   const pad = t.spacing[4];
   const gap = t.spacing[2];
   const tileW = (width - pad * 2 - gap * (cols - 1)) / cols;
@@ -306,7 +320,7 @@ export default function IconsGalleryScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Icons' }} />
+      <Stack.Screen options={{ title: 'Icons', headerRight: () => <ThemeToggle /> }} />
       <SafeAreaView
         edges={['bottom']}
         style={{ flex: 1, minHeight: 0, backgroundColor: t.colors.bg }}
@@ -448,30 +462,42 @@ export default function IconsGalleryScreen() {
               style={{
                 width: tileW,
                 flexShrink: 0,
+                minHeight: iconSlot + labelLine + t.spacing[2],
                 borderWidth: 1,
                 borderColor: t.colors.border,
                 borderRadius: t.radii.md,
-                padding: t.spacing[3],
+                paddingTop: t.spacing[2],
+                paddingBottom: t.spacing[1],
+                paddingHorizontal: t.spacing[1],
                 backgroundColor: t.colors.surface,
-                gap: t.spacing[2],
                 alignItems: 'center',
+                justifyContent: 'flex-start',
                 ...(Platform.OS === 'web'
                   ? { cursor: 'pointer' as const, textDecorationLine: 'none' as const }
                   : null),
               }}
             >
-              {Platform.OS === 'web' ? (
-                <View style={{ width: 40, height: 40 }} pointerEvents="none">
-                  <WebSvgImg name={item} size={40} />
-                </View>
-              ) : null}
-              <Text
-                numberOfLines={2}
+              <View
                 style={{
-                  color: t.colors.textPrimary,
+                  width: tileW - t.spacing[2],
+                  height: iconSlot,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <IconThumbnail name={item} size={ICON_SIZE} color={t.colors.textPrimary} />
+              </View>
+              <Text
+                numberOfLines={1}
+                style={{
+                  width: tileW - t.spacing[2],
+                  color: t.colors.textTertiary,
                   fontFamily: t.fontFamilies.mono,
-                  fontSize: 11,
+                  fontSize: 8,
+                  lineHeight: labelLine,
                   textAlign: 'center',
+                  flexShrink: 0,
                 }}
               >
                 {stripWeightPrefix(item)}

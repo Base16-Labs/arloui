@@ -6,6 +6,10 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".expo/**", "registry/**"]
     },
+    "emit": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "dev": {
       "cache": false,
       "persistent": true
@@ -24,6 +28,18 @@
     },
     "clean": {
       "cache": false
+    },
+    "@arloui/icons#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["src/generated/**"]
+    },
+    "@arloui/icons#typecheck": {
+      "dependsOn": ["build"],
+      "outputs": []
+    },
+    "@arloui/icons#lint": {
+      "dependsOn": ["build"],
+      "outputs": []
     }
   }
 }

@@ -7,7 +7,7 @@ Drop **production SVG exports** from Figma here — one icon per file, **kebab-c
 Then from the repo root:
 
 ```bash
-pnpm icons:build
+npm run icons:build
 ```
 
 Icons are **not** hand-edited under `src/generated/` — that folder is build output.

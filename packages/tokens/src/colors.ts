@@ -75,15 +75,15 @@ export const lightSemanticColors = {
 /** Dark — same token names; values derived from Main palette (no separate Figma table yet). */
 export const darkSemanticColors = {
   surfaceBackground: G[950],
-  surfaceInput: G[800],
-  surfaceElevated: G[900],
+  surfaceInput: G[900],
+  surfaceElevated: G[800],
   surfaceOverlay: alphaRamp.black[70],
   surfaceInverse: G[50],
 
   textPrimary: G[50],
   textSecondary: G[400],
   textTertiary: G[500],
-  textDisabled: rgbaFromHex(G[50], 0.12),
+  textDisabled: rgbaFromHex(G[50], 0.38),
   textInverse: G[900],
   textPlaceholder: G[600],
   textInteractivePrimary: base.white,
