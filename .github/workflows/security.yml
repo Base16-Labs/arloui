@@ -21,24 +21,34 @@ jobs:
     permissions:
       contents: read
       security-events: write # upload SARIF to code scanning
+    env:
+      SKIP_DIRS: node_modules,dist,coverage,.next,.expo,.turbo
     steps:
       - uses: actions/checkout@v4
 
+      # Install the Trivy CLI directly. This avoids trivy-action's transitive
+      # dependency on setup-trivy tags that upstream sometimes deletes (the
+      # "unable to resolve aquasecurity/setup-trivy" failures).
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+            | sh -s -- -b "$RUNNER_TEMP/trivy-bin"
+          echo "$RUNNER_TEMP/trivy-bin" >> "$GITHUB_PATH"
+
       # Vulnerabilities + misconfigurations → SARIF (report-only, surfaced in
-      # the Security tab). Non-gating: ignore-unfixed keeps known dev-tooling
-      # advisories with no available fix from failing the build.
+      # the Security tab). ignore-unfixed keeps known dev-tooling advisories
+      # with no available fix from failing the build.
       - name: Trivy vuln + misconfig scan
-        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          scanners: vuln,misconfig
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          format: sarif
-          output: trivy-results.sarif
-          exit-code: '0'
-          skip-dirs: node_modules,dist,coverage,.next,.expo,.turbo
+        run: |
+          trivy fs . \
+            --scanners vuln,misconfig \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --format sarif \
+            --output trivy-results.sarif \
+            --skip-dirs "$SKIP_DIRS" \
+            --exit-code 0 \
+            --no-progress
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@v3
@@ -48,14 +58,12 @@ jobs:
 
       # Secrets are a hard gate — fail the run if a credential is committed.
       - name: Trivy secret scan (gate)
-        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          scanners: secret
-          format: table
-          exit-code: '1'
-          skip-dirs: node_modules,dist,coverage,.next,.expo,.turbo
+        run: |
+          trivy fs . \
+            --scanners secret \
+            --skip-dirs "$SKIP_DIRS" \
+            --exit-code 1 \
+            --no-progress
 
   audit:
     name: npm audit (published deps)
