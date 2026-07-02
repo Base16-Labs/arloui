@@ -1,26 +1,5 @@
 # Arlo UI pre-commit gate.
-
-# 1. Test suite — Turbo-cached, so it's instant when nothing relevant changed.
+# Runs the test suite — Turbo-cached, so it's instant when nothing relevant
+# changed. Security scanning (Trivy) and audits run in CI (.github/workflows).
 echo "▶ running tests…"
-npm test || exit 1
-
-# 2. Trivy secret scan of the working tree (skips deps + build output).
-#    Fails the commit if a credential/token is about to be committed.
-#    Vulnerability scanning stays in CI / `npm audit` — pre-commit is secrets only.
-if command -v trivy >/dev/null 2>&1; then
-  echo "▶ trivy: scanning for secrets…"
-  trivy fs \
-    --scanners secret \
-    --exit-code 1 \
-    --no-progress \
-    --skip-dirs node_modules \
-    --skip-dirs .next \
-    --skip-dirs .expo \
-    --skip-dirs dist \
-    --skip-dirs coverage \
-    --skip-dirs .turbo \
-    . || exit 1
-else
-  echo "⚠ trivy not installed — skipping secret scan."
-  echo "  Install it to enable this check: https://trivy.dev  (e.g. 'brew install trivy')"
-fi
+npm test

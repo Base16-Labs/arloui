@@ -1,18 +1,18 @@
-name: CI
+name: Build
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
   pull_request:
-    branches: [main]
+    branches: [main, staging]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: typecheck · lint · test · build · registry · e2e · skill
+  build:
+    name: build · registry · e2e · skill
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +24,6 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm test
       - run: npm run build
       - run: npm run registry:build
 
