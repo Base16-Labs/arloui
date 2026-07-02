@@ -18,9 +18,6 @@ jobs:
   trivy:
     name: trivy (vuln · secret · misconfig)
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write # upload SARIF to code scanning
     env:
       SKIP_DIRS: node_modules,dist,coverage,.next,.expo,.turbo
     steps:
@@ -35,26 +32,20 @@ jobs:
             | sh -s -- -b "$RUNNER_TEMP/trivy-bin"
           echo "$RUNNER_TEMP/trivy-bin" >> "$GITHUB_PATH"
 
-      # Vulnerabilities + misconfigurations → SARIF (report-only, surfaced in
-      # the Security tab). ignore-unfixed keeps known dev-tooling advisories
-      # with no available fix from failing the build.
-      - name: Trivy vuln + misconfig scan
+      # Vulnerabilities + misconfigurations → printed to the run log (report-only).
+      # ignore-unfixed drops advisories with no available fix (e.g. the known
+      # dev-tooling ones) so this stays informational. SARIF/code-scanning upload
+      # is intentionally omitted — it requires GitHub Advanced Security, which
+      # isn't guaranteed on this repo.
+      - name: Trivy vuln + misconfig scan (report-only)
         run: |
           trivy fs . \
             --scanners vuln,misconfig \
             --severity HIGH,CRITICAL \
             --ignore-unfixed \
-            --format sarif \
-            --output trivy-results.sarif \
             --skip-dirs "$SKIP_DIRS" \
             --exit-code 0 \
             --no-progress
-
-      - name: Upload Trivy SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results.sarif
 
       # Secrets are a hard gate — fail the run if a credential is committed.
       - name: Trivy secret scan (gate)
@@ -79,6 +70,6 @@ jobs:
       - run: npm ci
 
       # Gate only on what ships to consumers: HIGH+ in production dependencies.
-      # (Dev-only tooling advisories are tracked via the Trivy SARIF above.)
+      # (Dev-only tooling advisories show up in the Trivy report-only step above.)
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
