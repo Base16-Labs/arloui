@@ -28,7 +28,7 @@ jobs:
       # the Security tab). Non-gating: ignore-unfixed keeps known dev-tooling
       # advisories with no available fix from failing the build.
       - name: Trivy vuln + misconfig scan
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
         with:
           scan-type: fs
           scan-ref: .
@@ -48,7 +48,7 @@ jobs:
 
       # Secrets are a hard gate — fail the run if a credential is committed.
       - name: Trivy secret scan (gate)
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
         with:
           scan-type: fs
           scan-ref: .
