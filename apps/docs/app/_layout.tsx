@@ -41,6 +41,9 @@ function ThemedStack() {
         <Stack.Screen name="button" options={{ title: 'Button' }} />
         <Stack.Screen name="input" options={{ title: 'Input' }} />
         <Stack.Screen name="icons" options={{ title: 'Icons' }} />
+        <Stack.Screen name="checkbox" options={{ title: 'Checkbox' }} />
+        <Stack.Screen name="radio" options={{ title: 'Radio' }} />
+        <Stack.Screen name="toggle" options={{ title: 'Toggle' }} />
         <Stack.Screen name="components/button" options={{ headerShown: false }} />
       </Stack>
     </>

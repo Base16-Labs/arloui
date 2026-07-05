@@ -9,12 +9,13 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 type IndexItem = {
   title: string;
   category: string;
-  href?: '/button' | '/input' | '/icons';
+  href?: '/button' | '/input' | '/icons' | '/toggle' | '/checkbox' | '/radio';
 };
 
 const COMPONENTS: IndexItem[] = [
   { title: 'Button', category: 'Controls', href: '/button' },
   { title: 'Card', category: 'Layout' },
+  { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
   { title: 'Chip', category: 'Controls' },
   { title: 'Empty', category: 'Feedback' },
   { title: 'Field', category: 'Controls', href: '/input' },
@@ -26,7 +27,9 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Nav', category: 'Nav' },
   { title: 'Note', category: 'Type' },
   { title: 'Pill', category: 'Controls' },
+  { title: 'Radio', category: 'Controls', href: '/radio' },
   { title: 'Row', category: 'Lists' },
+  { title: 'Toggle', category: 'Controls', href: '/toggle' },
 ];
 
 export default function ComponentIndex() {

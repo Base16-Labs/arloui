@@ -86,6 +86,8 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Chip', slug: 'chip' },
       { label: 'Tab', slug: 'tab' },
       { label: 'Toggle', slug: 'toggle' },
+      { label: 'Checkbox', slug: 'checkbox' },
+      { label: 'Radio', slug: 'radio' },
       { label: 'Stepper', slug: 'stepper' },
       { label: 'Slider', slug: 'slider' },
       { label: 'Input', slug: 'input' },
