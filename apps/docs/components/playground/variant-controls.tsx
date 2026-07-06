@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useRef } from 'react';
 import { Animated, Pressable, ScrollView, Text, View } from 'react-native';
+import { useTokens } from '@arloui/registry';
 
 export function VariantControlRow({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -38,6 +39,13 @@ export function VariantChip({
   onPress: () => void;
 }) {
   const scale = useRef(new Animated.Value(1)).current;
+  const t = useTokens();
+  const dark = t.name === 'dark';
+  const activeBg = dark ? '#FAFAFA' : '#18181B';
+  const activeFg = dark ? '#18181B' : '#FAFAFA';
+  const inactiveBg = dark ? '#303033' : '#F4F4F5';
+  const inactiveFg = dark ? '#F4F4F5' : '#52525B';
+  const inactiveBorder = dark ? '#52525B' : '#E4E4E7';
 
   function feedback(toValue: number) {
     Animated.timing(scale, {
@@ -62,14 +70,14 @@ export function VariantChip({
           paddingHorizontal: 14,
           borderRadius: 999,
           borderWidth: 1,
-          borderColor: active ? '#FAFAFA' : '#52525B',
-          backgroundColor: active ? '#FAFAFA' : '#303033',
+          borderColor: active ? activeBg : inactiveBorder,
+          backgroundColor: active ? activeBg : inactiveBg,
           transform: [{ scale }],
         }}
       >
         <Text
           style={{
-            color: active ? '#18181B' : '#F4F4F5',
+            color: active ? activeFg : inactiveFg,
             fontFamily: active ? 'Manrope SemiBold' : 'Manrope Medium',
             fontSize: 13,
           }}
