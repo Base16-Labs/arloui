@@ -27,6 +27,13 @@ export {
   type InputSize,
   type InputState,
 } from './components/input';
+export {
+  TextArea,
+  type TextAreaAppearance,
+  type TextAreaProps,
+  type TextAreaSize,
+  type TextAreaState,
+} from './components/text-area';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
 
 export { COMPONENTS, FOUNDATION, REGISTRY } from './manifest';

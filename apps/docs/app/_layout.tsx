@@ -40,6 +40,7 @@ function ThemedStack() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="button" options={{ title: 'Button' }} />
         <Stack.Screen name="input" options={{ title: 'Input' }} />
+        <Stack.Screen name="textarea" options={{ title: 'TextArea' }} />
         <Stack.Screen name="icons" options={{ title: 'Icons' }} />
         <Stack.Screen name="components/button" options={{ headerShown: false }} />
       </Stack>

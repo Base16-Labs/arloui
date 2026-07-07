@@ -11,6 +11,8 @@ import { ButtonDocPlayground } from "@/components/docs/button-doc-playground";
 import { ButtonPhonePreview } from "@/components/docs/button-phone-preview";
 import { InputDocPlayground } from "@/components/docs/input-doc-playground";
 import { InputPhonePreview } from "@/components/docs/input-phone-preview";
+import { TextAreaDocPlayground } from "@/components/docs/textarea-doc-playground";
+import { TextAreaPhonePreview } from "@/components/docs/textarea-phone-preview";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
 import {
   DocIconArrowRight,
@@ -22,6 +24,7 @@ import {
   docDataToMarkdown,
   inputData,
   sheetData,
+  textAreaData,
 } from "@/lib/docs-markdown";
 
 export function generateStaticParams() {
@@ -46,6 +49,10 @@ export default async function ComponentPage({
 
   if (slug === "input") {
     return <InputDocPage />;
+  }
+
+  if (slug === "text-area") {
+    return <TextAreaDocPage />;
   }
 
   if (slug !== "sheet") {
@@ -333,6 +340,158 @@ import { Input, InputAction } from "@/components/ui/input";
       </main>
 
       <RightRail headings={[...inputData.headings]} actions={[...inputData.actions]} />
+    </>
+  );
+}
+
+function TextAreaDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(textAreaData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{textAreaData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {textAreaData.title}
+        </h1>
+        <Lede>{textAreaData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={textAreaData.figma}>
+            ◆ Figma <span className="opacity-50">↗</span>
+          </Pill>
+          <Pill as="a" href={textAreaData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <TextAreaPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A multiline surface with optional label, leading/trailing slots, helper or error text, and an optional character count."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                <span>label</span>
+                <span>value</span>
+                <span>count</span>
+              </div>
+              <div className="min-h-24 rounded-[16px] bg-[#F3F4F6] px-3 py-3">
+                <div className="text-[12px] font-medium leading-4 text-[#65758B]">Message</div>
+                <p className="mt-1 text-[14px] leading-5 text-[#364153]">
+                  This is a calm place to write longer content.
+                </p>
+              </div>
+              <div className="mt-1.5 flex justify-between gap-3 px-1 text-[11px] text-[#65758B]">
+                <span>Helper / error text</span>
+                <span>48/200</span>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Container fill", "colors.surfaceInput"],
+                ["Value text", "typography.body · textPrimary"],
+                ["Placeholder", "colors.textTertiary"],
+                ["Height", "96px min-height"],
+                ["Corner radius", "radii.xl / 16px (filled) · 0 (plain)"],
+                ["Padding", "spacing.3 inside · spacing.0 wrapper"],
+                ["Error border", "colors.borderError"],
+                ["Helper / count", "typography.bodySm · textSecondary"],
+              ].map(([name, token]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Use TextArea when the answer needs room to breathe.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use it for comments, notes, support messages, bios, descriptions, and feedback forms.</li>
+            <li>Use <code className="font-mono text-[13px]">filled</code> when the field needs a clear standalone touch surface.</li>
+            <li>Use <code className="font-mono text-[13px]">plain</code> when the parent card, sheet, or row already frames the field.</li>
+          </ul>
+        </Section>
+
+        <TextAreaDocPlayground states={[...textAreaData.states]} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <CodeBlock language="tsx">{`npx arloui add text-area
+
+import { TextArea } from "@/components/ui/text-area";
+
+<TextArea
+  label="Message"
+  placeholder="Write a message"
+  value={message}
+  onChangeText={setMessage}
+  helperText="Keep it short and specific."
+  maxLength={200}
+  showCount
+/>
+
+<TextArea
+  appearance="plain"
+  value={notes}
+  onChangeText={setNotes}
+  errorText={hasError ? "Message is required" : undefined}
+/>`}</CodeBlock>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="The same semantic tokens used by Input, adapted for multiline content.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {textAreaData.tokens.map((t) => (
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Longer fields need clear labels and concise validation.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Always provide a visible label or an accessibility label when the visual label is omitted.</li>
+            <li>Use helper text for guidance and error text for validation; do not overload helper text with paragraphs.</li>
+            <li>Pair <code className="font-mono text-[13px]">maxLength</code> with <code className="font-mono text-[13px]">showCount</code> when users need a hard limit.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Common pitfalls, paired.">
+          <DoDont
+            pairs={[
+              {
+                do: "Keep the field tall enough for the expected answer.",
+                dont: "Use a single-line input for messages or notes that naturally wrap.",
+              },
+              {
+                do: "Use counters for constrained content like bios or support tickets.",
+                dont: "Show a counter when there is no meaningful limit.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Complements and alternatives.">
+          <div className="flex flex-wrap gap-2">
+            {["Input", "Button", "Sheet", "Form row", "Keyboard toolbar"].map((r) => (
+              <Chip key={r}>→ {r}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...textAreaData.headings]} actions={[...textAreaData.actions]} />
     </>
   );
 }
