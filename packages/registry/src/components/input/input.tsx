@@ -17,7 +17,7 @@ import {
   type InputAppearance,
   type InputSize,
   type InputState,
-} from './field';
+} from '../field/field';
 
 /** Interactive slot for the input (clear, password toggle, copy…). Alias of `Field.Action`. */
 export const InputAction = Field.Action;
@@ -103,5 +103,5 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   );
 });
 
-export { Field } from './field';
-export type { FieldProps, FieldActionProps, InputAppearance, InputSize, InputState } from './field';
+export { Field } from '../field/field';
+export type { FieldProps, FieldActionProps, InputAppearance, InputSize, InputState } from '../field/field';

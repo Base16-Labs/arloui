@@ -69,6 +69,15 @@ export {};
         typescript: true,
         expandProps: 'end',
         exportType: 'named',
+        // Keep viewBox so icons scale (not clip) when width/height are overridden.
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: { overrides: { removeViewBox: false } },
+            },
+          ],
+        },
       },
       { componentName },
     );

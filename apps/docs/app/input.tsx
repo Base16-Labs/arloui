@@ -211,10 +211,10 @@ export default function InputCanvas() {
           <VariantSheet
             visible={sheetOpen}
             previous="Button"
-            next="Icons"
+            next="TextArea"
             onClose={() => setSheetOpen(false)}
             onPrevious={() => router.replace('/button')}
-            onNext={() => router.replace('/icons')}
+            onNext={() => router.replace('/textarea')}
           >
             <View style={{ gap: 14 }}>
               <VariantControlRow label="Type">

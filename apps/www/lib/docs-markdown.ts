@@ -336,7 +336,7 @@ export const inputData = {
     "borderFocus",
     "borderError",
     "sizing.icon",
-    "radii.md",
+    "radii.xl",
     "typography.body",
     "typography.bodySm",
   ],
@@ -354,6 +354,60 @@ export const inputData = {
   actions: [
     { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input" },
     { label: "Open playground ↗", href: "http://localhost:8081/input" },
+  ],
+} as const;
+
+export const textAreaData = {
+  slug: "text-area",
+  category: "Controls",
+  title: "TextArea",
+  lede:
+    "A multiline field for messages, notes, bios, and support forms. It shares Input's filled and no-background language while keeping longer text top-aligned and easy to scan.",
+  figma:
+    "https://www.figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=875-2658&m=dev",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area",
+  states: [
+    "empty",
+    "filled",
+    "focused",
+    "helper",
+    "error",
+    "disabled",
+    "leading icon",
+    "trailing icon",
+    "character count",
+    "long content",
+    "dark mode",
+  ],
+  tokens: [
+    "surfaceInput",
+    "textPrimary",
+    "textSecondary",
+    "textTertiary",
+    "textInteractiveError",
+    "borderError",
+    "sizing.icon",
+    "radii.md",
+    "spacing.2",
+    "spacing.3",
+    "typography.body",
+    "typography.bodySm",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area" },
+    { label: "Open playground ↗", href: "http://localhost:8081/textarea" },
   ],
 } as const;
 
@@ -395,6 +449,7 @@ const PAGE_MARKDOWN: Record<string, string> = {
   "/docs/components/sheet": docDataToMarkdown(sheetData),
   "/docs/components/button": docDataToMarkdown(buttonData),
   "/docs/components/input": docDataToMarkdown(inputData),
+  "/docs/components/text-area": docDataToMarkdown(textAreaData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [
