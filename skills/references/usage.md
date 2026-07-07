@@ -34,7 +34,9 @@ npx arloui diff button
 
 - **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
 - **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
+- **field** — Field. Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.
 - **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.
+- **text-area** — TextArea. A multiline text field for comments, notes, bios, support messages, and long-form form content.
 
 ### icon
 

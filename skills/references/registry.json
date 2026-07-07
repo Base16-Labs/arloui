@@ -84,10 +84,10 @@
       "figma": "Components/Card/Default"
     },
     {
-      "name": "input",
+      "name": "field",
       "kind": "primitive",
-      "title": "Input",
-      "description": "A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.",
+      "title": "Field",
+      "description": "Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.",
       "registryDependencies": [
         "tokens",
         "theme-provider"
@@ -98,8 +98,42 @@
       "tags": [
         "form",
         "primitive"
+      ]
+    },
+    {
+      "name": "input",
+      "kind": "primitive",
+      "title": "Input",
+      "description": "A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "field"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive"
       ],
       "figma": "Components/Text Input/Default"
+    },
+    {
+      "name": "text-area",
+      "kind": "primitive",
+      "title": "TextArea",
+      "description": "A multiline text field for comments, notes, bios, support messages, and long-form form content.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "field"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive",
+        "multiline"
+      ],
+      "figma": "Components/Text Area/Default"
     }
   ]
 }
