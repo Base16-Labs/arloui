@@ -118,6 +118,56 @@
       "figma": "Components/Text Input/Default"
     },
     {
+      "name": "checkbox",
+      "kind": "primitive",
+      "title": "Checkbox",
+      "description": "An animated check box with two sizes, check icon, and disabled state.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [
+        "react-native-svg"
+      ],
+      "tags": [
+        "form",
+        "primitive"
+      ],
+      "figma": "Components/Checkbox/Default"
+    },
+    {
+      "name": "radio",
+      "kind": "primitive",
+      "title": "Radio",
+      "description": "An animated radio button with a scaling dot indicator, two sizes, and disabled state.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive"
+      ],
+      "figma": "Components/Radio/Default"
+    },
+    {
+      "name": "toggle",
+      "kind": "primitive",
+      "title": "Toggle",
+      "description": "An animated on/off switch with two sizes, disabled state, and smooth thumb transition.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive"
+      ],
+      "figma": "Components/Toggle/Default"
+    },
+    {
       "name": "text-area",
       "kind": "primitive",
       "title": "TextArea",

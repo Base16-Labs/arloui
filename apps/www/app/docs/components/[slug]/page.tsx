@@ -14,6 +14,8 @@ import { InputPhonePreview } from "@/components/docs/input-phone-preview";
 import { TextAreaDocPlayground } from "@/components/docs/textarea-doc-playground";
 import { TextAreaPhonePreview } from "@/components/docs/textarea-phone-preview";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
+import { FormControlDocPlayground, type Control } from "@/components/docs/form-control-doc-playground";
+import { FormControlPhonePreview } from "@/components/docs/form-control-phone-preview";
 import {
   DocIconArrowRight,
   DocIconLock,
@@ -21,10 +23,13 @@ import {
 import { componentGroups } from "@/lib/routes";
 import {
   buttonData,
+  checkboxData,
   docDataToMarkdown,
   inputData,
+  radioData,
   sheetData,
   textAreaData,
+  toggleData,
 } from "@/lib/docs-markdown";
 
 export function generateStaticParams() {
@@ -49,6 +54,18 @@ export default async function ComponentPage({
 
   if (slug === "input") {
     return <InputDocPage />;
+  }
+
+  if (slug === "toggle") {
+    return <FormControlDocPage data={toggleData} />;
+  }
+
+  if (slug === "checkbox") {
+    return <FormControlDocPage data={checkboxData} />;
+  }
+
+  if (slug === "radio") {
+    return <FormControlDocPage data={radioData} />;
   }
 
   if (slug === "text-area") {
@@ -702,6 +719,277 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
       </main>
 
       <RightRail headings={[...buttonData.headings]} actions={[...buttonData.actions]} />
+    </>
+  );
+}
+
+function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkboxData | typeof radioData }) {
+  const isToggle = data.slug === "toggle";
+  const isCheckbox = data.slug === "checkbox";
+  const isRadio = data.slug === "radio";
+
+  const installCmd = `npx arloui add ${data.slug}`;
+  const importLine = isToggle
+    ? `import { Toggle } from "@/components/ui/toggle";`
+    : isCheckbox
+      ? `import { Checkbox } from "@/components/ui/checkbox";`
+      : `import { Radio } from "@/components/ui/radio";`;
+
+  const usageSnippet = isToggle
+    ? `<Toggle
+  value={notifications}
+  onValueChange={setNotifications}
+  accessibilityLabel="Enable notifications"
+/>
+
+<Toggle size="sm" value={true} disabled />
+`
+    : isCheckbox
+      ? `<Checkbox
+  checked={agreed}
+  onCheckedChange={setAgreed}
+  accessibilityLabel="I agree to the terms"
+/>
+
+<Checkbox size="lg" checked={true} disabled />
+`
+      : `<Radio
+  selected={plan === "pro"}
+  onSelect={() => setPlan("pro")}
+  accessibilityLabel="Pro plan"
+/>
+
+{/* Filled dot style */}
+<Radio appearance="filled" selected={true} />
+
+{/* Outlined thick ring style (default) */}
+<Radio appearance="outlined" selected={true} />
+`;
+
+  const whenToUse = isToggle
+    ? [
+        "Use for binary settings that take effect immediately — Wi-Fi, dark mode, notifications.",
+        "Prefer a checkbox when the change requires a separate submit action.",
+        "Keep the label outside the toggle; the control itself is purely visual.",
+      ]
+    : isCheckbox
+      ? [
+          "Use for multi-select options within a form that will be submitted together.",
+          "Use when toggling a single opt-in (\"I agree to terms\") that requires explicit confirmation.",
+          "Prefer a toggle when the state takes effect immediately without a submit step.",
+        ]
+      : [
+          "Use for mutually exclusive choices within a small group (2–6 options).",
+          "Use outlined appearance for a subtle ring indicator; use filled for a dot that fills in.",
+          "Prefer a select or picker when the option count exceeds what fits comfortably on screen.",
+        ];
+
+  const a11yNotes = isToggle
+    ? [
+        "Exposes accessibilityRole \"switch\" with checked and disabled state.",
+        "Touch target expands to 44pt minimum via hitSlop.",
+        "Thumb slide animation uses motion tokens; respects reduce-motion settings.",
+      ]
+    : isCheckbox
+      ? [
+          "Exposes accessibilityRole \"checkbox\" with checked and disabled state.",
+          "Touch target expands to 44pt minimum via hitSlop.",
+          "Fill animation uses motion.duration.instant with easeOut easing.",
+        ]
+      : [
+          "Exposes accessibilityRole \"radio\" with selected and disabled state.",
+          "Does not fire onSelect when already selected — prevents redundant callbacks.",
+          "Touch target expands to 44pt minimum via hitSlop.",
+        ];
+
+  const doDont = isToggle
+    ? [
+        { do: "Use for settings that apply instantly without a save step.", dont: "Use a toggle inside a form that has a submit button — use a checkbox instead." },
+        { do: "Place the label to the left or above the toggle, never inside.", dont: "Use a toggle for actions (\"Delete account\") — those need buttons." },
+      ]
+    : isCheckbox
+      ? [
+        { do: "Use in forms where multiple options can be selected and submitted together.", dont: "Use a checkbox for an instant-effect setting — use a toggle instead." },
+        { do: "Pair with a visible label; the checkbox alone has no text.", dont: "Nest checkboxes more than one level deep — flatten the hierarchy." },
+      ]
+      : [
+        { do: "Group radios visually and semantically — they represent one choice.", dont: "Use radios when multiple selections are valid — use checkboxes." },
+        { do: "Pre-select the most common option so the user can confirm with one tap.", dont: "Mix outlined and filled appearances in the same radio group." },
+      ];
+
+  const related = isToggle
+    ? ["Checkbox", "Radio", "Input", "Button"]
+    : isCheckbox
+      ? ["Toggle", "Radio", "Input", "Button"]
+      : ["Toggle", "Checkbox", "Input", "Button"];
+
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(data)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{data.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {data.title}
+        </h1>
+        <Lede>{data.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={data.figma}>
+            ◆ Figma <span className="opacity-50">↗</span>
+          </Pill>
+          <Pill as="a" href={data.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <FormControlPhonePreview control={data.slug as Control} />
+
+        <Section id="anatomy" title="Anatomy" sub={`The parts of a ${data.title}.`}>
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            {isToggle && (
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex h-8 w-[52px] items-center rounded-full bg-[#E5E7EB] px-[3px]">
+                    <div className="size-[26px] rounded-full bg-white shadow-sm" />
+                  </div>
+                  <div className="flex h-8 w-[52px] items-center rounded-full bg-[#155DFC] px-[3px]">
+                    <div className="ml-auto size-[26px] rounded-full bg-white shadow-sm" />
+                  </div>
+                </div>
+                <div className="mt-2 flex gap-12 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                  <span>off</span>
+                  <span>on</span>
+                </div>
+                <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
+                  {[
+                    ["Track", "52×32 (md) · 40×24 (sm)"],
+                    ["Thumb", "26px (md) · 18px (sm)"],
+                    ["Track fill", "interactivePrimary (on)"],
+                    ["Track empty", "surfaceInput (off)"],
+                    ["Corner radius", "height / 2 (capsule)"],
+                    ["Animation", "duration.fast · easeOut"],
+                  ].map(([name, token]) => (
+                    <div key={name} className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]">
+                      <span className="text-ink-2">{name}</span>
+                      <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {isCheckbox && (
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex size-6 items-center justify-center rounded-md border-[1.5px] border-[#D1D5DC]" />
+                  <div className="flex size-6 items-center justify-center rounded-md bg-[#155DFC]">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7.5L5.5 10L11 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
+                  {[
+                    ["Box", "24px (md) · 20px (sm) · 32px (lg)"],
+                    ["Check icon", "14px (md) SVG path"],
+                    ["Fill", "interactivePrimary (checked)"],
+                    ["Border", "borderPrimary (unchecked)"],
+                    ["Corner radius", "radii.sm (sm) · radii.md-2 (md)"],
+                    ["Animation", "duration.instant · easeOut"],
+                  ].map(([name, token]) => (
+                    <div key={name} className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]">
+                      <span className="text-ink-2">{name}</span>
+                      <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {isRadio && (
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex size-6 items-center justify-center rounded-full border-[1.5px] border-[#D1D5DC]" />
+                  <div className="flex size-6 items-center justify-center rounded-full border-[1.5px] border-[#155DFC]">
+                    <div className="size-3 rounded-full bg-[#155DFC]" />
+                  </div>
+                  <div className="flex size-6 items-center justify-center rounded-full bg-[#155DFC]">
+                    <div className="size-[10px] rounded-full bg-white" />
+                  </div>
+                </div>
+                <div className="mt-2 flex gap-8 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                  <span>unselected</span>
+                  <span>filled</span>
+                  <span>outlined</span>
+                </div>
+                <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
+                  {[
+                    ["Outer", "24px (md) · 20px (sm) · 32px (lg)"],
+                    ["Dot (filled)", "12px (md) · scales in"],
+                    ["Hole (outlined)", "10px (md) · bg-colored"],
+                    ["Border", "borderPrimary / interactivePrimary"],
+                    ["Animation", "duration.instant · easeOut"],
+                    ["Appearances", "outlined (ring) · filled (dot)"],
+                  ].map(([name, token]) => (
+                    <div key={name} className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]">
+                      <span className="text-ink-2">{name}</span>
+                      <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Choosing the right form control.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            {whenToUse.map((rule) => (
+              <li key={rule}>{rule}</li>
+            ))}
+          </ul>
+        </Section>
+
+        <FormControlDocPlayground control={data.slug as Control} states={[...data.states]} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`${installCmd}\n\n${importLine}`}</CodeBlock>
+            <CodeBlock language="tsx">{usageSnippet}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Semantic tokens driving color, size, and motion.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {data.tokens.map((t) => (
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Semantics, focus, and hit targets.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            {a11yNotes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Common pitfalls, paired.">
+          <DoDont pairs={doDont} />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Complements and alternatives.">
+          <div className="flex flex-wrap gap-2">
+            {related.map((r) => (
+              <Chip key={r}>→ {r}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...data.headings]} actions={[...data.actions]} />
     </>
   );
 }
