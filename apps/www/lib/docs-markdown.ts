@@ -357,6 +357,137 @@ export const inputData = {
   ],
 } as const;
 
+export const toggleData = {
+  slug: "toggle",
+  category: "Controls",
+  title: "Toggle",
+  lede:
+    "An animated on/off switch for binary settings — smooth thumb slide with track color transition, two sizes, and a disabled state.",
+  figma: "#",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toggle",
+  states: [
+    "off",
+    "on",
+    "disabled off",
+    "disabled on",
+    "dark mode",
+  ],
+  tokens: [
+    "colors.interactivePrimary",
+    "colors.surfaceInput",
+    "colors.interactiveDisabled",
+    "colors.textTertiary",
+    "colors.borderPrimary",
+    "colors.borderSecondary",
+    "sizing.touchTarget.minimum",
+    "motion.duration.fast",
+    "motion.easing.easeOut",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toggle" },
+  ],
+} as const;
+
+export const checkboxData = {
+  slug: "checkbox",
+  category: "Controls",
+  title: "Checkbox",
+  lede:
+    "An animated check box for multi-select forms — fill transition with an SVG check icon, three sizes, and a disabled state.",
+  figma: "#",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/checkbox",
+  states: [
+    "unchecked",
+    "checked",
+    "disabled unchecked",
+    "disabled checked",
+    "dark mode",
+  ],
+  tokens: [
+    "colors.interactivePrimary",
+    "colors.interactiveDisabled",
+    "colors.textInteractivePrimary",
+    "colors.textTertiary",
+    "colors.borderPrimary",
+    "colors.borderSecondary",
+    "radii.sm",
+    "radii.md",
+    "sizing.touchTarget.minimum",
+    "motion.duration.instant",
+    "motion.easing.easeOut",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/checkbox" },
+  ],
+} as const;
+
+export const radioData = {
+  slug: "radio",
+  category: "Controls",
+  title: "Radio",
+  lede:
+    "An animated radio button for single-select groups — two appearances (outlined ring, filled dot), three sizes, and a disabled state.",
+  figma: "#",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/radio",
+  states: [
+    "unselected",
+    "selected",
+    "disabled unselected",
+    "disabled selected",
+    "dark mode",
+  ],
+  tokens: [
+    "colors.interactivePrimary",
+    "colors.textTertiary",
+    "colors.textSecondary",
+    "colors.surfaceBackground",
+    "colors.borderPrimary",
+    "colors.borderSecondary",
+    "sizing.touchTarget.minimum",
+    "motion.duration.instant",
+    "motion.easing.easeOut",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/radio" },
+  ],
+} as const;
+
 export const textAreaData = {
   slug: "text-area",
   category: "Controls",
@@ -449,6 +580,9 @@ const PAGE_MARKDOWN: Record<string, string> = {
   "/docs/components/sheet": docDataToMarkdown(sheetData),
   "/docs/components/button": docDataToMarkdown(buttonData),
   "/docs/components/input": docDataToMarkdown(inputData),
+  "/docs/components/toggle": docDataToMarkdown(toggleData),
+  "/docs/components/checkbox": docDataToMarkdown(checkboxData),
+  "/docs/components/radio": docDataToMarkdown(radioData),
   "/docs/components/text-area": docDataToMarkdown(textAreaData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(

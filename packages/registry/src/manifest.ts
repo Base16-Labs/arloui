@@ -128,6 +128,55 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'checkbox',
+    kind: 'primitive',
+    title: 'Checkbox',
+    description:
+      'An animated check box with two sizes, check icon, and disabled state.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/checkbox/checkbox.tsx', target: 'checkbox.tsx' },
+      { source: 'components/checkbox/index.ts', target: 'checkbox/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Checkbox/Default',
+      tags: ['form', 'primitive'],
+    },
+  },
+  {
+    name: 'radio',
+    kind: 'primitive',
+    title: 'Radio',
+    description:
+      'An animated radio button with a scaling dot indicator, two sizes, and disabled state.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/radio/radio.tsx', target: 'radio.tsx' },
+      { source: 'components/radio/index.ts', target: 'radio/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Radio/Default',
+      tags: ['form', 'primitive'],
+    },
+  },
+  {
+    name: 'toggle',
+    kind: 'primitive',
+    title: 'Toggle',
+    description:
+      'An animated on/off switch with two sizes, disabled state, and smooth thumb transition.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/toggle/toggle.tsx', target: 'toggle.tsx' },
+      { source: 'components/toggle/index.ts', target: 'toggle/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Toggle/Default',
+      tags: ['form', 'primitive'],
+    },
+  },
+  {
     name: 'text-area',
     kind: 'primitive',
     title: 'TextArea',
