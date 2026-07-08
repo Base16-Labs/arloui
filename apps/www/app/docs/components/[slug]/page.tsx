@@ -12,6 +12,8 @@ import { ButtonPhonePreview } from "@/components/docs/button-phone-preview";
 import { InputDocPlayground } from "@/components/docs/input-doc-playground";
 import { InputPhonePreview } from "@/components/docs/input-phone-preview";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
+import { FormControlDocPlayground, type Control } from "@/components/docs/form-control-doc-playground";
+import { FormControlPhonePreview } from "@/components/docs/form-control-phone-preview";
 import {
   DocIconArrowRight,
   DocIconLock,
@@ -684,6 +686,8 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
           </Pill>
         </div>
 
+        <FormControlPhonePreview control={data.slug as Control} />
+
         <Section id="anatomy" title="Anatomy" sub={`The parts of a ${data.title}.`}>
           <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
             {isToggle && (
@@ -700,7 +704,7 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
                   <span>off</span>
                   <span>on</span>
                 </div>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-0 border-t border-line pt-5 w-full max-w-[320px]">
+                <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
                   {[
                     ["Track", "52×32 (md) · 40×24 (sm)"],
                     ["Thumb", "26px (md) · 18px (sm)"],
@@ -725,7 +729,7 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7.5L5.5 10L11 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-0 border-t border-line pt-5 w-full max-w-[320px]">
+                <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
                   {[
                     ["Box", "24px (md) · 20px (sm) · 32px (lg)"],
                     ["Check icon", "14px (md) SVG path"],
@@ -758,7 +762,7 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
                   <span>filled</span>
                   <span>outlined</span>
                 </div>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-0 border-t border-line pt-5 w-full max-w-[320px]">
+                <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
                   {[
                     ["Outer", "24px (md) · 20px (sm) · 32px (lg)"],
                     ["Dot (filled)", "12px (md) · scales in"],
@@ -785,6 +789,8 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
             ))}
           </ul>
         </Section>
+
+        <FormControlDocPlayground control={data.slug as Control} states={[...data.states]} />
 
         <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
           <div className="space-y-3">

@@ -387,6 +387,8 @@ export const toggleData = {
   headings: [
     { id: "anatomy", label: "Anatomy" },
     { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
     { id: "code", label: "Code" },
     { id: "tokens", label: "Tokens" },
     { id: "accessibility", label: "Accessibility" },
@@ -430,6 +432,8 @@ export const checkboxData = {
   headings: [
     { id: "anatomy", label: "Anatomy" },
     { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
     { id: "code", label: "Code" },
     { id: "tokens", label: "Tokens" },
     { id: "accessibility", label: "Accessibility" },
@@ -471,6 +475,8 @@ export const radioData = {
   headings: [
     { id: "anatomy", label: "Anatomy" },
     { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
     { id: "code", label: "Code" },
     { id: "tokens", label: "Tokens" },
     { id: "accessibility", label: "Accessibility" },
