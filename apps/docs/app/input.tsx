@@ -10,6 +10,7 @@ import {
   type InputAppearance,
   type InputProps,
 } from '@arloui/registry';
+import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -164,7 +165,10 @@ export default function InputCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <LiveBadge />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <BackButton />
+              <LiveBadge />
+            </View>
             <ThemeToggle />
           </View>
 
@@ -211,10 +215,10 @@ export default function InputCanvas() {
           <VariantSheet
             visible={sheetOpen}
             previous="Button"
-            next="Icons"
+            next="TextArea"
             onClose={() => setSheetOpen(false)}
             onPrevious={() => router.replace('/button')}
-            onNext={() => router.replace('/icons')}
+            onNext={() => router.replace('/textarea')}
           >
             <View style={{ gap: 14 }}>
               <VariantControlRow label="Type">

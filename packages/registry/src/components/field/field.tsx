@@ -45,6 +45,8 @@ type FieldContextValue = {
   hasError: boolean;
   disabled: boolean;
   fullWidth: boolean;
+  /** Multiline (textarea) layout: column control, top-aligned input, bottom toolbar. */
+  multiline: boolean;
   focused: boolean;
   setFocused: (value: boolean) => void;
 };
@@ -55,6 +57,7 @@ const DEFAULT_CONTEXT: FieldContextValue = {
   hasError: false,
   disabled: false,
   fullWidth: true,
+  multiline: false,
   focused: false,
   setFocused: () => {},
 };
@@ -76,8 +79,18 @@ type FieldDims = {
   iconSize: number;
 };
 
-/** Single source of truth for field dimensions across the filled/plain × sm/md matrix. */
-function fieldDims(t: Tokens, isPlain: boolean, size: InputSize): FieldDims {
+/** Single source of truth for field dimensions across the filled/plain × sm/md × single/multiline matrix. */
+function fieldDims(t: Tokens, isPlain: boolean, size: InputSize, multiline: boolean): FieldDims {
+  if (multiline) {
+    if (isPlain) {
+      return size === 'md'
+        ? { minHeight: 118, paddingX: 0, paddingY: 0, font: t.typography.body, label: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.sm }
+        : { minHeight: 86, paddingX: 0, paddingY: 0, font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
+    }
+    return size === 'md'
+      ? { minHeight: 132, paddingX: t.spacing[3], paddingY: t.spacing[3], font: t.typography.body, label: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.sm }
+      : { minHeight: 112, paddingX: t.spacing[3], paddingY: t.spacing[2], font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
+  }
   if (isPlain) {
     return size === 'md'
       ? { minHeight: 35, paddingX: 0, paddingY: 0, font: t.typography.displayMedium, label: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.sm }
@@ -88,12 +101,14 @@ function fieldDims(t: Tokens, isPlain: boolean, size: InputSize): FieldDims {
     : { minHeight: 36, paddingX: t.spacing[3], paddingY: t.spacing[1], font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[2], iconSize: t.sizing.icon.xs };
 }
 
-function useFieldDims(): { dims: FieldDims; isPlain: boolean; stretches: boolean } {
+function useFieldDims(): { dims: FieldDims; isPlain: boolean; multiline: boolean; stretches: boolean } {
   const t = useTokens();
-  const { size, appearance, fullWidth } = useField();
+  const { size, appearance, fullWidth, multiline } = useField();
   const isPlain = appearance === 'plain';
-  const dims = useMemo(() => fieldDims(t, isPlain, size), [t, isPlain, size]);
-  return { dims, isPlain, stretches: fullWidth && !isPlain };
+  const dims = useMemo(() => fieldDims(t, isPlain, size, multiline), [t, isPlain, size, multiline]);
+  // A textarea keeps its full width even when plain; a single-line plain field hugs its content.
+  const stretches = multiline ? fullWidth : fullWidth && !isPlain;
+  return { dims, isPlain, multiline, stretches };
 }
 
 function InfoIcon({ color, size = 13 }: { color: string; size?: number }) {
@@ -115,6 +130,8 @@ export type FieldProps = {
   error?: boolean;
   disabled?: boolean;
   fullWidth?: boolean;
+  /** Multiline (textarea) layout: column control, top-aligned input, bottom toolbar, optional count. */
+  multiline?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -125,23 +142,27 @@ function FieldRoot({
   error = false,
   disabled = false,
   fullWidth = true,
+  multiline = false,
   style,
 }: FieldProps) {
   const t = useTokens();
   const [focused, setFocused] = useState(false);
   const isPlain = appearance === 'plain';
-  const stretches = fullWidth && !isPlain;
+  const stretches = multiline ? fullWidth : fullWidth && !isPlain;
 
   const ctx = useMemo<FieldContextValue>(
-    () => ({ size, appearance, hasError: error, disabled, fullWidth, focused, setFocused }),
-    [size, appearance, error, disabled, fullWidth, focused],
+    () => ({ size, appearance, hasError: error, disabled, fullWidth, multiline, focused, setFocused }),
+    [size, appearance, error, disabled, fullWidth, multiline, focused],
   );
 
   return (
     <FieldContext.Provider value={ctx}>
       <View
         style={[
-          { gap: isPlain ? t.spacing[1] : t.spacing[2], alignSelf: stretches ? 'stretch' : 'flex-start' },
+          {
+            gap: multiline || isPlain ? t.spacing[1] : t.spacing[2],
+            alignSelf: stretches ? 'stretch' : 'flex-start',
+          },
           style,
         ]}
       >
@@ -177,20 +198,20 @@ function FieldLabel({ children, style }: { children: ReactNode; style?: StylePro
 function FieldControl({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const t = useTokens();
   const { hasError, disabled } = useField();
-  const { dims, isPlain, stretches } = useFieldDims();
+  const { dims, isPlain, multiline, stretches } = useFieldDims();
   return (
     <View
       style={[
         {
           minHeight: dims.minHeight,
-          borderRadius: isPlain ? 0 : t.radii.md,
+          borderRadius: isPlain ? 0 : multiline ? t.radii.xl : t.radii.md,
           backgroundColor: isPlain ? 'transparent' : t.colors.surfaceInput,
           borderWidth: !isPlain && hasError ? 1 : 0,
           borderColor: hasError ? t.colors.borderError : 'transparent',
           paddingHorizontal: isPlain ? 0 : dims.paddingX,
           paddingVertical: dims.paddingY,
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: multiline ? 'column' : 'row',
+          alignItems: multiline ? 'stretch' : 'center',
           gap: dims.gap,
           alignSelf: stretches ? 'stretch' : 'flex-start',
           opacity: disabled ? 0.45 : 1,
@@ -264,25 +285,38 @@ export type FieldInputProps = Omit<TextInputProps, 'style' | 'editable'> & {
 
 /** The text entry itself. Reads color/size/focus from the surrounding Field. */
 const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
-  { insetLabel, style, onFocus, onBlur, placeholderTextColor, value, defaultValue, ...rest },
+  {
+    insetLabel,
+    style,
+    onFocus,
+    onBlur,
+    placeholderTextColor,
+    value,
+    defaultValue,
+    multiline: multilineProp,
+    textAlignVertical,
+    ...rest
+  },
   ref,
 ) {
   const t = useTokens();
   const { size, hasError, disabled, setFocused } = useField();
-  const { dims, isPlain, stretches } = useFieldDims();
+  const { dims, isPlain, multiline: fieldMultiline, stretches } = useFieldDims();
+  const multiline = multilineProp ?? fieldMultiline;
 
   const textColor = hasError
     ? t.colors.textInteractiveError
     : disabled
       ? t.colors.textDisabled
-      : isPlain
+      : isPlain && !multiline
         ? t.colors.textSecondary
         : t.colors.textPrimary;
 
   const plainText = String(value || defaultValue || rest.placeholder || '');
-  const plainInputWidth = isPlain
-    ? Math.max(size === 'md' ? 132 : 88, Math.min(300, plainText.length * dims.font.fontSize * 0.68 + 12))
-    : undefined;
+  const plainInputWidth =
+    isPlain && !multiline
+      ? Math.max(size === 'md' ? 132 : 88, Math.min(300, plainText.length * dims.font.fontSize * 0.68 + 12))
+      : undefined;
 
   const handleFocus: TextInputProps['onFocus'] = (event) => {
     setFocused(true);
@@ -294,8 +328,14 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
   };
 
   return (
-    <View style={{ flex: stretches ? 1 : undefined, minWidth: stretches ? 0 : undefined, justifyContent: 'center' }}>
-      {insetLabel ? (
+    <View
+      style={
+        multiline
+          ? { flex: 1, alignSelf: 'stretch' }
+          : { flex: stretches ? 1 : undefined, minWidth: stretches ? 0 : undefined, justifyContent: 'center' }
+      }
+    >
+      {insetLabel && !multiline ? (
         <Text
           numberOfLines={1}
           style={{
@@ -314,6 +354,8 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
         value={value}
         defaultValue={defaultValue}
         editable={!disabled}
+        multiline={multiline}
+        textAlignVertical={textAlignVertical ?? (multiline ? 'top' : undefined)}
         placeholderTextColor={placeholderTextColor ?? t.colors.textTertiary}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -325,12 +367,16 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
             lineHeight: dims.font.lineHeight,
             fontWeight: dims.font.fontWeight,
             minHeight: dims.font.lineHeight,
+            flex: multiline ? 1 : undefined,
+            alignSelf: multiline ? 'stretch' : undefined,
             width: plainInputWidth,
-            textAlign: isPlain ? 'center' : 'left',
+            textAlign: isPlain && !multiline ? 'center' : 'left',
             padding: 0,
             margin: 0,
           },
-          Platform.OS === 'web' ? ({ outlineStyle: 'none' } as unknown as TextStyle) : null,
+          Platform.OS === 'web'
+            ? ({ outlineStyle: 'none', ...(multiline ? { resize: 'none' } : null) } as unknown as TextStyle)
+            : null,
           style,
         ]}
         {...rest}
@@ -339,44 +385,80 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
   );
 });
 
-/** Helper or error message rendered below the control. Renders nothing when empty. */
-function FieldHelper({ children, style }: { children?: ReactNode; style?: StyleProp<TextStyle> }) {
+/** Bottom row inside a multiline control that right-aligns its slots (mic, send, etc.). */
+function FieldToolbar({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  const { dims } = useFieldDims();
+  return (
+    <View
+      style={[
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          gap: dims.gap,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
+}
+
+/**
+ * Helper or error message rendered below the control. Renders nothing when there is
+ * neither a message nor a count. Pass `count` to show a right-aligned character count.
+ */
+function FieldHelper({
+  children,
+  count,
+  style,
+}: {
+  children?: ReactNode;
+  count?: ReactNode;
+  style?: StyleProp<TextStyle>;
+}) {
   const t = useTokens();
   const { hasError, disabled } = useField();
   const { isPlain, stretches } = useFieldDims();
-  if (children == null || children === '') return null;
+  const hasHelper = !(children == null || children === '');
+  const hasCount = count != null && count !== '';
+  if (!hasHelper && !hasCount) return null;
 
   const color = hasError
     ? t.colors.textInteractiveError
     : disabled
       ? t.colors.textDisabled
       : t.colors.textSecondary;
+  const font = {
+    fontFamily: t.fontFamilies.sans,
+    fontSize: t.typography.bodySm.fontSize,
+    lineHeight: t.typography.bodySm.lineHeight,
+  };
 
   return (
     <View
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: isPlain ? 'center' : 'flex-start',
-        gap: t.spacing[1],
+        justifyContent: hasCount ? 'space-between' : isPlain ? 'center' : 'flex-start',
+        gap: t.spacing[2],
         alignSelf: stretches ? 'stretch' : isPlain ? 'center' : 'flex-start',
       }}
     >
-      <InfoIcon color={color} />
-      <Text
-        style={[
-          {
-            flexShrink: 1,
-            color,
-            fontFamily: t.fontFamilies.sans,
-            fontSize: t.typography.bodySm.fontSize,
-            lineHeight: t.typography.bodySm.lineHeight,
-          },
-          style,
-        ]}
-      >
-        {children}
-      </Text>
+      {hasHelper ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[1], minWidth: 0, flexShrink: 1 }}>
+          <InfoIcon color={color} />
+          <Text style={[{ flexShrink: 1, color, ...font }, style]}>{children}</Text>
+        </View>
+      ) : hasCount ? (
+        <View />
+      ) : null}
+      {hasCount ? (
+        <Text style={{ color: hasError ? t.colors.textInteractiveError : t.colors.textTertiary, ...font }}>
+          {count}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -387,5 +469,6 @@ export const Field = Object.assign(FieldRoot, {
   Icon: FieldIcon,
   Action: FieldAction,
   Input: FieldInput,
+  Toolbar: FieldToolbar,
   Helper: FieldHelper,
 });

@@ -30,6 +30,13 @@ export {
 export { Checkbox, type CheckboxProps, type CheckboxSize } from './components/checkbox';
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
 export { Toggle, type ToggleProps, type ToggleSize } from './components/toggle';
+export {
+  TextArea,
+  type TextAreaAppearance,
+  type TextAreaProps,
+  type TextAreaSize,
+  type TextAreaState,
+} from './components/text-area';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
 
 export { COMPONENTS, FOUNDATION, REGISTRY } from './manifest';

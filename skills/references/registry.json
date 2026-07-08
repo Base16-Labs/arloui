@@ -84,10 +84,44 @@
       "figma": "Components/Card/Default"
     },
     {
+      "name": "field",
+      "kind": "primitive",
+      "title": "Field",
+      "description": "Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [
+        "react-native-svg"
+      ],
+      "tags": [
+        "form",
+        "primitive"
+      ]
+    },
+    {
       "name": "input",
       "kind": "primitive",
       "title": "Input",
       "description": "A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "field"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive"
+      ],
+      "figma": "Components/Text Input/Default"
+    },
+    {
+      "name": "checkbox",
+      "kind": "primitive",
+      "title": "Checkbox",
+      "description": "An animated check box with two sizes, check icon, and disabled state.",
       "registryDependencies": [
         "tokens",
         "theme-provider"
@@ -99,7 +133,57 @@
         "form",
         "primitive"
       ],
-      "figma": "Components/Text Input/Default"
+      "figma": "Components/Checkbox/Default"
+    },
+    {
+      "name": "radio",
+      "kind": "primitive",
+      "title": "Radio",
+      "description": "An animated radio button with a scaling dot indicator, two sizes, and disabled state.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive"
+      ],
+      "figma": "Components/Radio/Default"
+    },
+    {
+      "name": "toggle",
+      "kind": "primitive",
+      "title": "Toggle",
+      "description": "An animated on/off switch with two sizes, disabled state, and smooth thumb transition.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive"
+      ],
+      "figma": "Components/Toggle/Default"
+    },
+    {
+      "name": "text-area",
+      "kind": "primitive",
+      "title": "TextArea",
+      "description": "A multiline text field for comments, notes, bios, support messages, and long-form form content.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "field"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "primitive",
+        "multiline"
+      ],
+      "figma": "Components/Text Area/Default"
     }
   ]
 }

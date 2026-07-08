@@ -96,16 +96,30 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'field',
+    kind: 'primitive',
+    title: 'Field',
+    description:
+      'Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/field/field.tsx', target: 'field/field.tsx' },
+      { source: 'components/field/index.ts', target: 'field/index.ts' },
+    ],
+    meta: {
+      tags: ['form', 'primitive'],
+    },
+  },
+  {
     name: 'input',
     kind: 'primitive',
     title: 'Input',
     description:
       'A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.',
-    dependencies: ['react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'field'],
     files: [
-      { source: 'components/input/field.tsx', target: 'field.tsx' },
-      { source: 'components/input/input.tsx', target: 'input.tsx' },
+      { source: 'components/input/input.tsx', target: 'input/input.tsx' },
       { source: 'components/input/index.ts', target: 'input/index.ts' },
     ],
     meta: {
@@ -160,6 +174,22 @@ export const COMPONENTS: RegistryEntry[] = [
     meta: {
       figma: 'Components/Toggle/Default',
       tags: ['form', 'primitive'],
+    },
+  },
+  {
+    name: 'text-area',
+    kind: 'primitive',
+    title: 'TextArea',
+    description:
+      'A multiline text field for comments, notes, bios, support messages, and long-form form content.',
+    registryDependencies: ['tokens', 'theme-provider', 'field'],
+    files: [
+      { source: 'components/text-area/text-area.tsx', target: 'text-area/text-area.tsx' },
+      { source: 'components/text-area/index.ts', target: 'text-area/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Text Area/Default',
+      tags: ['form', 'primitive', 'multiline'],
     },
   },
 ];

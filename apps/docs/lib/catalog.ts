@@ -7,7 +7,7 @@ export type PlaygroundItem = {
   slug: string;
   title: string;
   description: string;
-  href: `/button` | `/input` | `/icons`;
+  href: `/button` | `/input` | `/textarea` | `/icons`;
   category: string;
   icon: PlaygroundIcon;
   /** Accent for icon well + border highlight */
@@ -33,6 +33,15 @@ export const playgroundCatalog: PlaygroundItem[] = [
     href: '/input',
     category: 'Controls',
     icon: 'text-outline',
+    accent: 'violet',
+  },
+  {
+    slug: 'textarea',
+    title: 'TextArea',
+    description: 'Multiline notes, messages, helper text, errors, and counters.',
+    href: '/textarea',
+    category: 'Controls',
+    icon: 'document-text-outline',
     accent: 'violet',
   },
   {

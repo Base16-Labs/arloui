@@ -10,7 +10,8 @@ export function ThemeToggle() {
   const isLight = theme.name === 'light';
 
   const trackBg = isDark ? 'rgba(250,250,250,0.06)' : '#f4f4f5';
-  const activeBg = isDark ? '#18181B' : '#E4E4E7';
+  const activeBg = isDark ? '#FAFAFA' : '#18181B';
+  const activeIcon = isDark ? '#18181B' : '#FAFAFA';
   const activeShadow = isLight
     ? {
         shadowColor: '#18181b',
@@ -62,7 +63,7 @@ export function ThemeToggle() {
         <Ionicons
           name="moon"
           size={12}
-          color={isDark ? t.colors.textPrimary : t.colors.textTertiary}
+          color={isDark ? activeIcon : t.colors.textTertiary}
         />
       </Pressable>
       <Pressable
@@ -85,7 +86,7 @@ export function ThemeToggle() {
         <Ionicons
           name="sunny"
           size={12}
-          color={isLight ? t.colors.textPrimary : t.colors.textTertiary}
+          color={isLight ? activeIcon : t.colors.textTertiary}
         />
       </Pressable>
     </View>
