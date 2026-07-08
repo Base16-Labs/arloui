@@ -88,8 +88,8 @@ function fieldDims(t: Tokens, isPlain: boolean, size: InputSize, multiline: bool
         : { minHeight: 86, paddingX: 0, paddingY: 0, font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
     }
     return size === 'md'
-      ? { minHeight: 96, paddingX: t.spacing[3], paddingY: t.spacing[3], font: t.typography.body, label: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.sm }
-      : { minHeight: 96, paddingX: t.spacing[3], paddingY: t.spacing[2], font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
+      ? { minHeight: 132, paddingX: t.spacing[3], paddingY: t.spacing[3], font: t.typography.body, label: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.sm }
+      : { minHeight: 112, paddingX: t.spacing[3], paddingY: t.spacing[2], font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
   }
   if (isPlain) {
     return size === 'md'

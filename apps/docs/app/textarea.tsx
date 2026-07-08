@@ -9,6 +9,7 @@ import {
   type TextAreaAppearance,
   type TextAreaSize,
 } from '@arloui/registry';
+import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -66,7 +67,12 @@ export default function TextAreaCanvas() {
   }, [content]);
 
   useEffect(() => {
-    const showSub = Keyboard.addListener('keyboardDidShow', () => setKeyboardOpen(true));
+    const showSub = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardOpen(true);
+      // The variant sheet and the keyboard can't share the screen — focusing the
+      // field while the sheet is open left it stuck behind the keyboard, so close it.
+      setSheetOpen(false);
+    });
     const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardOpen(false));
     return () => {
       showSub.remove();
@@ -100,7 +106,10 @@ export default function TextAreaCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <LiveBadge />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <BackButton />
+              <LiveBadge />
+            </View>
             <ThemeToggle />
           </View>
 
