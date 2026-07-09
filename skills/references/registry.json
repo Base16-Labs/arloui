@@ -84,6 +84,23 @@
       "figma": "Components/Card/Default"
     },
     {
+      "name": "sheet",
+      "kind": "primitive",
+      "title": "Sheet",
+      "description": "A bottom drawer with a grabber, drag-to-dismiss, and detents. Composable backdrop (scrim modal or iOS-style pass-through) and surface (solid or Liquid-Glass) treatments.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "surface",
+        "overlay",
+        "primitive"
+      ],
+      "figma": "Components/Sheet/Default"
+    },
+    {
       "name": "field",
       "kind": "primitive",
       "title": "Field",

@@ -96,6 +96,22 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'sheet',
+    kind: 'primitive',
+    title: 'Sheet',
+    description:
+      'A bottom drawer with a grabber, drag-to-dismiss, and detents. Composable backdrop (scrim modal or iOS-style pass-through) and surface (solid or Liquid-Glass) treatments.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/sheet/sheet.tsx', target: 'sheet.tsx' },
+      { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Sheet/Default',
+      tags: ['surface', 'overlay', 'primitive'],
+    },
+  },
+  {
     name: 'field',
     kind: 'primitive',
     title: 'Field',
