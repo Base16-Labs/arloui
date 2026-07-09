@@ -14,6 +14,7 @@ import { InputPhonePreview } from "@/components/docs/input-phone-preview";
 import { TextAreaDocPlayground } from "@/components/docs/textarea-doc-playground";
 import { TextAreaPhonePreview } from "@/components/docs/textarea-phone-preview";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
+import { SheetPhonePreview } from "@/components/docs/sheet-phone-preview";
 import { FormControlDocPlayground, type Control } from "@/components/docs/form-control-doc-playground";
 import { FormControlPhonePreview } from "@/components/docs/form-control-phone-preview";
 import {
@@ -72,21 +73,25 @@ export default async function ComponentPage({
     return <TextAreaDocPage />;
   }
 
-  if (slug !== "sheet") {
-    return (
-      <>
-        <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
-          <Eyebrow>Component</Eyebrow>
-          <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
-            {slug.charAt(0).toUpperCase() + slug.slice(1)}
-          </h1>
-          <Lede>This component page is coming soon.</Lede>
-        </main>
-        <RightRail headings={[]} actions={[]} />
-      </>
-    );
+  if (slug === "sheet") {
+    return <SheetDocPage />;
   }
 
+  return (
+    <>
+      <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <Eyebrow>Component</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {slug.charAt(0).toUpperCase() + slug.slice(1)}
+        </h1>
+        <Lede>This component page is coming soon.</Lede>
+      </main>
+      <RightRail headings={[]} actions={[]} />
+    </>
+  );
+}
+
+function SheetDocPage() {
   return (
     <>
       <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
@@ -111,12 +116,66 @@ export default async function ComponentPage({
           </Pill>
         </div>
 
-        <SheetDocPlayground states={sheetData.states} />
+        <SheetPhonePreview />
 
         {/* Anatomy */}
-        <Section id="anatomy" title="Anatomy" sub="Named slots so the spec is unambiguous.">
-          <div className="flex h-[220px] items-center justify-center rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] font-mono text-xs text-ink-3 dark:bg-surface-raised">
-            handle · header · content · scrim · detent line · safe area
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A sheet is a bottom-anchored surface with a handle, optional backdrop, content slots, and safe-area aware detents."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] dark:bg-[#09090B]">
+                <div className="px-5 pt-6">
+                  <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="mt-4 grid grid-cols-2 gap-2.5">
+                    {["#155DFC", "#00C950", "#F54900", "#FB2C36"].map((color) => (
+                      <div
+                        key={color}
+                        className="h-14 rounded-xl opacity-25 dark:opacity-45"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#111827]/85">
+                  <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">header</span>
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">dismiss</span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
+                    <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
+                    <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
+                  </div>
+                  <div className="mt-3 font-mono text-[10px] uppercase tracking-wide text-ink-3">footer / safe area</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Backdrop", "scrim or pass-through"],
+                ["Surface", "solid or glass"],
+                ["Handle", "visible drag affordance"],
+                ["Header", "title and optional action"],
+                ["Body", "scrollable content area"],
+                ["Footer", "sticky actions / safe-area padding"],
+                ["Detent", "auto · full · fractional height"],
+                ["Dismissal", "backdrop tap · drag · hardware back"],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
           </div>
         </Section>
 
@@ -138,14 +197,37 @@ export default async function ComponentPage({
           </div>
         </Section>
 
+        <SheetDocPlayground states={sheetData.states} />
+
         {/* Code */}
         <Section id="code" title="Code" sub="React Native, copy-paste.">
-          <CodeBlock language="tsx">{`npm install @arloui/sheet
+          <CodeBlock language="tsx">{`npx arloui add sheet
 
-import { Sheet } from "@arloui/sheet";
+import { BlurView } from "expo-blur";
+import { StyleSheet } from "react-native";
+import { Sheet } from "@/components/ui/sheet";
 
-<Sheet detents={["medium","full"]}>
-  ...
+<Sheet
+  visible={open}
+  onClose={() => setOpen(false)}
+  backdrop="passthrough"
+  surface="glass"
+  detent="auto"
+  blurComponent={
+    <BlurView
+      intensity={34}
+      tint="systemMaterial"
+      style={StyleSheet.absoluteFill}
+    />
+  }
+>
+  <Sheet.Header title="Add to collection" />
+  <Sheet.Body>
+    {/* Your content */}
+  </Sheet.Body>
+  <Sheet.Footer>
+    {/* Primary action */}
+  </Sheet.Footer>
 </Sheet>`}</CodeBlock>
         </Section>
 

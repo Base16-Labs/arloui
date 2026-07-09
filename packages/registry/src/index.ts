@@ -16,6 +16,13 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Sheet,
+  type SheetProps,
+  type SheetBackdrop,
+  type SheetSurface,
+  type SheetDetent,
+} from './components/sheet';
+export {
   Field,
   Input,
   InputAction,

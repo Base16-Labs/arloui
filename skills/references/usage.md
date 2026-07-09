@@ -34,6 +34,7 @@ npx arloui diff button
 
 - **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
 - **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
+- **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, and detents. Composable backdrop (scrim modal or iOS-style pass-through) and surface (solid or Liquid-Glass) treatments.
 - **field** — Field. Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.
 - **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.
 - **checkbox** — Checkbox. An animated check box with two sizes, check icon, and disabled state.
