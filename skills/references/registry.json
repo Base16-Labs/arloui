@@ -201,6 +201,24 @@
         "multiline"
       ],
       "figma": "Components/Text Area/Default"
+    },
+    {
+      "name": "date-picker",
+      "kind": "primitive",
+      "title": "Date Picker",
+      "description": "An accessible single-date calendar with month navigation, date constraints, and configurable week starts.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "form",
+        "calendar",
+        "date",
+        "primitive"
+      ],
+      "figma": "Components/Date Picker/Default"
     }
   ]
 }

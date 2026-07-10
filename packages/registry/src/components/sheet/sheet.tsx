@@ -37,6 +37,7 @@ import { useTokens } from '../../foundation/theme-provider';
 
 export type SheetBackdrop = 'scrim' | 'passthrough';
 export type SheetSurface = 'solid' | 'glass';
+export type SheetPresentation = 'edge' | 'inset' | 'stack';
 /** `'auto'` hugs the content, `'full'` fills the screen, a number 0–1 is a fraction of the screen height. */
 export type SheetDetent = 'auto' | 'full' | number;
 
@@ -47,8 +48,20 @@ export type SheetProps = {
   backdrop?: SheetBackdrop;
   /** `'solid'` opaque fill or `'glass'` translucent Liquid-Glass material. */
   surface?: SheetSurface;
+  /** `'edge'` is full-bleed, `'inset'` adds side gutters, `'stack'` adds a second surface behind the sheet. */
+  presentation?: SheetPresentation;
   detent?: SheetDetent;
   showHandle?: boolean;
+  /** Horizontal gutter for inset/stack sheets. Defaults to 16 for inset and stack, 0 for edge. */
+  horizontalInset?: number;
+  /** Outer gutter below inset/stack sheets. Defaults to the resolved horizontal gutter. */
+  bottomOffset?: number;
+  /** Maximum visual width for tablet/large phones. */
+  maxWidth?: number;
+  /** Surface corner radius. Defaults to 24 for edge/inset and 20 for stack. */
+  cornerRadius?: number;
+  handleWidth?: number;
+  handleHeight?: number;
   /** Tap the scrim to dismiss (scrim backdrop only). */
   dismissOnBackdropPress?: boolean;
   dragToDismiss?: boolean;
@@ -70,8 +83,15 @@ function SheetRoot({
   onClose,
   backdrop = 'scrim',
   surface = 'solid',
+  presentation = 'edge',
   detent = 'auto',
   showHandle = true,
+  horizontalInset,
+  bottomOffset,
+  maxWidth,
+  cornerRadius,
+  handleWidth,
+  handleHeight,
   dismissOnBackdropPress = true,
   dragToDismiss = true,
   blurComponent,
@@ -88,8 +108,12 @@ function SheetRoot({
 
   const isGlass = surface === 'glass';
   const isScrim = backdrop === 'scrim';
+  const isInset = presentation !== 'edge';
+  const resolvedInset = horizontalInset ?? (isInset ? t.spacing[4] : 0);
+  const resolvedBottomOffset = bottomOffset ?? (isInset ? resolvedInset : 0);
+  const resolvedRadius = cornerRadius ?? (presentation === 'stack' ? 20 : t.radii['2xl']);
 
-  const maxHeight = windowHeight - Math.max(topInset, 24) - 8;
+  const maxHeight = windowHeight - Math.max(topInset, 24) - resolvedBottomOffset - 8;
   const fixedHeight =
     detent === 'full'
       ? maxHeight
@@ -102,7 +126,8 @@ function SheetRoot({
   const [reduceMotion, setReduceMotion] = useState(false);
 
   const sheetHeight = fixedHeight ?? measuredHeight;
-  const closedY = sheetHeight > 0 ? sheetHeight + bottomInset + 48 : windowHeight;
+  const closedY =
+    sheetHeight > 0 ? sheetHeight + resolvedBottomOffset + bottomInset + 48 : windowHeight;
   const translateY = useRef(new Animated.Value(windowHeight)).current;
   const closing = useRef(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -273,51 +298,106 @@ function SheetRoot({
           {
             maxHeight,
             height: fixedHeight,
-            paddingBottom: Math.max(bottomInset, t.spacing[4]),
-            borderTopLeftRadius: t.radii['2xl'],
-            borderTopRightRadius: t.radii['2xl'],
-            borderTopWidth: 1,
-            borderLeftWidth: isGlass ? 1 : 0,
-            borderRightWidth: isGlass ? 1 : 0,
-            borderColor: surfaceBorder,
-            backgroundColor: surfaceColor,
-            overflow: 'hidden',
+            alignSelf: maxWidth ? 'center' : 'stretch',
+            width: maxWidth ? '100%' : undefined,
+            maxWidth,
+            marginHorizontal: resolvedInset,
+            marginBottom: resolvedBottomOffset,
+            overflow: 'visible',
             transform: [{ translateY }],
-            ...shadow,
-            shadowOffset: { width: 0, height: -4 },
           },
           style,
         ]}
       >
-        {isGlass && blurComponent ? (
-          <View pointerEvents="none" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>
-            {blurComponent}
-          </View>
+        {presentation === 'stack' ? (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              top: -12,
+              right: t.spacing[3],
+              left: t.spacing[3],
+              height: 30,
+              borderRadius: resolvedRadius,
+              backgroundColor: dark ? t.colors.surfaceRaised : t.colors.surfaceElevated,
+              borderWidth: 1,
+              borderColor: surfaceBorder,
+              opacity: dark ? 0.82 : 0.94,
+              transform: [{ scaleX: 0.97 }],
+            }}
+          />
         ) : null}
 
-        {showHandle ? (
-          <View {...panResponder.panHandlers}>
-            <SheetHandle />
-          </View>
-        ) : (
-          <View {...panResponder.panHandlers} style={{ height: t.spacing[2] }} />
-        )}
+        <View
+          style={{
+            flex: fixedHeight != null ? 1 : undefined,
+            borderTopLeftRadius: resolvedRadius,
+            borderTopRightRadius: resolvedRadius,
+            borderBottomLeftRadius: isInset ? resolvedRadius : 0,
+            borderBottomRightRadius: isInset ? resolvedRadius : 0,
+            ...shadow,
+            shadowOffset: { width: 0, height: -4 },
+          }}
+        >
+          <View
+            style={{
+              flex: fixedHeight != null ? 1 : undefined,
+              paddingBottom: Math.max(bottomInset, t.spacing[4]),
+              borderTopLeftRadius: resolvedRadius,
+              borderTopRightRadius: resolvedRadius,
+              borderBottomLeftRadius: isInset ? resolvedRadius : 0,
+              borderBottomRightRadius: isInset ? resolvedRadius : 0,
+              borderTopWidth: 1,
+              borderLeftWidth: isGlass ? 1 : 0,
+              borderRightWidth: isGlass ? 1 : 0,
+              borderBottomWidth: isInset && isGlass ? 1 : 0,
+              borderColor: surfaceBorder,
+              backgroundColor: surfaceColor,
+              overflow: 'hidden',
+            }}
+          >
+            {isGlass && blurComponent ? (
+              <View
+                pointerEvents="none"
+                style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+              >
+                {blurComponent}
+              </View>
+            ) : null}
 
-        {children}
+            {showHandle ? (
+              <View {...panResponder.panHandlers}>
+                <SheetHandle width={handleWidth} height={handleHeight} />
+              </View>
+            ) : (
+              <View {...panResponder.panHandlers} style={{ height: t.spacing[2] }} />
+            )}
+
+            {children}
+          </View>
+        </View>
       </Animated.View>
     </View>
   );
 }
 
 /** The grabber. Rendered by default; exported for custom header layouts. */
-function SheetHandle({ style }: { style?: StyleProp<ViewStyle> }) {
+function SheetHandle({
+  width = 44,
+  height = 4,
+  style,
+}: {
+  width?: number;
+  height?: number;
+  style?: StyleProp<ViewStyle>;
+}) {
   const t = useTokens();
   return (
     <View style={[{ alignItems: 'center', paddingTop: t.spacing[2], paddingBottom: t.spacing[1] }, style]}>
       <View
         style={{
-          width: 40,
-          height: 5,
+          width,
+          height,
           borderRadius: t.radii.full,
           backgroundColor: t.colors.borderStrong,
         }}

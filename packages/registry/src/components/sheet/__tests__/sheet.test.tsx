@@ -67,4 +67,21 @@ describe('Sheet', () => {
     expect(screen.getByText('Glass body')).toBeTruthy();
     expect(screen.queryByLabelText('Close')).toBeNull();
   });
+
+  it('supports inset and stacked presentations', () => {
+    renderWithTheme(
+      <Sheet
+        visible
+        onClose={() => {}}
+        presentation="stack"
+        horizontalInset={16}
+        bottomOffset={16}
+        cornerRadius={20}
+        handleHeight={3}
+      >
+        <Text>Stacked sheet</Text>
+      </Sheet>,
+    );
+    expect(screen.getByText('Stacked sheet')).toBeTruthy();
+  });
 });

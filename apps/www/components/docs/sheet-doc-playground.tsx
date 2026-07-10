@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 
 type Backdrop = "scrim" | "passthrough";
 type Surface = "solid" | "glass";
+type Presentation = "edge" | "inset" | "stack";
 type Detent = "auto" | "full";
 
 type SheetDocPlaygroundProps = { states: readonly string[] };
@@ -15,6 +16,7 @@ const ROWS = ["Recently added", "Favorites", "Shared with you", "Downloads", "Ar
 export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
   const [backdrop, setBackdrop] = useState<Backdrop>("scrim");
   const [surface, setSurface] = useState<Surface>("solid");
+  const [presentation, setPresentation] = useState<Presentation>("edge");
   const [detent, setDetent] = useState<Detent>("auto");
   const [pinned, setPinned] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -48,6 +50,12 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
             />
             <ControlLabel>Surface</ControlLabel>
             <ChipRow values={["solid", "glass"]} value={surface} onChange={(v) => setSurface(v as Surface)} />
+            <ControlLabel>Style</ControlLabel>
+            <ChipRow
+              values={["edge", "inset", "stack"]}
+              value={presentation}
+              onChange={(v) => setPresentation(v as Presentation)}
+            />
             <ControlLabel>Detent</ControlLabel>
             <ChipRow values={["auto", "full"]} value={detent} onChange={(v) => setDetent(v as Detent)} />
           </div>
@@ -89,6 +97,7 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
             <SheetSample
               backdrop={effBackdrop}
               glass={isGlass}
+              presentation={presentation}
               detent={detent}
               dark={false}
               dragging={dragging}
@@ -105,6 +114,7 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
 function SheetSample({
   backdrop,
   glass,
+  presentation,
   detent,
   dark,
   dragging,
@@ -113,6 +123,7 @@ function SheetSample({
 }: {
   backdrop: Backdrop;
   glass: boolean;
+  presentation: Presentation;
   detent: Detent;
   dark: boolean;
   dragging: boolean;
@@ -133,6 +144,8 @@ function SheetSample({
       ? "#1E2939"
       : "#FFFFFF";
   const sheetBorder = glass ? (dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.64)") : "transparent";
+  const inset = presentation === "edge" ? 0 : 10;
+  const radius = presentation === "stack" ? 18 : 22;
 
   return (
     <div
@@ -160,18 +173,35 @@ function SheetSample({
       ) : null}
 
       {/* Sheet */}
+      {presentation === "stack" && !dismissing ? (
+        <div
+          className="absolute left-5 right-5 h-8 rounded-[18px] border opacity-90 shadow-sm"
+          style={{
+            bottom: `calc(44% + ${inset + 12}px)`,
+            backgroundColor: glass ? "rgba(255,255,255,0.48)" : dark ? "#293142" : "#EEF0F3",
+            borderColor: glass ? "rgba(255,255,255,0.46)" : dark ? "#364153" : "#E5E7EB",
+          }}
+        />
+      ) : null}
       <div
-        className="absolute inset-x-0 bottom-0 rounded-t-[20px] border-x border-t px-4 pb-5 pt-2 shadow-xl transition-transform duration-300 ease-out"
+        className="absolute border px-4 pb-5 pt-2 shadow-xl transition-transform duration-300 ease-out"
         style={{
+          left: inset,
+          right: inset,
+          bottom: inset,
           backgroundColor: sheetBg,
           borderColor: sheetBorder,
+          borderTopLeftRadius: radius,
+          borderTopRightRadius: radius,
+          borderBottomLeftRadius: presentation === "edge" ? 0 : radius,
+          borderBottomRightRadius: presentation === "edge" ? 0 : radius,
           backdropFilter: glass ? "blur(20px)" : undefined,
           WebkitBackdropFilter: glass ? "blur(20px)" : undefined,
           height: detent === "full" ? "86%" : undefined,
           transform: dismissing ? "translateY(100%)" : dragging ? "translateY(6%)" : "translateY(0)",
         }}
       >
-        <div className="mx-auto mb-2 h-[5px] w-9 rounded-full" style={{ backgroundColor: handle }} />
+        <div className="mx-auto mb-2 h-[3px] w-11 rounded-full" style={{ backgroundColor: handle }} />
         <div className="text-[14px] font-semibold" style={{ color: title }}>
           Add to collection
         </div>

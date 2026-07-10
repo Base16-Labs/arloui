@@ -208,6 +208,22 @@ export const COMPONENTS: RegistryEntry[] = [
       tags: ['form', 'primitive', 'multiline'],
     },
   },
+  {
+    name: 'date-picker',
+    kind: 'primitive',
+    title: 'Date Picker',
+    description:
+      'An accessible single-date calendar with month navigation, date constraints, and configurable week starts.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/date-picker/date-picker.tsx', target: 'date-picker/date-picker.tsx' },
+      { source: 'components/date-picker/index.ts', target: 'date-picker/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Date Picker/Default',
+      tags: ['form', 'calendar', 'date', 'primitive'],
+    },
+  },
 ];
 
 export const REGISTRY: Registry = {

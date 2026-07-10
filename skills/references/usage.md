@@ -41,6 +41,7 @@ npx arloui diff button
 - **radio** — Radio. An animated radio button with a scaling dot indicator, two sizes, and disabled state.
 - **toggle** — Toggle. An animated on/off switch with two sizes, disabled state, and smooth thumb transition.
 - **text-area** — TextArea. A multiline text field for comments, notes, bios, support messages, and long-form form content.
+- **date-picker** — Date Picker. An accessible single-date calendar with month navigation, date constraints, and configurable week starts.
 
 ### icon
 
