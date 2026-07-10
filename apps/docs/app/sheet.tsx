@@ -8,6 +8,7 @@ import {
   useTokens,
   type SheetBackdrop,
   type SheetDetent,
+  type SheetPresentation,
   type SheetSurface,
 } from '@arloui/registry';
 import { BackButton } from '@/components/playground/back-button';
@@ -21,10 +22,16 @@ type PreviewState = 'open' | 'closed' | 'no handle' | 'locked';
 
 const BACKDROPS: SheetBackdrop[] = ['scrim', 'passthrough'];
 const SURFACES: SheetSurface[] = ['solid', 'glass'];
+const PRESENTATIONS: SheetPresentation[] = ['edge', 'inset', 'stack'];
 const DETENTS: Array<{ label: string; value: SheetDetent }> = [
   { label: 'auto', value: 'auto' },
   { label: 'half', value: 0.54 },
   { label: 'full', value: 'full' },
+];
+const PADDING = [
+  { label: '0', value: 0 },
+  { label: '16', value: 16 },
+  { label: '24', value: 24 },
 ];
 const STATES: PreviewState[] = ['open', 'closed', 'no handle', 'locked'];
 
@@ -36,7 +43,9 @@ export default function SheetCanvas() {
   const [previewVisible, setPreviewVisible] = useState(true);
   const [backdrop, setBackdrop] = useState<SheetBackdrop>('passthrough');
   const [surface, setSurface] = useState<SheetSurface>('glass');
+  const [presentation, setPresentation] = useState<SheetPresentation>('stack');
   const [detent, setDetent] = useState<SheetDetent>('auto');
+  const [horizontalInset, setHorizontalInset] = useState(16);
   const [state, setState] = useState<PreviewState>('open');
   const previewOffset = useRef(new Animated.Value(0)).current;
 
@@ -137,7 +146,11 @@ export default function SheetCanvas() {
                   onClose={() => setPreviewVisible(false)}
                   backdrop={backdrop}
                   surface={surface}
+                  presentation={presentation}
                   detent={detent}
+                  horizontalInset={horizontalInset}
+                  cornerRadius={presentation === 'stack' ? 20 : 24}
+                  handleHeight={3}
                   showHandle={showHandle}
                   dragToDismiss={dragToDismiss}
                   dismissOnBackdropPress={state !== 'locked'}
@@ -313,6 +326,21 @@ export default function SheetCanvas() {
                   />
                 ))}
               </VariantControlRow>
+              <VariantControlRow label="Style">
+                {PRESENTATIONS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={presentation === option}
+                    onPress={() => {
+                      setPresentation(option);
+                      if (option === 'edge') setHorizontalInset(0);
+                      if (option !== 'edge' && horizontalInset === 0) setHorizontalInset(16);
+                      setPreviewVisible(true);
+                    }}
+                  />
+                ))}
+              </VariantControlRow>
               <VariantControlRow label="Detent">
                 {DETENTS.map((option) => (
                   <VariantChip
@@ -321,6 +349,20 @@ export default function SheetCanvas() {
                     active={detent === option.value}
                     onPress={() => {
                       setDetent(option.value);
+                      setPreviewVisible(true);
+                    }}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Padding">
+                {PADDING.map((option) => (
+                  <VariantChip
+                    key={option.label}
+                    label={option.label}
+                    active={horizontalInset === option.value}
+                    onPress={() => {
+                      setHorizontalInset(option.value);
+                      if (option.value > 0 && presentation === 'edge') setPresentation('inset');
                       setPreviewVisible(true);
                     }}
                   />

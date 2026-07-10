@@ -202,7 +202,7 @@ export const sheetData = {
   category: "Layout & surface",
   title: "Sheet",
   lede:
-    "A bottom drawer with a grabber, drag-to-dismiss, and detents. Composable backdrop (scrim modal or iOS-style pass-through) and surface (solid or Liquid-Glass) treatments — the moment to demonstrate Fluidity in your UI.",
+    "A bottom drawer with a slim grabber, drag-to-dismiss, detents, and full-bleed, inset, or stacked presentations with balanced side and bottom gutters. Backdrop and surface stay composable, from scrim modal to pass-through Liquid Glass.",
   figma: "#",
   source:
     "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet",
@@ -218,6 +218,9 @@ export const sheetData = {
     "colors.surfaceElevated",
     "colors.surfaceOverlay",
     "materials.glassMedium",
+    "spacing.4",
+    "spacing.6",
+    "radii.xl",
     "radii.2xl",
     "shadows.xl",
     "motion.easing.easeSheet",
@@ -316,6 +319,47 @@ export const buttonData = {
   ],
   actions: [
     { label: "Edit on GitHub ↗", href: "https://github.com/Base16-Labs/arloui" },
+  ],
+} as const;
+
+export const datePickerData = {
+  slug: "date-picker",
+  category: "Controls",
+  title: "Date Picker",
+  lede:
+    "A compact, accessible calendar for choosing one date. It supports month navigation, date constraints, configurable week starts, and outside-day visibility without adding a date library to the consumer bundle.",
+  figma: "#",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/date-picker",
+  states: ["default", "selected", "today", "disabled", "weekends disabled"],
+  tokens: [
+    "colors.surfaceElevated",
+    "colors.interactivePrimary",
+    "colors.interactiveSecondaryPressed",
+    "colors.textPrimary",
+    "colors.textTertiary",
+    "colors.borderFocus",
+    "colors.borderSecondary",
+    "radii.xl",
+    "sizing.touchTarget.minimum",
+    "typography.bodyMedium",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    {
+      label: "View registry source ↗",
+      href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/date-picker",
+    },
+    { label: "Open playground ↗", href: "http://localhost:8081/date-picker" },
   ],
 } as const;
 
@@ -591,6 +635,7 @@ function primitiveMarkdown(doc: PrimitiveDoc): string {
 const PAGE_MARKDOWN: Record<string, string> = {
   "/docs/foundations/fluidity": ESSAYS.fluidity,
   "/docs/components/sheet": docDataToMarkdown(sheetData),
+  "/docs/components/date-picker": docDataToMarkdown(datePickerData),
   "/docs/components/button": docDataToMarkdown(buttonData),
   "/docs/components/input": docDataToMarkdown(inputData),
   "/docs/components/toggle": docDataToMarkdown(toggleData),

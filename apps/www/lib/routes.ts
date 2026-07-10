@@ -92,6 +92,7 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Slider', slug: 'slider' },
       { label: 'Input', slug: 'input' },
       { label: 'TextArea', slug: 'text-area' },
+      { label: 'Date Picker', slug: 'date-picker' },
       { label: 'Select', slug: 'select' },
       { label: 'Picker', slug: 'picker' },
     ],

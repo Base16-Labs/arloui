@@ -15,6 +15,10 @@ import { TextAreaDocPlayground } from "@/components/docs/textarea-doc-playground
 import { TextAreaPhonePreview } from "@/components/docs/textarea-phone-preview";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
 import { SheetPhonePreview } from "@/components/docs/sheet-phone-preview";
+import {
+  DatePickerDocPlayground,
+  DatePickerPhonePreview,
+} from "@/components/docs/date-picker-preview";
 import { FormControlDocPlayground, type Control } from "@/components/docs/form-control-doc-playground";
 import { FormControlPhonePreview } from "@/components/docs/form-control-phone-preview";
 import {
@@ -25,6 +29,7 @@ import { componentGroups } from "@/lib/routes";
 import {
   buttonData,
   checkboxData,
+  datePickerData,
   docDataToMarkdown,
   inputData,
   radioData,
@@ -77,6 +82,10 @@ export default async function ComponentPage({
     return <SheetDocPage />;
   }
 
+  if (slug === "date-picker") {
+    return <DatePickerDocPage />;
+  }
+
   return (
     <>
       <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
@@ -87,6 +96,125 @@ export default async function ComponentPage({
         <Lede>This component page is coming soon.</Lede>
       </main>
       <RightRail headings={[]} actions={[]} />
+    </>
+  );
+}
+
+function DatePickerDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(datePickerData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{datePickerData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {datePickerData.title}
+        </h1>
+        <Lede>{datePickerData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={datePickerData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DatePickerPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A predictable calendar surface with a month header, navigation, weekday labels, and a fixed six-week grid."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[350px] space-y-3">
+              {[
+                ["Header", "month and year"],
+                ["Navigation", "previous and next month"],
+                ["Week labels", "Sunday or Monday start"],
+                ["Day grid", "42 stable cells"],
+                ["Selection", "single selected date"],
+              ].map(([name, detail]) => (
+                <div key={name} className="flex items-center justify-between border-b border-line pb-3 text-[13px] last:border-0 last:pb-0">
+                  <span className="font-medium text-ink">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Use a visible calendar when the date itself matters.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>For appointments, bookings, deadlines, and dates users need to compare visually.</li>
+            <li>When unavailable dates or a valid range must be visible before selection.</li>
+            <li>Use a native date input instead when speed matters more than calendar context.</li>
+          </ul>
+        </Section>
+
+        <DatePickerDocPlayground states={datePickerData.states} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste.">
+          <CodeBlock language="tsx">{`npx arloui add date-picker
+
+import { useState } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
+
+const [date, setDate] = useState<Date | null>(null);
+
+<DatePicker
+  value={date}
+  onValueChange={setDate}
+  minDate={new Date()}
+  weekStartsOn={1}
+  isDateDisabled={(day) => day.getDay() === 0}
+/>`}</CodeBlock>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Calendar color, type, radius, and touch targets come from the same Arlo foundations.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {datePickerData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Dates remain understandable without relying on color.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Every date exposes its complete weekday, month, day, and year to screen readers.</li>
+            <li>Selected and disabled dates use native accessibility state.</li>
+            <li>Day cells preserve a 44px touch target even though the visible selection is 36px.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep date choices legible and bounded.">
+          <DoDont
+            pairs={[
+              {
+                do: "Set minDate, maxDate, and disabled dates from the real booking rules.",
+                dont: "Allow selection first and reveal an invalid date only after submission.",
+              },
+              {
+                do: "Use Monday or Sunday week start to match the user's locale.",
+                dont: "Change week start between calendars in the same product.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Compose the picker into the flow that fits the task.">
+          <div className="flex flex-wrap gap-2">
+            {["Input", "Sheet", "Button", "Time Picker"].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...datePickerData.headings]} actions={[...datePickerData.actions]} />
     </>
   );
 }
@@ -212,7 +340,12 @@ import { Sheet } from "@/components/ui/sheet";
   onClose={() => setOpen(false)}
   backdrop="passthrough"
   surface="glass"
+  presentation="stack"
   detent="auto"
+  horizontalInset={16}
+  bottomOffset={16}
+  cornerRadius={20}
+  handleHeight={3}
   blurComponent={
     <BlurView
       intensity={34}
