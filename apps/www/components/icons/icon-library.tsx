@@ -12,7 +12,9 @@ import { cn } from '@/lib/cn';
 type GalleryTab = 'outline' | 'solid' | 'animated';
 
 const animatedNames = Object.keys(animatedIconDefinitions) as AnimatedIconName[];
-const PAGE_SIZE = 240;
+// Keep the initial DOM and SVG request burst small; the full catalogue remains
+// available through search and incremental loading.
+const PAGE_SIZE = 96;
 const ONE_SHOT_DURATIONS: Partial<Record<AnimatedIconName, number>> = {
   'copy-check': 1500,
   'spinner-check': 1400,
