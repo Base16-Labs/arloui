@@ -1,0 +1,66 @@
+---
+title: Fluidity
+lede: Interfaces that feel alive, responsive, and natural.
+category: Foundations
+---
+
+<div className="flex items-center gap-4 text-[13px] text-ink-3 mb-10">
+  <span>5 min read</span>
+  <span>·</span>
+  <span>Updated May 2026</span>
+  <span>·</span>
+  <span>v2.0</span>
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-[580px_280px] gap-[56px] relative items-start">
+  
+<div className="prose prose-zinc prose-a:text-ink max-w-none">
+
+<Eyebrow>Foundation</Eyebrow>
+# Fluidity
+<Lede>Interfaces that feel alive, responsive, and natural.</Lede>
+
+Fluidity in ArloUI is not just about animations; it's about the unbroken thread of interaction from the moment a user touches the glass to the moment the system responds.
+
+When we talk about fluidity, we mean the physical rules of the interface.<Footnote id="1" /> Elements should have mass, momentum, and friction. They shouldn't just teleport from state A to state B.
+
+### The 120ms Rule
+Every interactive element must respond visually within 120ms of a touch event. This is the threshold of human perception for cause and effect. If an action takes longer, the user feels disconnected from the interface.
+
+<Companion id="120ms-rule">
+  <div className="rounded-xl bg-surface-sunken p-6 border border-line">
+    <h4 className="text-[13px] font-medium text-ink mb-2">120ms Threshold</h4>
+    <p className="text-[12px] text-ink-2">The maximum acceptable delay for visual feedback after a user interaction.</p>
+  </div>
+</Companion>
+
+### Continuous Gestures
+Interactions should not be discrete. A swipe should track perfectly with the user's finger. When the user releases, the velocity of their swipe should dictate the momentum of the element.
+
+<Companion id="gestures">
+  <div className="rounded-xl bg-surface-sunken p-6 border border-line">
+    <div className="h-32 w-full rounded-lg bg-line-strong flex items-center justify-center">
+      <span className="text-ink-3 text-[12px]">Interactive Demo</span>
+    </div>
+  </div>
+</Companion>
+
+We use spring physics instead of duration-based easings for all spatial transitions (moving, scaling, sliding).
+
+</div>
+
+<div className="hidden md:block sticky top-24">
+  {/* The Companion components will teleport their contents here via React Portal or Context based on scroll position */}
+  <div className="rounded-2xl border border-line-weak bg-surface p-6 shadow-sm min-h-[300px]">
+    <p className="text-[13px] text-ink-3 text-center mt-24">Companion Content</p>
+  </div>
+</div>
+
+</div>
+
+<div className="mt-20 pt-10 border-t border-line-weak">
+  <h4 className="text-[14px] font-medium text-ink mb-4">Footnotes</h4>
+  <ol className="list-decimal pl-4 text-[13px] text-ink-2 space-y-2">
+    <li id="fn-1">The physical rules refer to spring physics based on mass, stiffness, and damping, rather than Bézier curves.</li>
+  </ol>
+</div>

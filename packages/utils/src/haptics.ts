@@ -16,21 +16,23 @@ export async function haptic(strength: Strength = 'light'): Promise<void> {
   try {
     const mod = await import('expo-haptics').catch(() => null);
     if (!mod) return;
+    // `return await` (not a bare `return`) so a rejected haptics promise is
+    // caught here and swallowed — haptics are non-critical and must never throw.
     switch (strength) {
       case 'light':
-        return mod.impactAsync(mod.ImpactFeedbackStyle.Light);
+        return await mod.impactAsync(mod.ImpactFeedbackStyle.Light);
       case 'medium':
-        return mod.impactAsync(mod.ImpactFeedbackStyle.Medium);
+        return await mod.impactAsync(mod.ImpactFeedbackStyle.Medium);
       case 'heavy':
-        return mod.impactAsync(mod.ImpactFeedbackStyle.Heavy);
+        return await mod.impactAsync(mod.ImpactFeedbackStyle.Heavy);
       case 'selection':
-        return mod.selectionAsync();
+        return await mod.selectionAsync();
       case 'success':
-        return mod.notificationAsync(mod.NotificationFeedbackType.Success);
+        return await mod.notificationAsync(mod.NotificationFeedbackType.Success);
       case 'warning':
-        return mod.notificationAsync(mod.NotificationFeedbackType.Warning);
+        return await mod.notificationAsync(mod.NotificationFeedbackType.Warning);
       case 'error':
-        return mod.notificationAsync(mod.NotificationFeedbackType.Error);
+        return await mod.notificationAsync(mod.NotificationFeedbackType.Error);
     }
   } catch {
     // swallowed — haptics are non-critical

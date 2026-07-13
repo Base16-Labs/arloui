@@ -1,258 +1,300 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import { Input, InputAction, useTokens } from '@arloui/registry';
+import { Stack, useRouter } from 'expo-router';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  Input,
+  InputAction,
+  useTokens,
+  type InputAppearance,
+  type InputProps,
+} from '@arloui/registry';
+import { BackButton } from '@/components/playground/back-button';
+import { CanvasPill } from '@/components/playground/canvas-pill';
+import { LiveBadge } from '@/components/playground/live-badge';
+import { ThemeToggle } from '@/components/playground/theme-toggle';
+import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
+import { VariantSheet } from '@/components/playground/variant-sheet';
 
-export default function InputShowcase() {
+type InputType = 'text' | 'email' | 'password' | 'search';
+type LabelMode = 'none' | 'inset';
+type InputSize = 'sm' | 'md';
+type IconMode = 'none' | 'leading' | 'trailing' | 'both';
+type ContentMode = 'empty' | 'filled';
+type FieldState = 'default' | 'helper' | 'error' | 'disabled';
+
+const TYPES: InputType[] = ['text', 'email', 'password', 'search'];
+const LABELS: LabelMode[] = ['none', 'inset'];
+const SIZES: InputSize[] = ['sm', 'md'];
+const ICONS: IconMode[] = ['none', 'leading', 'trailing', 'both'];
+const CONTENT: ContentMode[] = ['empty', 'filled'];
+const STATES: FieldState[] = ['default', 'helper', 'error', 'disabled'];
+const APPEARANCES: InputAppearance[] = ['filled', 'plain'];
+
+export default function InputCanvas() {
   const t = useTokens();
-  const [query, setQuery] = useState('Query');
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [type, setType] = useState<InputType>('text');
+  const [labelMode, setLabelMode] = useState<LabelMode>('none');
+  const [size, setSize] = useState<InputSize>('md');
+  const [icons, setIcons] = useState<IconMode>('trailing');
+  const [content, setContent] = useState<ContentMode>('filled');
+  const [state, setState] = useState<FieldState>('default');
+  const [appearance, setAppearance] = useState<InputAppearance>('filled');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const iconColor = t.colors.textSecondary;
-  const errorColor = t.colors.textInteractiveError;
+  const [value, setValue] = useState('Allan Thomas');
+  const previewOffset = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.spring(previewOffset, {
+      toValue: sheetOpen ? -170 : 0,
+      damping: 27,
+      stiffness: 300,
+      mass: 0.8,
+      useNativeDriver: true,
+    }).start();
+  }, [previewOffset, sheetOpen]);
+
+  useEffect(() => {
+    if (content === 'empty') {
+      setValue('');
+      return;
+    }
+
+    setValue(
+      type === 'email'
+        ? 'allan.thomas@atstudio.com'
+        : type === 'password'
+          ? 'Password'
+          : type === 'search'
+            ? 'Query'
+            : appearance === 'plain'
+              ? 'Content'
+              : 'Allan Thomas',
+    );
+  }, [appearance, content, type]);
+
+  const iconColor = state === 'disabled' ? t.colors.textDisabled : t.colors.textSecondary;
+  const iconSize = size === 'sm' ? 16 : 20;
+  const leadingName =
+    type === 'email' ? 'mail-outline' : type === 'search' ? 'search-outline' : 'person-outline';
+  const inputLabel =
+    type === 'email'
+      ? 'Email'
+      : type === 'password'
+        ? 'Password'
+        : type === 'search'
+          ? 'Search'
+          : 'Name';
+
+  const trailingAction = useMemo(() => {
+    if (icons !== 'trailing' && icons !== 'both') return undefined;
+
+    if (type === 'password') {
+      return (
+        <InputAction
+          accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
+          onPress={() => setPasswordVisible((visible) => !visible)}
+        >
+          <Ionicons
+            name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
+            size={iconSize}
+            color={iconColor}
+          />
+        </InputAction>
+      );
+    }
+
+    if (type === 'search' && value) {
+      return (
+        <InputAction accessibilityLabel="Clear input" onPress={() => setValue('')}>
+          <Ionicons name="close" size={iconSize} color={iconColor} />
+        </InputAction>
+      );
+    }
+
+    return (
+      <InputAction accessibilityLabel="Copy input value" onPress={() => undefined}>
+        <Ionicons name="copy-outline" size={iconSize} color={iconColor} />
+      </InputAction>
+    );
+  }, [iconColor, icons, passwordVisible, type, value]);
+
+  const fieldProps: InputProps = {
+    value,
+    onChangeText: setValue,
+    size,
+    appearance,
+    label: labelMode === 'none' ? undefined : inputLabel,
+    insetLabel: labelMode === 'inset',
+    placeholder: inputLabel,
+    keyboardType: type === 'email' ? 'email-address' : 'default',
+    autoCapitalize: type === 'email' || type === 'search' ? 'none' : 'words',
+    secureTextEntry: type === 'password' && !passwordVisible,
+    editable: state !== 'disabled',
+    state: state === 'error' ? 'error' : 'default',
+    helperText: state === 'helper' ? 'Helper text' : undefined,
+    errorText: state === 'error' ? `${inputLabel} is invalid` : undefined,
+    leadingIcon:
+      icons === 'leading' || icons === 'both' ? (
+        <Ionicons name={leadingName} size={iconSize} color={iconColor} />
+      ) : undefined,
+    trailingAction,
+    containerStyle: appearance === 'plain' ? { alignSelf: 'center' } : { width: '100%' },
+    inputStyle: { fontFamily: 'Manrope' },
+    helperStyle: { fontFamily: 'Manrope' },
+  };
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Input' }} />
-      <View style={{ flex: 1, minHeight: 0, backgroundColor: t.colors.bg }}>
-        <ScrollView
-          style={{ flex: 1 }}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{
-            padding: t.spacing[5],
-            gap: t.spacing[6],
-            paddingBottom: t.spacing[10],
-          }}
-        >
-          <View style={{ gap: t.spacing[2] }}>
-            <Text
-              style={{
-                color: t.colors.textPrimary,
-                fontFamily: t.fontFamilies.sans,
-                fontSize: t.typography.displayLg.fontSize,
-                lineHeight: t.typography.displayLg.lineHeight,
-                fontWeight: '600',
-              }}
-            >
-              Text Inputs - Examples
-            </Text>
-            <Text
-              style={{
-                color: t.colors.textSecondary,
-                fontFamily: t.fontFamilies.sans,
-                fontSize: t.typography.body.fontSize,
-                lineHeight: t.typography.body.lineHeight,
-              }}
-            >
-              Default, icon, action, password, helper, search, disabled, focused, and error states.
-            </Text>
-          </View>
-
-          <Section title="Default" subtitle="Example: name fields">
-            <Input placeholder="Name" />
-            <Input insetLabel label="Name" defaultValue="Allan Thomas" />
-          </Section>
-
-          <Section
-            title="Leading Icon"
-            subtitle="Contextual icon to communicate field better. Example: email fields"
-          >
-            <Input
-              placeholder="Email"
-              leadingIcon={<Ionicons name="mail-outline" size={20} color={t.colors.textTertiary} />}
-            />
-            <Input
-              insetLabel
-              label="Email"
-              defaultValue="allan.thomas@atstudio.com"
-              leadingIcon={<Ionicons name="mail-outline" size={20} color={iconColor} />}
-            />
-          </Section>
-
-          <Section
-            title="Leading Action"
-            subtitle="Action controlling content of input field. Example: phone fields with country code selection"
-          >
-            <View style={{ flexDirection: 'row', gap: t.spacing[2] }}>
-              <InputAction
-                accessibilityLabel="Select country code"
-                style={{
-                  minHeight: 52,
-                  paddingHorizontal: t.spacing[3],
-                  gap: t.spacing[1],
-                  flexDirection: 'row',
-                }}
-              >
-                <Text style={{ fontFamily: t.fontFamilies.sans, color: t.colors.textPrimary }}>
-                  +447
-                </Text>
-                <Ionicons name="chevron-down" size={16} color={iconColor} />
-              </InputAction>
-              <Input containerStyle={{ flex: 1 }} placeholder="Phone" />
-            </View>
-            <View style={{ flexDirection: 'row', gap: t.spacing[2] }}>
-              <InputAction
-                accessibilityLabel="Select country code"
-                style={{
-                  minHeight: 52,
-                  paddingHorizontal: t.spacing[3],
-                  gap: t.spacing[1],
-                  flexDirection: 'row',
-                }}
-              >
-                <Text style={{ fontFamily: t.fontFamilies.sans, color: t.colors.textPrimary }}>
-                  +447
-                </Text>
-                <Ionicons name="chevron-down" size={16} color={iconColor} />
-              </InputAction>
-              <Input
-                containerStyle={{ flex: 1 }}
-                insetLabel
-                label="Phone"
-                defaultValue="020-293-9393"
-                keyboardType="phone-pad"
-              />
-            </View>
-          </Section>
-
-          <Section
-            title="Password with Trailing Action"
-            subtitle="Trailing action is for actions taken after inputting content such as copying or hiding/showing. Example: password"
-          >
-            <Input
-              placeholder="Password"
-              secureTextEntry={!passwordVisible}
-              trailingAction={
-                <InputAction
-                  accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
-                  onPress={() => setPasswordVisible((v) => !v)}
-                >
-                  <Ionicons
-                    name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
-                    size={20}
-                    color={iconColor}
-                  />
-                </InputAction>
-              }
-            />
-            <Input
-              defaultValue="Password"
-              secureTextEntry={!passwordVisible}
-              trailingAction={
-                <InputAction
-                  accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
-                  onPress={() => setPasswordVisible((v) => !v)}
-                >
-                  <Ionicons
-                    name={passwordVisible ? 'eye-outline' : 'eye-off-outline'}
-                    size={20}
-                    color={iconColor}
-                  />
-                </InputAction>
-              }
-            />
-            <Input
-              defaultValue="Password"
-              secureTextEntry
-              errorText="Incorrect Password"
-              trailingAction={
-                <InputAction accessibilityLabel="Show password">
-                  <Ionicons name="eye-off-outline" size={20} color={iconColor} />
-                </InputAction>
-              }
-              helperStyle={{ color: errorColor }}
-            />
-          </Section>
-
-          <Section title="With Helper Text" subtitle="Example: existing username">
-            <Input
-              label="Username"
-              placeholder="Username"
-              trailingAction={
-                <InputAction accessibilityLabel="Username visibility">
-                  <Ionicons name="eye-off-outline" size={20} color={iconColor} />
-                </InputAction>
-              }
-            />
-            <Input
-              insetLabel
-              label="Username"
-              defaultValue="@allanthomas"
-              errorText="Username taken"
-            />
-          </Section>
-
-          <Section title="With Leading Icon and Trailing action" subtitle="Example: search">
-            <Input
-              placeholder="Search"
-              leadingIcon={
-                <Ionicons name="search-outline" size={20} color={t.colors.textTertiary} />
-              }
-            />
-            <Input
-              value={query}
-              onChangeText={setQuery}
-              leadingIcon={<Ionicons name="search-outline" size={20} color={iconColor} />}
-              trailingAction={
-                query ? (
-                  <InputAction accessibilityLabel="Clear query" onPress={() => setQuery('')}>
-                    <Ionicons name="close" size={22} color={iconColor} />
-                  </InputAction>
-                ) : undefined
-              }
-            />
-          </Section>
-
-          <Section title="Background style states" subtitle="Focused, filled, error, and disabled">
-            <Input label="Label" placeholder="Label" helperText="Helper text" />
-            <Input insetLabel label="Label" defaultValue="Content" helperText="Helper text" />
-            <Input insetLabel label="Label" defaultValue="Content" errorText="Helper text" />
-            <Input defaultValue="Content" helperText="Helper text" editable={false} />
-          </Section>
-        </ScrollView>
-      </View>
-    </>
-  );
-}
-
-function Section({
-  title,
-  subtitle,
-  children,
-}: {
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
-}) {
-  const t = useTokens();
-  return (
-    <View style={{ gap: t.spacing[3] }}>
-      <View style={{ gap: t.spacing[1] }}>
-        <Text
-          style={{
-            color: t.colors.textPrimary,
-            fontFamily: t.fontFamilies.sans,
-            fontSize: t.typography.title2.fontSize,
-            lineHeight: t.typography.title2.lineHeight,
-            fontWeight: '600',
-          }}
-        >
-          {title}
-        </Text>
-        {subtitle ? (
-          <Text
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: t.colors.bg }}>
+        <View style={{ flex: 1 }}>
+          <View
             style={{
-              color: t.colors.textSecondary,
-              fontFamily: t.fontFamilies.sans,
-              fontSize: t.typography.bodySm.fontSize,
-              lineHeight: t.typography.bodySm.lineHeight,
+              position: 'absolute',
+              top: 22,
+              left: 20,
+              right: 20,
+              zIndex: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
-      <View style={{ gap: t.spacing[2] }}>{children}</View>
-    </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <BackButton />
+              <LiveBadge />
+            </View>
+            <ThemeToggle />
+          </View>
+
+          <Animated.View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 20,
+              transform: [{ translateY: previewOffset }],
+            }}
+          >
+            <View
+              style={{
+                width: '100%',
+                maxWidth: 350,
+                paddingVertical: 32,
+                alignItems: appearance === 'plain' ? 'center' : 'stretch',
+              }}
+            >
+              <Input {...fieldProps} />
+            </View>
+          </Animated.View>
+
+          {!sheetOpen ? (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: Math.max(insets.bottom, 14),
+                left: 0,
+                right: 0,
+                alignItems: 'center',
+              }}
+            >
+              <CanvasPill
+                componentName="Input"
+                open={false}
+                onComponentPress={() => router.replace('/')}
+                onMenuPress={() => setSheetOpen(true)}
+              />
+            </View>
+          ) : null}
+
+          <VariantSheet
+            visible={sheetOpen}
+            previous="Button"
+            next="TextArea"
+            onClose={() => setSheetOpen(false)}
+            onPrevious={() => router.replace('/button')}
+            onNext={() => router.replace('/textarea')}
+          >
+            <View style={{ gap: 14 }}>
+              <VariantControlRow label="Type">
+                {TYPES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={type === option}
+                    onPress={() => setType(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Style">
+                {APPEARANCES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option === 'plain' ? 'no bg' : option}
+                    active={appearance === option}
+                    onPress={() => setAppearance(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Label">
+                {LABELS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={labelMode === option}
+                    onPress={() => setLabelMode(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Size">
+                {SIZES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={size === option}
+                    onPress={() => setSize(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Icons">
+                {ICONS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={icons === option}
+                    onPress={() => setIcons(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Content">
+                {CONTENT.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={content === option}
+                    onPress={() => setContent(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="State">
+                {STATES.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={state === option}
+                    onPress={() => setState(option)}
+                  />
+                ))}
+              </VariantControlRow>
+            </View>
+          </VariantSheet>
+        </View>
+      </SafeAreaView>
+    </>
   );
 }

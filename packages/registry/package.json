@@ -17,23 +17,28 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
-    "clean": "rm -rf .turbo"
+    "clean": "rm -rf .turbo",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@arloui/theme": "workspace:*",
-    "@arloui/tokens": "workspace:*",
-    "@arloui/utils": "workspace:*"
+    "@arloui/theme": "file:../theme",
+    "@arloui/tokens": "file:../tokens",
+    "@arloui/utils": "file:../utils"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.74.0"
   },
   "devDependencies": {
-    "@arloui/eslint-config": "workspace:*",
-    "@arloui/tsconfig": "workspace:*",
-    "@types/react": "^18.3.11",
-    "react": "18.3.1",
-    "react-native": "0.76.0",
+    "@arloui/eslint-config": "file:../eslint-config",
+    "@arloui/tsconfig": "file:../tsconfig",
+    "@testing-library/react-native": "^13.2.0",
+    "@types/react": "~19.1.10",
+    "babel-preset-expo": "~54.0.0",
+    "jest": "^29.7.0",
+    "jest-expo": "~54.0.17",
+    "react-test-renderer": "19.1.0",
     "typescript": "^5.6.2"
   }
 }

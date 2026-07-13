@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-    "ignore": ["@arloui/docs", "@arloui/playground", "@arloui/build-registry", "@arloui/build-icons", "@arloui/skill"]
+    "ignore": ["@arloui/docs", "@arloui/playground", "@arloui/build-registry", "@arloui/build-icons"]
 }

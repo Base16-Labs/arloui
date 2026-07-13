@@ -5,7 +5,12 @@
  * with `elevation` only (tint matches Material defaults, not the Figma hex).
  */
 import { Platform } from 'react-native';
-import { shadowBaseColor, shadowLevels } from './shadowSpec';
+import {
+  darkShadowBaseColor,
+  darkShadowLevels,
+  shadowBaseColor,
+  shadowLevels,
+} from './shadowSpec';
 
 type Shadow = {
   shadowColor: string;
@@ -15,9 +20,13 @@ type Shadow = {
   elevation: number;
 };
 
-function make(level: { offsetY: number; blur: number; opacity: number }, elevation: number): Shadow {
+function make(
+  level: { offsetY: number; blur: number; opacity: number },
+  elevation: number,
+  color = shadowBaseColor,
+): Shadow {
   return {
-    shadowColor: shadowBaseColor,
+    shadowColor: color,
     shadowOpacity: Platform.OS === 'ios' ? level.opacity : 0,
     shadowRadius: level.blur,
     shadowOffset: { width: 0, height: level.offsetY },
@@ -31,6 +40,14 @@ export const shadows = {
   md: make(shadowLevels.md, 4),
   lg: make(shadowLevels.lg, 8),
   xl: make(shadowLevels.xl, 12),
+} as const;
+
+export const darkShadows = {
+  none: make({ offsetY: 0, blur: 0, opacity: 0 }, 0, darkShadowBaseColor),
+  sm: make(darkShadowLevels.sm, 2, darkShadowBaseColor),
+  md: make(darkShadowLevels.md, 4, darkShadowBaseColor),
+  lg: make(darkShadowLevels.lg, 8, darkShadowBaseColor),
+  xl: make(darkShadowLevels.xl, 12, darkShadowBaseColor),
 } as const;
 
 export type ShadowTokens = typeof shadows;

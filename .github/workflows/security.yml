@@ -1,0 +1,75 @@
+name: Security
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+  schedule:
+    # Weekly (Mon 06:00 UTC) so newly-published advisories are caught even
+    # without a push.
+    - cron: '0 6 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trivy:
+    name: trivy (vuln · secret · misconfig)
+    runs-on: ubuntu-latest
+    env:
+      SKIP_DIRS: node_modules,dist,coverage,.next,.expo,.turbo
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install the Trivy CLI directly. This avoids trivy-action's transitive
+      # dependency on setup-trivy tags that upstream sometimes deletes (the
+      # "unable to resolve aquasecurity/setup-trivy" failures).
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+            | sh -s -- -b "$RUNNER_TEMP/trivy-bin"
+          echo "$RUNNER_TEMP/trivy-bin" >> "$GITHUB_PATH"
+
+      # Vulnerabilities + misconfigurations → printed to the run log (report-only).
+      # ignore-unfixed drops advisories with no available fix (e.g. the known
+      # dev-tooling ones) so this stays informational. SARIF/code-scanning upload
+      # is intentionally omitted — it requires GitHub Advanced Security, which
+      # isn't guaranteed on this repo.
+      - name: Trivy vuln + misconfig scan (report-only)
+        run: |
+          trivy fs . \
+            --scanners vuln,misconfig \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --skip-dirs "$SKIP_DIRS" \
+            --exit-code 0 \
+            --no-progress
+
+      # Secrets are a hard gate — fail the run if a credential is committed.
+      - name: Trivy secret scan (gate)
+        run: |
+          trivy fs . \
+            --scanners secret \
+            --skip-dirs "$SKIP_DIRS" \
+            --exit-code 1 \
+            --no-progress
+
+  audit:
+    name: npm audit (published deps)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+
+      # Gate only on what ships to consumers: HIGH+ in production dependencies.
+      # (Dev-only tooling advisories show up in the Trivy report-only step above.)
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high

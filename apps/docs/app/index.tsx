@@ -1,94 +1,195 @@
-import { Link, Stack } from 'expo-router';
-import { ScrollView, Text, View } from 'react-native';
-import { Button, Card } from '@arloui/registry';
-import { useTokens } from '@arloui/registry';
+import { Ionicons } from '@expo/vector-icons';
+import { Stack, useRouter } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTokens } from '@arloui/registry';
+import { ThemeToggle } from '@/components/playground/theme-toggle';
 
-export default function Index() {
+type IndexItem = {
+  title: string;
+  category: string;
+  href?: '/button' | '/input' | '/textarea' | '/sheet' | '/date-picker' | '/icons' | '/toggle' | '/checkbox' | '/radio';
+};
+
+const COMPONENTS: IndexItem[] = [
+  { title: 'Button', category: 'Controls', href: '/button' },
+  { title: 'Card', category: 'Layout' },
+  { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
+  { title: 'Chip', category: 'Controls' },
+  { title: 'Date Picker', category: 'Controls', href: '/date-picker' },
+  { title: 'Empty', category: 'Feedback' },
+  { title: 'Field', category: 'Controls', href: '/input' },
+  { title: 'Group', category: 'Layout' },
+  { title: 'Header', category: 'Nav' },
+  { title: 'Icons', category: 'Foundations', href: '/icons' },
+  { title: 'Input', category: 'Controls', href: '/input' },
+  { title: 'List', category: 'Lists' },
+  { title: 'Nav', category: 'Nav' },
+  { title: 'Note', category: 'Type' },
+  { title: 'Pill', category: 'Controls' },
+  { title: 'Radio', category: 'Controls', href: '/radio' },
+  { title: 'Row', category: 'Lists' },
+  { title: 'Sheet', category: 'Layout', href: '/sheet' },
+  { title: 'TextArea', category: 'Controls', href: '/textarea' },
+  { title: 'Toggle', category: 'Controls', href: '/toggle' },
+];
+
+export default function ComponentIndex() {
   const t = useTokens();
+  const [query, setQuery] = useState('');
+  const items = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) return COMPONENTS;
+    return COMPONENTS.filter(
+      (item) =>
+        item.title.toLowerCase().includes(normalized) ||
+        item.category.toLowerCase().includes(normalized),
+    );
+  }, [query]);
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Arlo UI' }} />
-      <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: t.colors.bg }}>
-        <ScrollView contentContainerStyle={{ padding: t.spacing[5], gap: t.spacing[6] }}>
-          <View style={{ gap: t.spacing[2] }}>
-            <Text
-              style={{
-                color: t.colors.textTertiary,
-                fontFamily: t.fontFamilies.mono,
-                fontSize: t.typography.label.fontSize,
-                letterSpacing: t.typography.label.letterSpacing,
-                textTransform: 'uppercase',
-              }}
-            >
-              arlo ui · v0.1.0
-            </Text>
-            <Text
-              style={{
-                color: t.colors.textPrimary,
-                fontFamily: t.fontFamilies.sans,
-                fontSize: t.typography.displayLg.fontSize,
-                lineHeight: t.typography.displayLg.lineHeight,
-                fontWeight: '600',
-              }}
-            >
-              Copy-paste UI for React Native.
-            </Text>
-            <Text
-              style={{
-                color: t.colors.textSecondary,
-                fontFamily: t.fontFamilies.sans,
-                fontSize: t.typography.body.fontSize,
-                lineHeight: t.typography.body.lineHeight,
-              }}
-            >
-              Premium primitives. Token-driven. Zero black boxes.
-            </Text>
+      <Stack.Screen options={{ headerShown: false }} />
+      <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1, backgroundColor: t.colors.bg }}>
+        <View
+          style={{
+            flex: 1,
+            paddingTop: 22,
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'flex-end',
+              paddingHorizontal: 20,
+            }}
+          >
+            <ThemeToggle />
           </View>
 
-          <Card>
-            <Card.Header>
-              <Card.Title>Button</Card.Title>
-              <Card.Subtitle>Variants and sizes</Card.Subtitle>
-            </Card.Header>
-            <Card.Body>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t.spacing[2] }}>
-                <Button label="Primary" />
-                <Button label="Secondary" variant="secondary" />
-                <Button label="Ghost" variant="ghost" />
-                <Button label="Danger" variant="danger" />
+          <View
+            style={{
+              marginTop: 44,
+              marginHorizontal: 20,
+              height: 52,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              paddingHorizontal: 16,
+              borderRadius: 14,
+              borderWidth: 1,
+              borderColor: t.colors.border,
+              backgroundColor: t.colors.surfaceRaised,
+            }}
+          >
+            <Ionicons name="search-outline" size={21} color={t.colors.textTertiary} />
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search components"
+              placeholderTextColor={t.colors.textTertiary}
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={{
+                flex: 1,
+                color: t.colors.textPrimary,
+                fontFamily: 'Manrope',
+                fontSize: 15,
+                paddingVertical: 0,
+              }}
+            />
+            {query ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Clear search"
+                hitSlop={8}
+                onPress={() => setQuery('')}
+              >
+                <Ionicons name="close-circle" size={18} color={t.colors.textTertiary} />
+              </Pressable>
+            ) : null}
+          </View>
+
+          <FlatList
+            data={items}
+            keyExtractor={(item) => item.title}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator
+            style={{ flex: 1, marginTop: 18 }}
+            contentContainerStyle={{
+              borderTopWidth: 1,
+              borderTopColor: t.colors.border,
+              paddingBottom: 36,
+            }}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: 1, backgroundColor: t.colors.border }} />
+            )}
+            renderItem={({ item }) => <IndexRow item={item} />}
+            ListEmptyComponent={
+              <View style={{ alignItems: 'center', paddingTop: 48 }}>
+                <Text
+                  style={{
+                    color: t.colors.textSecondary,
+                    fontFamily: 'Manrope',
+                    fontSize: 14,
+                  }}
+                >
+                  No matching components
+                </Text>
               </View>
-            </Card.Body>
-          </Card>
-
-          <Card tone="raised">
-            <Card.Header>
-              <Card.Title>Icons</Card.Title>
-              <Card.Subtitle>Copy SVG or React usage (web gallery)</Card.Subtitle>
-            </Card.Header>
-            <Card.Body>
-              <Link href="/icons" asChild>
-                <Button label="Icon gallery →" variant="secondary" />
-              </Link>
-            </Card.Body>
-          </Card>
-
-          <Card tone="raised">
-            <Card.Header>
-              <Card.Title>Components</Card.Title>
-              <Card.Subtitle>Browse the registry</Card.Subtitle>
-            </Card.Header>
-            <Card.Body style={{ gap: t.spacing[2] }}>
-              <Link href="/button" asChild>
-                <Button label="Button showcase →" variant="secondary" />
-              </Link>
-              <Link href={'/input' as never} asChild>
-                <Button label="Input showcase →" variant="secondary" />
-              </Link>
-            </Card.Body>
-          </Card>
-        </ScrollView>
+            }
+          />
+        </View>
       </SafeAreaView>
     </>
+  );
+}
+
+function IndexRow({ item }: { item: IndexItem }) {
+  const t = useTokens();
+  const router = useRouter();
+
+  return (
+    <Pressable
+      disabled={!item.href}
+      onPress={() => {
+        if (item.href) router.push(item.href);
+      }}
+      style={({ pressed }) => ({
+        minHeight: 64,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: pressed ? t.colors.surfaceRaised : t.colors.bg,
+      })}
+    >
+      <Text
+        style={{
+          flex: 1,
+          color: t.colors.textPrimary,
+          fontFamily: 'Manrope Medium',
+          fontSize: 17,
+          lineHeight: 23,
+        }}
+      >
+        {item.title}
+      </Text>
+      <Text
+        style={{
+          flexShrink: 0,
+          marginLeft: 16,
+          color: t.colors.textTertiary,
+          fontFamily: 'Manrope SemiBold',
+          fontSize: 10,
+          lineHeight: 14,
+          letterSpacing: 1.1,
+          textAlign: 'right',
+          textTransform: 'uppercase',
+        }}
+      >
+        {item.category}
+      </Text>
+    </Pressable>
   );
 }

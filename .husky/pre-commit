@@ -1,0 +1,5 @@
+# Arlo UI pre-commit gate.
+# Runs the test suite — Turbo-cached, so it's instant when nothing relevant
+# changed. Security scanning (Trivy) and audits run in CI (.github/workflows).
+echo "▶ running tests…"
+npm test

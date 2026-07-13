@@ -1,24 +1,8 @@
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  ...require('./index.js'),
-  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'react-native'],
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:react-native/all',
-    'prettier',
-  ],
-  rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 'off',
-    'react-native/no-color-literals': 'warn',
-    'react-native/no-inline-styles': 'warn',
-    'react-native/no-raw-text': 'off',
-    '@typescript-eslint/no-unused-vars': [
-      'warn',
-      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-    ],
-  },
-};
+// React Native packages share the base flat config.
+//
+// NOTE: `eslint-plugin-react-native` (v4.1.0, latest) is not compatible with
+// ESLint 9 — its rules call the removed `context.getScope()` and crash. It has no
+// ESLint 9 release, so the RN-specific style rules (no-inline-styles,
+// no-color-literals, no-unused-styles) are omitted until a compatible plugin
+// exists. The subpath is kept stable so consumers don't need to change.
+module.exports = require('./index.js');

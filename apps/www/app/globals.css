@@ -1,0 +1,247 @@
+@import 'tailwindcss';
+
+/* Drive the `dark:` variant from the `.dark` class set by the in-app theme
+   toggle, not the OS `prefers-color-scheme`. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Manrope is loaded from @fontsource-variable/manrope in app/layout.tsx. */
+
+/* ──────────────────────────────────────────────
+   Design tokens — Color (light)
+   ────────────────────────────────────────────── */
+
+:root {
+  --font-sans: 'Manrope Variable', Manrope, system-ui, -apple-system, sans-serif;
+  --font-mono: 'Manrope Variable', Manrope, system-ui, -apple-system, sans-serif;
+
+  /* Surfaces */
+  --canvas: #ffffff;
+  --surface: #fafafa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f4f4f5;
+
+  /* Text */
+  --ink: #18181b;
+  --ink-2: #52525b;
+  --ink-3: #a1a1aa;
+  --ink-4: #d4d4d8;
+
+  /* Lines */
+  --line: rgb(24 24 27 / 0.08);
+  --line-strong: rgb(24 24 27 / 0.14);
+
+  /* Overlays */
+  --scrim: rgb(24 24 27 / 0.4);
+
+  /* Glass */
+  --glass-bg: rgb(255 255 255 / 0.7);
+  --glass-border: rgb(24 24 27 / 0.06);
+  --glass-blur: 20px;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-pill: 9999px;
+
+  /* Motion — curves */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-morph: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Motion — durations */
+  --dur-instant: 80ms;
+  --dur-fast: 140ms;
+  --dur-base: 200ms;
+  --dur-slow: 280ms;
+  --dur-page: 220ms;
+}
+
+/* ──────────────────────────────────────────────
+   Design tokens — Color (dark)
+   ────────────────────────────────────────────── */
+
+.dark {
+  --canvas: #09090b;
+  --surface: #18181b;
+  --surface-raised: #27272a;
+  --surface-sunken: #09090b;
+
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --ink-4: #52525b;
+
+  --line: rgb(250 250 250 / 0.08);
+  --line-strong: rgb(250 250 250 / 0.14);
+
+  --scrim: rgb(0 0 0 / 0.55);
+
+  --glass-bg: rgb(24 24 27 / 0.7);
+  --glass-border: rgb(250 250 250 / 0.08);
+  --glass-blur: 20px;
+}
+
+/* ──────────────────────────────────────────────
+   Tailwind v4 theme extensions
+   ────────────────────────────────────────────── */
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-scrim: var(--scrim);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-pill: var(--radius-pill);
+}
+
+/* ──────────────────────────────────────────────
+   Base styles
+   ────────────────────────────────────────────── */
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pressable feedback — Emil's scale(0.97) on :active */
+button:active,
+a:active,
+[role='button']:active {
+  transform: scale(0.97);
+  transition-property: transform;
+  transition-duration: var(--dur-instant);
+  transition-timing-function: var(--ease-out);
+}
+
+/* Hide scrollbar but keep scrolling */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@supports (view-transition-name: none) {
+  /* Avoid whole-page crossfade when only a named group animates */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+
+  ::view-transition-group(bottom-pill) {
+    animation-duration: 260ms;
+    animation-timing-function: var(--ease-morph);
+    transform-origin: center bottom;
+    overflow: clip;
+    border-radius: 24px;
+  }
+
+  ::view-transition-image-pair(bottom-pill) {
+    overflow: clip;
+    border-radius: inherit;
+  }
+
+  ::view-transition-old(bottom-pill),
+  ::view-transition-new(bottom-pill) {
+    box-shadow: none;
+  }
+
+  ::view-transition-old(bottom-pill) {
+    animation: bottom-pill-out 70ms var(--ease-out) both;
+    transform-origin: center bottom;
+  }
+
+  ::view-transition-new(bottom-pill) {
+    animation: bottom-pill-in 170ms var(--ease-out) 55ms both;
+    transform-origin: center bottom;
+  }
+}
+
+html:has([data-pill-transition='closing']) ::view-transition-old(bottom-pill) {
+  animation-duration: 35ms;
+}
+
+html:has([data-pill-transition='closing']) ::view-transition-new(bottom-pill) {
+  animation-delay: 20ms;
+}
+
+@keyframes bottom-pill-out {
+  0% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+}
+
+@keyframes bottom-pill-in {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+}
+
+.bottom-pill-surface {
+  contain: layout paint;
+}
+
+.bottom-pill-shadow {
+  box-shadow:
+    0 18px 48px rgb(24 24 27 / 0.12),
+    0 4px 12px rgb(24 24 27 / 0.06);
+}
+
+.bottom-pill-surface button:active {
+  transform: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Appended — wins over Tailwind preflight (`cursor: default` on `<button>`). */
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}

@@ -22,6 +22,10 @@ export const sizing = {
     lg: 48,
     xl: 52,
   },
+  touchTarget: {
+    minimum: 44,
+    comfortable: 48,
+  },
 } as const;
 
 export type SizingTokens = typeof sizing;

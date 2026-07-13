@@ -57,14 +57,14 @@ export const lightSemanticColors = {
 
 export const darkSemanticColors = {
   surfaceBackground: '#09090B',
-  surfaceInput: '#1E2939',
-  surfaceElevated: '#101828',
+  surfaceInput: '#101828',
+  surfaceElevated: '#1E2939',
   surfaceOverlay: 'rgba(16,24,40,0.7)',
   surfaceInverse: '#F9FAFB',
   textPrimary: '#F9FAFB',
   textSecondary: '#99A1AF',
   textTertiary: '#6A7282',
-  textDisabled: 'rgba(249,250,251,0.12)',
+  textDisabled: 'rgba(249,250,251,0.38)',
   textInverse: '#101828',
   textPlaceholder: '#4A5565',
   textInteractivePrimary: '#FFFFFF',
@@ -134,20 +134,95 @@ export const darkColors = {
 } as const;
 
 export const fontFamilies = {
-  sans: 'Space Grotesk',
+  sans: 'Manrope',
   mono: 'Space Mono',
-  display: 'Doto',
+  display: 'Manrope',
+} as const;
+
+export const fontWeights = {
+  normal: '400',
+  emphasized: '600',
+  regular: '400',
+  medium: '500',
+  semibold: '600',
 } as const;
 
 export const typography = {
-  displayXl: { fontSize: 40, lineHeight: 44, fontWeight: '600' as const },
-  displayLg: { fontSize: 32, lineHeight: 36, fontWeight: '600' as const },
-  title1: { fontSize: 24, lineHeight: 30, fontWeight: '600' as const },
-  title2: { fontSize: 20, lineHeight: 26, fontWeight: '600' as const },
-  title3: { fontSize: 17, lineHeight: 22, fontWeight: '500' as const },
-  body: { fontSize: 15, lineHeight: 21, fontWeight: '400' as const },
-  bodySm: { fontSize: 13, lineHeight: 18, fontWeight: '400' as const },
-  label: { fontSize: 11, lineHeight: 14, fontWeight: '500' as const, letterSpacing: 0.66 },
+  displayLarge: {
+    fontSize: 34,
+    lineHeight: 42.5,
+    fontWeight: '400' as const,
+    letterSpacing: -0.68,
+  },
+  displayLargeEmphasized: {
+    fontSize: 34,
+    lineHeight: 42.5,
+    fontWeight: '600' as const,
+    letterSpacing: -0.68,
+  },
+  displayMedium: { fontSize: 28, lineHeight: 35, fontWeight: '400' as const, letterSpacing: -0.56 },
+  displayMediumEmphasized: {
+    fontSize: 28,
+    lineHeight: 35,
+    fontWeight: '600' as const,
+    letterSpacing: -0.56,
+  },
+  displaySmall: { fontSize: 24, lineHeight: 30, fontWeight: '400' as const, letterSpacing: -0.48 },
+  displaySmallEmphasized: {
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: '600' as const,
+    letterSpacing: -0.48,
+  },
+  headingLarge: { fontSize: 20, lineHeight: 26, fontWeight: '400' as const, letterSpacing: -0.2 },
+  headingLargeEmphasized: {
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: '600' as const,
+    letterSpacing: -0.2,
+  },
+  headingMedium: {
+    fontSize: 17,
+    lineHeight: 22.1,
+    fontWeight: '400' as const,
+    letterSpacing: -0.17,
+  },
+  headingMediumEmphasized: {
+    fontSize: 17,
+    lineHeight: 22.1,
+    fontWeight: '600' as const,
+    letterSpacing: -0.17,
+  },
+  headingSmall: {
+    fontSize: 14,
+    lineHeight: 18.2,
+    fontWeight: '400' as const,
+    letterSpacing: -0.14,
+  },
+  headingSmallEmphasized: {
+    fontSize: 14,
+    lineHeight: 18.2,
+    fontWeight: '600' as const,
+    letterSpacing: -0.14,
+  },
+  bodyLarge: { fontSize: 17, lineHeight: 23.8, fontWeight: '400' as const, letterSpacing: 0 },
+  bodyMedium: { fontSize: 14, lineHeight: 19.6, fontWeight: '400' as const, letterSpacing: 0 },
+  bodySmall: { fontSize: 12, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
+  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
+  labelMedium: { fontSize: 12, lineHeight: 14.4, fontWeight: '400' as const, letterSpacing: 0 },
+  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: '400' as const, letterSpacing: 0 },
+  buttonLarge: { fontSize: 20, lineHeight: 22, fontWeight: '600' as const, letterSpacing: 0 },
+  buttonMedium: { fontSize: 17, lineHeight: 18.7, fontWeight: '600' as const, letterSpacing: 0 },
+  buttonSmall: { fontSize: 14, lineHeight: 15.4, fontWeight: '600' as const, letterSpacing: 0 },
+  buttonLabel: { fontSize: 12, lineHeight: 13.2, fontWeight: '600' as const, letterSpacing: 0 },
+  displayXl: { fontSize: 34, lineHeight: 42.5, fontWeight: '600' as const, letterSpacing: -0.68 },
+  displayLg: { fontSize: 28, lineHeight: 35, fontWeight: '600' as const, letterSpacing: -0.56 },
+  title1: { fontSize: 24, lineHeight: 30, fontWeight: '600' as const, letterSpacing: -0.48 },
+  title2: { fontSize: 20, lineHeight: 26, fontWeight: '600' as const, letterSpacing: -0.2 },
+  title3: { fontSize: 17, lineHeight: 22.1, fontWeight: '500' as const, letterSpacing: -0.17 },
+  body: { fontSize: 14, lineHeight: 19.6, fontWeight: '400' as const, letterSpacing: 0 },
+  bodySm: { fontSize: 12, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
+  label: { fontSize: 11, lineHeight: 13.2, fontWeight: '500' as const, letterSpacing: 0 },
 } as const;
 
 export const spacing = {
@@ -173,12 +248,32 @@ export const sizing = {
   icon: { xs: 16, sm: 20, md: 24, lg: 32 },
   avatar: { xs: 16, sm: 24, md: 32, lg: 40 },
   buttonHeight: { sm: 36, md: 40, lg: 48, xl: 52 },
+  touchTarget: { minimum: 44, comfortable: 48 },
 } as const;
 
+/**
+ * Motion is spatial information, not decoration. Curves and durations are the tokens.
+ * Default ease is `easeOut`; never use `ease-in` for UI. Springs are for gesture-driven
+ * or playful elements. Never animate from `scale(0)`.
+ */
 export const motion = {
-  duration: { press: 140, state: 200, sheet: 280 },
-  easing: { easeOut: [0.16, 1, 0.3, 1] as const },
-  pressed: { scale: 0.98, opacity: 0.92 },
+  easing: {
+    easeOut: [0.23, 1, 0.32, 1] as const, // entrances, exits, pressable return
+    easeInOut: [0.77, 0, 0.175, 1] as const, // moving or morphing in place
+    easeSheet: [0.32, 0.72, 0, 1] as const, // sheet and drawer gestures
+  },
+  duration: {
+    instant: 130, // 100–160 — press feedback, micro-interactions
+    fast: 200, // 180–220 — tooltips, small popovers, toggles
+    base: 280, // 220–320 — sheets, drawers, modals, content swaps
+    slow: 400, // 320–480 — shared-element transitions, complex morphs
+  },
+  spring: {
+    snappy: { stiffness: 400, damping: 30, mass: 1 }, // pressable snap-back, toggle bounce
+    gentle: { stiffness: 150, damping: 20, mass: 1 }, // sheet settle, card reposition
+    heavy: { stiffness: 300, damping: 40, mass: 1.2 }, // drag-to-dismiss commit, large surface
+  },
+  pressed: { scale: 0.97, opacity: 0.85 },
 } as const;
 
 /** Grey-900 tint shadows — mirrors `@arloui/tokens` shadow scale (RN shadow props). */
@@ -220,6 +315,109 @@ export const shadows = {
   },
 } as const;
 
+export const darkShadows = {
+  none: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+  },
+  sm: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.18,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 2,
+  },
+  md: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.22,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 4,
+  },
+  lg: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 8,
+  },
+  xl: {
+    shadowColor: '#51A2FF',
+    shadowOpacity: 0.34,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 12,
+  },
+} as const;
+
+export const blurs = {
+  none: 0,
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 40,
+} as const;
+
+/** @deprecated Prefer `blurs`. */
+export const blur = blurs;
+
+/**
+ * Translucent surface fallbacks for glass-like navigation and controls.
+ * A platform-native Liquid Glass treatment can replace the surface on supported
+ * iOS versions without changing the surrounding component contract.
+ */
+export const materials = {
+  glassSmall: {
+    blur: blurs.sm,
+    lightOverlay: 'rgba(255,255,255,0.64)',
+    darkOverlay: 'rgba(16,24,40,0.64)',
+    lightBorder: 'rgba(255,255,255,0.56)',
+    darkBorder: 'rgba(255,255,255,0.12)',
+  },
+  glassMedium: {
+    blur: blurs.lg,
+    lightOverlay: 'rgba(255,255,255,0.72)',
+    darkOverlay: 'rgba(16,24,40,0.72)',
+    lightBorder: 'rgba(255,255,255,0.64)',
+    darkBorder: 'rgba(255,255,255,0.14)',
+  },
+  glassLarge: {
+    blur: blurs.xl,
+    lightOverlay: 'rgba(255,255,255,0.82)',
+    darkOverlay: 'rgba(16,24,40,0.82)',
+    lightBorder: 'rgba(255,255,255,0.72)',
+    darkBorder: 'rgba(255,255,255,0.16)',
+  },
+  /** @deprecated Prefer `glassSmall`. */
+  glassThin: {
+    blur: blurs.sm,
+    lightOverlay: 'rgba(255,255,255,0.64)',
+    darkOverlay: 'rgba(16,24,40,0.64)',
+    lightBorder: 'rgba(255,255,255,0.56)',
+    darkBorder: 'rgba(255,255,255,0.12)',
+  },
+  /** @deprecated Prefer `glassMedium`. */
+  glassRegular: {
+    blur: blurs.lg,
+    lightOverlay: 'rgba(255,255,255,0.72)',
+    darkOverlay: 'rgba(16,24,40,0.72)',
+    lightBorder: 'rgba(255,255,255,0.64)',
+    darkBorder: 'rgba(255,255,255,0.14)',
+  },
+  /** @deprecated Prefer `glassLarge`. */
+  glassThick: {
+    blur: blurs.xl,
+    lightOverlay: 'rgba(255,255,255,0.82)',
+    darkOverlay: 'rgba(16,24,40,0.82)',
+    lightBorder: 'rgba(255,255,255,0.72)',
+    darkBorder: 'rgba(255,255,255,0.16)',
+  },
+} as const;
+
 /** CSS box-shadow strings for `:focus-visible` on web — RN consumers use borders if needed. */
 export const focusRing = {
   light: {
@@ -237,24 +435,32 @@ export const themes = {
     name: 'dark' as const,
     colors: darkColors,
     fontFamilies,
+    fontWeights,
     typography,
     spacing,
     radii,
     sizing,
     motion,
-    shadows,
+    shadows: darkShadows,
+    blur,
+    blurs,
+    materials,
     focusRing: focusRing.dark,
   },
   light: {
     name: 'light' as const,
     colors: lightColors,
     fontFamilies,
+    fontWeights,
     typography,
     spacing,
     radii,
     sizing,
     motion,
     shadows,
+    blur,
+    blurs,
+    materials,
     focusRing: focusRing.light,
   },
 };

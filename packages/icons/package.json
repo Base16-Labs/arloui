@@ -14,8 +14,8 @@
   },
   "files": ["src", "assets", "README.md"],
   "scripts": {
-    "generate": "pnpm --filter @arloui/build-icons start",
-    "build": "pnpm run generate",
+    "generate": "tsx ../../tooling/build-icons/src/index.ts",
+    "build": "tsx ../../tooling/build-icons/src/index.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ignore-pattern 'src/generated/**'",
     "clean": "rm -rf .turbo"
@@ -26,11 +26,9 @@
     "react-native-svg": ">=15.0.0"
   },
   "devDependencies": {
-    "@arloui/eslint-config": "workspace:*",
-    "@arloui/tsconfig": "workspace:*",
-    "@types/react": "~18.2.79",
-    "react": "18.2.0",
-    "react-native": "0.74.5",
+    "@arloui/eslint-config": "file:../eslint-config",
+    "@arloui/tsconfig": "file:../tsconfig",
+    "@types/react": "~19.1.10",
     "react-native-svg": "15.8.0",
     "typescript": "^5.6.2"
   }

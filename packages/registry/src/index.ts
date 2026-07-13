@@ -3,6 +3,7 @@ export {
   FabButton,
   SocialAuthButton,
   type ButtonAppearance,
+  type ButtonHaptic,
   type ButtonProps,
   type ButtonSize,
   type ButtonTone,
@@ -15,13 +16,40 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Sheet,
+  type SheetProps,
+  type SheetBackdrop,
+  type SheetSurface,
+  type SheetPresentation,
+  type SheetDetent,
+} from './components/sheet';
+export {
+  Field,
   Input,
   InputAction,
+  type FieldActionProps,
+  type FieldProps,
   type InputActionProps,
+  type InputAppearance,
   type InputProps,
   type InputSize,
   type InputState,
 } from './components/input';
+export { Checkbox, type CheckboxProps, type CheckboxSize } from './components/checkbox';
+export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
+export { Toggle, type ToggleProps, type ToggleSize } from './components/toggle';
+export {
+  DatePicker,
+  type DatePickerProps,
+  type DatePickerWeekStartsOn,
+} from './components/date-picker';
+export {
+  TextArea,
+  type TextAreaAppearance,
+  type TextAreaProps,
+  type TextAreaSize,
+  type TextAreaState,
+} from './components/text-area';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
 
 export { COMPONENTS, FOUNDATION, REGISTRY } from './manifest';

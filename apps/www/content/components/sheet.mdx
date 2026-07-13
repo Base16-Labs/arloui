@@ -1,0 +1,113 @@
+---
+title: Sheet
+lede: An interruptive modal that slides up from the bottom of the screen.
+category: Layout & Surface
+---
+
+<Eyebrow>Layout & Surface</Eyebrow>
+# Sheet
+<Lede>An interruptive modal that slides up from the bottom of the screen.</Lede>
+
+<div className="flex gap-2 my-6">
+  <Pill as="a" href="https://figma.com/file/..." variant="default">Figma</Pill>
+  <Pill as="a" href="https://github.com/..." variant="default">Source</Pill>
+</div>
+
+<PhoneFrame className="my-10">
+  <div className="flex h-full items-end p-4">
+    <div className="w-full rounded-3xl bg-surface p-6 shadow-xl">
+      <div className="mx-auto mb-6 h-1 w-12 rounded-full bg-line-strong" />
+      <h3 className="text-[20px] font-medium text-ink mb-2">Sheet Title</h3>
+      <p className="text-[15px] text-ink-2 mb-6">This is a sheet preview inside the phone frame.</p>
+      <button className="w-full rounded-full bg-ink py-3 text-[15px] font-medium text-canvas">
+        Action
+      </button>
+    </div>
+  </div>
+</PhoneFrame>
+
+## Anatomy
+<Anatomy caption="Sheet structure showing handle, header, content, and safe area">
+  <div className="w-[320px] rounded-t-3xl border border-line-strong bg-white shadow-lg">
+    <div className="p-6">
+      <div className="mx-auto mb-6 h-1 w-12 rounded-full bg-line-strong" />
+      <div className="h-6 w-32 rounded bg-surface-sunken mb-4" />
+      <div className="h-24 rounded bg-surface-sunken" />
+    </div>
+  </div>
+</Anatomy>
+
+## When to use
+- **Interruptive flows:** When the user must complete a sub-task before continuing.
+- **Context preservation:** When the user needs to see the underlying screen to make a decision.
+- **Mobile-first:** Prefer sheets over center modals on mobile.
+
+## Archetypes
+Used in the following compositional patterns:
+- Sheet over content
+- Composer
+- Paywall
+
+## Variants
+<Variants title="Snap Points">
+  <div className="rounded-xl border border-line p-4">
+    <div className="h-32 rounded bg-surface-sunken mb-2" />
+    <p className="text-[12px] text-ink-2 text-center">Detent: 50%</p>
+  </div>
+  <div className="rounded-xl border border-line p-4">
+    <div className="h-48 rounded bg-surface-sunken mb-2" />
+    <p className="text-[12px] text-ink-2 text-center">Detent: 90%</p>
+  </div>
+</Variants>
+
+## States
+<States>
+  <StateGrid 
+    states={['default', 'scrolling', 'snapping', 'dismissing', 'keyboard-open']} 
+  />
+</States>
+
+## Motion
+- **Curve:** `spring-smooth` (stiffness: 300, damping: 28)
+- **Duration:** Typically resolves in ~350ms.
+- **Reduced Motion:** Fallback to a 200ms opacity fade.
+
+## Code
+<CodeBlock language="tsx">
+{`import { Sheet } from '@arloui/native';
+
+function MySheet() {
+  return (
+    <Sheet snapPoints={['50%', '90%']}>
+      <Sheet.Header title="Title" />
+      <Sheet.Content>
+        {/* content */}
+      </Sheet.Content>
+    </Sheet>
+  );
+}`}
+</CodeBlock>
+
+## Tokens
+- `--surface-raised`
+- `--radius-3xl`
+- `--shadow-modal`
+
+## Accessibility
+- Must trap focus while open.
+- Must dismiss on Escape key (web/hardware keyboard).
+- Must have an accessible dismiss button if swipe-to-dismiss is not obvious.
+
+## Do / Don't
+<DoDont>
+  <div slot="do">
+    Use a drag handle indicator to afford swipeability.
+  </div>
+  <div slot="dont">
+    Don't stack sheets on top of other sheets.
+  </div>
+</DoDont>
+
+## Related
+- Tray
+- Scrim

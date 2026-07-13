@@ -6,7 +6,7 @@
  *
  * Naming: chevron-right.svg → ChevronRight.tsx
  *
- * Run from repo root: pnpm icons:build
+ * Run from repo root: npm run icons:build
  */
 import { transform } from '@svgr/core';
 import jsx from '@svgr/plugin-jsx';
@@ -47,7 +47,7 @@ async function main() {
   if (files.length === 0) {
     await writeFile(
       join(OUT, 'index.ts'),
-      `// No SVG assets yet. Add .svg files to packages/icons/assets/svg and run \`pnpm icons:build\`.
+      `// No SVG assets yet. Add .svg files to packages/icons/assets/svg and run \`npm run icons:build\`.
 export {};
 `,
     );
@@ -69,6 +69,15 @@ export {};
         typescript: true,
         expandProps: 'end',
         exportType: 'named',
+        // Keep viewBox so icons scale (not clip) when width/height are overridden.
+        svgoConfig: {
+          plugins: [
+            {
+              name: 'preset-default',
+              params: { overrides: { removeViewBox: false } },
+            },
+          ],
+        },
       },
       { componentName },
     );

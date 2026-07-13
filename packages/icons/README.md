@@ -16,8 +16,6 @@ Registry components (Button, Row, …) stay copy-paste; they **accept `ReactNode
 
 ```bash
 npm install @arloui/icons react-native-svg
-# or
-pnpm add @arloui/icons react-native-svg
 ```
 
 ```tsx
@@ -34,7 +32,7 @@ Generated components follow `react-native-svg` props: `width`, `height`, `color`
 
 ### Copy raw SVG (HeroUI-style)
 
-The **docs app** (`apps/docs`) includes an **`/icons`** gallery on **web**: search, preview, **Copy SVG**, and **Copy React usage**. Static SVGs are synced from this package into `apps/docs/public/arloui-icons/` (gitignored) via `pnpm --filter @arloui/docs sync-icons`; the icon name list lives in `apps/docs/data/icon-names.json`.
+The **docs app** (`apps/docs`) includes an **`/icons`** gallery on **web**: search, preview, **Copy SVG**, and **Copy React usage**. Static SVGs are synced from this package into `apps/docs/public/arloui-icons/` (gitignored) via `npm run sync-icons -w @arloui/docs`; the icon name list lives in `apps/docs/data/icon-names.json`.
 
 After installing **`@arloui/icons`**, you can also open **`node_modules/@arloui/icons/assets/svg/<name>.svg`** and paste the file into `SvgXml` from `react-native-svg` if you prefer not to import a component.
 
@@ -43,7 +41,7 @@ After installing **`@arloui/icons`**, you can also open **`node_modules/@arloui/
 ## Maintainer workflow (this monorepo)
 
 1. Export SVG from Figma into `packages/icons/assets/svg/` — **one file per icon**, `kebab-case.svg`.
-2. Run **`pnpm icons:build`** at the repo root (uses `tooling/build-icons` + SVGR).
+2. Run **`npm run icons:build`** at the repo root (uses `tooling/build-icons` + SVGR).
 3. Commit **`assets/svg/`** and the updated **`src/generated/`** output.
 4. Release **`@arloui/icons`** with Changesets like any other public package.
 

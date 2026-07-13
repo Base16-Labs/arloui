@@ -1,43 +1,59 @@
 /**
- * Arlo UI — FAB / circular icon button
+ * Arlo UI — FAB (Floating Action Button)
  *
- * Circular control with default shadow (rest), darker fill while pressed, reduced opacity when disabled,
- * and on web a focus ring with offset (outline) matching Figma FAB states.
+ * Circular, 48×48px, single icon. Primary or neutral tone.
+ * Shadow on rest, no shadow on press. Reduced opacity (~28%) when disabled.
+ * Export `FAB` is the canonical name; `FabButton` kept for backward compatibility.
  */
-import { forwardRef, useMemo, useRef, useState, type ReactNode } from 'react';
+import { forwardRef, useMemo, useState, type ReactNode } from 'react';
 import {
   Animated,
   Platform,
   Pressable,
   View,
-  type GestureResponderEvent,
   type PressableProps,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { usePressFeedback, type ButtonHaptic } from './press-feedback';
+
+type Tokens = ReturnType<typeof useTokens>;
 
 export type FabTone = 'primary' | 'neutral';
 
-type Size = 'sm' | 'md' | 'lg' | 'xl';
+/** Single source of truth for the FAB's rest/pressed background per tone. */
+function fabVariants(t: Tokens): Record<FabTone, { rest: string; pressed: string }> {
+  return {
+    primary: { rest: t.colors.interactivePrimary, pressed: t.colors.interactivePrimaryPressed },
+    neutral: { rest: t.colors.surfaceElevated, pressed: t.colors.interactiveSecondaryPressed },
+  };
+}
 
-export type FabButtonProps = Omit<PressableProps, 'style' | 'children'> & {
-  /** Icon centered in the circle — tint externally or pass colored glyph. */
-  children: ReactNode;
+export type FABProps = Omit<PressableProps, 'style' | 'children'> & {
+  icon: ReactNode;
+  /** @deprecated Use `icon` prop instead. */
+  children?: ReactNode;
   tone?: FabTone;
-  size?: Size;
   disabled?: boolean;
-  /** Accessibility — required for icon-only control. */
+  haptic?: ButtonHaptic;
   accessibilityLabel: string;
   style?: StyleProp<ViewStyle>;
 };
 
-export const FabButton = forwardRef<View, FabButtonProps>(function FabButton(
+/** @deprecated Use `FABProps`. */
+export type FabButtonProps = FABProps;
+
+const FAB_SIZE = 48;
+const FAB_ICON_SIZE = 24;
+
+export const FAB = forwardRef<View, FABProps>(function FAB(
   {
+    icon,
     children,
     tone = 'primary',
-    size = 'md',
     disabled = false,
+    haptic = 'medium',
     accessibilityLabel,
     onPressIn,
     onPressOut,
@@ -49,42 +65,22 @@ export const FabButton = forwardRef<View, FabButtonProps>(function FabButton(
   ref,
 ) {
   const t = useTokens();
-  const press = useRef(new Animated.Value(0)).current;
-  const [pressed, setPressed] = useState(false);
+  const palette = useMemo(() => fabVariants(t)[tone], [t, tone]);
+  const { pressed, animatedStyle, onPressIn: pressIn, onPressOut: pressOut } = usePressFeedback({
+    haptic,
+    onPressIn,
+    onPressOut,
+  });
   const [focused, setFocused] = useState(false);
 
-  const d = useMemo(() => {
-    switch (size) {
-      case 'sm':
-        return t.sizing.buttonHeight.sm;
-      case 'md':
-        return t.sizing.buttonHeight.md;
-      case 'lg':
-        return t.sizing.buttonHeight.lg;
-      case 'xl':
-        return t.sizing.buttonHeight.xl;
-    }
-  }, [size, t.sizing.buttonHeight]);
+  const content = icon ?? children;
 
-  const palette = useMemo(() => {
-    if (tone === 'primary') {
-      return {
-        rest: t.colors.interactivePrimary,
-        pressed: t.colors.interactivePrimaryPressed,
-      };
-    }
-    return {
-      rest: t.colors.interactiveSecondary,
-      pressed: t.colors.interactiveSecondaryPressed,
-    };
-  }, [t.colors.interactivePrimary, t.colors.interactivePrimaryPressed, t.colors.interactiveSecondary, t.colors.interactiveSecondaryPressed, tone]);
-
-  const baseShadow = useMemo(() => {
+  const shadow = useMemo(() => {
     if (disabled || pressed) return t.shadows.none as unknown as ViewStyle;
     return t.shadows.sm as unknown as ViewStyle;
   }, [disabled, pressed, t.shadows]);
 
-  const focusOutline: ViewStyle | undefined = useMemo(() => {
+  const focusOutline = useMemo((): ViewStyle | undefined => {
     if (Platform.OS !== 'web' || !focused || disabled) return undefined;
     return {
       outlineWidth: 2,
@@ -93,32 +89,6 @@ export const FabButton = forwardRef<View, FabButtonProps>(function FabButton(
       outlineOffset: 4,
     } as ViewStyle;
   }, [disabled, focused, t.colors.focusRingMain]);
-
-  const handleIn = (e: GestureResponderEvent) => {
-    setPressed(true);
-    Animated.timing(press, {
-      toValue: 1,
-      duration: t.motion.duration.press,
-      useNativeDriver: true,
-    }).start();
-    onPressIn?.(e);
-  };
-  const handleOut = (e: GestureResponderEvent) => {
-    setPressed(false);
-    Animated.timing(press, {
-      toValue: 0,
-      duration: t.motion.duration.press,
-      useNativeDriver: true,
-    }).start();
-    onPressOut?.(e);
-  };
-
-  const animated = {
-    transform: [
-      { scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, t.motion.pressed.scale] }) },
-    ],
-    opacity: press.interpolate({ inputRange: [0, 1], outputRange: [1, t.motion.pressed.opacity] }),
-  };
 
   const bg = pressed ? palette.pressed : palette.rest;
 
@@ -129,38 +99,36 @@ export const FabButton = forwardRef<View, FabButtonProps>(function FabButton(
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled }}
       disabled={disabled}
-      onPressIn={handleIn}
-      onPressOut={handleOut}
-      onFocus={(e) => {
-        setFocused(true);
-        onFocus?.(e);
-      }}
-      onBlur={(e) => {
-        setFocused(false);
-        onBlur?.(e);
-      }}
-      hitSlop={size === 'sm' ? { top: 6, bottom: 6, left: 6, right: 6 } : undefined}
+      onPressIn={pressIn}
+      onPressOut={pressOut}
+      onFocus={(e) => { setFocused(true); onFocus?.(e); }}
+      onBlur={(e) => { setFocused(false); onBlur?.(e); }}
       {...rest}
     >
       <Animated.View
         style={[
           {
-            width: d,
-            height: d,
-            borderRadius: d / 2,
+            width: FAB_SIZE,
+            height: FAB_SIZE,
+            borderRadius: t.radii.full,
             backgroundColor: bg,
             alignItems: 'center',
             justifyContent: 'center',
             opacity: disabled ? 0.28 : 1,
           },
-          baseShadow,
+          shadow,
           focusOutline,
-          animated,
+          animatedStyle,
           style,
         ]}
       >
-        {children}
+        <View style={{ width: FAB_ICON_SIZE, height: FAB_ICON_SIZE, alignItems: 'center', justifyContent: 'center' }}>
+          {content}
+        </View>
       </Animated.View>
     </Pressable>
   );
 });
+
+/** @deprecated Use `FAB`. */
+export const FabButton = FAB;

@@ -12,6 +12,8 @@
   "include": [
     "app/**/*",
     "components/**/*",
+    "providers/**/*",
+    "lib/**/*",
     "data/**/*",
     "*.ts",
     "*.tsx",

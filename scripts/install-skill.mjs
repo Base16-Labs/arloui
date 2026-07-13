@@ -16,7 +16,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../..');
-const SOURCE = join(ROOT, 'packages/skill/arloui');
+const SOURCE = join(ROOT, 'skills');
 
 const TARGETS = {
   cursor: join(homedir(), '.cursor/skills-cursor/arloui'),

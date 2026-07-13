@@ -40,8 +40,8 @@ function jsxSnippet(componentName: string): string {
 function ThumbImg({ name }: { name: string }) {
   return createElement('img', {
     src: `/arloui-icons/${name}.svg`,
-    width: 40,
-    height: 40,
+    width: 28,
+    height: 28,
     alt: '',
     loading: 'lazy' as const,
     draggable: false,
@@ -217,7 +217,7 @@ export default function IconsGalleryScreenWeb() {
     () =>
       ({
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(9.5rem, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(5.5rem, 1fr))',
         gap,
         width: '100%',
         paddingBottom: pad,
@@ -360,29 +360,43 @@ export default function IconsGalleryScreenWeb() {
                     borderWidth: 1,
                     borderColor: t.colors.border,
                     borderRadius: t.radii.md,
-                    padding: t.spacing[3],
+                    paddingTop: t.spacing[2],
+                    paddingBottom: t.spacing[1],
+                    paddingLeft: t.spacing[1],
+                    paddingRight: t.spacing[1],
                     backgroundColor: t.colors.surface,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: t.spacing[2],
+                    justifyContent: 'flex-start',
                     cursor: 'pointer',
                     minWidth: 0,
                     textDecorationLine: 'none',
                   }}
                 >
-                  <ThumbImg name={item} />
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 36,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <ThumbImg name={item} />
+                  </View>
                   <span
                     style={{
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
+                      display: 'block',
+                      width: '100%',
                       overflow: 'hidden',
-                      color: t.colors.textPrimary,
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      color: t.colors.textTertiary,
                       fontFamily: t.fontFamilies.mono,
-                      fontSize: 11,
+                      fontSize: 9,
+                      lineHeight: '12px',
                       textAlign: 'center',
-                      alignSelf: 'stretch',
                       pointerEvents: 'none',
                     }}
                   >

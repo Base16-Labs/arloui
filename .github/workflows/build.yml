@@ -1,0 +1,50 @@
+name: Build
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build · registry · e2e · skill
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm run build
+      - run: npm run registry:build
+
+      - name: Verify registry artifacts
+        run: |
+          test -f apps/www/public/r/index.json
+          test -f apps/www/public/r/button.json
+          test -f apps/www/public/r/card.json
+
+      # E2E drives the built CLI bundle against the generated registry — needs
+      # both `build` and `registry:build` above.
+      - name: CLI end-to-end
+        run: npm run test:e2e -w arloui
+
+      - name: Sync skill (drift check)
+        run: npm run skill:sync
+
+      - name: Detect skill drift
+        run: |
+          if ! git diff --quiet --exit-code -- skills; then
+            echo "::error::skills/ is out of sync with the implementation. Run skill:sync from the repo root (\`npm run skill:sync\`) and commit the result."
+            git --no-pager diff -- skills
+            exit 1
+          fi
