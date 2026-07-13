@@ -14,6 +14,11 @@ import { InputPhonePreview } from "@/components/docs/input-phone-preview";
 import { TextAreaDocPlayground } from "@/components/docs/textarea-doc-playground";
 import { TextAreaPhonePreview } from "@/components/docs/textarea-phone-preview";
 import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
+import { SheetPhonePreview } from "@/components/docs/sheet-phone-preview";
+import {
+  DatePickerDocPlayground,
+  DatePickerPhonePreview,
+} from "@/components/docs/date-picker-preview";
 import { FormControlDocPlayground, type Control } from "@/components/docs/form-control-doc-playground";
 import { FormControlPhonePreview } from "@/components/docs/form-control-phone-preview";
 import {
@@ -24,6 +29,7 @@ import { componentGroups } from "@/lib/routes";
 import {
   buttonData,
   checkboxData,
+  datePickerData,
   docDataToMarkdown,
   inputData,
   radioData,
@@ -72,21 +78,148 @@ export default async function ComponentPage({
     return <TextAreaDocPage />;
   }
 
-  if (slug !== "sheet") {
-    return (
-      <>
-        <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
-          <Eyebrow>Component</Eyebrow>
-          <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
-            {slug.charAt(0).toUpperCase() + slug.slice(1)}
-          </h1>
-          <Lede>This component page is coming soon.</Lede>
-        </main>
-        <RightRail headings={[]} actions={[]} />
-      </>
-    );
+  if (slug === "sheet") {
+    return <SheetDocPage />;
   }
 
+  if (slug === "date-picker") {
+    return <DatePickerDocPage />;
+  }
+
+  return (
+    <>
+      <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <Eyebrow>Component</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {slug.charAt(0).toUpperCase() + slug.slice(1)}
+        </h1>
+        <Lede>This component page is coming soon.</Lede>
+      </main>
+      <RightRail headings={[]} actions={[]} />
+    </>
+  );
+}
+
+function DatePickerDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(datePickerData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{datePickerData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {datePickerData.title}
+        </h1>
+        <Lede>{datePickerData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={datePickerData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DatePickerPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A predictable calendar surface with a month header, navigation, weekday labels, and a fixed six-week grid."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[350px] space-y-3">
+              {[
+                ["Header", "month and year"],
+                ["Navigation", "previous and next month"],
+                ["Week labels", "Sunday or Monday start"],
+                ["Day grid", "42 stable cells"],
+                ["Selection", "single selected date"],
+              ].map(([name, detail]) => (
+                <div key={name} className="flex items-center justify-between border-b border-line pb-3 text-[13px] last:border-0 last:pb-0">
+                  <span className="font-medium text-ink">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Use a visible calendar when the date itself matters.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>For appointments, bookings, deadlines, and dates users need to compare visually.</li>
+            <li>When unavailable dates or a valid range must be visible before selection.</li>
+            <li>Use a native date input instead when speed matters more than calendar context.</li>
+          </ul>
+        </Section>
+
+        <DatePickerDocPlayground states={datePickerData.states} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste.">
+          <CodeBlock language="tsx">{`npx arloui add date-picker
+
+import { useState } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
+
+const [date, setDate] = useState<Date | null>(null);
+
+<DatePicker
+  value={date}
+  onValueChange={setDate}
+  minDate={new Date()}
+  weekStartsOn={1}
+  isDateDisabled={(day) => day.getDay() === 0}
+/>`}</CodeBlock>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Calendar color, type, radius, and touch targets come from the same Arlo foundations.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {datePickerData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Dates remain understandable without relying on color.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Every date exposes its complete weekday, month, day, and year to screen readers.</li>
+            <li>Selected and disabled dates use native accessibility state.</li>
+            <li>Day cells preserve a 44px touch target even though the visible selection is 36px.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep date choices legible and bounded.">
+          <DoDont
+            pairs={[
+              {
+                do: "Set minDate, maxDate, and disabled dates from the real booking rules.",
+                dont: "Allow selection first and reveal an invalid date only after submission.",
+              },
+              {
+                do: "Use Monday or Sunday week start to match the user's locale.",
+                dont: "Change week start between calendars in the same product.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Compose the picker into the flow that fits the task.">
+          <div className="flex flex-wrap gap-2">
+            {["Input", "Sheet", "Button", "Time Picker"].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...datePickerData.headings]} actions={[...datePickerData.actions]} />
+    </>
+  );
+}
+
+function SheetDocPage() {
   return (
     <>
       <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
@@ -111,12 +244,66 @@ export default async function ComponentPage({
           </Pill>
         </div>
 
-        <SheetDocPlayground states={sheetData.states} />
+        <SheetPhonePreview />
 
         {/* Anatomy */}
-        <Section id="anatomy" title="Anatomy" sub="Named slots so the spec is unambiguous.">
-          <div className="flex h-[220px] items-center justify-center rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] font-mono text-xs text-ink-3 dark:bg-surface-raised">
-            handle · header · content · scrim · detent line · safe area
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A sheet is a bottom-anchored surface with a handle, optional backdrop, content slots, and safe-area aware detents."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] dark:bg-[#09090B]">
+                <div className="px-5 pt-6">
+                  <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="mt-4 grid grid-cols-2 gap-2.5">
+                    {["#155DFC", "#00C950", "#F54900", "#FB2C36"].map((color) => (
+                      <div
+                        key={color}
+                        className="h-14 rounded-xl opacity-25 dark:opacity-45"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#111827]/85">
+                  <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">header</span>
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">dismiss</span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
+                    <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
+                    <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
+                  </div>
+                  <div className="mt-3 font-mono text-[10px] uppercase tracking-wide text-ink-3">footer / safe area</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Backdrop", "scrim or pass-through"],
+                ["Surface", "solid or glass"],
+                ["Handle", "visible drag affordance"],
+                ["Header", "title and optional action"],
+                ["Body", "scrollable content area"],
+                ["Footer", "sticky actions / safe-area padding"],
+                ["Detent", "auto · full · fractional height"],
+                ["Dismissal", "backdrop tap · drag · hardware back"],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
           </div>
         </Section>
 
@@ -138,14 +325,42 @@ export default async function ComponentPage({
           </div>
         </Section>
 
+        <SheetDocPlayground states={sheetData.states} />
+
         {/* Code */}
         <Section id="code" title="Code" sub="React Native, copy-paste.">
-          <CodeBlock language="tsx">{`npm install @arloui/sheet
+          <CodeBlock language="tsx">{`npx arloui add sheet
 
-import { Sheet } from "@arloui/sheet";
+import { BlurView } from "expo-blur";
+import { StyleSheet } from "react-native";
+import { Sheet } from "@/components/ui/sheet";
 
-<Sheet detents={["medium","full"]}>
-  ...
+<Sheet
+  visible={open}
+  onClose={() => setOpen(false)}
+  backdrop="passthrough"
+  surface="glass"
+  presentation="stack"
+  detent="auto"
+  horizontalInset={16}
+  bottomOffset={16}
+  cornerRadius={20}
+  handleHeight={3}
+  blurComponent={
+    <BlurView
+      intensity={34}
+      tint="systemMaterial"
+      style={StyleSheet.absoluteFill}
+    />
+  }
+>
+  <Sheet.Header title="Add to collection" />
+  <Sheet.Body>
+    {/* Your content */}
+  </Sheet.Body>
+  <Sheet.Footer>
+    {/* Primary action */}
+  </Sheet.Footer>
 </Sheet>`}</CodeBlock>
         </Section>
 

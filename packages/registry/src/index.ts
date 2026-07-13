@@ -16,6 +16,14 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Sheet,
+  type SheetProps,
+  type SheetBackdrop,
+  type SheetSurface,
+  type SheetPresentation,
+  type SheetDetent,
+} from './components/sheet';
+export {
   Field,
   Input,
   InputAction,
@@ -30,6 +38,11 @@ export {
 export { Checkbox, type CheckboxProps, type CheckboxSize } from './components/checkbox';
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
 export { Toggle, type ToggleProps, type ToggleSize } from './components/toggle';
+export {
+  DatePicker,
+  type DatePickerProps,
+  type DatePickerWeekStartsOn,
+} from './components/date-picker';
 export {
   TextArea,
   type TextAreaAppearance,
