@@ -16,7 +16,7 @@
     }
   },
   "bin": {
-    "arloui": "./dist/cli.cjs"
+    "arloui": "dist/cli.cjs"
   },
   "files": [
     "dist"
@@ -24,12 +24,12 @@
   "homepage": "https://arloui.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Base16-Labs/arloui.git",
+    "url": "git+https://github.com/Base16-Labs/arloui.git",
     "directory": "packages/cli"
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true
+    "provenance": false
   },
   "keywords": [
     "react-native",
