@@ -52,12 +52,15 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full data flow.
 
 Requires **Node 20+**. This monorepo is **npm-managed** — npm `workspaces` in the root `package.json`, a committed `package-lock.json`, and a root `packageManager` field pinned to npm. Root scripts wrap **Turbo**.
 
-| Task            | Command                      |
-| --------------- | ---------------------------- |
-| Install         | `npm install`                |
-| Build all       | `npm run build`              |
-| Dev (docs site) | `npm run dev -w @arloui/www` |
-| Test            | `npm test`                   |
+| Task                 | Command                  |
+| -------------------- | ------------------------ |
+| Install              | `npm install`            |
+| Build all            | `npm run build`          |
+| Dev (docs site)      | `npm run dev`            |
+| Dev (Expo)           | `npm run dev:playground` |
+| Dev (packages)       | `npm run dev:packages`   |
+| Dev (full workspace) | `npm run dev:all`        |
+| Test                 | `npm test`               |
 
 The repo-level `.npmrc` sets `legacy-peer-deps=true` and `install-strategy=nested` so workspace resolution stays predictable for the pinned React / React Native versions. **CI** on GitHub runs `npm ci` against the committed `package-lock.json`.
 
@@ -65,7 +68,7 @@ The repo-level `.npmrc` sets `legacy-peer-deps=true` and `install-strategy=neste
 npm install
 npm run icons:build     # SVG in packages/icons/assets/svg → src/generated (SVGR)
 npm run registry:build  # generates apps/www/public/r/*.json
-npm run dev -w @arloui/www
+npm run dev
 ```
 
 Open the web-first copy surface at `http://localhost:4321`. It serves raw icons from
@@ -80,6 +83,10 @@ npm run playground:tunnel   # use this if LAN scanning fails
 npm run playground:ios
 npm run playground:android
 ```
+
+`npm run dev` intentionally starts only the docs site to keep local memory usage low. Use
+`npm run dev:packages` when editing package source, or `npm run dev:all` when you explicitly
+need the docs, Expo, registry, and every package watcher running together.
 
 ## Quickstart (consumer app)
 

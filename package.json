@@ -21,7 +21,11 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
+    "dev": "npm run dev:www",
+    "dev:www": "npm --workspace @arloui/www run dev",
+    "dev:playground": "npm --workspace @arloui/docs run dev",
+    "dev:packages": "turbo run dev --filter=arloui --filter=@arloui/theme --filter=@arloui/tokens --filter=@arloui/utils --filter=@arloui/build-registry",
+    "dev:all": "turbo run dev",
     "playground": "npm --workspace @arloui/docs run playground",
     "playground:clear": "npm --workspace @arloui/docs run playground:clear",
     "playground:tunnel": "npm --workspace @arloui/docs run playground:tunnel",
