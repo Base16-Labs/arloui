@@ -4,6 +4,10 @@ import { diff } from './commands/diff';
 import { init } from './commands/init';
 import { list } from './commands/list';
 
+declare const __ARLOUI_VERSION__: string;
+
+const cliVersion = typeof __ARLOUI_VERSION__ === 'undefined' ? '0.1.0' : __ARLOUI_VERSION__;
+
 /**
  * Build the commander program. Kept separate from `cli.ts` (the bin entry that
  * calls `parseAsync`) so the argument wiring can be unit tested without
@@ -17,7 +21,7 @@ export function buildProgram(): Command {
     .description(
       'Arlo UI — copy-paste React Native components, tokens, and patterns into your Expo or bare RN app.',
     )
-    .version('0.1.0');
+    .version(cliVersion);
 
   program
     .command('init')

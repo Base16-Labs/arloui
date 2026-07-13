@@ -147,7 +147,15 @@ After install, the skill activates whenever you ask Cursor / Claude for Arlo UI 
 
 ## Releasing
 
-The CLI, tokens, theme, and utils packages publish to npm via Changesets:
+Every push to `main` validates, packs, and publishes a new patch of the `arloui` CLI. The checked-in
+CLI version defines the release line and the GitHub Actions run number supplies the patch, so a base
+version of `0.1.0` publishes as `0.1.x`. Bump the checked-in minor or major version when starting a
+new release line.
+
+The first publish uses the repository's `NPM_TOKEN` secret. After the package exists on npm, configure
+`.github/workflows/release.yml` as its trusted publisher and the workflow can publish through OIDC.
+
+The tokens, theme, icons, and utils packages continue to use Changesets when they need a release:
 
 ```bash
 npm run changeset

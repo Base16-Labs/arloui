@@ -1,37 +1,71 @@
-name: Release
+name: Publish CLI
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
-  release:
-    name: Changesets release
+  publish:
+    name: Validate and publish arloui
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: 22.14.0
+          registry-url: https://registry.npmjs.org
+          cache: npm
 
-      - run: npm ci
-      - run: npm run build
+      # npm trusted publishing requires npm 11.5.1 or newer. NPM_TOKEN is
+      # still supported for the first publish, before OIDC can be configured.
+      - name: Install release npm version
+        run: npm install --global npm@11.5.1
 
-      - uses: changesets/action@v1
-        with:
-          publish: npm run release
-          version: npm run version
-          commit: 'chore: release packages'
-          title: 'chore: release packages'
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate CLI source
+        run: |
+          npm run typecheck --workspace arloui
+          npm run test --workspace arloui
+          npm run registry:build
+
+      - name: Set release version
+        id: version
+        run: |
+          version=$(node scripts/cli-release-version.mjs "$GITHUB_RUN_NUMBER")
+          npm version "$version" --workspace arloui --no-git-tag-version
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          if npm view "arloui@$version" version >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and test published artifact
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          npm run build --workspace arloui
+          npm run test:e2e --workspace arloui
+          npm pack --workspace arloui --dry-run
+
+      - name: Publish CLI
+        if: steps.version.outputs.exists == 'false'
+        run: npm publish --workspace arloui --access public
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Release summary
+        run: |
+          if [ "${{ steps.version.outputs.exists }}" = "true" ]; then
+            echo "arloui@${{ steps.version.outputs.version }} was already published; nothing to do." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Published arloui@${{ steps.version.outputs.version }} to npm." >> "$GITHUB_STEP_SUMMARY"
+          fi

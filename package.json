@@ -42,7 +42,7 @@
     "skill:install:claude": "node scripts/install-skill.mjs claude",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "turbo run build --filter=@arloui/cli && changeset publish",
+    "release": "turbo run build --filter=arloui && changeset publish",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "prepare": "husky"

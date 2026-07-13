@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsup';
+import packageJson from './package.json';
 
 export default defineConfig({
   entry: {
@@ -17,6 +18,9 @@ export default defineConfig({
   sourcemap: true,
   splitting: false,
   shims: true,
+  define: {
+    __ARLOUI_VERSION__: JSON.stringify(packageJson.version),
+  },
   banner: ({ format }) => {
     if (format === 'cjs') {
       return { js: '#!/usr/bin/env node' };
