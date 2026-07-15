@@ -96,11 +96,41 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'skeleton',
+    kind: 'primitive',
+    title: 'Skeleton',
+    description:
+      'A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/skeleton/skeleton.tsx', target: 'skeleton/skeleton.tsx' },
+      { source: 'components/skeleton/index.ts', target: 'skeleton/index.ts' },
+    ],
+    meta: {
+      tags: ['feedback', 'loading', 'placeholder', 'motion', 'primitive'],
+    },
+  },
+  {
+    name: 'tabs',
+    kind: 'primitive',
+    title: 'Tabs',
+    description:
+      'Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/tabs/tabs.tsx', target: 'tabs/tabs.tsx' },
+      { source: 'components/tabs/index.ts', target: 'tabs/index.ts' },
+    ],
+    meta: {
+      tags: ['navigation', 'tabs', 'segmented', 'filter', 'primitive'],
+    },
+  },
+  {
     name: 'sheet',
     kind: 'primitive',
     title: 'Sheet',
     description:
-      'A bottom drawer with a grabber, drag-to-dismiss, and detents. Composable backdrop (scrim modal or iOS-style pass-through) and surface (solid or Liquid-Glass) treatments.',
+      'A bottom drawer with a grabber, drag-to-dismiss, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet.tsx' },
@@ -147,8 +177,7 @@ export const COMPONENTS: RegistryEntry[] = [
     name: 'checkbox',
     kind: 'primitive',
     title: 'Checkbox',
-    description:
-      'An animated check box with two sizes, check icon, and disabled state.',
+    description: 'An animated check box with two sizes, check icon, and disabled state.',
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
@@ -209,14 +238,33 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'tab-bar',
+    kind: 'primitive',
+    title: 'Tab Bar',
+    description:
+      'An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },
+      { source: 'components/tab-bar/index.ts', target: 'tab-bar/index.ts' },
+    ],
+    meta: {
+      tags: ['navigation', 'tabs', 'motion', 'primitive'],
+    },
+  },
+  {
     name: 'date-picker',
     kind: 'primitive',
     title: 'Date Picker',
     description:
-      'An accessible single-date calendar with month navigation, date constraints, and configurable week starts.',
+      'Accessible calendar and wheel surfaces for date, time, date-time, and month-year selection.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/date-picker/date-picker.tsx', target: 'date-picker/date-picker.tsx' },
+      {
+        source: 'components/date-picker/date-wheel-picker.tsx',
+        target: 'date-picker/date-wheel-picker.tsx',
+      },
       { source: 'components/date-picker/index.ts', target: 'date-picker/index.ts' },
     ],
     meta: {

@@ -6,8 +6,9 @@ import { cn } from "@/lib/cn";
 
 type Backdrop = "scrim" | "passthrough";
 type Surface = "solid" | "glass";
-type Presentation = "edge" | "inset" | "stack";
-type Detent = "auto" | "full";
+type Width = "default" | "stack";
+type Height = "auto" | "half" | "full";
+type Padding = "none" | "md" | "lg";
 
 type SheetDocPlaygroundProps = { states: readonly string[] };
 
@@ -16,15 +17,17 @@ const ROWS = ["Recently added", "Favorites", "Shared with you", "Downloads", "Ar
 export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
   const [backdrop, setBackdrop] = useState<Backdrop>("scrim");
   const [surface, setSurface] = useState<Surface>("solid");
-  const [presentation, setPresentation] = useState<Presentation>("edge");
-  const [detent, setDetent] = useState<Detent>("auto");
+  const [width, setWidth] = useState<Width>("default");
+  const [height, setHeight] = useState<Height>("auto");
+  const [padding, setPadding] = useState<Padding>("none");
   const [pinned, setPinned] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
 
   const docState = pinned ?? hovered ?? "open";
 
   // State tokens can override the variant chips for the live preview.
-  const effBackdrop: Backdrop = docState === "passthrough" ? "passthrough" : docState === "scrim" ? "scrim" : backdrop;
+  const effBackdrop: Backdrop =
+    docState === "passthrough" ? "passthrough" : docState === "scrim" ? "scrim" : backdrop;
   const dragging = docState === "dragging";
   const dismissing = docState === "dismissing";
   const long = docState === "long content";
@@ -35,8 +38,8 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
     <section id="variants" className="border-t border-line py-9">
       <h2 className="text-[26px] font-semibold tracking-tight">Variants &amp; states</h2>
       <p className="mt-1.5 mb-6 text-[13px] text-ink-3">
-        Backdrop and surface are independent axes — combine pass-through with glass
-        for a floating Liquid-Glass sheet. Pick a variant and hover or pin a state.
+        Backdrop and surface are independent axes — combine pass-through with glass for a floating
+        Liquid-Glass sheet. Pick a variant and hover or pin a state.
       </p>
 
       <div className="grid gap-6 md:grid-cols-[1fr_minmax(0,260px)] md:items-start">
@@ -49,19 +52,35 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
               onChange={(v) => setBackdrop(v as Backdrop)}
             />
             <ControlLabel>Surface</ControlLabel>
-            <ChipRow values={["solid", "glass"]} value={surface} onChange={(v) => setSurface(v as Surface)} />
-            <ControlLabel>Style</ControlLabel>
             <ChipRow
-              values={["edge", "inset", "stack"]}
-              value={presentation}
-              onChange={(v) => setPresentation(v as Presentation)}
+              values={["solid", "glass"]}
+              value={surface}
+              onChange={(v) => setSurface(v as Surface)}
             />
-            <ControlLabel>Detent</ControlLabel>
-            <ChipRow values={["auto", "full"]} value={detent} onChange={(v) => setDetent(v as Detent)} />
+            <ControlLabel>Width</ControlLabel>
+            <ChipRow
+              values={["default", "stack"]}
+              value={width}
+              onChange={(v) => setWidth(v as Width)}
+            />
+            <ControlLabel>Height</ControlLabel>
+            <ChipRow
+              values={["auto", "half", "full"]}
+              value={height}
+              onChange={(v) => setHeight(v as Height)}
+            />
+            <ControlLabel>Padding</ControlLabel>
+            <ChipRow
+              values={["none", "md", "lg"]}
+              value={padding}
+              onChange={(v) => setPadding(v as Padding)}
+            />
           </div>
 
           <div id="states" className="scroll-mt-24 border-t border-line pt-6">
-            <h3 className="text-[12px] font-semibold uppercase tracking-widest text-ink-2">States</h3>
+            <h3 className="text-[12px] font-semibold uppercase tracking-widest text-ink-2">
+              States
+            </h3>
             <p className="mt-1 mb-3 text-[12px] text-ink-3">Hover to preview, click to pin.</p>
             <div className="flex flex-wrap gap-2">
               {[...states].map((s) => (
@@ -97,8 +116,9 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
             <SheetSample
               backdrop={effBackdrop}
               glass={isGlass}
-              presentation={presentation}
-              detent={detent}
+              width={width}
+              height={height}
+              padding={padding}
               dark={false}
               dragging={dragging}
               dismissing={dismissing}
@@ -114,8 +134,9 @@ export function SheetDocPlayground({ states }: SheetDocPlaygroundProps) {
 function SheetSample({
   backdrop,
   glass,
-  presentation,
-  detent,
+  width,
+  height,
+  padding,
   dark,
   dragging,
   dismissing,
@@ -123,8 +144,9 @@ function SheetSample({
 }: {
   backdrop: Backdrop;
   glass: boolean;
-  presentation: Presentation;
-  detent: Detent;
+  width: Width;
+  height: Height;
+  padding: Padding;
   dark: boolean;
   dragging: boolean;
   dismissing: boolean;
@@ -143,9 +165,13 @@ function SheetSample({
     : dark
       ? "#1E2939"
       : "#FFFFFF";
-  const sheetBorder = glass ? (dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.64)") : "transparent";
-  const inset = presentation === "edge" ? 0 : 10;
-  const radius = presentation === "stack" ? 18 : 22;
+  const sheetBorder = glass
+    ? dark
+      ? "rgba(255,255,255,0.14)"
+      : "rgba(255,255,255,0.64)"
+    : "transparent";
+  const inset = padding === "md" ? 10 : padding === "lg" ? 16 : 0;
+  const radius = width === "stack" ? 18 : 22;
 
   return (
     <div
@@ -159,7 +185,11 @@ function SheetSample({
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {["#2B7FFF", "#00C950", "#E17100", "#FB2C36"].map((c, i) => (
-            <div key={i} className="h-12 rounded-xl" style={{ backgroundColor: c, opacity: dark ? 0.5 : 0.28 }} />
+            <div
+              key={i}
+              className="h-12 rounded-xl"
+              style={{ backgroundColor: c, opacity: dark ? 0.5 : 0.28 }}
+            />
           ))}
         </div>
       </div>
@@ -168,12 +198,15 @@ function SheetSample({
       {backdrop === "scrim" ? (
         <div
           className="absolute inset-0 transition-opacity duration-300"
-          style={{ backgroundColor: dark ? "rgba(16,24,40,0.7)" : "rgba(16,24,40,0.4)", opacity: dismissing ? 0 : 1 }}
+          style={{
+            backgroundColor: dark ? "rgba(16,24,40,0.7)" : "rgba(16,24,40,0.4)",
+            opacity: dismissing ? 0 : 1,
+          }}
         />
       ) : null}
 
       {/* Sheet */}
-      {presentation === "stack" && !dismissing ? (
+      {width === "stack" && !dismissing ? (
         <div
           className="absolute left-5 right-5 h-8 rounded-[18px] border opacity-90 shadow-sm"
           style={{
@@ -193,15 +226,22 @@ function SheetSample({
           borderColor: sheetBorder,
           borderTopLeftRadius: radius,
           borderTopRightRadius: radius,
-          borderBottomLeftRadius: presentation === "edge" ? 0 : radius,
-          borderBottomRightRadius: presentation === "edge" ? 0 : radius,
+          borderBottomLeftRadius: inset === 0 ? 0 : radius,
+          borderBottomRightRadius: inset === 0 ? 0 : radius,
           backdropFilter: glass ? "blur(20px)" : undefined,
           WebkitBackdropFilter: glass ? "blur(20px)" : undefined,
-          height: detent === "full" ? "86%" : undefined,
-          transform: dismissing ? "translateY(100%)" : dragging ? "translateY(6%)" : "translateY(0)",
+          height: height === "full" ? "86%" : height === "half" ? "54%" : undefined,
+          transform: dismissing
+            ? "translateY(100%)"
+            : dragging
+              ? "translateY(6%)"
+              : "translateY(0)",
         }}
       >
-        <div className="mx-auto mb-2 h-[3px] w-11 rounded-full" style={{ backgroundColor: handle }} />
+        <div
+          className="mx-auto mb-2 h-[3px] w-11 rounded-full"
+          style={{ backgroundColor: handle }}
+        />
         <div className="text-[14px] font-semibold" style={{ color: title }}>
           Add to collection
         </div>
@@ -223,7 +263,9 @@ function SheetSample({
 }
 
 function ControlLabel({ children }: { children: React.ReactNode }) {
-  return <span className="text-[11px] font-medium uppercase tracking-widest text-ink-3">{children}</span>;
+  return (
+    <span className="text-[11px] font-medium uppercase tracking-widest text-ink-3">{children}</span>
+  );
 }
 
 function ChipRow({

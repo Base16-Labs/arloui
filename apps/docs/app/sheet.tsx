@@ -7,9 +7,10 @@ import {
   Sheet,
   useTokens,
   type SheetBackdrop,
-  type SheetDetent,
-  type SheetPresentation,
+  type SheetHeight,
+  type SheetPadding,
   type SheetSurface,
+  type SheetWidth,
 } from '@arloui/registry';
 import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -22,17 +23,9 @@ type PreviewState = 'open' | 'closed' | 'no handle' | 'locked';
 
 const BACKDROPS: SheetBackdrop[] = ['scrim', 'passthrough'];
 const SURFACES: SheetSurface[] = ['solid', 'glass'];
-const PRESENTATIONS: SheetPresentation[] = ['edge', 'inset', 'stack'];
-const DETENTS: Array<{ label: string; value: SheetDetent }> = [
-  { label: 'auto', value: 'auto' },
-  { label: 'half', value: 0.54 },
-  { label: 'full', value: 'full' },
-];
-const PADDING = [
-  { label: '0', value: 0 },
-  { label: '16', value: 16 },
-  { label: '24', value: 24 },
-];
+const WIDTHS: SheetWidth[] = ['default', 'stack'];
+const HEIGHTS: SheetHeight[] = ['auto', 'half', 'full'];
+const PADDINGS: SheetPadding[] = ['none', 'md', 'lg'];
 const STATES: PreviewState[] = ['open', 'closed', 'no handle', 'locked'];
 
 export default function SheetCanvas() {
@@ -43,9 +36,9 @@ export default function SheetCanvas() {
   const [previewVisible, setPreviewVisible] = useState(true);
   const [backdrop, setBackdrop] = useState<SheetBackdrop>('passthrough');
   const [surface, setSurface] = useState<SheetSurface>('glass');
-  const [presentation, setPresentation] = useState<SheetPresentation>('stack');
-  const [detent, setDetent] = useState<SheetDetent>('auto');
-  const [horizontalInset, setHorizontalInset] = useState(16);
+  const [width, setWidth] = useState<SheetWidth>('stack');
+  const [height, setHeight] = useState<SheetHeight>('auto');
+  const [padding, setPadding] = useState<SheetPadding>('md');
   const [state, setState] = useState<PreviewState>('open');
   const previewOffset = useRef(new Animated.Value(0)).current;
 
@@ -65,8 +58,7 @@ export default function SheetCanvas() {
 
   const showHandle = state !== 'no handle';
   const dragToDismiss = state !== 'locked';
-  const previewDetentHeight =
-    detent === 'full' ? 430 : typeof detent === 'number' ? 270 : undefined;
+  const previewHeight = height === 'full' ? 430 : height === 'half' ? 270 : undefined;
 
   return (
     <>
@@ -146,10 +138,9 @@ export default function SheetCanvas() {
                   onClose={() => setPreviewVisible(false)}
                   backdrop={backdrop}
                   surface={surface}
-                  presentation={presentation}
-                  detent={detent}
-                  horizontalInset={horizontalInset}
-                  cornerRadius={presentation === 'stack' ? 20 : 24}
+                  width={width}
+                  height={height}
+                  padding={padding}
                   handleHeight={3}
                   showHandle={showHandle}
                   dragToDismiss={dragToDismiss}
@@ -166,7 +157,7 @@ export default function SheetCanvas() {
                   bottomInset={10}
                   style={{
                     position: 'absolute',
-                    height: previewDetentHeight,
+                    height: previewHeight,
                     maxHeight: 430,
                   }}
                 >
@@ -293,10 +284,10 @@ export default function SheetCanvas() {
 
           <VariantSheet
             visible={sheetOpen}
-            previous="TextArea"
+            previous="Tab Bar"
             next="Icons"
             onClose={() => setSheetOpen(false)}
-            onPrevious={() => router.replace('/textarea')}
+            onPrevious={() => router.replace('/tab-bar')}
             onNext={() => router.replace('/icons')}
           >
             <View style={{ gap: 14 }}>
@@ -326,43 +317,40 @@ export default function SheetCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Style">
-                {PRESENTATIONS.map((option) => (
+              <VariantControlRow label="Width">
+                {WIDTHS.map((option) => (
                   <VariantChip
                     key={option}
                     label={option}
-                    active={presentation === option}
+                    active={width === option}
                     onPress={() => {
-                      setPresentation(option);
-                      if (option === 'edge') setHorizontalInset(0);
-                      if (option !== 'edge' && horizontalInset === 0) setHorizontalInset(16);
+                      setWidth(option);
                       setPreviewVisible(true);
                     }}
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Detent">
-                {DETENTS.map((option) => (
+              <VariantControlRow label="Height">
+                {HEIGHTS.map((option) => (
                   <VariantChip
-                    key={option.label}
-                    label={option.label}
-                    active={detent === option.value}
+                    key={option}
+                    label={option}
+                    active={height === option}
                     onPress={() => {
-                      setDetent(option.value);
+                      setHeight(option);
                       setPreviewVisible(true);
                     }}
                   />
                 ))}
               </VariantControlRow>
               <VariantControlRow label="Padding">
-                {PADDING.map((option) => (
+                {PADDINGS.map((option) => (
                   <VariantChip
-                    key={option.label}
-                    label={option.label}
-                    active={horizontalInset === option.value}
+                    key={option}
+                    label={option}
+                    active={padding === option}
                     onPress={() => {
-                      setHorizontalInset(option.value);
-                      if (option.value > 0 && presentation === 'edge') setPresentation('inset');
+                      setPadding(option);
                       setPreviewVisible(true);
                     }}
                   />

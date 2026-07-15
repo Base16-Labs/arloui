@@ -9,7 +9,19 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 type IndexItem = {
   title: string;
   category: string;
-  href?: '/button' | '/input' | '/textarea' | '/sheet' | '/date-picker' | '/icons' | '/toggle' | '/checkbox' | '/radio';
+  href?:
+    | '/button'
+    | '/input'
+    | '/textarea'
+    | '/sheet'
+    | '/skeleton'
+    | '/tabs'
+    | '/date-picker'
+    | '/tab-bar'
+    | '/icons'
+    | '/toggle'
+    | '/checkbox'
+    | '/radio';
 };
 
 const COMPONENTS: IndexItem[] = [
@@ -31,6 +43,9 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Radio', category: 'Controls', href: '/radio' },
   { title: 'Row', category: 'Lists' },
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
+  { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
+  { title: 'Tab Bar', category: 'Nav', href: '/tab-bar' },
+  { title: 'Tabs', category: 'Nav', href: '/tabs' },
   { title: 'TextArea', category: 'Controls', href: '/textarea' },
   { title: 'Toggle', category: 'Controls', href: '/toggle' },
 ];

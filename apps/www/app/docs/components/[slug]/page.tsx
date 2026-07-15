@@ -1,31 +1,34 @@
-import { notFound } from "next/navigation";
-import { RightRail } from "@/components/nav/RightRail";
-import { Eyebrow } from "@/components/mdx/Eyebrow";
-import { Lede } from "@/components/mdx/Lede";
-import { DoDont } from "@/components/mdx/DoDont";
-import { Pill } from "@/components/ui/Pill";
-import { Chip } from "@/components/ui/Chip";
-import { CodeBlock } from "@/components/ui/CodeBlock";
-import { CopyButton } from "@/components/ui/CopyButton";
-import { ButtonDocPlayground } from "@/components/docs/button-doc-playground";
-import { ButtonPhonePreview } from "@/components/docs/button-phone-preview";
-import { InputDocPlayground } from "@/components/docs/input-doc-playground";
-import { InputPhonePreview } from "@/components/docs/input-phone-preview";
-import { TextAreaDocPlayground } from "@/components/docs/textarea-doc-playground";
-import { TextAreaPhonePreview } from "@/components/docs/textarea-phone-preview";
-import { SheetDocPlayground } from "@/components/docs/sheet-doc-playground";
-import { SheetPhonePreview } from "@/components/docs/sheet-phone-preview";
+import { notFound } from 'next/navigation';
+import { RightRail } from '@/components/nav/RightRail';
+import { Eyebrow } from '@/components/mdx/Eyebrow';
+import { Lede } from '@/components/mdx/Lede';
+import { DoDont } from '@/components/mdx/DoDont';
+import { Pill } from '@/components/ui/Pill';
+import { Chip } from '@/components/ui/Chip';
+import { CodeBlock } from '@/components/ui/CodeBlock';
+import { CopyButton } from '@/components/ui/CopyButton';
+import { ButtonDocPlayground } from '@/components/docs/button-doc-playground';
+import { ButtonPhonePreview } from '@/components/docs/button-phone-preview';
+import { InputDocPlayground } from '@/components/docs/input-doc-playground';
+import { InputPhonePreview } from '@/components/docs/input-phone-preview';
+import { TextAreaDocPlayground } from '@/components/docs/textarea-doc-playground';
+import { TextAreaPhonePreview } from '@/components/docs/textarea-phone-preview';
+import { SheetDocPlayground } from '@/components/docs/sheet-doc-playground';
+import { SheetPhonePreview } from '@/components/docs/sheet-phone-preview';
+import { TabBarDocPlayground, TabBarPhonePreview } from '@/components/docs/tab-bar-preview';
+import { TabsDocPlayground, TabsPhonePreview } from '@/components/docs/tabs-preview';
+import { SkeletonDocPlayground, SkeletonPhonePreview } from '@/components/docs/skeleton-preview';
 import {
   DatePickerDocPlayground,
   DatePickerPhonePreview,
-} from "@/components/docs/date-picker-preview";
-import { FormControlDocPlayground, type Control } from "@/components/docs/form-control-doc-playground";
-import { FormControlPhonePreview } from "@/components/docs/form-control-phone-preview";
+} from '@/components/docs/date-picker-preview';
 import {
-  DocIconArrowRight,
-  DocIconLock,
-} from "@/components/docs/button-preview-icons";
-import { componentGroups } from "@/lib/routes";
+  FormControlDocPlayground,
+  type Control,
+} from '@/components/docs/form-control-doc-playground';
+import { FormControlPhonePreview } from '@/components/docs/form-control-phone-preview';
+import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
+import { componentGroups } from '@/lib/routes';
 import {
   buttonData,
   checkboxData,
@@ -34,56 +37,65 @@ import {
   inputData,
   radioData,
   sheetData,
+  skeletonData,
+  tabBarData,
+  tabsData,
   textAreaData,
   toggleData,
-} from "@/lib/docs-markdown";
+} from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
-  return componentGroups.flatMap((g) =>
-    g.items.map((item) => ({ slug: item.slug }))
-  );
+  return componentGroups.flatMap((g) => g.items.map((item) => ({ slug: item.slug })));
 }
 
-export default async function ComponentPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
   const exists = componentGroups.some((g) => g.items.some((item) => item.slug === slug));
   if (!exists) notFound();
 
-  if (slug === "button") {
+  if (slug === 'button') {
     return <ButtonDocPage />;
   }
 
-  if (slug === "input") {
+  if (slug === 'input') {
     return <InputDocPage />;
   }
 
-  if (slug === "toggle") {
+  if (slug === 'toggle') {
     return <FormControlDocPage data={toggleData} />;
   }
 
-  if (slug === "checkbox") {
+  if (slug === 'checkbox') {
     return <FormControlDocPage data={checkboxData} />;
   }
 
-  if (slug === "radio") {
+  if (slug === 'radio') {
     return <FormControlDocPage data={radioData} />;
   }
 
-  if (slug === "text-area") {
+  if (slug === 'text-area') {
     return <TextAreaDocPage />;
   }
 
-  if (slug === "sheet") {
+  if (slug === 'sheet') {
     return <SheetDocPage />;
   }
 
-  if (slug === "date-picker") {
+  if (slug === 'date-picker') {
     return <DatePickerDocPage />;
+  }
+
+  if (slug === 'tab-bar') {
+    return <TabBarDocPage />;
+  }
+
+  if (slug === 'tabs') {
+    return <TabsDocPage />;
+  }
+
+  if (slug === 'skeleton') {
+    return <SkeletonDocPage />;
   }
 
   return (
@@ -96,6 +108,459 @@ export default async function ComponentPage({
         <Lede>This component page is coming soon.</Lede>
       </main>
       <RightRail headings={[]} actions={[]} />
+    </>
+  );
+}
+
+function TabsDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(tabsData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{tabsData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {tabsData.title}
+        </h1>
+        <Lede>{tabsData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={tabsData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <TabsPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A set of peer destinations with exactly one selected item."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Container', 'content width or equal distribution'],
+                ['Item', 'label and 44px touch target'],
+                ['Selection', 'weight, underline, or filled surface'],
+                ['Tone', 'neutral or accent'],
+                ['Content', 'the current in-screen view'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For sibling content or views inside the current screen."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use plain tabs for quiet categorisation where hierarchy is already obvious.</li>
+            <li>Use underline tabs for persistent sections with a strong current-location cue.</li>
+            <li>Use filled tabs for compact view switching or mutually exclusive filters.</li>
+          </ul>
+        </Section>
+
+        <TabsDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste.">
+          <CodeBlock language="tsx">{`npx arloui add tabs
+
+import { Tabs } from "@/components/ui/tabs";
+
+<Tabs
+  value={section}
+  onValueChange={setSection}
+  appearance="underline"
+  tone="accent"
+  layout="equal"
+  accessibilityLabel="Profile sections"
+>
+  <Tabs.Item value="posts" label="Posts" />
+  <Tabs.Item value="media" label="Media" />
+  <Tabs.Item value="saved" label="Saved" />
+</Tabs>`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Text hierarchy, selection color, motion, radius, and touch foundations."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {tabsData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Selection remains clear beyond decoration."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Each item exposes the tab role with selected and disabled state.</li>
+            <li>Every item preserves a 44px minimum touch target and a visible text label.</li>
+            <li>
+              Reduced motion removes selection travel while keeping the state change immediate.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep secondary navigation legible and local.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Use short peer labels and keep their order stable.',
+                dont: 'Mix actions such as Add or Edit into the tab set.',
+              },
+              {
+                do: 'Use Tabs to switch content within the current screen.',
+                dont: 'Use Tabs for primary app destinations — use Tab Bar instead.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Choose navigation by scope and utility."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Tab Bar', 'Chip', 'Segmented Control', 'Header'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...tabsData.headings]} actions={[...tabsData.actions]} />
+    </>
+  );
+}
+
+function SkeletonDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(skeletonData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{skeletonData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {skeletonData.title}
+        </h1>
+        <Lede>{skeletonData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={skeletonData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <SkeletonPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="One neutral bone, shaped to match the content that will replace it."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Geometry', 'width, height, and shape'],
+                ['Base', 'neutral loading surface'],
+                ['Highlight', 'optional moving sheen'],
+                ['Motion', 'shimmer, pulse, or none'],
+                ['Composition', 'mirrors final content layout'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For loading states whose layout is already known."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use when content takes long enough to load that an empty surface would feel broken.
+            </li>
+            <li>
+              Match the approximate size and hierarchy of the incoming content to prevent layout
+              shift.
+            </li>
+            <li>
+              Prefer a spinner for an indeterminate action with no meaningful content geometry.
+            </li>
+          </ul>
+        </Section>
+
+        <SkeletonDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add skeleton
+
+import { View } from "react-native";
+import { Skeleton } from "@/components/ui/skeleton";
+
+<View
+  accessibilityLabel="Loading profile"
+  accessibilityLiveRegion="polite"
+  style={{ gap: 12 }}
+>
+  <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+    <Skeleton shape="circle" width={44} height={44} />
+    <View style={{ flex: 1, gap: 8 }}>
+      <Skeleton shape="text" width="48%" />
+      <Skeleton shape="text" width="30%" height={9} />
+    </View>
+  </View>
+  <Skeleton height={180} borderRadius={16} animation="shimmer" />
+</View>`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Neutral surface, radius, and restrained motion foundations."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {skeletonData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Communicate loading once, not once per bone."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Skeleton bones are hidden from VoiceOver and TalkBack by default.</li>
+            <li>
+              Label the containing region as loading and announce it politely when appropriate.
+            </li>
+            <li>
+              Reduced-motion settings disable shimmer and pulse while preserving the placeholder.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Make loading feel structurally honest.">
+          <DoDont
+            pairs={[
+              {
+                do: "Mirror the final content's broad geometry and hierarchy.",
+                dont: 'Build a pixel-perfect fake copy of every word and control.',
+              },
+              {
+                do: 'Animate a composed loading region as one calm system.',
+                dont: 'Mix shimmer, pulse, and spinners in the same loading state.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Feedback pieces that cover other loading conditions."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Spinner', 'Progress', 'Empty', 'Card'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...skeletonData.headings]} actions={[...skeletonData.actions]} />
+    </>
+  );
+}
+
+function TabBarDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(tabBarData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{tabBarData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {tabBarData.title}
+        </h1>
+        <Lede>{tabBarData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={tabBarData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <TabBarPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="One primary destination per item, one moving indicator, and one optional surface."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Container', 'full or floating'],
+                ['Surface', 'transparent or filled'],
+                ['Item', 'icon and optional label'],
+                ['Indicator', 'tracks the selected destination'],
+                ['Badge', 'short, exceptional count'],
+                ['Visibility', 'fixed or driven by scroll direction'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="For stable, top-level app destinations.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use three to five destinations that remain available across the main app experience.
+            </li>
+            <li>Use floating when content should remain visible around the navigation surface.</li>
+            <li>Use scroll-aware hiding only on immersive, vertically scrolling screens.</li>
+          </ul>
+        </Section>
+
+        <TabBarDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste.">
+          <CodeBlock language="tsx">{`npx arloui add tab-bar
+
+import { ScrollView } from "react-native";
+import { OutlineHouse, OutlineMagnifyingGlass, OutlineUser } from "@arloui/icons";
+import { TabBar, useTabBarScroll } from "@/components/ui/tab-bar";
+
+const scroll = useTabBarScroll();
+
+<ScrollView onScroll={scroll.onScroll} scrollEventThrottle={16}>
+  {/* Screen content */}
+</ScrollView>
+
+<TabBar
+  value={tab}
+  onValueChange={setTab}
+  width="floating"
+  surface="filled"
+  hidden={scroll.hidden}
+>
+  <TabBar.Item
+    value="home"
+    label="Home"
+    icon={({ color, size }) => <OutlineHouse color={color} width={size} height={size} />}
+  />
+  <TabBar.Item
+    value="search"
+    label="Search"
+    icon={({ color, size }) => <OutlineMagnifyingGlass color={color} width={size} height={size} />}
+  />
+  <TabBar.Item
+    value="profile"
+    label="Profile"
+    icon={({ color, size }) => <OutlineUser color={color} width={size} height={size} />}
+  />
+</TabBar>`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Navigation color, motion, touch, radius, and elevation foundations."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {tabBarData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Selection, labels, and resilient touch targets."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Every destination exposes the tab role and selected state.</li>
+            <li>Icon-only tabs retain their label for VoiceOver and TalkBack.</li>
+            <li>
+              Each item preserves at least a 44px touch target and reduced motion removes travel.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep primary navigation predictable.">
+          <DoDont
+            pairs={[
+              {
+                do: "Keep destination order stable and preserve each tab's navigation history.",
+                dont: 'Reorder or remove destinations because the user scrolled.',
+              },
+              {
+                do: 'Reveal the bar as soon as scroll direction reverses upward.',
+                dont: 'Hide navigation on short screens or non-scrolling task flows.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Navigation pieces that compose with Tab Bar."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Header', 'Nav', 'Badge', 'SafeArea'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...tabBarData.headings]} actions={[...tabBarData.actions]} />
     </>
   );
 }
@@ -125,18 +590,22 @@ function DatePickerDocPage() {
         <Section
           id="anatomy"
           title="Anatomy"
-          sub="A predictable calendar surface with a month header, navigation, weekday labels, and a fixed six-week grid."
+          sub="Two selection surfaces share one Date value: a visual calendar and a compact, snapping wheel."
         >
           <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
             <div className="mx-auto max-w-[350px] space-y-3">
               {[
-                ["Header", "month and year"],
-                ["Navigation", "previous and next month"],
-                ["Week labels", "Sunday or Monday start"],
-                ["Day grid", "42 stable cells"],
-                ["Selection", "single selected date"],
+                ['Presentation', 'calendar or wheel'],
+                ['Header', 'month and year'],
+                ['Navigation', 'previous and next month'],
+                ['Day grid', '42 stable cells'],
+                ['Wheel columns', 'date, time, month, year'],
+                ['Selection', 'centered highlighted row'],
               ].map(([name, detail]) => (
-                <div key={name} className="flex items-center justify-between border-b border-line pb-3 text-[13px] last:border-0 last:pb-0">
+                <div
+                  key={name}
+                  className="flex items-center justify-between border-b border-line pb-3 text-[13px] last:border-0 last:pb-0"
+                >
                   <span className="font-medium text-ink">{name}</span>
                   <code className="font-mono text-[11px] text-ink-3">{detail}</code>
                 </div>
@@ -145,11 +614,17 @@ function DatePickerDocPage() {
           </div>
         </Section>
 
-        <Section id="when-to-use" title="When to use" sub="Use a visible calendar when the date itself matters.">
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="Choose the presentation that matches the decision."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>For appointments, bookings, deadlines, and dates users need to compare visually.</li>
+            <li>
+              For appointments, bookings, deadlines, and dates users need to compare visually.
+            </li>
             <li>When unavailable dates or a valid range must be visible before selection.</li>
-            <li>Use a native date input instead when speed matters more than calendar context.</li>
+            <li>Use the wheel for compact date-time, time-only, or month-year selection.</li>
           </ul>
         </Section>
 
@@ -159,7 +634,7 @@ function DatePickerDocPage() {
           <CodeBlock language="tsx">{`npx arloui add date-picker
 
 import { useState } from "react";
-import { DatePicker } from "@/components/ui/date-picker";
+import { DatePicker, DateWheelPicker } from "@/components/ui/date-picker";
 
 const [date, setDate] = useState<Date | null>(null);
 
@@ -169,10 +644,22 @@ const [date, setDate] = useState<Date | null>(null);
   minDate={new Date()}
   weekStartsOn={1}
   isDateDisabled={(day) => day.getDay() === 0}
+/>
+
+<DateWheelPicker
+  value={date ?? undefined}
+  onValueChange={setDate}
+  mode="date-time"
+  minuteInterval={5}
+  hourCycle={12}
 />`}</CodeBlock>
         </Section>
 
-        <Section id="tokens" title="Tokens used" sub="Calendar color, type, radius, and touch targets come from the same Arlo foundations.">
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Calendar and wheel surfaces share Arlo color, type, radius, and touch foundations."
+        >
           <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {datePickerData.tokens.map((token) => (
               <div key={token} className="border-b border-line px-4 py-3 last:border-0">
@@ -182,11 +669,22 @@ const [date, setDate] = useState<Date | null>(null);
           </div>
         </Section>
 
-        <Section id="accessibility" title="Accessibility" sub="Dates remain understandable without relying on color.">
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Dates remain understandable without relying on color."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>Every date exposes its complete weekday, month, day, and year to screen readers.</li>
+            <li>
+              Every date exposes its complete weekday, month, day, and year to screen readers.
+            </li>
             <li>Selected and disabled dates use native accessibility state.</li>
-            <li>Day cells preserve a 44px touch target even though the visible selection is 36px.</li>
+            <li>
+              Day cells preserve a 44px touch target even though the visible selection is 36px.
+            </li>
+            <li>
+              Each wheel column is adjustable with screen-reader increment and decrement actions.
+            </li>
           </ul>
         </Section>
 
@@ -194,20 +692,28 @@ const [date, setDate] = useState<Date | null>(null);
           <DoDont
             pairs={[
               {
-                do: "Set minDate, maxDate, and disabled dates from the real booking rules.",
-                dont: "Allow selection first and reveal an invalid date only after submission.",
+                do: 'Set minDate, maxDate, and disabled dates from the real booking rules.',
+                dont: 'Allow selection first and reveal an invalid date only after submission.',
               },
               {
                 do: "Use Monday or Sunday week start to match the user's locale.",
-                dont: "Change week start between calendars in the same product.",
+                dont: 'Change week start between calendars in the same product.',
+              },
+              {
+                do: 'Use a wheel when users already know the date or time they need.',
+                dont: 'Use a wheel when people need to compare availability across days.',
               },
             ]}
           />
         </Section>
 
-        <Section id="related" title="Related primitives" sub="Compose the picker into the flow that fits the task.">
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Compose the picker into the flow that fits the task."
+        >
           <div className="flex flex-wrap gap-2">
-            {["Input", "Sheet", "Button", "Time Picker"].map((item) => (
+            {['Input', 'Sheet', 'Button'].map((item) => (
               <Chip key={item}>→ {item}</Chip>
             ))}
           </div>
@@ -258,7 +764,7 @@ function SheetDocPage() {
                 <div className="px-5 pt-6">
                   <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
                   <div className="mt-4 grid grid-cols-2 gap-2.5">
-                    {["#155DFC", "#00C950", "#F54900", "#FB2C36"].map((color) => (
+                    {['#155DFC', '#00C950', '#F54900', '#FB2C36'].map((color) => (
                       <div
                         key={color}
                         className="h-14 rounded-xl opacity-25 dark:opacity-45"
@@ -271,29 +777,37 @@ function SheetDocPage() {
                 <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#111827]/85">
                   <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">header</span>
-                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">dismiss</span>
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                      header
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                      dismiss
+                    </span>
                   </div>
                   <div className="mt-3 space-y-2">
                     <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
                     <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
                     <div className="h-8 rounded-lg bg-[#F3F4F6] dark:bg-white/10" />
                   </div>
-                  <div className="mt-3 font-mono text-[10px] uppercase tracking-wide text-ink-3">footer / safe area</div>
+                  <div className="mt-3 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                    footer / safe area
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
               {[
-                ["Backdrop", "scrim or pass-through"],
-                ["Surface", "solid or glass"],
-                ["Handle", "visible drag affordance"],
-                ["Header", "title and optional action"],
-                ["Body", "scrollable content area"],
-                ["Footer", "sticky actions / safe-area padding"],
-                ["Detent", "auto · full · fractional height"],
-                ["Dismissal", "backdrop tap · drag · hardware back"],
+                ['Backdrop', 'scrim or pass-through'],
+                ['Surface', 'solid or glass'],
+                ['Handle', 'visible drag affordance'],
+                ['Header', 'title and optional action'],
+                ['Body', 'scrollable content area'],
+                ['Footer', 'sticky actions / safe-area padding'],
+                ['Height', 'auto · half · full'],
+                ['Width', 'default · stack'],
+                ['Padding', 'none · md · lg'],
+                ['Dismissal', 'backdrop tap · drag · hardware back'],
               ].map(([name, detail]) => (
                 <div
                   key={name}
@@ -311,15 +825,21 @@ function SheetDocPage() {
         <Section id="when-to-use" title="When to use" sub="Three rules.">
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>For a secondary task that should not interrupt the parent context.</li>
-            <li>When the input or selection list is short enough to fit a natural-content detent.</li>
+            <li>
+              When the input or selection list is short enough to fit a natural-content detent.
+            </li>
             <li>When dismissal should be available via gesture, not just a button.</li>
           </ul>
         </Section>
 
         {/* Archetypes */}
-        <Section id="archetypes" title="Archetypes that use Sheet" sub="Click an archetype for the full screen recipe.">
+        <Section
+          id="archetypes"
+          title="Archetypes that use Sheet"
+          sub="Click an archetype for the full screen recipe."
+        >
           <div className="flex flex-wrap gap-2">
-            {["Question", "Sheet over content", "Detail"].map((a) => (
+            {['Question', 'Sheet over content', 'Detail'].map((a) => (
               <Chip key={a}>→ {a}</Chip>
             ))}
           </div>
@@ -340,11 +860,9 @@ import { Sheet } from "@/components/ui/sheet";
   onClose={() => setOpen(false)}
   backdrop="passthrough"
   surface="glass"
-  presentation="stack"
-  detent="auto"
-  horizontalInset={16}
-  bottomOffset={16}
-  cornerRadius={20}
+  width="stack"
+  height="auto"
+  padding="md"
   handleHeight={3}
   blurComponent={
     <BlurView
@@ -365,7 +883,11 @@ import { Sheet } from "@/components/ui/sheet";
         </Section>
 
         {/* Tokens used */}
-        <Section id="tokens" title="Tokens used" sub="Click any to jump to its definition in /docs/primitives/tokens.">
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Click any to jump to its definition in /docs/primitives/tokens."
+        >
           <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {sheetData.tokens.map((t) => (
               <div key={t} className="border-b border-line px-4 py-3 last:border-0">
@@ -376,7 +898,11 @@ import { Sheet } from "@/components/ui/sheet";
         </Section>
 
         {/* Accessibility */}
-        <Section id="accessibility" title="Accessibility" sub="Screen reader semantics, focus, dismissal.">
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Screen reader semantics, focus, dismissal."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>VoiceOver / TalkBack announces as a modal sheet.</li>
             <li>Focus traps inside the sheet; Esc / hardware back dismisses.</li>
@@ -389,12 +915,12 @@ import { Sheet } from "@/components/ui/sheet";
           <DoDont
             pairs={[
               {
-                do: "Detent at content height; reach for full only when content demands it.",
-                dont: "Spring straight to full on a row tap — it teleports the user.",
+                do: 'Use auto height first; reach for full only when content demands it.',
+                dont: 'Spring straight to full on a row tap — it teleports the user.',
               },
               {
-                do: "Dismiss on velocity ≥ 0.11 px/ms, not just distance.",
-                dont: "Require an explicit close button when a swipe dismiss is available.",
+                do: 'Dismiss on velocity ≥ 0.11 px/ms, not just distance.',
+                dont: 'Require an explicit close button when a swipe dismiss is available.',
               },
             ]}
           />
@@ -403,7 +929,7 @@ import { Sheet } from "@/components/ui/sheet";
         {/* Related */}
         <Section id="related" title="Related primitives" sub="Complements and alternatives.">
           <div className="flex flex-wrap gap-2">
-            {["Tray", "Scrim", "Picker", "Modal (rare)"].map((r) => (
+            {['Tray', 'Scrim', 'Picker', 'Modal (rare)'].map((r) => (
               <Chip key={r}>→ {r}</Chip>
             ))}
           </div>
@@ -453,27 +979,35 @@ function InputDocPage() {
                 <span>trailingAction</span>
               </div>
               <div className="flex items-center gap-2 rounded-md bg-[#F3F4F6] px-3 py-2">
-                <span className="size-4 shrink-0 rounded-sm border border-line-strong" aria-hidden />
+                <span
+                  className="size-4 shrink-0 rounded-sm border border-line-strong"
+                  aria-hidden
+                />
                 <div className="min-w-0 flex-1">
                   <div className="text-[11px] leading-4 text-[#99A1AF]">Username</div>
-                  <div className="text-[14px] font-medium leading-5 text-[#364153]">@allanthomas</div>
+                  <div className="text-[14px] font-medium leading-5 text-[#364153]">
+                    @allanthomas
+                  </div>
                 </div>
-                <span className="size-4 shrink-0 rounded-sm border border-line-strong" aria-hidden />
+                <span
+                  className="size-4 shrink-0 rounded-sm border border-line-strong"
+                  aria-hidden
+                />
               </div>
               <div className="mt-1.5 px-1 text-[11px] text-[#6A7282]">Helper / error text</div>
             </div>
 
             <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
               {[
-                ["Inset label", "typography.bodySm / label"],
-                ["Value text", "typography.body · textPrimary"],
-                ["Placeholder", "colors.textTertiary"],
-                ["Leading / trailing icon", "sizing.icon.xs–sm"],
-                ["Container fill", "colors.surfaceInput"],
-                ["Corner radius", "radii.md (filled) · 0 (plain)"],
-                ["Padding", "spacing.3 horizontal · spacing.1–2 vertical"],
-                ["Focus / error border", "colors.borderFocus / borderError"],
-                ["Helper / error text", "colors.textSecondary / textInteractiveError"],
+                ['Inset label', 'typography.bodySm / label'],
+                ['Value text', 'typography.body · textPrimary'],
+                ['Placeholder', 'colors.textTertiary'],
+                ['Leading / trailing icon', 'sizing.icon.xs–sm'],
+                ['Container fill', 'colors.surfaceInput'],
+                ['Corner radius', 'radii.md (filled) · 0 (plain)'],
+                ['Padding', 'spacing.3 horizontal · spacing.1–2 vertical'],
+                ['Focus / error border', 'colors.borderFocus / borderError'],
+                ['Helper / error text', 'colors.textSecondary / textInteractiveError'],
               ].map(([name, token]) => (
                 <div
                   key={name}
@@ -487,10 +1021,20 @@ function InputDocPage() {
           </div>
         </Section>
 
-        <Section id="when-to-use" title="When to use" sub="Choose the surface treatment based on layout context.">
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="Choose the surface treatment based on layout context."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>Use <code className="font-mono text-[13px]">filled</code> for standalone form rows, settings screens, and search inputs that need a visible hit area.</li>
-            <li>Use <code className="font-mono text-[13px]">plain</code> for no-background fields inside dense forms, table-like layouts, or surfaces that already frame the content.</li>
+            <li>
+              Use <code className="font-mono text-[13px]">filled</code> for standalone form rows,
+              settings screens, and search inputs that need a visible hit area.
+            </li>
+            <li>
+              Use <code className="font-mono text-[13px]">plain</code> for no-background fields
+              inside dense forms, table-like layouts, or surfaces that already frame the content.
+            </li>
             <li>Use inset labels when the field needs to keep context after a value is entered.</li>
           </ul>
         </Section>
@@ -529,7 +1073,11 @@ import { Input, InputAction } from "@/components/ui/input";
 />`}</CodeBlock>
         </Section>
 
-        <Section id="tokens" title="Tokens used" sub="These are the tokens that make the filled and no-bg treatments consistent.">
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="These are the tokens that make the filled and no-bg treatments consistent."
+        >
           <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {inputData.tokens.map((t) => (
               <div key={t} className="border-b border-line px-4 py-3 last:border-0">
@@ -539,11 +1087,23 @@ import { Input, InputAction } from "@/components/ui/input";
           </div>
         </Section>
 
-        <Section id="accessibility" title="Accessibility" sub="Input semantics should survive every visual variant.">
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Input semantics should survive every visual variant."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>Pass a visible label or an accessibility label for fields without on-screen labels.</li>
-            <li>Use helper text for guidance and error text for validation feedback; errors use semantic error color tokens.</li>
-            <li>Trailing actions use <code className="font-mono text-[13px]">InputAction</code> so touch targets stay large enough.</li>
+            <li>
+              Pass a visible label or an accessibility label for fields without on-screen labels.
+            </li>
+            <li>
+              Use helper text for guidance and error text for validation feedback; errors use
+              semantic error color tokens.
+            </li>
+            <li>
+              Trailing actions use <code className="font-mono text-[13px]">InputAction</code> so
+              touch targets stay large enough.
+            </li>
           </ul>
         </Section>
 
@@ -551,12 +1111,12 @@ import { Input, InputAction } from "@/components/ui/input";
           <DoDont
             pairs={[
               {
-                do: "Use plain/no-bg inputs when the parent surface already creates enough structure.",
-                dont: "Stack filled input boxes inside another heavy card when the layout already feels framed.",
+                do: 'Use plain/no-bg inputs when the parent surface already creates enough structure.',
+                dont: 'Stack filled input boxes inside another heavy card when the layout already feels framed.',
               },
               {
-                do: "Keep helper text short and tied to the field state.",
-                dont: "Use helper text as a paragraph of instructions under every field.",
+                do: 'Keep helper text short and tied to the field state.',
+                dont: 'Use helper text as a paragraph of instructions under every field.',
               },
             ]}
           />
@@ -564,7 +1124,7 @@ import { Input, InputAction } from "@/components/ui/input";
 
         <Section id="related" title="Related primitives" sub="Complements and alternatives.">
           <div className="flex flex-wrap gap-2">
-            {["Button", "Search", "Form row", "Sheet", "Picker"].map((r) => (
+            {['Button', 'Search', 'Form row', 'Sheet', 'Picker'].map((r) => (
               <Chip key={r}>→ {r}</Chip>
             ))}
           </div>
@@ -627,14 +1187,14 @@ function TextAreaDocPage() {
 
             <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
               {[
-                ["Container fill", "colors.surfaceInput"],
-                ["Value text", "typography.body · textPrimary"],
-                ["Placeholder", "colors.textTertiary"],
-                ["Height", "96px min-height"],
-                ["Corner radius", "radii.xl / 16px (filled) · 0 (plain)"],
-                ["Padding", "spacing.3 inside · spacing.0 wrapper"],
-                ["Error border", "colors.borderError"],
-                ["Helper / count", "typography.bodySm · textSecondary"],
+                ['Container fill', 'colors.surfaceInput'],
+                ['Value text', 'typography.body · textPrimary'],
+                ['Placeholder', 'colors.textTertiary'],
+                ['Height', '96px min-height'],
+                ['Corner radius', 'radii.xl / 16px (filled) · 0 (plain)'],
+                ['Padding', 'spacing.3 inside · spacing.0 wrapper'],
+                ['Error border', 'colors.borderError'],
+                ['Helper / count', 'typography.bodySm · textSecondary'],
               ].map(([name, token]) => (
                 <div
                   key={name}
@@ -648,11 +1208,23 @@ function TextAreaDocPage() {
           </div>
         </Section>
 
-        <Section id="when-to-use" title="When to use" sub="Use TextArea when the answer needs room to breathe.">
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="Use TextArea when the answer needs room to breathe."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>Use it for comments, notes, support messages, bios, descriptions, and feedback forms.</li>
-            <li>Use <code className="font-mono text-[13px]">filled</code> when the field needs a clear standalone touch surface.</li>
-            <li>Use <code className="font-mono text-[13px]">plain</code> when the parent card, sheet, or row already frames the field.</li>
+            <li>
+              Use it for comments, notes, support messages, bios, descriptions, and feedback forms.
+            </li>
+            <li>
+              Use <code className="font-mono text-[13px]">filled</code> when the field needs a clear
+              standalone touch surface.
+            </li>
+            <li>
+              Use <code className="font-mono text-[13px]">plain</code> when the parent card, sheet,
+              or row already frames the field.
+            </li>
           </ul>
         </Section>
 
@@ -681,7 +1253,11 @@ import { TextArea } from "@/components/ui/text-area";
 />`}</CodeBlock>
         </Section>
 
-        <Section id="tokens" title="Tokens used" sub="The same semantic tokens used by Input, adapted for multiline content.">
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="The same semantic tokens used by Input, adapted for multiline content."
+        >
           <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {textAreaData.tokens.map((t) => (
               <div key={t} className="border-b border-line px-4 py-3 last:border-0">
@@ -691,11 +1267,24 @@ import { TextArea } from "@/components/ui/text-area";
           </div>
         </Section>
 
-        <Section id="accessibility" title="Accessibility" sub="Longer fields need clear labels and concise validation.">
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Longer fields need clear labels and concise validation."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>Always provide a visible label or an accessibility label when the visual label is omitted.</li>
-            <li>Use helper text for guidance and error text for validation; do not overload helper text with paragraphs.</li>
-            <li>Pair <code className="font-mono text-[13px]">maxLength</code> with <code className="font-mono text-[13px]">showCount</code> when users need a hard limit.</li>
+            <li>
+              Always provide a visible label or an accessibility label when the visual label is
+              omitted.
+            </li>
+            <li>
+              Use helper text for guidance and error text for validation; do not overload helper
+              text with paragraphs.
+            </li>
+            <li>
+              Pair <code className="font-mono text-[13px]">maxLength</code> with{' '}
+              <code className="font-mono text-[13px]">showCount</code> when users need a hard limit.
+            </li>
           </ul>
         </Section>
 
@@ -703,12 +1292,12 @@ import { TextArea } from "@/components/ui/text-area";
           <DoDont
             pairs={[
               {
-                do: "Keep the field tall enough for the expected answer.",
-                dont: "Use a single-line input for messages or notes that naturally wrap.",
+                do: 'Keep the field tall enough for the expected answer.',
+                dont: 'Use a single-line input for messages or notes that naturally wrap.',
               },
               {
-                do: "Use counters for constrained content like bios or support tickets.",
-                dont: "Show a counter when there is no meaningful limit.",
+                do: 'Use counters for constrained content like bios or support tickets.',
+                dont: 'Show a counter when there is no meaningful limit.',
               },
             ]}
           />
@@ -716,7 +1305,7 @@ import { TextArea } from "@/components/ui/text-area";
 
         <Section id="related" title="Related primitives" sub="Complements and alternatives.">
           <div className="flex flex-wrap gap-2">
-            {["Input", "Button", "Sheet", "Form row", "Keyboard toolbar"].map((r) => (
+            {['Input', 'Button', 'Sheet', 'Form row', 'Keyboard toolbar'].map((r) => (
               <Chip key={r}>→ {r}</Chip>
             ))}
           </div>
@@ -737,7 +1326,9 @@ function ButtonDocPage() {
         </div>
 
         <Eyebrow>{buttonData.category}</Eyebrow>
-        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">{buttonData.title}</h1>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {buttonData.title}
+        </h1>
         <Lede>{buttonData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
@@ -778,14 +1369,14 @@ function ButtonDocPage() {
 
             <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
               {[
-                ["Label", "typography.body · weight 600"],
-                ["Leading / trailing icon", "sizing.icon.xs–md"],
-                ["Height", "sizing.buttonHeight.sm–xl · 36–52"],
-                ["Corner radius", "radii.full (pill)"],
-                ["Horizontal padding", "spacing.3–6 by size"],
-                ["Icon ↔ label gap", "spacing.1–3 by size"],
-                ["Pressed overlay", "colors.touchFeedbackMain"],
-                ["Focus ring (web)", "focusRing.main / error"],
+                ['Label', 'typography.body · weight 600'],
+                ['Leading / trailing icon', 'sizing.icon.xs–md'],
+                ['Height', 'sizing.buttonHeight.sm–xl · 36–52'],
+                ['Corner radius', 'radii.full (pill)'],
+                ['Horizontal padding', 'spacing.3–6 by size'],
+                ['Icon ↔ label gap', 'spacing.1–3 by size'],
+                ['Pressed overlay', 'colors.touchFeedbackMain'],
+                ['Focus ring (web)', 'focusRing.main / error'],
               ].map(([name, token]) => (
                 <div
                   key={name}
@@ -801,15 +1392,26 @@ function ButtonDocPage() {
 
         <Section id="when-to-use" title="When to use" sub="Three rules.">
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>Use the primary solid button for the single highest-commitment action on the surface.</li>
-            <li>Use neutral soft or outline for secondary actions that should stay visible but quieter.</li>
-            <li>Reserve danger tone for destructive or irreversible actions — keep copy explicit.</li>
+            <li>
+              Use the primary solid button for the single highest-commitment action on the surface.
+            </li>
+            <li>
+              Use neutral soft or outline for secondary actions that should stay visible but
+              quieter.
+            </li>
+            <li>
+              Reserve danger tone for destructive or irreversible actions — keep copy explicit.
+            </li>
           </ul>
         </Section>
 
-        <Section id="archetypes" title="Archetypes that use Button" sub="Click an archetype for the full screen recipe.">
+        <Section
+          id="archetypes"
+          title="Archetypes that use Button"
+          sub="Click an archetype for the full screen recipe."
+        >
           <div className="flex flex-wrap gap-2">
-            {["Onboarding", "Detail", "Settings", "Creation", "Decision"].map((a) => (
+            {['Onboarding', 'Detail', 'Settings', 'Creation', 'Decision'].map((a) => (
               <Chip key={a}>→ {a}</Chip>
             ))}
           </div>
@@ -822,24 +1424,20 @@ function ButtonDocPage() {
           title="Social auth"
           sub={
             <>
-              Full-width pills with a provider mark and fixed label, the way the{" "}
-              <span className="font-medium text-ink-2">Social</span> frame lays
-              them out. All four providers — Google, Apple, Facebook, and X — ship in{" "}
-              <code className="font-mono text-[12px] text-ink-2">
-                SocialAuthButton
-              </code>{" "}
-              via{" "}
-              <code className="font-mono text-[12px] text-ink-2">platform</code>{" "}
-              and{" "}
-              <code className="font-mono text-[12px] text-ink-2">type</code>{" "}
-              (<code className="font-mono text-[12px] text-ink-2">fill</code> or{" "}
+              Full-width pills with a provider mark and fixed label, the way the{' '}
+              <span className="font-medium text-ink-2">Social</span> frame lays them out. All four
+              providers — Google, Apple, Facebook, and X — ship in{' '}
+              <code className="font-mono text-[12px] text-ink-2">SocialAuthButton</code> via{' '}
+              <code className="font-mono text-[12px] text-ink-2">platform</code> and{' '}
+              <code className="font-mono text-[12px] text-ink-2">type</code> (
+              <code className="font-mono text-[12px] text-ink-2">fill</code> or{' '}
               <code className="font-mono text-[12px] text-ink-2">secondary</code>).
             </>
           }
         >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>
-              Implementation:{" "}
+              Implementation:{' '}
               <a
                 className="underline decoration-[color-mix(in_srgb,var(--ink-2)_25%,transparent)] underline-offset-2 hover:decoration-inherit"
                 href="https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/button/social-auth-button.tsx"
@@ -848,10 +1446,8 @@ function ButtonDocPage() {
               </a>
             </li>
             <li>
-              Drop in SVGs from{" "}
-              <code className="text-[13px]">@arloui/icons</code> or your own
-              bundle; the defaults stay text-only so you are not forced to ship
-              every provider logo.
+              Drop in SVGs from <code className="text-[13px]">@arloui/icons</code> or your own
+              bundle; the defaults stay text-only so you are not forced to ship every provider logo.
             </li>
           </ul>
         </Section>
@@ -888,7 +1484,11 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
           </div>
         </Section>
 
-        <Section id="tokens" title="Tokens used" sub="Semantic tokens that drive tone, size, spacing, and interaction states.">
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Semantic tokens that drive tone, size, spacing, and interaction states."
+        >
           <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {buttonData.tokens.map((t) => (
               <div key={t} className="border-b border-line px-4 py-3 last:border-0">
@@ -898,14 +1498,31 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
           </div>
         </Section>
 
-        <Section id="accessibility" title="Accessibility" sub="Semantics, focus, hit targets, and motion.">
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Semantics, focus, hit targets, and motion."
+        >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>Exposes accessibilityRole &quot;button&quot; with the label from children or an explicit accessibilityLabel.</li>
-            <li>icon-only buttons and FAB require accessibilityLabel — without it the control announces nothing useful.</li>
-            <li>Loading sets accessibilityState busy and blocks interaction until the action resolves.</li>
-            <li>Web focus draws the design-system focus ring (primary, or error for the danger tone).</li>
+            <li>
+              Exposes accessibilityRole &quot;button&quot; with the label from children or an
+              explicit accessibilityLabel.
+            </li>
+            <li>
+              icon-only buttons and FAB require accessibilityLabel — without it the control
+              announces nothing useful.
+            </li>
+            <li>
+              Loading sets accessibilityState busy and blocks interaction until the action resolves.
+            </li>
+            <li>
+              Web focus draws the design-system focus ring (primary, or error for the danger tone).
+            </li>
             <li>The sm (36px) and md (40px) sizes expand to a 44pt touch target via hitSlop.</li>
-            <li>prefers-reduced-motion replaces the press scale with an opacity dim to 0.85, and the loading spinner runs at reduced speed.</li>
+            <li>
+              prefers-reduced-motion replaces the press scale with an opacity dim to 0.85, and the
+              loading spinner runs at reduced speed.
+            </li>
           </ul>
         </Section>
 
@@ -913,12 +1530,12 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
           <DoDont
             pairs={[
               {
-                do: "Use one primary solid CTA per view; pair with neutral outline or soft for secondary actions.",
-                dont: "Stack multiple identical primary solids — users lose hierarchy.",
+                do: 'Use one primary solid CTA per view; pair with neutral outline or soft for secondary actions.',
+                dont: 'Stack multiple identical primary solids — users lose hierarchy.',
               },
               {
-                do: "Keep labels short; put detail in supporting body copy or a sheet.",
-                dont: "Let button text wrap to three lines — increase hit target height instead.",
+                do: 'Keep labels short; put detail in supporting body copy or a sheet.',
+                dont: 'Let button text wrap to three lines — increase hit target height instead.',
               },
             ]}
           />
@@ -926,7 +1543,7 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
 
         <Section id="related" title="Related primitives" sub="Complements and alternatives.">
           <div className="flex flex-wrap gap-2">
-            {["FabButton", "SocialAuthButton", "Pill", "Chip", "Field"].map((r) => (
+            {['FabButton', 'SocialAuthButton', 'Pill', 'Chip', 'Field'].map((r) => (
               <Chip key={r}>→ {r}</Chip>
             ))}
           </div>
@@ -938,10 +1555,14 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
   );
 }
 
-function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkboxData | typeof radioData }) {
-  const isToggle = data.slug === "toggle";
-  const isCheckbox = data.slug === "checkbox";
-  const isRadio = data.slug === "radio";
+function FormControlDocPage({
+  data,
+}: {
+  data: typeof toggleData | typeof checkboxData | typeof radioData;
+}) {
+  const isToggle = data.slug === 'toggle';
+  const isCheckbox = data.slug === 'checkbox';
+  const isRadio = data.slug === 'radio';
 
   const installCmd = `npx arloui add ${data.slug}`;
   const importLine = isToggle
@@ -983,60 +1604,78 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
 
   const whenToUse = isToggle
     ? [
-        "Use for binary settings that take effect immediately — Wi-Fi, dark mode, notifications.",
-        "Prefer a checkbox when the change requires a separate submit action.",
-        "Keep the label outside the toggle; the control itself is purely visual.",
+        'Use for binary settings that take effect immediately — Wi-Fi, dark mode, notifications.',
+        'Prefer a checkbox when the change requires a separate submit action.',
+        'Keep the label outside the toggle; the control itself is purely visual.',
       ]
     : isCheckbox
       ? [
-          "Use for multi-select options within a form that will be submitted together.",
-          "Use when toggling a single opt-in (\"I agree to terms\") that requires explicit confirmation.",
-          "Prefer a toggle when the state takes effect immediately without a submit step.",
+          'Use for multi-select options within a form that will be submitted together.',
+          'Use when toggling a single opt-in ("I agree to terms") that requires explicit confirmation.',
+          'Prefer a toggle when the state takes effect immediately without a submit step.',
         ]
       : [
-          "Use for mutually exclusive choices within a small group (2–6 options).",
-          "Use outlined appearance for a subtle ring indicator; use filled for a dot that fills in.",
-          "Prefer a select or picker when the option count exceeds what fits comfortably on screen.",
+          'Use for mutually exclusive choices within a small group (2–6 options).',
+          'Use outlined appearance for a subtle ring indicator; use filled for a dot that fills in.',
+          'Prefer a select or picker when the option count exceeds what fits comfortably on screen.',
         ];
 
   const a11yNotes = isToggle
     ? [
-        "Exposes accessibilityRole \"switch\" with checked and disabled state.",
-        "Touch target expands to 44pt minimum via hitSlop.",
-        "Thumb slide animation uses motion tokens; respects reduce-motion settings.",
+        'Exposes accessibilityRole "switch" with checked and disabled state.',
+        'Touch target expands to 44pt minimum via hitSlop.',
+        'Thumb slide animation uses motion tokens; respects reduce-motion settings.',
       ]
     : isCheckbox
       ? [
-          "Exposes accessibilityRole \"checkbox\" with checked and disabled state.",
-          "Touch target expands to 44pt minimum via hitSlop.",
-          "Fill animation uses motion.duration.instant with easeOut easing.",
+          'Exposes accessibilityRole "checkbox" with checked and disabled state.',
+          'Touch target expands to 44pt minimum via hitSlop.',
+          'Fill animation uses motion.duration.instant with easeOut easing.',
         ]
       : [
-          "Exposes accessibilityRole \"radio\" with selected and disabled state.",
-          "Does not fire onSelect when already selected — prevents redundant callbacks.",
-          "Touch target expands to 44pt minimum via hitSlop.",
+          'Exposes accessibilityRole "radio" with selected and disabled state.',
+          'Does not fire onSelect when already selected — prevents redundant callbacks.',
+          'Touch target expands to 44pt minimum via hitSlop.',
         ];
 
   const doDont = isToggle
     ? [
-        { do: "Use for settings that apply instantly without a save step.", dont: "Use a toggle inside a form that has a submit button — use a checkbox instead." },
-        { do: "Place the label to the left or above the toggle, never inside.", dont: "Use a toggle for actions (\"Delete account\") — those need buttons." },
+        {
+          do: 'Use for settings that apply instantly without a save step.',
+          dont: 'Use a toggle inside a form that has a submit button — use a checkbox instead.',
+        },
+        {
+          do: 'Place the label to the left or above the toggle, never inside.',
+          dont: 'Use a toggle for actions ("Delete account") — those need buttons.',
+        },
       ]
     : isCheckbox
       ? [
-        { do: "Use in forms where multiple options can be selected and submitted together.", dont: "Use a checkbox for an instant-effect setting — use a toggle instead." },
-        { do: "Pair with a visible label; the checkbox alone has no text.", dont: "Nest checkboxes more than one level deep — flatten the hierarchy." },
-      ]
+          {
+            do: 'Use in forms where multiple options can be selected and submitted together.',
+            dont: 'Use a checkbox for an instant-effect setting — use a toggle instead.',
+          },
+          {
+            do: 'Pair with a visible label; the checkbox alone has no text.',
+            dont: 'Nest checkboxes more than one level deep — flatten the hierarchy.',
+          },
+        ]
       : [
-        { do: "Group radios visually and semantically — they represent one choice.", dont: "Use radios when multiple selections are valid — use checkboxes." },
-        { do: "Pre-select the most common option so the user can confirm with one tap.", dont: "Mix outlined and filled appearances in the same radio group." },
-      ];
+          {
+            do: 'Group radios visually and semantically — they represent one choice.',
+            dont: 'Use radios when multiple selections are valid — use checkboxes.',
+          },
+          {
+            do: 'Pre-select the most common option so the user can confirm with one tap.',
+            dont: 'Mix outlined and filled appearances in the same radio group.',
+          },
+        ];
 
   const related = isToggle
-    ? ["Checkbox", "Radio", "Input", "Button"]
+    ? ['Checkbox', 'Radio', 'Input', 'Button']
     : isCheckbox
-      ? ["Toggle", "Radio", "Input", "Button"]
-      : ["Toggle", "Checkbox", "Input", "Button"];
+      ? ['Toggle', 'Radio', 'Input', 'Button']
+      : ['Toggle', 'Checkbox', 'Input', 'Button'];
 
   return (
     <>
@@ -1046,9 +1685,7 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
         </div>
 
         <Eyebrow>{data.category}</Eyebrow>
-        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
-          {data.title}
-        </h1>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">{data.title}</h1>
         <Lede>{data.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
@@ -1080,14 +1717,17 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
                 </div>
                 <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
                   {[
-                    ["Track", "52×32 (md) · 40×24 (sm)"],
-                    ["Thumb", "26px (md) · 18px (sm)"],
-                    ["Track fill", "interactivePrimary (on)"],
-                    ["Track empty", "surfaceInput (off)"],
-                    ["Corner radius", "height / 2 (capsule)"],
-                    ["Animation", "duration.fast · easeOut"],
+                    ['Track', '52×32 (md) · 40×24 (sm)'],
+                    ['Thumb', '26px (md) · 18px (sm)'],
+                    ['Track fill', 'interactivePrimary (on)'],
+                    ['Track empty', 'surfaceInput (off)'],
+                    ['Corner radius', 'height / 2 (capsule)'],
+                    ['Animation', 'duration.fast · easeOut'],
                   ].map(([name, token]) => (
-                    <div key={name} className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]">
+                    <div
+                      key={name}
+                      className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                    >
                       <span className="text-ink-2">{name}</span>
                       <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
                     </div>
@@ -1100,19 +1740,30 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
                 <div className="flex items-center gap-6">
                   <div className="flex size-6 items-center justify-center rounded-md border-[1.5px] border-[#D1D5DC]" />
                   <div className="flex size-6 items-center justify-center rounded-md bg-[#155DFC]">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7.5L5.5 10L11 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path
+                        d="M3 7.5L5.5 10L11 4"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
                 </div>
                 <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
                   {[
-                    ["Box", "24px (md) · 20px (sm) · 32px (lg)"],
-                    ["Check icon", "14px (md) SVG path"],
-                    ["Fill", "interactivePrimary (checked)"],
-                    ["Border", "borderPrimary (unchecked)"],
-                    ["Corner radius", "radii.sm (sm) · radii.md-2 (md)"],
-                    ["Animation", "duration.instant · easeOut"],
+                    ['Box', '24px (md) · 20px (sm) · 32px (lg)'],
+                    ['Check icon', '14px (md) SVG path'],
+                    ['Fill', 'interactivePrimary (checked)'],
+                    ['Border', 'borderPrimary (unchecked)'],
+                    ['Corner radius', 'radii.sm (sm) · radii.md-2 (md)'],
+                    ['Animation', 'duration.instant · easeOut'],
                   ].map(([name, token]) => (
-                    <div key={name} className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]">
+                    <div
+                      key={name}
+                      className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                    >
                       <span className="text-ink-2">{name}</span>
                       <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
                     </div>
@@ -1138,14 +1789,17 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
                 </div>
                 <div className="flex flex-col gap-y-0 border-t border-line pt-5 w-full max-w-[380px]">
                   {[
-                    ["Outer", "24px (md) · 20px (sm) · 32px (lg)"],
-                    ["Dot (filled)", "12px (md) · scales in"],
-                    ["Hole (outlined)", "10px (md) · bg-colored"],
-                    ["Border", "borderPrimary / interactivePrimary"],
-                    ["Animation", "duration.instant · easeOut"],
-                    ["Appearances", "outlined (ring) · filled (dot)"],
+                    ['Outer', '24px (md) · 20px (sm) · 32px (lg)'],
+                    ['Dot (filled)', '12px (md) · scales in'],
+                    ['Hole (outlined)', '10px (md) · bg-colored'],
+                    ['Border', 'borderPrimary / interactivePrimary'],
+                    ['Animation', 'duration.instant · easeOut'],
+                    ['Appearances', 'outlined (ring) · filled (dot)'],
                   ].map(([name, token]) => (
-                    <div key={name} className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]">
+                    <div
+                      key={name}
+                      className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                    >
                       <span className="text-ink-2">{name}</span>
                       <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
                     </div>
@@ -1173,7 +1827,11 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
           </div>
         </Section>
 
-        <Section id="tokens" title="Tokens used" sub="Semantic tokens driving color, size, and motion.">
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Semantic tokens driving color, size, and motion."
+        >
           <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
             {data.tokens.map((t) => (
               <div key={t} className="border-b border-line px-4 py-3 last:border-0">

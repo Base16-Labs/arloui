@@ -34,14 +34,17 @@ npx arloui diff button
 
 - **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
 - **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
-- **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, and detents. Composable backdrop (scrim modal or iOS-style pass-through) and surface (solid or Liquid-Glass) treatments.
+- **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
+- **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.
+- **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.
 - **field** — Field. Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.
 - **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.
 - **checkbox** — Checkbox. An animated check box with two sizes, check icon, and disabled state.
 - **radio** — Radio. An animated radio button with a scaling dot indicator, two sizes, and disabled state.
 - **toggle** — Toggle. An animated on/off switch with two sizes, disabled state, and smooth thumb transition.
 - **text-area** — TextArea. A multiline text field for comments, notes, bios, support messages, and long-form form content.
-- **date-picker** — Date Picker. An accessible single-date calendar with month navigation, date constraints, and configurable week starts.
+- **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.
+- **date-picker** — Date Picker. Accessible calendar and wheel surfaces for date, time, date-time, and month-year selection.
 
 ### icon
 
