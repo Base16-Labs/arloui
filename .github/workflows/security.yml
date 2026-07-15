@@ -67,6 +67,7 @@ jobs:
           node-version: 20
           cache: 'npm'
 
+      - run: npm install --global npm@11.5.1
       - run: npm ci
 
       # Gate only on what ships to consumers: HIGH+ in production dependencies.
