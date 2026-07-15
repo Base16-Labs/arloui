@@ -7,6 +7,11 @@
   "scripts": {
     "dev": "next dev --port 4321",
     "build": "NEXT_IGNORE_INCORRECT_LOCKFILE=1 next build",
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "preview:cloudflare": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:cloudflare": "opennextjs-cloudflare deploy",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -15,6 +20,7 @@
   "dependencies": {
     "@arloui/tokens": "file:../../packages/tokens",
     "@fontsource-variable/manrope": "^5.2.8",
+    "@opennextjs/cloudflare": "^1.20.1",
     "fuse.js": "^7.1.0",
     "next": "16.2.6",
     "qrcode.react": "^4.2.0",
@@ -30,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.111.0"
   }
 }
