@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --port 4321",
     "build": "NEXT_IGNORE_INCORRECT_LOCKFILE=1 next build",
-    "registry:build": "npm --prefix ../.. run registry:build",
+    "registry:build": "cd ../.. && npm run registry:emit",
     "build:cloudflare": "npm run registry:build && opennextjs-cloudflare build",
     "preview:cloudflare": "npm run build:cloudflare && opennextjs-cloudflare preview",
     "deploy:cloudflare": "opennextjs-cloudflare deploy",

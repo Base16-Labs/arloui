@@ -7,6 +7,6 @@
     "jsx": "react-native",
     "moduleResolution": "Bundler",
     "allowJs": true,
-    "types": ["react-native"]
+    "types": []
   }
 }
