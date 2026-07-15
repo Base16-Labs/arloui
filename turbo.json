@@ -7,7 +7,6 @@
       "outputs": ["dist/**", ".expo/**", "registry/**"]
     },
     "emit": {
-      "dependsOn": ["^build"],
       "outputs": []
     },
     "dev": {

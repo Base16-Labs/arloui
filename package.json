@@ -36,6 +36,7 @@
     "test": "turbo run test",
     "clean": "turbo run clean && rm -rf node_modules",
     "registry:build": "turbo run emit --filter=@arloui/build-registry",
+  "registry:emit": "tsx tooling/build-registry/src/index.ts",
     "icons:build": "turbo run build --filter=@arloui/icons",
     "skill:sync": "tsx scripts/sync-skill.ts",
     "skill:install:cursor": "node scripts/install-skill.mjs cursor",
