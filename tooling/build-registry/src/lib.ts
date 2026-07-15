@@ -19,7 +19,6 @@ export type ResolvedEntry = Omit<RegistryEntry, 'files'> & {
 export type RegistryIndex = {
   $schema: string;
   version: string;
-  generatedAt: string;
   items: Array<Omit<RegistryEntry, 'files'>>;
 };
 
@@ -69,15 +68,10 @@ export async function buildAll(
 }
 
 /** The directory of entries (without inlined file contents) served as index.json. */
-export function buildIndex(
-  registry: Registry,
-  resolved: ResolvedEntry[],
-  now: Date = new Date(),
-): RegistryIndex {
+export function buildIndex(registry: Registry, resolved: ResolvedEntry[]): RegistryIndex {
   return {
     $schema: 'https://arloui.com/schemas/registry-index-v1.json',
     version: registry.version,
-    generatedAt: now.toISOString(),
     items: resolved.map(({ files: _files, hash: _hash, ...meta }) => meta),
   };
 }

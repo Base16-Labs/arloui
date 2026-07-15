@@ -1,0 +1,31 @@
+{
+  "name": "input",
+  "kind": "primitive",
+  "title": "Input",
+  "description": "A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.",
+  "registryDependencies": [
+    "tokens",
+    "theme-provider",
+    "field"
+  ],
+  "files": [
+    {
+      "source": "components/input/input.tsx",
+      "target": "input/input.tsx",
+      "content": "/**\n * Arlo UI — Input\n *\n * A ready-made text input: label, helper/error text, leading/trailing icons and\n * actions, inset label, plain/filled treatment, secure entry, and disabled state.\n *\n * `Input` is a preset assembled from the composable `Field` primitives. Reach for\n * `Field` directly (see field.tsx) when you need a custom layout; reach for `Input`\n * when you want the batteries-included field.\n */\nimport { forwardRef } from 'react';\nimport { type TextInput, View, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle } from 'react-native';\nimport { useTokens } from '../../foundation/theme-provider';\nimport {\n  Field,\n  type FieldActionProps,\n  type InputAppearance,\n  type InputSize,\n  type InputState,\n} from '../field/field';\n\n/** Interactive slot for the input (clear, password toggle, copy…). Alias of `Field.Action`. */\nexport const InputAction = Field.Action;\nexport type InputActionProps = FieldActionProps;\n\nexport type InputProps = Omit<TextInputProps, 'style'> & {\n  label?: string;\n  helperText?: string;\n  errorText?: string;\n  state?: InputState;\n  /** `plain` removes the field surface, border, and horizontal inset. */\n  appearance?: InputAppearance;\n  size?: InputSize;\n  leadingIcon?: React.ReactNode;\n  trailingIcon?: React.ReactNode;\n  leadingAction?: React.ReactNode;\n  trailingAction?: React.ReactNode;\n  containerStyle?: StyleProp<ViewStyle>;\n  inputStyle?: StyleProp<TextStyle>;\n  helperStyle?: StyleProp<TextStyle>;\n  fullWidth?: boolean;\n  /** Shows a small label inside the input above the current value. */\n  insetLabel?: boolean;\n};\n\nexport const Input = forwardRef<TextInput, InputProps>(function Input(\n  {\n    label,\n    helperText,\n    errorText,\n    state,\n    appearance = 'filled',\n    size = 'md',\n    leadingIcon,\n    trailingIcon,\n    leadingAction,\n    trailingAction,\n    containerStyle,\n    inputStyle,\n    helperStyle,\n    fullWidth = true,\n    insetLabel = false,\n    editable = true,\n    ...rest\n  },\n  ref,\n) {\n  const t = useTokens();\n  const hasError = state === 'error' || Boolean(errorText);\n  const isPlain = appearance === 'plain';\n  const supportingText = errorText ?? helperText;\n\n  return (\n    <Field\n      size={size}\n      appearance={appearance}\n      error={hasError}\n      disabled={editable === false}\n      fullWidth={fullWidth}\n      style={containerStyle}\n    >\n      {label && !insetLabel ? <Field.Label>{label}</Field.Label> : null}\n\n      <Field.Control>\n        {leadingAction ? (\n          <View style={{ marginLeft: isPlain ? 0 : -t.spacing[3] }}>{leadingAction}</View>\n        ) : leadingIcon ? (\n          <Field.Icon>{leadingIcon}</Field.Icon>\n        ) : null}\n\n        <Field.Input\n          ref={ref}\n          insetLabel={insetLabel && label ? label : undefined}\n          style={inputStyle}\n          {...rest}\n        />\n\n        {trailingAction ? trailingAction : trailingIcon ? <Field.Icon>{trailingIcon}</Field.Icon> : null}\n      </Field.Control>\n\n      <Field.Helper style={helperStyle}>{supportingText}</Field.Helper>\n    </Field>\n  );\n});\n\nexport { Field } from '../field/field';\nexport type { FieldProps, FieldActionProps, InputAppearance, InputSize, InputState } from '../field/field';\n"
+    },
+    {
+      "source": "components/input/index.ts",
+      "target": "input/index.ts",
+      "content": "export {\n  Field,\n  Input,\n  InputAction,\n  type FieldActionProps,\n  type FieldProps,\n  type InputActionProps,\n  type InputAppearance,\n  type InputProps,\n  type InputSize,\n  type InputState,\n} from './input';\n"
+    }
+  ],
+  "meta": {
+    "figma": "Components/Text Input/Default",
+    "tags": [
+      "form",
+      "primitive"
+    ]
+  },
+  "hash": "d3ded82c815f39f6"
+}

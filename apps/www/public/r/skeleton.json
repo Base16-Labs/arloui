@@ -1,0 +1,32 @@
+{
+  "name": "skeleton",
+  "kind": "primitive",
+  "title": "Skeleton",
+  "description": "A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.",
+  "registryDependencies": [
+    "tokens",
+    "theme-provider"
+  ],
+  "files": [
+    {
+      "source": "components/skeleton/skeleton.tsx",
+      "target": "skeleton/skeleton.tsx",
+      "content": "import { useEffect, useRef, useState } from 'react';\nimport {\n  AccessibilityInfo,\n  Animated,\n  Easing,\n  type DimensionValue,\n  type LayoutChangeEvent,\n  type StyleProp,\n  type ViewStyle,\n} from 'react-native';\nimport { useTokens } from '../../foundation/theme-provider';\n\nexport type SkeletonShape = 'rectangle' | 'text' | 'circle';\nexport type SkeletonAnimation = 'shimmer' | 'pulse' | 'none';\n\nexport type SkeletonProps = {\n  width?: DimensionValue;\n  height?: DimensionValue;\n  shape?: SkeletonShape;\n  animation?: SkeletonAnimation;\n  borderRadius?: number;\n  color?: string;\n  highlightColor?: string;\n  style?: StyleProp<ViewStyle>;\n  testID?: string;\n};\n\nexport function Skeleton({\n  width = '100%',\n  height,\n  shape = 'rectangle',\n  animation = 'shimmer',\n  borderRadius,\n  color,\n  highlightColor,\n  style,\n  testID,\n}: SkeletonProps) {\n  const t = useTokens();\n  const progress = useRef(new Animated.Value(0)).current;\n  const [layoutWidth, setLayoutWidth] = useState(0);\n  const [reduceMotion, setReduceMotion] = useState(false);\n  const circle = shape === 'circle';\n  const resolvedWidth = circle && width === '100%' ? 40 : width;\n  const resolvedHeight = height ?? (circle ? resolvedWidth : shape === 'text' ? 12 : 16);\n  const resolvedRadius =\n    borderRadius ?? (circle ? 999 : shape === 'text' ? t.radii.full : t.radii.md);\n  const baseColor = color ?? t.colors.surfaceStrong;\n  const sheenColor =\n    highlightColor ?? (t.name === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.52)');\n\n  useEffect(() => {\n    let active = true;\n    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => active && setReduceMotion(enabled));\n    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);\n    return () => {\n      active = false;\n      subscription.remove();\n    };\n  }, []);\n\n  useEffect(() => {\n    progress.stopAnimation();\n    progress.setValue(0);\n    if (animation === 'none' || reduceMotion) return;\n\n    const cycle =\n      animation === 'pulse'\n        ? Animated.sequence([\n            Animated.timing(progress, {\n              toValue: 1,\n              duration: 600,\n              easing: Easing.inOut(Easing.ease),\n              useNativeDriver: true,\n            }),\n            Animated.timing(progress, {\n              toValue: 0,\n              duration: 600,\n              easing: Easing.inOut(Easing.ease),\n              useNativeDriver: true,\n            }),\n          ])\n        : Animated.timing(progress, {\n            toValue: 1,\n            duration: 1200,\n            easing: Easing.linear,\n            useNativeDriver: true,\n          });\n    const loop = Animated.loop(cycle);\n    loop.start();\n    return () => loop.stop();\n  }, [animation, progress, reduceMotion]);\n\n  function handleLayout(event: LayoutChangeEvent) {\n    setLayoutWidth(event.nativeEvent.layout.width);\n  }\n\n  return (\n    <Animated.View\n      testID={testID}\n      accessible={false}\n      accessibilityElementsHidden\n      importantForAccessibility=\"no-hide-descendants\"\n      onLayout={handleLayout}\n      style={[\n        {\n          width: resolvedWidth,\n          height: resolvedHeight,\n          overflow: 'hidden',\n          borderRadius: resolvedRadius,\n          backgroundColor: baseColor,\n          opacity:\n            animation === 'pulse' && !reduceMotion\n              ? progress.interpolate({ inputRange: [0, 1], outputRange: [1, 0.48] })\n              : 1,\n        },\n        style,\n      ]}\n    >\n      {animation === 'shimmer' && !reduceMotion && layoutWidth > 0 ? (\n        <Animated.View\n          pointerEvents=\"none\"\n          style={{\n            position: 'absolute',\n            top: 0,\n            bottom: 0,\n            width: Math.max(28, layoutWidth * 0.38),\n            borderRadius: resolvedRadius,\n            backgroundColor: sheenColor,\n            transform: [\n              {\n                translateX: progress.interpolate({\n                  inputRange: [0, 1],\n                  outputRange: [-layoutWidth, layoutWidth],\n                }),\n              },\n            ],\n          }}\n        />\n      ) : null}\n    </Animated.View>\n  );\n}\n"
+    },
+    {
+      "source": "components/skeleton/index.ts",
+      "target": "skeleton/index.ts",
+      "content": "export {\n  Skeleton,\n  type SkeletonAnimation,\n  type SkeletonProps,\n  type SkeletonShape,\n} from './skeleton';\n"
+    }
+  ],
+  "meta": {
+    "tags": [
+      "feedback",
+      "loading",
+      "placeholder",
+      "motion",
+      "primitive"
+    ]
+  },
+  "hash": "6553b0e14af9015b"
+}

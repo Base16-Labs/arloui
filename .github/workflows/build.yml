@@ -34,6 +34,14 @@ jobs:
           test -f apps/www/public/r/button.json
           test -f apps/www/public/r/card.json
 
+      - name: Detect registry drift
+        run: |
+          if ! git diff --quiet --exit-code -- apps/www/public/r; then
+            echo "::error::apps/www/public/r is out of sync with the registry. Run \`npm run registry:build\` from the repo root and commit the result."
+            git --no-pager diff -- apps/www/public/r
+            exit 1
+          fi
+
       # E2E drives the built CLI bundle against the generated registry — needs
       # both `build` and `registry:build` above.
       - name: CLI end-to-end
