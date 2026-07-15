@@ -14,7 +14,7 @@ import { sizing } from './sizing';
 import { spacing } from './spacing';
 
 export const raw = {
-  $schema: 'https://arloui.dev/schemas/tokens-v1.json',
+  $schema: 'https://arloui.com/schemas/tokens-v1.json',
   version: '0.3.1',
   color: {
     paletteMain,

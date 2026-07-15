@@ -52,7 +52,7 @@ export type RegistryEntry = {
 };
 
 export type Registry = {
-  $schema: 'https://arloui.dev/schemas/registry-v1.json';
+  $schema: 'https://arloui.com/schemas/registry-v1.json';
   version: string;
   items: RegistryEntry[];
 };

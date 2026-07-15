@@ -75,7 +75,7 @@ export function buildIndex(
   now: Date = new Date(),
 ): RegistryIndex {
   return {
-    $schema: 'https://arloui.dev/schemas/registry-index-v1.json',
+    $schema: 'https://arloui.com/schemas/registry-index-v1.json',
     version: registry.version,
     generatedAt: now.toISOString(),
     items: resolved.map(({ files: _files, hash: _hash, ...meta }) => meta),

@@ -70,7 +70,7 @@ beforeAll(async () => {
   await writeFile(
     join(projectDir, 'arlo.json'),
     JSON.stringify({
-      $schema: 'https://arloui.dev/schemas/arlo-config-v1.json',
+      $schema: 'https://arloui.com/schemas/arlo-config-v1.json',
       registry: baseUrl,
       aliases: {
         components: 'components/ui',
