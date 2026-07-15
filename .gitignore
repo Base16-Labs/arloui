@@ -9,6 +9,8 @@ dist
 build
 out
 .next
+.open-next
+.wrangler
 .expo
 .turbo
 *.tsbuildinfo
