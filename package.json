@@ -35,7 +35,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "clean": "turbo run clean && rm -rf node_modules",
-    "registry:build": "turbo run emit --filter=@arloui/build-registry",
+    "registry:build": "npx turbo run emit --filter=@arloui/build-registry",
     "icons:build": "turbo run build --filter=@arloui/icons",
     "skill:sync": "tsx scripts/sync-skill.ts",
     "skill:install:cursor": "node scripts/install-skill.mjs cursor",
