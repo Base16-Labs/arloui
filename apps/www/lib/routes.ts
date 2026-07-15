@@ -57,71 +57,29 @@ export type ComponentGroup = ItemGroup;
 export const componentGroups: ComponentGroup[] = [
   {
     label: 'Layout & surface',
-    items: [
-      { label: 'Stack', slug: 'stack' },
-      { label: 'Group', slug: 'group' },
-      { label: 'Card', slug: 'card' },
-      { label: 'Sheet', slug: 'sheet' },
-      { label: 'Tray', slug: 'tray' },
-      { label: 'Scrim', slug: 'scrim' },
-      { label: 'SafeArea', slug: 'safearea' },
-    ],
-  },
-  {
-    label: 'Type & content',
-    items: [
-      { label: 'Title', slug: 'title' },
-      { label: 'Body', slug: 'body' },
-      { label: 'Caption', slug: 'caption' },
-      { label: 'Stat', slug: 'stat' },
-      { label: 'Note', slug: 'note' },
-      { label: 'Eyebrow', slug: 'eyebrow' },
-    ],
+    items: [{ label: 'Sheet', slug: 'sheet' }],
   },
   {
     label: 'Controls',
     items: [
       { label: 'Button', slug: 'button' },
-      { label: 'Pill', slug: 'pill' },
-      { label: 'Chip', slug: 'chip' },
-      { label: 'Tab', slug: 'tab' },
       { label: 'Toggle', slug: 'toggle' },
       { label: 'Checkbox', slug: 'checkbox' },
       { label: 'Radio', slug: 'radio' },
-      { label: 'Stepper', slug: 'stepper' },
-      { label: 'Slider', slug: 'slider' },
       { label: 'Input', slug: 'input' },
       { label: 'TextArea', slug: 'text-area' },
       { label: 'Date Picker', slug: 'date-picker' },
-      { label: 'Select', slug: 'select' },
-      { label: 'Picker', slug: 'picker' },
-    ],
-  },
-  {
-    label: 'Lists & rows',
-    items: [
-      { label: 'List', slug: 'list' },
-      { label: 'Row', slug: 'row' },
-      { label: 'Divider', slug: 'divider' },
     ],
   },
   {
     label: 'Feedback',
-    items: [
-      { label: 'Toast', slug: 'toast' },
-      { label: 'Banner', slug: 'banner' },
-      { label: 'Spinner', slug: 'spinner' },
-      { label: 'Progress', slug: 'progress' },
-      { label: 'Empty', slug: 'empty' },
-      { label: 'Loader', slug: 'loader' },
-    ],
+    items: [{ label: 'Skeleton', slug: 'skeleton' }],
   },
   {
     label: 'Navigation',
     items: [
-      { label: 'Nav', slug: 'nav' },
-      { label: 'Header', slug: 'header' },
-      { label: 'Breadcrumb', slug: 'breadcrumb' },
+      { label: 'Tab Bar', slug: 'tab-bar' },
+      { label: 'Tabs', slug: 'tabs' },
     ],
   },
 ];

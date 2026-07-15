@@ -2,7 +2,7 @@
  * Arlo UI — Sheet (Bottom Drawer)
  *
  * A bottom-anchored surface with a grabber, drag-to-dismiss, safe-area padding,
- * and detents. Two composable axes drive the treatment:
+ * and token-based width, height, and padding controls. Two composable axes drive the material treatment:
  *
  *   - `backdrop`: 'scrim' (modal — dims and blocks the background, default) or
  *     'passthrough' (iOS-style — the background stays visible and interactive).
@@ -37,8 +37,14 @@ import { useTokens } from '../../foundation/theme-provider';
 
 export type SheetBackdrop = 'scrim' | 'passthrough';
 export type SheetSurface = 'solid' | 'glass';
+export type SheetWidth = 'default' | 'stack';
+/** `'auto'` hugs the content, `'half'` uses half the screen, and `'full'` fills the available height. */
+export type SheetHeight = 'auto' | 'half' | 'full';
+/** Outer horizontal and bottom spacing around the sheet. */
+export type SheetPadding = 'none' | 'md' | 'lg';
+/** @deprecated Use `SheetWidth` and the `width` prop. */
 export type SheetPresentation = 'edge' | 'inset' | 'stack';
-/** `'auto'` hugs the content, `'full'` fills the screen, a number 0–1 is a fraction of the screen height. */
+/** @deprecated Use `SheetHeight` and the `height` prop. */
 export type SheetDetent = 'auto' | 'full' | number;
 
 export type SheetProps = {
@@ -48,17 +54,24 @@ export type SheetProps = {
   backdrop?: SheetBackdrop;
   /** `'solid'` opaque fill or `'glass'` translucent Liquid-Glass material. */
   surface?: SheetSurface;
-  /** `'edge'` is full-bleed, `'inset'` adds side gutters, `'stack'` adds a second surface behind the sheet. */
+  /** `'default'` uses one surface; `'stack'` adds a second surface behind it. */
+  width?: SheetWidth;
+  /** Controls how much vertical space the sheet occupies. */
+  height?: SheetHeight;
+  /** Token-based outer gutter. This is independent of `width`. */
+  padding?: SheetPadding;
+  /** @deprecated Use `width` and `padding`. */
   presentation?: SheetPresentation;
+  /** @deprecated Use `height`. Fractional numbers remain supported here for compatibility. */
   detent?: SheetDetent;
   showHandle?: boolean;
-  /** Horizontal gutter for inset/stack sheets. Defaults to 16 for inset and stack, 0 for edge. */
+  /** @deprecated Use token-based `padding`. */
   horizontalInset?: number;
-  /** Outer gutter below inset/stack sheets. Defaults to the resolved horizontal gutter. */
+  /** Optional override for the outer bottom gutter. */
   bottomOffset?: number;
   /** Maximum visual width for tablet/large phones. */
   maxWidth?: number;
-  /** Surface corner radius. Defaults to 24 for edge/inset and 20 for stack. */
+  /** Surface corner radius. Defaults to 24 for default and 20 for stack. */
   cornerRadius?: number;
   handleWidth?: number;
   handleHeight?: number;
@@ -83,8 +96,11 @@ function SheetRoot({
   onClose,
   backdrop = 'scrim',
   surface = 'solid',
-  presentation = 'edge',
-  detent = 'auto',
+  width,
+  height,
+  padding,
+  presentation,
+  detent,
   showHandle = true,
   horizontalInset,
   bottomOffset,
@@ -108,18 +124,24 @@ function SheetRoot({
 
   const isGlass = surface === 'glass';
   const isScrim = backdrop === 'scrim';
-  const isInset = presentation !== 'edge';
-  const resolvedInset = horizontalInset ?? (isInset ? t.spacing[4] : 0);
+  const resolvedWidth: SheetWidth = width ?? (presentation === 'stack' ? 'stack' : 'default');
+  const resolvedHeight: SheetHeight | number = height ?? detent ?? 'auto';
+  const tokenPadding = padding === 'md' ? t.spacing[4] : padding === 'lg' ? t.spacing[6] : 0;
+  const legacyInset = presentation === 'inset' || presentation === 'stack' ? t.spacing[4] : 0;
+  const resolvedInset = horizontalInset ?? (padding == null ? legacyInset : tokenPadding);
+  const isInset = resolvedInset > 0;
   const resolvedBottomOffset = bottomOffset ?? (isInset ? resolvedInset : 0);
-  const resolvedRadius = cornerRadius ?? (presentation === 'stack' ? 20 : t.radii['2xl']);
+  const resolvedRadius = cornerRadius ?? (resolvedWidth === 'stack' ? 20 : t.radii['2xl']);
 
   const maxHeight = windowHeight - Math.max(topInset, 24) - resolvedBottomOffset - 8;
   const fixedHeight =
-    detent === 'full'
+    resolvedHeight === 'full'
       ? maxHeight
-      : typeof detent === 'number'
-        ? Math.min(maxHeight, Math.round(windowHeight * detent))
-        : undefined;
+      : resolvedHeight === 'half'
+        ? Math.min(maxHeight, Math.round(windowHeight * 0.54))
+        : typeof resolvedHeight === 'number'
+          ? Math.min(maxHeight, Math.round(windowHeight * resolvedHeight))
+          : undefined;
 
   const [mounted, setMounted] = useState(visible);
   const [measuredHeight, setMeasuredHeight] = useState(0);
@@ -265,7 +287,14 @@ function SheetRoot({
   return (
     <View
       pointerEvents="box-none"
-      style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, justifyContent: 'flex-end' }}
+      style={{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        justifyContent: 'flex-end',
+      }}
     >
       {isScrim ? (
         <Animated.View
@@ -309,7 +338,7 @@ function SheetRoot({
           style,
         ]}
       >
-        {presentation === 'stack' ? (
+        {resolvedWidth === 'stack' ? (
           <View
             pointerEvents="none"
             style={{
@@ -393,7 +422,12 @@ function SheetHandle({
 }) {
   const t = useTokens();
   return (
-    <View style={[{ alignItems: 'center', paddingTop: t.spacing[2], paddingBottom: t.spacing[1] }, style]}>
+    <View
+      style={[
+        { alignItems: 'center', paddingTop: t.spacing[2], paddingBottom: t.spacing[1] },
+        style,
+      ]}
+    >
       <View
         style={{
           width,
@@ -421,7 +455,12 @@ function SheetHeader({
   return (
     <View
       style={[
-        { paddingHorizontal: t.spacing[5], paddingTop: t.spacing[1], paddingBottom: t.spacing[3], gap: t.spacing[1] },
+        {
+          paddingHorizontal: t.spacing[5],
+          paddingTop: t.spacing[1],
+          paddingBottom: t.spacing[3],
+          gap: t.spacing[1],
+        },
         style,
       ]}
     >
@@ -448,7 +487,9 @@ function SheetHeader({
 
 function SheetBody({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const t = useTokens();
-  return <View style={[{ paddingHorizontal: t.spacing[5], gap: t.spacing[3] }, style]}>{children}</View>;
+  return (
+    <View style={[{ paddingHorizontal: t.spacing[5], gap: t.spacing[3] }, style]}>{children}</View>
+  );
 }
 
 function SheetFooter({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {

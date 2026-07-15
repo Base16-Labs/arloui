@@ -68,20 +68,21 @@ describe('Sheet', () => {
     expect(screen.queryByLabelText('Close')).toBeNull();
   });
 
-  it('supports inset and stacked presentations', () => {
+  it('supports independent width, height, and padding variants', () => {
     renderWithTheme(
-      <Sheet
-        visible
-        onClose={() => {}}
-        presentation="stack"
-        horizontalInset={16}
-        bottomOffset={16}
-        cornerRadius={20}
-        handleHeight={3}
-      >
+      <Sheet visible onClose={() => {}} width="stack" height="half" padding="lg" handleHeight={3}>
         <Text>Stacked sheet</Text>
       </Sheet>,
     );
     expect(screen.getByText('Stacked sheet')).toBeTruthy();
+  });
+
+  it('keeps the legacy presentation and detent props compatible', () => {
+    renderWithTheme(
+      <Sheet visible onClose={() => {}} presentation="inset" detent={0.5}>
+        <Text>Legacy sheet</Text>
+      </Sheet>,
+    );
+    expect(screen.getByText('Legacy sheet')).toBeTruthy();
   });
 });

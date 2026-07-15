@@ -16,10 +16,27 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Skeleton,
+  type SkeletonAnimation,
+  type SkeletonProps,
+  type SkeletonShape,
+} from './components/skeleton';
+export {
+  Tabs,
+  type TabsAppearance,
+  type TabsItemProps,
+  type TabsLayout,
+  type TabsProps,
+  type TabsTone,
+} from './components/tabs';
+export {
   Sheet,
   type SheetProps,
   type SheetBackdrop,
   type SheetSurface,
+  type SheetWidth,
+  type SheetHeight,
+  type SheetPadding,
   type SheetPresentation,
   type SheetDetent,
 } from './components/sheet';
@@ -39,7 +56,22 @@ export { Checkbox, type CheckboxProps, type CheckboxSize } from './components/ch
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
 export { Toggle, type ToggleProps, type ToggleSize } from './components/toggle';
 export {
+  TabBar,
+  useTabBarScroll,
+  type TabBarIconProps,
+  type TabBarItemProps,
+  type TabBarProps,
+  type TabBarSurface,
+  type TabBarWidth,
+  type UseTabBarScrollOptions,
+} from './components/tab-bar';
+export {
   DatePicker,
+  DateWheelPicker,
+  type DateWheelPickerHourCycle,
+  type DateWheelPickerMinuteInterval,
+  type DateWheelPickerMode,
+  type DateWheelPickerProps,
   type DatePickerProps,
   type DatePickerWeekStartsOn,
 } from './components/date-picker';

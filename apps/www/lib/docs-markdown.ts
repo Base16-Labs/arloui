@@ -3,7 +3,7 @@
  *
  * Rather than maintaining a separate `.md` file per page (which drifts from the
  * rendered page), every page's markdown is generated here from the same
- * structured data the page renders from. One format, one place — 
+ * structured data the page renders from. One format, one place —
  * single content source feeding both the page and its markdown.
  *
  * - Data-driven pages (components, primitives) pass their doc object to
@@ -11,14 +11,14 @@
  * - Prose pages (foundation essays) register authored markdown in `ESSAYS`.
  */
 
-import { primitiveDocs, type PrimitiveDoc } from "./primitive-docs";
+import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
 
-const SITE = "https://arloui.dev";
+const SITE = 'https://arloui.dev';
 
 export type DocLink = { label: string; href: string };
 
 export type DocMeta = {
-  kind: "Component" | "Foundation" | "Primitive";
+  kind: 'Component' | 'Foundation' | 'Primitive';
   title: string;
   slug: string;
   lede: string;
@@ -36,7 +36,7 @@ export type DocMeta = {
 
 function cleanLabel(label: string): string {
   // Strip trailing affordances like " ↗" used in on-page link labels.
-  return label.replace(/\s*↗\s*$/, "").trim();
+  return label.replace(/\s*↗\s*$/, '').trim();
 }
 
 /** Serialize a page's structured data into a single markdown document. */
@@ -44,7 +44,7 @@ export function pageMarkdown(meta: DocMeta): string {
   const out: string[] = [];
 
   out.push(`# ${meta.title}`);
-  out.push("");
+  out.push('');
   out.push(`> ${meta.lede}`);
 
   const facts: string[] = [];
@@ -52,58 +52,63 @@ export function pageMarkdown(meta: DocMeta): string {
   if (meta.category) facts.push(`**Category:** ${meta.category}`);
   if (meta.source) facts.push(`**Source:** ${meta.source}`);
   if (facts.length) {
-    out.push("");
-    out.push(facts.join("  \n"));
+    out.push('');
+    out.push(facts.join('  \n'));
   }
 
   if (meta.sections?.length) {
-    out.push("");
-    out.push("## On this page");
-    out.push("");
+    out.push('');
+    out.push('## On this page');
+    out.push('');
     for (const s of meta.sections) out.push(`- ${s.label}`);
   }
 
   if (meta.states?.length) {
-    out.push("");
-    out.push("## States");
-    out.push("");
-    out.push(meta.states.map((s) => `\`${s}\``).join(" · "));
+    out.push('');
+    out.push('## States');
+    out.push('');
+    out.push(meta.states.map((s) => `\`${s}\``).join(' · '));
   }
 
   if (meta.tokens?.length) {
-    out.push("");
-    out.push("## Tokens used");
-    out.push("");
+    out.push('');
+    out.push('## Tokens used');
+    out.push('');
     for (const t of meta.tokens) out.push(`- \`${t}\``);
   }
 
   if (meta.body) {
-    out.push("");
+    out.push('');
     out.push(meta.body.trim());
   }
 
   const links: DocLink[] = [];
-  if (meta.figma && meta.figma !== "#") links.push({ label: "Figma", href: meta.figma });
-  if (meta.source) links.push({ label: "Source", href: meta.source });
+  if (meta.figma && meta.figma !== '#') links.push({ label: 'Figma', href: meta.figma });
+  if (meta.source) links.push({ label: 'Source', href: meta.source });
   for (const l of meta.links ?? []) {
     const href = cleanLabel(l.href);
-    if (href && href !== "#" && !href.includes("localhost") && !links.some((x) => x.href === href)) {
+    if (
+      href &&
+      href !== '#' &&
+      !href.includes('localhost') &&
+      !links.some((x) => x.href === href)
+    ) {
       links.push({ label: cleanLabel(l.label), href });
     }
   }
   if (links.length) {
-    out.push("");
-    out.push("## Links");
-    out.push("");
+    out.push('');
+    out.push('## Links');
+    out.push('');
     for (const l of links) out.push(`- [${l.label}](${l.href})`);
   }
 
-  out.push("");
+  out.push('');
   out.push(`---`);
   out.push(`Source: ${SITE}`);
-  out.push("");
+  out.push('');
 
-  return out.join("\n");
+  return out.join('\n');
 }
 
 /**
@@ -125,7 +130,7 @@ type PageData = {
 
 export function docDataToMarkdown(
   data: PageData,
-  kind: DocMeta["kind"] = "Component",
+  kind: DocMeta['kind'] = 'Component',
   body?: string,
 ): string {
   return pageMarkdown({
@@ -198,404 +203,493 @@ Related: Motion, Tokens, Sheet
  * ------------------------------------------------------------------ */
 
 export const sheetData = {
-  slug: "sheet",
-  category: "Layout & surface",
-  title: "Sheet",
-  lede:
-    "A bottom drawer with a slim grabber, drag-to-dismiss, detents, and full-bleed, inset, or stacked presentations with balanced side and bottom gutters. Backdrop and surface stay composable, from scrim modal to pass-through Liquid Glass.",
-  figma: "#",
-  source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet",
-  states: [
-    "open",
-    "dragging",
-    "dismissing",
-    "scrim",
-    "passthrough",
-    "long content",
-  ],
+  slug: 'sheet',
+  category: 'Layout & surface',
+  title: 'Sheet',
+  lede: 'A bottom drawer with a slim grabber, drag-to-dismiss, default or stacked width, three useful heights, and token-based outer padding. Backdrop and surface stay composable, from scrim modal to pass-through Liquid Glass.',
+  figma: '#',
+  source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet',
+  states: ['open', 'dragging', 'dismissing', 'scrim', 'passthrough', 'long content'],
   tokens: [
-    "colors.surfaceElevated",
-    "colors.surfaceOverlay",
-    "materials.glassMedium",
-    "spacing.4",
-    "spacing.6",
-    "radii.xl",
-    "radii.2xl",
-    "shadows.xl",
-    "motion.easing.easeSheet",
-    "motion.duration.base",
-    "motion.spring.gentle",
+    'colors.surfaceElevated',
+    'colors.surfaceOverlay',
+    'materials.glassMedium',
+    'spacing.4',
+    'spacing.6',
+    'radii.xl',
+    'radii.2xl',
+    'shadows.xl',
+    'motion.easing.easeSheet',
+    'motion.duration.base',
+    'motion.spring.gentle',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'states', label: 'States' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
-    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet" },
-    { label: "Open playground ↗", href: "http://localhost:8081/sheet" },
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/sheet' },
+  ],
+};
+
+export const tabBarData = {
+  slug: 'tab-bar',
+  category: 'Navigation',
+  title: 'Tab Bar',
+  lede: "Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, transparent or filled surfaces, directional selection motion, and scroll-aware visibility.",
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tab-bar',
+  states: ['default', 'selected', 'pressed', 'disabled', 'hidden on scroll'],
+  tokens: [
+    'colors.navBackground',
+    'colors.navBorder',
+    'colors.navActive',
+    'colors.navInactive',
+    'colors.navIndicator',
+    'motion.duration.fast',
+    'motion.spring.snappy',
+    'sizing.touchTarget.minimum',
+    'radii.full',
+    'shadows.md',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tab-bar',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/tab-bar' },
+  ],
+};
+
+export const skeletonData = {
+  slug: 'skeleton',
+  category: 'Feedback',
+  title: 'Skeleton',
+  lede: 'A loading placeholder that preserves the geometry of incoming content, with composable text, rectangle, and circle shapes plus restrained shimmer or pulse motion.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/skeleton',
+  states: ['shimmer', 'pulse', 'static', 'reduced motion'],
+  tokens: [
+    'colors.surfaceStrong',
+    'radii.md',
+    'radii.full',
+    'motion.duration.slow',
+    'accessibility.reduceMotion',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/skeleton',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/skeleton' },
+  ],
+};
+
+export const tabsData = {
+  slug: 'tabs',
+  category: 'Navigation',
+  title: 'Tabs',
+  lede: 'Secondary navigation for categorising content or switching views within the current screen, with plain, underlined, and separate filled presentations.',
+  figma: '#',
+  source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tabs',
+  states: ['default', 'selected', 'pressed', 'disabled', 'overflow'],
+  tokens: [
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.accent',
+    'colors.surfaceStrong',
+    'radii.full',
+    'motion.duration.fast',
+    'motion.pressed',
+    'sizing.touchTarget.minimum',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tabs',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/tabs' },
   ],
 };
 
 export const buttonData = {
-  slug: "button",
-  category: "Controls",
-  title: "Button",
-  lede:
-    "The primary commitment surface on a mobile screen — strong defaults across three tones and four appearances, with press feedback that earns the tap.",
-  figma:
-    "https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=266-4982",
-  source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/button",
+  slug: 'button',
+  category: 'Controls',
+  title: 'Button',
+  lede: 'The primary commitment surface on a mobile screen — strong defaults across three tones and four appearances, with press feedback that earns the tap.',
+  figma: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=266-4982',
+  source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/button',
   states: [
-    "default",
-    "pressed",
-    "loading",
-    "disabled",
-    "focus",
-    "icon-only",
-    "reduced motion",
-    "RTL",
-    "dynamic type",
+    'default',
+    'pressed',
+    'loading',
+    'disabled',
+    'focus',
+    'icon-only',
+    'reduced motion',
+    'RTL',
+    'dynamic type',
   ],
   tokens: [
-    "colors.interactivePrimary",
-    "colors.feedbackError",
-    "colors.feedbackErrorBg",
-    "colors.feedbackInfoBg",
-    "colors.textInteractivePrimary",
-    "colors.textInteractiveError",
-    "colors.textInteractiveTertiary",
-    "colors.textPrimary",
-    "colors.textSecondary",
-    "colors.textInverse",
-    "colors.textTertiary",
-    "colors.surfaceInput",
-    "colors.interactiveDisabled",
-    "colors.interactiveTertiaryPressed",
-    "colors.touchFeedbackMain",
-    "colors.borderPrimary",
-    "colors.borderError",
-    "colors.borderSecondary",
-    "sizing.buttonHeight.sm",
-    "sizing.buttonHeight.md",
-    "sizing.buttonHeight.lg",
-    "sizing.buttonHeight.xl",
-    "sizing.icon.xs",
-    "sizing.icon.sm",
-    "sizing.icon.md",
-    "sizing.touchTarget.minimum",
-    "radii.full",
-    "focusRing.main",
-    "focusRing.error",
-    "spacing.3",
-    "spacing.4",
-    "spacing.5",
-    "spacing.6",
-    "typography.body",
-    "typography.bodySm",
-    "typography.title3",
+    'colors.interactivePrimary',
+    'colors.feedbackError',
+    'colors.feedbackErrorBg',
+    'colors.feedbackInfoBg',
+    'colors.textInteractivePrimary',
+    'colors.textInteractiveError',
+    'colors.textInteractiveTertiary',
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.textInverse',
+    'colors.textTertiary',
+    'colors.surfaceInput',
+    'colors.interactiveDisabled',
+    'colors.interactiveTertiaryPressed',
+    'colors.touchFeedbackMain',
+    'colors.borderPrimary',
+    'colors.borderError',
+    'colors.borderSecondary',
+    'sizing.buttonHeight.sm',
+    'sizing.buttonHeight.md',
+    'sizing.buttonHeight.lg',
+    'sizing.buttonHeight.xl',
+    'sizing.icon.xs',
+    'sizing.icon.sm',
+    'sizing.icon.md',
+    'sizing.touchTarget.minimum',
+    'radii.full',
+    'focusRing.main',
+    'focusRing.error',
+    'spacing.3',
+    'spacing.4',
+    'spacing.5',
+    'spacing.6',
+    'typography.body',
+    'typography.bodySm',
+    'typography.title3',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "archetypes", label: "Archetypes" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "motion", label: "Motion" },
-    { id: "social-auth", label: "Social auth" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'archetypes', label: 'Archetypes' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'states', label: 'States' },
+    { id: 'motion', label: 'Motion' },
+    { id: 'social-auth', label: 'Social auth' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
-  actions: [
-    { label: "Edit on GitHub ↗", href: "https://github.com/Base16-Labs/arloui" },
-  ],
+  actions: [{ label: 'Edit on GitHub ↗', href: 'https://github.com/Base16-Labs/arloui' }],
 } as const;
 
 export const datePickerData = {
-  slug: "date-picker",
-  category: "Controls",
-  title: "Date Picker",
-  lede:
-    "A compact, accessible calendar for choosing one date. It supports month navigation, date constraints, configurable week starts, and outside-day visibility without adding a date library to the consumer bundle.",
-  figma: "#",
+  slug: 'date-picker',
+  category: 'Controls',
+  title: 'Date Picker',
+  lede: 'Calendar and wheel surfaces for choosing dates and times. Use the calendar for visual comparison, or the snapping wheel for compact date, time, date-time, and month-year selection.',
+  figma: '#',
   source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/date-picker",
-  states: ["default", "selected", "today", "disabled", "weekends disabled"],
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/date-picker',
+  states: ['default', 'selected', 'today', 'disabled', 'weekends disabled'],
   tokens: [
-    "colors.surfaceElevated",
-    "colors.interactivePrimary",
-    "colors.interactiveSecondaryPressed",
-    "colors.textPrimary",
-    "colors.textTertiary",
-    "colors.borderFocus",
-    "colors.borderSecondary",
-    "radii.xl",
-    "sizing.touchTarget.minimum",
-    "typography.bodyMedium",
+    'colors.surfaceElevated',
+    'colors.surfaceInput',
+    'colors.interactivePrimary',
+    'colors.interactiveSecondaryPressed',
+    'colors.textPrimary',
+    'colors.textTertiary',
+    'colors.borderFocus',
+    'colors.borderSecondary',
+    'radii.xl',
+    'sizing.touchTarget.minimum',
+    'typography.bodyMedium',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
     {
-      label: "View registry source ↗",
-      href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/date-picker",
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/date-picker',
     },
-    { label: "Open playground ↗", href: "http://localhost:8081/date-picker" },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/date-picker' },
   ],
 } as const;
 
 export const inputData = {
-  slug: "input",
-  category: "Controls",
-  title: "Input",
-  lede:
-    "A token-driven text input for forms, search, passwords, and compact no-background fields. Use filled inputs when the field needs a clear touch surface; use plain inputs when the surrounding layout already provides structure.",
-  figma: "#",
-  source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input",
+  slug: 'input',
+  category: 'Controls',
+  title: 'Input',
+  lede: 'A token-driven text input for forms, search, passwords, and compact no-background fields. Use filled inputs when the field needs a clear touch surface; use plain inputs when the surrounding layout already provides structure.',
+  figma: '#',
+  source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input',
   states: [
-    "empty",
-    "filled",
-    "focused",
-    "helper",
-    "error",
-    "disabled",
-    "password",
-    "search",
-    "leading icon",
-    "trailing action",
-    "dark mode",
+    'empty',
+    'filled',
+    'focused',
+    'helper',
+    'error',
+    'disabled',
+    'password',
+    'search',
+    'leading icon',
+    'trailing action',
+    'dark mode',
   ],
   tokens: [
-    "surfaceInput",
-    "textPrimary",
-    "textTertiary",
-    "textInteractiveError",
-    "borderFocus",
-    "borderError",
-    "sizing.icon",
-    "radii.xl",
-    "typography.body",
-    "typography.bodySm",
+    'surfaceInput',
+    'textPrimary',
+    'textTertiary',
+    'textInteractiveError',
+    'borderFocus',
+    'borderError',
+    'sizing.icon',
+    'radii.xl',
+    'typography.body',
+    'typography.bodySm',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'states', label: 'States' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
-    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input" },
-    { label: "Open playground ↗", href: "http://localhost:8081/input" },
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/input' },
   ],
 } as const;
 
 export const toggleData = {
-  slug: "toggle",
-  category: "Controls",
-  title: "Toggle",
-  lede:
-    "An animated on/off switch for binary settings — smooth thumb slide with track color transition, two sizes, and a disabled state.",
-  figma: "#",
-  source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toggle",
-  states: [
-    "off",
-    "on",
-    "disabled off",
-    "disabled on",
-    "dark mode",
-  ],
+  slug: 'toggle',
+  category: 'Controls',
+  title: 'Toggle',
+  lede: 'An animated on/off switch for binary settings — smooth thumb slide with track color transition, two sizes, and a disabled state.',
+  figma: '#',
+  source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toggle',
+  states: ['off', 'on', 'disabled off', 'disabled on', 'dark mode'],
   tokens: [
-    "colors.interactivePrimary",
-    "colors.surfaceInput",
-    "colors.interactiveDisabled",
-    "colors.textTertiary",
-    "colors.borderPrimary",
-    "colors.borderSecondary",
-    "sizing.touchTarget.minimum",
-    "motion.duration.fast",
-    "motion.easing.easeOut",
+    'colors.interactivePrimary',
+    'colors.surfaceInput',
+    'colors.interactiveDisabled',
+    'colors.textTertiary',
+    'colors.borderPrimary',
+    'colors.borderSecondary',
+    'sizing.touchTarget.minimum',
+    'motion.duration.fast',
+    'motion.easing.easeOut',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'states', label: 'States' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
-    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toggle" },
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toggle',
+    },
   ],
 } as const;
 
 export const checkboxData = {
-  slug: "checkbox",
-  category: "Controls",
-  title: "Checkbox",
-  lede:
-    "An animated check box for multi-select forms — fill transition with an SVG check icon, three sizes, and a disabled state.",
-  figma: "#",
+  slug: 'checkbox',
+  category: 'Controls',
+  title: 'Checkbox',
+  lede: 'An animated check box for multi-select forms — fill transition with an SVG check icon, three sizes, and a disabled state.',
+  figma: '#',
   source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/checkbox",
-  states: [
-    "unchecked",
-    "checked",
-    "disabled unchecked",
-    "disabled checked",
-    "dark mode",
-  ],
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/checkbox',
+  states: ['unchecked', 'checked', 'disabled unchecked', 'disabled checked', 'dark mode'],
   tokens: [
-    "colors.interactivePrimary",
-    "colors.interactiveDisabled",
-    "colors.textInteractivePrimary",
-    "colors.textTertiary",
-    "colors.borderPrimary",
-    "colors.borderSecondary",
-    "radii.sm",
-    "radii.md",
-    "sizing.touchTarget.minimum",
-    "motion.duration.instant",
-    "motion.easing.easeOut",
+    'colors.interactivePrimary',
+    'colors.interactiveDisabled',
+    'colors.textInteractivePrimary',
+    'colors.textTertiary',
+    'colors.borderPrimary',
+    'colors.borderSecondary',
+    'radii.sm',
+    'radii.md',
+    'sizing.touchTarget.minimum',
+    'motion.duration.instant',
+    'motion.easing.easeOut',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'states', label: 'States' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
-    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/checkbox" },
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/checkbox',
+    },
   ],
 } as const;
 
 export const radioData = {
-  slug: "radio",
-  category: "Controls",
-  title: "Radio",
-  lede:
-    "An animated radio button for single-select groups — two appearances (outlined ring, filled dot), three sizes, and a disabled state.",
-  figma: "#",
-  source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/radio",
-  states: [
-    "unselected",
-    "selected",
-    "disabled unselected",
-    "disabled selected",
-    "dark mode",
-  ],
+  slug: 'radio',
+  category: 'Controls',
+  title: 'Radio',
+  lede: 'An animated radio button for single-select groups — two appearances (outlined ring, filled dot), three sizes, and a disabled state.',
+  figma: '#',
+  source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/radio',
+  states: ['unselected', 'selected', 'disabled unselected', 'disabled selected', 'dark mode'],
   tokens: [
-    "colors.interactivePrimary",
-    "colors.textTertiary",
-    "colors.textSecondary",
-    "colors.surfaceBackground",
-    "colors.borderPrimary",
-    "colors.borderSecondary",
-    "sizing.touchTarget.minimum",
-    "motion.duration.instant",
-    "motion.easing.easeOut",
+    'colors.interactivePrimary',
+    'colors.textTertiary',
+    'colors.textSecondary',
+    'colors.surfaceBackground',
+    'colors.borderPrimary',
+    'colors.borderSecondary',
+    'sizing.touchTarget.minimum',
+    'motion.duration.instant',
+    'motion.easing.easeOut',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'states', label: 'States' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
-    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/radio" },
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/radio',
+    },
   ],
 } as const;
 
 export const textAreaData = {
-  slug: "text-area",
-  category: "Controls",
-  title: "TextArea",
-  lede:
-    "A multiline field for messages, notes, bios, and support forms. It shares Input's filled and no-background language while keeping longer text top-aligned and easy to scan.",
-  figma:
-    "https://www.figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=875-2658&m=dev",
+  slug: 'text-area',
+  category: 'Controls',
+  title: 'TextArea',
+  lede: "A multiline field for messages, notes, bios, and support forms. It shares Input's filled and no-background language while keeping longer text top-aligned and easy to scan.",
+  figma: 'https://www.figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=875-2658&m=dev',
   source:
-    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area",
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area',
   states: [
-    "empty",
-    "filled",
-    "focused",
-    "helper",
-    "error",
-    "disabled",
-    "leading icon",
-    "trailing icon",
-    "character count",
-    "long content",
-    "dark mode",
+    'empty',
+    'filled',
+    'focused',
+    'helper',
+    'error',
+    'disabled',
+    'leading icon',
+    'trailing icon',
+    'character count',
+    'long content',
+    'dark mode',
   ],
   tokens: [
-    "surfaceInput",
-    "textPrimary",
-    "textSecondary",
-    "textTertiary",
-    "textInteractiveError",
-    "borderError",
-    "sizing.icon",
-    "radii.md",
-    "spacing.2",
-    "spacing.3",
-    "typography.body",
-    "typography.bodySm",
+    'surfaceInput',
+    'textPrimary',
+    'textSecondary',
+    'textTertiary',
+    'textInteractiveError',
+    'borderError',
+    'sizing.icon',
+    'radii.md',
+    'spacing.2',
+    'spacing.3',
+    'typography.body',
+    'typography.bodySm',
   ],
   headings: [
-    { id: "anatomy", label: "Anatomy" },
-    { id: "when-to-use", label: "When to use" },
-    { id: "variants", label: "Variants" },
-    { id: "states", label: "States" },
-    { id: "code", label: "Code" },
-    { id: "tokens", label: "Tokens" },
-    { id: "accessibility", label: "Accessibility" },
-    { id: "do-dont", label: "Do · Don't" },
-    { id: "related", label: "Related" },
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'states', label: 'States' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
-    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area" },
-    { label: "Open playground ↗", href: "http://localhost:8081/textarea" },
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/textarea' },
   ],
 } as const;
 
@@ -606,42 +700,45 @@ export const textAreaData = {
 
 /** Serialize a primitive (foundation) doc into markdown. */
 function primitiveMarkdown(doc: PrimitiveDoc): string {
-  const out: string[] = [`# ${doc.title}`, "", `> ${doc.lede}`, "", "**Type:** Primitive"];
+  const out: string[] = [`# ${doc.title}`, '', `> ${doc.lede}`, '', '**Type:** Primitive'];
 
   if (doc.intro?.length) {
-    out.push("", "## Overview", "");
+    out.push('', '## Overview', '');
     for (const i of doc.intro) out.push(`- ${i}`);
   }
   if (doc.rules?.length) {
-    out.push("", "## Rules", "");
+    out.push('', '## Rules', '');
     for (const r of doc.rules) out.push(`- ${r}`);
   }
   if (doc.specs?.length) {
-    out.push("", "## Specs", "");
+    out.push('', '## Specs', '');
     for (const s of doc.specs) {
-      out.push(`- \`${s.name}\` — ${s.value}${s.note ? ` · ${s.note}` : ""}`);
+      out.push(`- \`${s.name}\` — ${s.value}${s.note ? ` · ${s.note}` : ''}`);
     }
   }
   if (doc.snippet) {
-    out.push("", "## Code", "", "```ts", doc.snippet.trim(), "```");
+    out.push('', '## Code', '', '```ts', doc.snippet.trim(), '```');
   }
   if (doc.related?.length) {
-    out.push("", "## Related", "", doc.related.join(" · "));
+    out.push('', '## Related', '', doc.related.join(' · '));
   }
-  out.push("", "---", `Source: ${SITE}`, "");
-  return out.join("\n");
+  out.push('', '---', `Source: ${SITE}`, '');
+  return out.join('\n');
 }
 
 const PAGE_MARKDOWN: Record<string, string> = {
-  "/docs/foundations/fluidity": ESSAYS.fluidity,
-  "/docs/components/sheet": docDataToMarkdown(sheetData),
-  "/docs/components/date-picker": docDataToMarkdown(datePickerData),
-  "/docs/components/button": docDataToMarkdown(buttonData),
-  "/docs/components/input": docDataToMarkdown(inputData),
-  "/docs/components/toggle": docDataToMarkdown(toggleData),
-  "/docs/components/checkbox": docDataToMarkdown(checkboxData),
-  "/docs/components/radio": docDataToMarkdown(radioData),
-  "/docs/components/text-area": docDataToMarkdown(textAreaData),
+  '/docs/foundations/fluidity': ESSAYS.fluidity,
+  '/docs/components/sheet': docDataToMarkdown(sheetData),
+  '/docs/components/date-picker': docDataToMarkdown(datePickerData),
+  '/docs/components/tab-bar': docDataToMarkdown(tabBarData),
+  '/docs/components/skeleton': docDataToMarkdown(skeletonData),
+  '/docs/components/tabs': docDataToMarkdown(tabsData),
+  '/docs/components/button': docDataToMarkdown(buttonData),
+  '/docs/components/input': docDataToMarkdown(inputData),
+  '/docs/components/toggle': docDataToMarkdown(toggleData),
+  '/docs/components/checkbox': docDataToMarkdown(checkboxData),
+  '/docs/components/radio': docDataToMarkdown(radioData),
+  '/docs/components/text-area': docDataToMarkdown(textAreaData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [
@@ -653,6 +750,6 @@ const PAGE_MARKDOWN: Record<string, string> = {
 
 /** Resolve the markdown for a docs pathname, or null if the page has none yet. */
 export function markdownForPath(pathname: string): string | null {
-  const key = pathname.replace(/\/+$/, "");
+  const key = pathname.replace(/\/+$/, '');
   return PAGE_MARKDOWN[key] ?? null;
 }
