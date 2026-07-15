@@ -31,6 +31,26 @@ describe('loadConfig', () => {
     expect(config).toEqual(DEFAULT_CONFIG);
   });
 
+  it('migrates legacy arloui.dev URLs and persists the updated config', async () => {
+    await writeFile(
+      join(dir, CONFIG_FILE),
+      JSON.stringify({
+        ...DEFAULT_CONFIG,
+        $schema: 'https://arloui.dev/schemas/arlo-config-v1.json',
+        registry: 'https://arloui.dev/r',
+      }),
+    );
+
+    expect(await loadConfig(dir)).toEqual(DEFAULT_CONFIG);
+    expect(JSON.parse(await readFile(join(dir, CONFIG_FILE), 'utf8'))).toEqual(DEFAULT_CONFIG);
+  });
+
+  it('does not replace a custom registry domain', async () => {
+    const custom = { ...DEFAULT_CONFIG, registry: 'https://example.com/arloui.dev/r' };
+    await writeFile(join(dir, CONFIG_FILE), JSON.stringify(custom));
+    expect(await loadConfig(dir)).toEqual(custom);
+  });
+
   it('throws a clear error on malformed JSON', async () => {
     await writeFile(join(dir, CONFIG_FILE), '{ not json');
     await expect(loadConfig(dir)).rejects.toThrow(/not valid JSON/);

@@ -275,7 +275,7 @@ export const COMPONENTS: RegistryEntry[] = [
 ];
 
 export const REGISTRY: Registry = {
-  $schema: 'https://arloui.dev/schemas/registry-v1.json',
+  $schema: 'https://arloui.com/schemas/registry-v1.json',
   version: '0.1.0',
   items: [...FOUNDATION, ...COMPONENTS],
 };

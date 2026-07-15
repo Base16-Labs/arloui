@@ -78,7 +78,7 @@ describe('buildEntry', () => {
 describe('buildIndex', () => {
   it('strips files and hash, keeps metadata, and stamps generatedAt', async () => {
     const registry: Registry = {
-      $schema: 'https://arloui.dev/schemas/registry-v1.json',
+      $schema: 'https://arloui.com/schemas/registry-v1.json',
       version: '9.9.9',
       items: [{ name: 'tokens', kind: 'foundation', title: 'Tokens', description: 'd', files: [] }],
     };
@@ -108,7 +108,7 @@ describe('validateManifest', () => {
 
   it('returns no errors for a consistent manifest', () => {
     const registry: Registry = {
-      $schema: 'https://arloui.dev/schemas/registry-v1.json',
+      $schema: 'https://arloui.com/schemas/registry-v1.json',
       version: '1',
       items: [
         base({ name: 'tokens', kind: 'foundation' }),
@@ -120,7 +120,7 @@ describe('validateManifest', () => {
 
   it('flags duplicate entry names', () => {
     const registry: Registry = {
-      $schema: 'https://arloui.dev/schemas/registry-v1.json',
+      $schema: 'https://arloui.com/schemas/registry-v1.json',
       version: '1',
       items: [base({ name: 'dup' }), base({ name: 'dup' })],
     };
@@ -129,7 +129,7 @@ describe('validateManifest', () => {
 
   it('flags duplicate file targets within an entry', () => {
     const registry: Registry = {
-      $schema: 'https://arloui.dev/schemas/registry-v1.json',
+      $schema: 'https://arloui.com/schemas/registry-v1.json',
       version: '1',
       items: [
         base({
@@ -146,7 +146,7 @@ describe('validateManifest', () => {
 
   it('flags an entry with no files', () => {
     const registry: Registry = {
-      $schema: 'https://arloui.dev/schemas/registry-v1.json',
+      $schema: 'https://arloui.com/schemas/registry-v1.json',
       version: '1',
       items: [base({ name: 'empty', files: [] })],
     };
@@ -155,7 +155,7 @@ describe('validateManifest', () => {
 
   it('flags an unknown registryDependency', () => {
     const registry: Registry = {
-      $schema: 'https://arloui.dev/schemas/registry-v1.json',
+      $schema: 'https://arloui.com/schemas/registry-v1.json',
       version: '1',
       items: [base({ name: 'button', registryDependencies: ['ghost'] })],
     };

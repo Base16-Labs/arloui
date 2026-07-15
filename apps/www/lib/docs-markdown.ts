@@ -13,7 +13,7 @@
 
 import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
 
-const SITE = 'https://arloui.dev';
+const SITE = 'https://arloui.com';
 
 export type DocLink = { label: string; href: string };
 

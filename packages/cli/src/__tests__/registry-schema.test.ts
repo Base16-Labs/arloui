@@ -15,7 +15,7 @@ const validEntry = {
 };
 
 const validIndex = {
-  $schema: 'https://arloui.dev/schemas/registry-index-v1.json',
+  $schema: 'https://arloui.com/schemas/registry-index-v1.json',
   version: '0.1.0',
   generatedAt: '2026-01-01T00:00:00.000Z',
   items: [

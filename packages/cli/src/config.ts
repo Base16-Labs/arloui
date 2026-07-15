@@ -4,6 +4,8 @@ import { resolve } from 'node:path';
 import { z } from 'zod';
 
 export const CONFIG_FILE = 'arlo.json';
+const LEGACY_SITE = 'https://arloui.dev';
+const SITE = 'https://arloui.com';
 
 const aliasesSchema = z
   .object({
@@ -29,8 +31,8 @@ export const arloConfigSchema = z
 export type ArloConfig = z.infer<typeof arloConfigSchema>;
 
 export const DEFAULT_CONFIG: ArloConfig = {
-  $schema: 'https://arloui.dev/schemas/arlo-config-v1.json',
-  registry: 'https://arloui.dev/r',
+  $schema: 'https://arloui.com/schemas/arlo-config-v1.json',
+  registry: 'https://arloui.com/r',
   aliases: {
     components: 'components/ui',
     tokens: 'lib/arloui',
@@ -58,12 +60,27 @@ export async function loadConfig(cwd: string): Promise<ArloConfig | null> {
       .join('\n');
     throw new Error(`${CONFIG_FILE} is invalid:\n${issues}`);
   }
-  return result.data;
+  const config = migrateLegacyDomain(result.data);
+  if (config !== result.data) await saveConfig(cwd, config);
+  return config;
 }
 
 export async function saveConfig(cwd: string, config: ArloConfig): Promise<void> {
   const path = resolve(cwd, CONFIG_FILE);
   await writeFile(path, JSON.stringify(config, null, 2) + '\n');
+}
+
+function migrateLegacyDomain(config: ArloConfig): ArloConfig {
+  const registry = replaceLegacySite(config.registry);
+  const $schema = replaceLegacySite(config.$schema);
+  if (registry === config.registry && $schema === config.$schema) return config;
+  return { ...config, $schema, registry };
+}
+
+function replaceLegacySite(value: string): string {
+  return value === LEGACY_SITE || value.startsWith(`${LEGACY_SITE}/`)
+    ? SITE + value.slice(LEGACY_SITE.length)
+    : value;
 }
 
 /** Map a registry file's `type` to the configured alias root it belongs under. */

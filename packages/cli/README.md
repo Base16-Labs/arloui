@@ -11,7 +11,7 @@ copy its source into your app with the CLI, and customize it like any other loca
 - Accessible states, touch targets, motion, and native interaction patterns
 - A registry workflow inspired by shadcn/ui
 
-[Documentation](https://arloui.dev) | [Browse components](https://arloui.dev/docs/components)
+[Documentation](https://arloui.com) | [Browse components](https://arloui.com/docs/components)
 
 ## Requirements
 
@@ -109,8 +109,8 @@ The generated `arlo.json` controls the registry and destination folders:
 
 ```json
 {
-  "$schema": "https://arloui.dev/schemas/arlo-config-v1.json",
-  "registry": "https://arloui.dev/r",
+  "$schema": "https://arloui.com/schemas/arlo-config-v1.json",
+  "registry": "https://arloui.com/r",
   "aliases": {
     "components": "components/ui",
     "tokens": "lib/arloui",
