@@ -9,7 +9,7 @@
     "packages/*",
     "tooling/*"
   ],
-  "packageManager": "npm@10.9.2",
+  "packageManager": "npm@11.5.1",
   "overrides": {
     "react": "19.1.0",
     "react-dom": "19.1.0",
