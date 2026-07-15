@@ -76,7 +76,7 @@ describe('buildEntry', () => {
 });
 
 describe('buildIndex', () => {
-  it('strips files and hash, keeps metadata, and stamps generatedAt', async () => {
+  it('strips files and hash, keeps metadata deterministically', async () => {
     const registry: Registry = {
       $schema: 'https://arloui.com/schemas/registry-v1.json',
       version: '9.9.9',
@@ -84,11 +84,10 @@ describe('buildIndex', () => {
     };
     const read = vi.fn(async () => 'content');
     const resolved = await buildAll('/src', registry, read);
-    const now = new Date('2026-02-03T04:05:06.000Z');
-    const index = buildIndex(registry, resolved, now);
+    const index = buildIndex(registry, resolved);
 
     expect(index.version).toBe('9.9.9');
-    expect(index.generatedAt).toBe('2026-02-03T04:05:06.000Z');
+    expect(index).not.toHaveProperty('generatedAt');
     expect(index.items).toHaveLength(1);
     expect(index.items[0]).not.toHaveProperty('files');
     expect(index.items[0]).not.toHaveProperty('hash');

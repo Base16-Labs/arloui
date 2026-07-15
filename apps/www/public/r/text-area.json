@@ -1,0 +1,32 @@
+{
+  "name": "text-area",
+  "kind": "primitive",
+  "title": "TextArea",
+  "description": "A multiline text field for comments, notes, bios, support messages, and long-form form content.",
+  "registryDependencies": [
+    "tokens",
+    "theme-provider",
+    "field"
+  ],
+  "files": [
+    {
+      "source": "components/text-area/text-area.tsx",
+      "target": "text-area/text-area.tsx",
+      "content": "/**\n * Arlo UI — TextArea\n *\n * A multiline text field for longer form content. Like `Input`, it is a preset\n * assembled from the composable `Field` primitives (see input/field.tsx) — it just\n * runs `Field` in `multiline` mode: a column control with top-aligned text, a\n * bottom `Field.Toolbar` for icon/action slots, and an optional character count in\n * the helper row.\n *\n * Reach for `TextArea` when you want the batteries-included multiline field; drop\n * down to `<Field multiline>…</Field>` when you need a custom layout.\n */\nimport { forwardRef, type ReactNode } from 'react';\nimport type {\n  StyleProp,\n  TextInput,\n  TextInputProps,\n  TextStyle,\n  ViewStyle,\n} from 'react-native';\nimport {\n  Field,\n  type InputAppearance,\n  type InputSize,\n  type InputState,\n} from '../field/field';\n\nexport type TextAreaAppearance = InputAppearance;\nexport type TextAreaSize = InputSize;\nexport type TextAreaState = InputState;\n\nexport type TextAreaProps = Omit<TextInputProps, 'style' | 'multiline'> & {\n  label?: string;\n  helperText?: string;\n  errorText?: string;\n  state?: TextAreaState;\n  appearance?: TextAreaAppearance;\n  size?: TextAreaSize;\n  /** Non-interactive glyph slot in the bottom toolbar. */\n  leadingIcon?: ReactNode;\n  trailingIcon?: ReactNode;\n  /** Interactive slot in the bottom toolbar (mic, send…). Takes priority over the matching icon. */\n  leadingAction?: ReactNode;\n  trailingAction?: ReactNode;\n  /** Shows a right-aligned character count in the helper row. */\n  showCount?: boolean;\n  containerStyle?: StyleProp<ViewStyle>;\n  inputStyle?: StyleProp<TextStyle>;\n  helperStyle?: StyleProp<TextStyle>;\n  fullWidth?: boolean;\n};\n\nexport const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(\n  {\n    label,\n    helperText,\n    errorText,\n    state,\n    appearance = 'filled',\n    size = 'md',\n    leadingIcon,\n    trailingIcon,\n    leadingAction,\n    trailingAction,\n    showCount = false,\n    containerStyle,\n    inputStyle,\n    helperStyle,\n    fullWidth = true,\n    editable = true,\n    value,\n    defaultValue,\n    maxLength,\n    ...rest\n  },\n  ref,\n) {\n  const hasError = state === 'error' || Boolean(errorText);\n  const supportingText = errorText ?? helperText;\n  const count = String(value ?? defaultValue ?? '').length;\n  const countLabel = showCount ? `${count}${maxLength != null ? `/${maxLength}` : ''}` : undefined;\n\n  const leading = leadingAction ?? leadingIcon;\n  const trailing = trailingAction ?? trailingIcon;\n  const hasToolbar = Boolean(leading || trailing);\n\n  return (\n    <Field\n      multiline\n      size={size}\n      appearance={appearance}\n      error={hasError}\n      disabled={editable === false}\n      fullWidth={fullWidth}\n      style={containerStyle}\n    >\n      {label ? <Field.Label>{label}</Field.Label> : null}\n\n      <Field.Control>\n        <Field.Input\n          ref={ref}\n          value={value}\n          defaultValue={defaultValue}\n          maxLength={maxLength}\n          style={inputStyle}\n          {...rest}\n        />\n\n        {hasToolbar ? (\n          <Field.Toolbar>\n            {leading ?? null}\n            {trailing ?? null}\n          </Field.Toolbar>\n        ) : null}\n      </Field.Control>\n\n      <Field.Helper count={countLabel} style={helperStyle}>\n        {supportingText}\n      </Field.Helper>\n    </Field>\n  );\n});\n\nexport { Field } from '../field/field';\n"
+    },
+    {
+      "source": "components/text-area/index.ts",
+      "target": "text-area/index.ts",
+      "content": "export {\n  TextArea,\n  type TextAreaAppearance,\n  type TextAreaProps,\n  type TextAreaSize,\n  type TextAreaState,\n} from './text-area';\n"
+    }
+  ],
+  "meta": {
+    "figma": "Components/Text Area/Default",
+    "tags": [
+      "form",
+      "primitive",
+      "multiline"
+    ]
+  },
+  "hash": "e01cdb618f474c40"
+}

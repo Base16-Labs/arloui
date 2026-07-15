@@ -1,0 +1,33 @@
+{
+  "name": "checkbox",
+  "kind": "primitive",
+  "title": "Checkbox",
+  "description": "An animated check box with two sizes, check icon, and disabled state.",
+  "dependencies": [
+    "react-native-svg"
+  ],
+  "registryDependencies": [
+    "tokens",
+    "theme-provider"
+  ],
+  "files": [
+    {
+      "source": "components/checkbox/checkbox.tsx",
+      "target": "checkbox.tsx",
+      "content": "import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';\nimport {\n  Animated,\n  Easing,\n  Platform,\n  Pressable,\n  View,\n  type PressableProps,\n  type StyleProp,\n  type ViewStyle,\n} from 'react-native';\nimport Svg, { Path } from 'react-native-svg';\nimport { useTokens } from '../../foundation/theme-provider';\n\ntype Tokens = ReturnType<typeof useTokens>;\n\nexport type CheckboxSize = 'sm' | 'md' | 'lg';\n\nexport type CheckboxProps = Omit<PressableProps, 'style' | 'children'> & {\n  checked: boolean;\n  onCheckedChange?: (checked: boolean) => void;\n  size?: CheckboxSize;\n  disabled?: boolean;\n  style?: StyleProp<ViewStyle>;\n};\n\ntype Dims = { box: number; iconSize: number; borderRadius: number; strokeWidth: number };\n\nfunction checkboxDims(t: Tokens): Record<CheckboxSize, Dims> {\n  return {\n    sm: { box: 20, iconSize: 12, borderRadius: t.radii.sm, strokeWidth: 1.5 },\n    md: { box: 24, iconSize: 14, borderRadius: t.radii.md - 2, strokeWidth: 2 },\n    lg: { box: 32, iconSize: 18, borderRadius: t.radii.md, strokeWidth: 2.5 },\n  };\n}\n\nfunction CheckIcon({ size, color, strokeWidth }: { size: number; color: string; strokeWidth: number }) {\n  return (\n    <Svg width={size} height={size} viewBox=\"0 0 14 14\" fill=\"none\">\n      <Path\n        d=\"M3 7.5L5.5 10L11 4\"\n        stroke={color}\n        strokeWidth={strokeWidth}\n        strokeLinecap=\"round\"\n        strokeLinejoin=\"round\"\n      />\n    </Svg>\n  );\n}\n\nexport const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(\n  {\n    checked,\n    onCheckedChange,\n    size = 'md',\n    disabled = false,\n    style,\n    accessibilityLabel,\n    ...rest\n  },\n  ref,\n) {\n  const t = useTokens();\n  const dims = useMemo(() => checkboxDims(t)[size], [t, size]);\n\n  const fillAnim = useRef(new Animated.Value(checked ? 1 : 0)).current;\n\n  const [x1, y1, x2, y2] = t.motion.easing.easeOut;\n  const easing = useMemo(() => Easing.bezier(x1, y1, x2, y2), [x1, y1, x2, y2]);\n\n  useEffect(() => {\n    Animated.timing(fillAnim, {\n      toValue: checked ? 1 : 0,\n      duration: t.motion.duration.instant,\n      easing,\n      useNativeDriver: false,\n    }).start();\n  }, [checked, fillAnim, t.motion.duration.instant, easing]);\n\n  const handlePress = useCallback(() => {\n    if (!disabled) onCheckedChange?.(!checked);\n  }, [disabled, onCheckedChange, checked]);\n\n  const bgColor = fillAnim.interpolate({\n    inputRange: [0, 1],\n    outputRange: [\n      'transparent',\n      disabled ? t.colors.interactiveDisabled : t.colors.interactivePrimary,\n    ],\n  });\n\n  const borderColor = disabled\n    ? t.colors.borderSecondary\n    : checked\n      ? t.colors.interactivePrimary\n      : t.colors.borderPrimary;\n\n  const checkColor = disabled ? t.colors.textTertiary : t.colors.textInteractivePrimary;\n\n  return (\n    <Pressable\n      ref={ref}\n      accessibilityRole=\"checkbox\"\n      accessibilityLabel={accessibilityLabel}\n      accessibilityState={{ checked, disabled }}\n      disabled={disabled}\n      onPress={handlePress}\n      hitSlop={Math.max(0, Math.ceil((t.sizing.touchTarget.minimum - dims.box) / 2))}\n      {...rest}\n    >\n      <Animated.View\n        style={[\n          {\n            width: dims.box,\n            height: dims.box,\n            borderRadius: dims.borderRadius,\n            borderWidth: checked ? 0 : 1.5,\n            borderColor,\n            backgroundColor: bgColor,\n            alignItems: 'center',\n            justifyContent: 'center',\n          },\n          style,\n        ]}\n      >\n        {checked ? (\n          <CheckIcon size={dims.iconSize} color={checkColor} strokeWidth={dims.strokeWidth} />\n        ) : null}\n      </Animated.View>\n    </Pressable>\n  );\n});\n"
+    },
+    {
+      "source": "components/checkbox/index.ts",
+      "target": "checkbox/index.ts",
+      "content": "export { Checkbox, type CheckboxProps, type CheckboxSize } from './checkbox';\n"
+    }
+  ],
+  "meta": {
+    "figma": "Components/Checkbox/Default",
+    "tags": [
+      "form",
+      "primitive"
+    ]
+  },
+  "hash": "15b0aa588541327f"
+}

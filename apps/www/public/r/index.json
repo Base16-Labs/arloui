@@ -1,0 +1,296 @@
+{
+  "$schema": "https://arloui.com/schemas/registry-index-v1.json",
+  "version": "0.1.0",
+  "items": [
+    {
+      "name": "tokens",
+      "kind": "foundation",
+      "title": "Design tokens",
+      "description": "Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.",
+      "meta": {
+        "tags": [
+          "foundation",
+          "tokens"
+        ]
+      }
+    },
+    {
+      "name": "theme-provider",
+      "kind": "foundation",
+      "title": "Theme provider",
+      "description": "React context that exposes tokens and follows the system color scheme.",
+      "registryDependencies": [
+        "tokens"
+      ],
+      "meta": {
+        "tags": [
+          "foundation",
+          "provider"
+        ]
+      }
+    },
+    {
+      "name": "animated-icons",
+      "kind": "icon",
+      "title": "Animated icons",
+      "description": "Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.",
+      "dependencies": [
+        "react-native-svg",
+        "react-native-reanimated"
+      ],
+      "registryDependencies": [
+        "tokens"
+      ],
+      "meta": {
+        "tags": [
+          "icon",
+          "motion",
+          "animated",
+          "state"
+        ]
+      }
+    },
+    {
+      "name": "button",
+      "kind": "primitive",
+      "title": "Button",
+      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.",
+      "dependencies": [
+        "@arloui/utils",
+        "expo-haptics",
+        "react-native-svg"
+      ],
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "figma": "Components/Button/Primary",
+        "tags": [
+          "action",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "card",
+      "kind": "primitive",
+      "title": "Card",
+      "description": "A flexible surface for grouping related content with header, body, footer, and hierarchy options.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "figma": "Components/Card/Default",
+        "tags": [
+          "surface",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "skeleton",
+      "kind": "primitive",
+      "title": "Skeleton",
+      "description": "A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "tags": [
+          "feedback",
+          "loading",
+          "placeholder",
+          "motion",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "tabs",
+      "kind": "primitive",
+      "title": "Tabs",
+      "description": "Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "tags": [
+          "navigation",
+          "tabs",
+          "segmented",
+          "filter",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "sheet",
+      "kind": "primitive",
+      "title": "Sheet",
+      "description": "A bottom drawer with a grabber, drag-to-dismiss, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "figma": "Components/Sheet/Default",
+        "tags": [
+          "surface",
+          "overlay",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "field",
+      "kind": "primitive",
+      "title": "Field",
+      "description": "Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.",
+      "dependencies": [
+        "react-native-svg"
+      ],
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "tags": [
+          "form",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "input",
+      "kind": "primitive",
+      "title": "Input",
+      "description": "A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "field"
+      ],
+      "meta": {
+        "figma": "Components/Text Input/Default",
+        "tags": [
+          "form",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "checkbox",
+      "kind": "primitive",
+      "title": "Checkbox",
+      "description": "An animated check box with two sizes, check icon, and disabled state.",
+      "dependencies": [
+        "react-native-svg"
+      ],
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "figma": "Components/Checkbox/Default",
+        "tags": [
+          "form",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "radio",
+      "kind": "primitive",
+      "title": "Radio",
+      "description": "An animated radio button with a scaling dot indicator, two sizes, and disabled state.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "figma": "Components/Radio/Default",
+        "tags": [
+          "form",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "toggle",
+      "kind": "primitive",
+      "title": "Toggle",
+      "description": "An animated on/off switch with two sizes, disabled state, and smooth thumb transition.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "figma": "Components/Toggle/Default",
+        "tags": [
+          "form",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "text-area",
+      "kind": "primitive",
+      "title": "TextArea",
+      "description": "A multiline text field for comments, notes, bios, support messages, and long-form form content.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "field"
+      ],
+      "meta": {
+        "figma": "Components/Text Area/Default",
+        "tags": [
+          "form",
+          "primitive",
+          "multiline"
+        ]
+      }
+    },
+    {
+      "name": "tab-bar",
+      "kind": "primitive",
+      "title": "Tab Bar",
+      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "tags": [
+          "navigation",
+          "tabs",
+          "motion",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "date-picker",
+      "kind": "primitive",
+      "title": "Date Picker",
+      "description": "Accessible calendar and wheel surfaces for date, time, date-time, and month-year selection.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "figma": "Components/Date Picker/Default",
+        "tags": [
+          "form",
+          "calendar",
+          "date",
+          "primitive"
+        ]
+      }
+    }
+  ]
+}

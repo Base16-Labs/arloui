@@ -1,0 +1,24 @@
+{
+  "name": "theme-provider",
+  "kind": "foundation",
+  "title": "Theme provider",
+  "description": "React context that exposes tokens and follows the system color scheme.",
+  "registryDependencies": [
+    "tokens"
+  ],
+  "files": [
+    {
+      "source": "foundation/theme-provider.tsx",
+      "target": "theme-provider.tsx",
+      "type": "theme",
+      "content": "/**\n * Registry source — copied into the consumer's project at `<alias>/theme-provider.tsx`.\n * Wrap your app root with `<ThemeProvider>` (typically in `_layout.tsx` or `App.tsx`).\n */\nimport { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';\nimport { Appearance, type ColorSchemeName } from 'react-native';\nimport { themes, type Theme, type ThemeName } from './tokens';\n\ntype Ctx = {\n  theme: Theme;\n  name: ThemeName;\n  setName: (n: ThemeName | 'system') => void;\n};\n\nconst ThemeContext = createContext<Ctx | null>(null);\n\nexport function ThemeProvider({\n  children,\n  defaultName = 'system',\n}: {\n  children: ReactNode;\n  defaultName?: ThemeName | 'system';\n}) {\n  const [pref, setPref] = useState<ThemeName | 'system'>(defaultName);\n  const [system, setSystem] = useState<ColorSchemeName>(Appearance.getColorScheme());\n\n  useEffect(() => {\n    if (pref !== 'system') return;\n    const sub = Appearance.addChangeListener(({ colorScheme }) => setSystem(colorScheme));\n    return () => sub.remove();\n  }, [pref]);\n\n  const value = useMemo<Ctx>(() => {\n    const resolved: ThemeName = pref === 'system' ? (system === 'light' ? 'light' : 'dark') : pref;\n    return { theme: themes[resolved], name: resolved, setName: setPref };\n  }, [pref, system]);\n\n  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;\n}\n\nexport function useTheme() {\n  const ctx = useContext(ThemeContext);\n  if (!ctx) throw new Error('useTheme() must be used inside <ThemeProvider>');\n  return ctx;\n}\n\nexport const useTokens = () => useTheme().theme;\n"
+    }
+  ],
+  "meta": {
+    "tags": [
+      "foundation",
+      "provider"
+    ]
+  },
+  "hash": "adfbd7922d146246"
+}
