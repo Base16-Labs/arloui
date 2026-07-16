@@ -9,14 +9,15 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 type IndexItem = {
   title: string;
   category: string;
-  href?: '/button' | '/input' | '/textarea' | '/sheet' | '/date-picker' | '/icons' | '/toggle' | '/checkbox' | '/radio';
+  href?: '/badge' | '/button' | '/chip' | '/input' | '/textarea' | '/sheet' | '/date-picker' | '/icons' | '/toggle' | '/checkbox' | '/radio';
 };
 
 const COMPONENTS: IndexItem[] = [
+  { title: 'Badge', category: 'Feedback', href: '/badge' },
   { title: 'Button', category: 'Controls', href: '/button' },
   { title: 'Card', category: 'Layout' },
   { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
-  { title: 'Chip', category: 'Controls' },
+  { title: 'Chip', category: 'Controls', href: '/chip' },
   { title: 'Date Picker', category: 'Controls', href: '/date-picker' },
   { title: 'Empty', category: 'Feedback' },
   { title: 'Field', category: 'Controls', href: '/input' },

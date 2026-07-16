@@ -26,9 +26,15 @@ import {
   DocIconLock,
 } from "@/components/docs/button-preview-icons";
 import { componentGroups } from "@/lib/routes";
+import { BadgePhonePreview } from "@/components/docs/badge-phone-preview";
+import { BadgeDocPlayground } from "@/components/docs/badge-doc-playground";
+import { ChipPhonePreview } from "@/components/docs/chip-phone-preview";
+import { ChipDocPlayground } from "@/components/docs/chip-doc-playground";
 import {
+  badgeData,
   buttonData,
   checkboxData,
+  chipData,
   datePickerData,
   docDataToMarkdown,
   inputData,
@@ -84,6 +90,14 @@ export default async function ComponentPage({
 
   if (slug === "date-picker") {
     return <DatePickerDocPage />;
+  }
+
+  if (slug === "badge") {
+    return <BadgeDocPage />;
+  }
+
+  if (slug === "chip") {
+    return <ChipDocPage />;
   }
 
   return (
@@ -1205,6 +1219,331 @@ function FormControlDocPage({ data }: { data: typeof toggleData | typeof checkbo
       </main>
 
       <RightRail headings={[...data.headings]} actions={[...data.actions]} />
+    </>
+  );
+}
+
+function BadgeDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(badgeData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{badgeData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">{badgeData.title}</h1>
+        <Lede>{badgeData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={badgeData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <BadgePhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A compact pill with optional dot or leading icon, sized and colored from tokens."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2" style={{ height: 24 }}>
+                  <span className="size-2 rounded-full bg-[#155DFC]" />
+                  <span className="text-[12px] text-[#155DFC]">Active</span>
+                </div>
+                <div className="flex items-center gap-1 rounded-full bg-[#155DFC] px-2" style={{ height: 24 }}>
+                  <span className="text-[12px] text-white">3 new</span>
+                </div>
+                <div className="flex items-center gap-1 rounded-full border border-[#00C950] px-2" style={{ height: 24 }}>
+                  <span className="text-[12px] text-[#00C950]">Verified</span>
+                </div>
+              </div>
+              <div className="flex gap-6 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                <span>dot + label</span>
+                <span>solid</span>
+                <span>outline</span>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Label", "typography 11–12px · weight 400"],
+                ["Dot", "6px (sm) · 8px (md) circle"],
+                ["Leading icon", "sizing.icon.xs (16px)"],
+                ["Height", "20px (sm) · 24px (md)"],
+                ["Corner radius", "radii.full (pill)"],
+                ["Padding", "spacing.2 horizontal"],
+                ["Solid inset", "1–1.5px rgba(255,255,255,0.12–0.15)"],
+                ["Icon ↔ label gap", "spacing.1 (4px)"],
+              ].map(([name, token]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Three rules for status labels.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use a badge to surface status, count, or category without demanding a tap.</li>
+            <li>Use dot mode for a minimal alive/offline indicator next to an avatar or row.</li>
+            <li>If the label needs to be interactive (dismissible, selectable), use a Chip instead.</li>
+          </ul>
+        </Section>
+
+        <BadgeDocPlayground states={badgeData.states} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <CodeBlock language="tsx">{`npx arloui add badge
+
+import { Badge } from "@/components/ui/badge";
+
+{/* Label badge */}
+<Badge tone="info" appearance="soft">Active</Badge>
+
+{/* Solid with count */}
+<Badge tone="error" appearance="solid">3</Badge>
+
+{/* Dot indicator */}
+<Badge tone="success" dot>Online</Badge>
+
+{/* Leading icon */}
+<Badge tone="warning" appearance="outline" leadingIcon={<StarIcon />}>
+  Featured
+</Badge>
+
+{/* Icon-only */}
+<Badge tone="info" leadingIcon={<BellIcon />} />`}</CodeBlock>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Semantic tokens driving tone, size, and appearance.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {badgeData.tokens.map((t) => (
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Non-interactive labels that announce clearly.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Exposes accessibilityRole &quot;text&quot; with the label from children or an explicit accessibilityLabel.</li>
+            <li>Dot-only and icon-only badges require accessibilityLabel — without it, the badge announces nothing useful.</li>
+            <li>Color is never the sole differentiator — tone names and labels carry the meaning.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Common pitfalls, paired.">
+          <DoDont
+            pairs={[
+              {
+                do: "Use semantic tones (success, error, warning) to communicate status at a glance.",
+                dont: "Use badge colors decoratively — each tone should carry meaning.",
+              },
+              {
+                do: "Keep badge labels short — one or two words, or a number.",
+                dont: "Put sentences or long phrases inside a badge — use body text instead.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Complements and alternatives.">
+          <div className="flex flex-wrap gap-2">
+            {["Chip", "Toast", "Banner", "Button", "Pill"].map((r) => (
+              <Chip key={r}>→ {r}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...badgeData.headings]} actions={[...badgeData.actions]} />
+    </>
+  );
+}
+
+function ChipDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(chipData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{chipData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">{chipData.title}</h1>
+        <Lede>{chipData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={chipData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <ChipPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="An interactive pill with optional check, leading icon, and remove button — sized from tokens with press feedback."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 rounded-full border border-[#155DFC] bg-[#EFF6FF] px-3" style={{ height: 32 }}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 7.5L5.5 10L11 4" stroke="#155DFC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="text-[14px] text-[#155DFC]">Filter</span>
+                </div>
+                <div className="flex items-center gap-1 rounded-full border border-[#D1D5DC] px-3" style={{ height: 32 }}>
+                  <span className="text-[14px] text-[#101828]">Token</span>
+                  <span className="flex size-6 items-center justify-center">
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                      <path d="M4 4L10 10M10 4L4 10" stroke="#101828" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+                <div className="flex items-center rounded-full border border-[#D1D5DC] px-3" style={{ height: 32 }}>
+                  <span className="text-[14px] text-[#101828]">Assist</span>
+                </div>
+              </div>
+              <div className="flex gap-6 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                <span>filter (selected)</span>
+                <span>input (remove)</span>
+                <span>assist</span>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Label", "typography 12–14px · weight 400"],
+                ["Check icon", "14–16px SVG (filter selected)"],
+                ["Remove button", "12–14px ✕ with hitSlop"],
+                ["Leading icon", "sizing.icon.xs–sm"],
+                ["Height", "28px (sm) · 32px (md)"],
+                ["Corner radius", "radii.full or radii.lg"],
+                ["Padding", "spacing.3 horizontal"],
+                ["Touch target", "44pt via hitSlop"],
+              ].map(([name, token]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Three types, three jobs.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use <code className="font-mono text-[13px]">filter</code> chips for toggling a set of criteria — each chip is independently selectable.</li>
+            <li>Use <code className="font-mono text-[13px]">input</code> chips for tokenised values the user can remove (tags, recipients, skills).</li>
+            <li>Use <code className="font-mono text-[13px]">assist</code> chips for single-tap contextual actions (share, export, duplicate).</li>
+          </ul>
+        </Section>
+
+        <ChipDocPlayground states={chipData.states} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add chip
+
+import { Chip } from "@/components/ui/chip";`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Filter chips — toggleable */}
+<Chip type="filter" selected={isActive} onPress={toggle}>
+  Active
+</Chip>
+
+{/* Input chips — removable tokens */}
+<Chip type="input" onRemove={() => remove(tag)}>
+  {tag}
+</Chip>
+
+{/* Assist chips — single-tap actions */}
+<Chip type="assist" onPress={handleShare}>
+  Share
+</Chip>
+
+{/* Visual options */}
+<Chip chipStyle="fill" accent="neutral" radius="lg">
+  Rounded
+</Chip>
+
+{/* Selection indicator — icon stays visible */}
+<Chip
+  type="filter"
+  selectionIndicator="none"
+  selected={on}
+  leadingIcon={<CalendarIcon />}
+>
+  Today
+</Chip>
+
+{/* Icon-only */}
+<Chip leadingIcon={<FilterIcon />} />`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Semantic tokens driving type, style, accent, and interaction states.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {chipData.tokens.map((t) => (
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Semantics, selection state, and touch targets.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Exposes accessibilityRole &quot;button&quot; with the label from children or an explicit accessibilityLabel.</li>
+            <li>Filter chips expose accessibilityState selected so screen readers announce toggle state.</li>
+            <li>The remove button on input chips has its own accessibilityLabel (&quot;Remove {'{'}label{'}'}&quot;) and hitSlop.</li>
+            <li>All chips expand to a 44pt touch target via hitSlop when the visible height is smaller.</li>
+            <li>Press feedback uses haptics and scale animation via the shared usePressFeedback hook.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Common pitfalls, paired.">
+          <DoDont
+            pairs={[
+              {
+                do: "Use filter chips for multi-select filtering; each chip toggles independently.",
+                dont: "Use filter chips for mutually exclusive choices — use radio or a segmented control.",
+              },
+              {
+                do: "Use input chips for user-generated tokens that can be individually removed.",
+                dont: "Use input chips for static labels that never change — use Badge instead.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Complements and alternatives.">
+          <div className="flex flex-wrap gap-2">
+            {["Badge", "Button", "Pill", "Toggle", "Radio"].map((r) => (
+              <Chip key={r}>→ {r}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...chipData.headings]} actions={[...chipData.actions]} />
     </>
   );
 }

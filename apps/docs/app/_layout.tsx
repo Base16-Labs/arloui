@@ -44,7 +44,9 @@ function ThemedStack() {
         <Stack.Screen name="sheet" options={{ title: 'Sheet' }} />
         <Stack.Screen name="date-picker" options={{ title: 'Date Picker' }} />
         <Stack.Screen name="icons" options={{ title: 'Icons' }} />
+        <Stack.Screen name="badge" options={{ title: 'Badge' }} />
         <Stack.Screen name="checkbox" options={{ title: 'Checkbox' }} />
+        <Stack.Screen name="chip" options={{ title: 'Chip' }} />
         <Stack.Screen name="radio" options={{ title: 'Radio' }} />
         <Stack.Screen name="toggle" options={{ title: 'Toggle' }} />
         <Stack.Screen name="components/button" options={{ headerShown: false }} />

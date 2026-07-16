@@ -1,8 +1,8 @@
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Radio, useTokens, type RadioAppearance, type RadioSize } from '@arloui/registry';
+import { Badge, useTokens, type BadgeAppearance, type BadgeSize, type BadgeTone } from '@arloui/registry';
 import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
@@ -10,22 +10,51 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
-type PreviewState = 'default' | 'disabled';
+const TONES: BadgeTone[] = ['neutral', 'info', 'success', 'warning', 'error'];
+const APPEARANCES: BadgeAppearance[] = ['soft', 'solid', 'outline'];
+const SIZES: BadgeSize[] = ['sm', 'md'];
 
-const APPEARANCES: RadioAppearance[] = ['outlined', 'filled'];
-const SIZES: RadioSize[] = ['sm', 'md', 'lg'];
-const STATES: PreviewState[] = ['default', 'disabled'];
-const OPTIONS = ['Option A', 'Option B', 'Option C'];
+type BadgeMode = 'label' | 'dot' | 'icon';
+const MODES: BadgeMode[] = ['label', 'dot', 'icon'];
 
-export default function RadioCanvas() {
+function StarIcon({ size, color }: { size: number; color: string }) {
+  const Svg = require('react-native-svg').default;
+  const Path = require('react-native-svg').Path;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+      <Path
+        d="M8 1.5L9.8 5.7L14.2 6.1L10.9 9.1L11.8 13.5L8 11.3L4.2 13.5L5.1 9.1L1.8 6.1L6.2 5.7L8 1.5Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function useIconColor(
+  t: ReturnType<typeof useTokens>,
+  tone: BadgeTone,
+  appearance: BadgeAppearance,
+) {
+  const toneColors: Record<BadgeTone, { soft: string; solid: string; outline: string }> = {
+    neutral: { soft: t.colors.textSecondary, solid: t.colors.textInteractivePrimary, outline: t.colors.textSecondary },
+    info: { soft: t.colors.feedbackInfo, solid: t.colors.textInteractivePrimary, outline: t.colors.feedbackInfo },
+    success: { soft: t.colors.feedbackSuccess, solid: t.colors.textInteractivePrimary, outline: t.colors.feedbackSuccess },
+    warning: { soft: t.colors.feedbackWarning, solid: t.colors.textInteractivePrimary, outline: t.colors.feedbackWarning },
+    error: { soft: t.colors.feedbackError, solid: t.colors.textInteractivePrimary, outline: t.colors.feedbackError },
+  };
+  return toneColors[tone][appearance];
+}
+
+export default function BadgeCanvas() {
   const t = useTokens();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [appearance, setAppearance] = useState<RadioAppearance>('outlined');
-  const [size, setSize] = useState<RadioSize>('md');
-  const [state, setState] = useState<PreviewState>('default');
-  const [selected, setSelected] = useState(0);
+  const [tone, setTone] = useState<BadgeTone>('neutral');
+  const [appearance, setAppearance] = useState<BadgeAppearance>('soft');
+  const [size, setSize] = useState<BadgeSize>('md');
+  const [mode, setMode] = useState<BadgeMode>('label');
+  const iconColor = useIconColor(t, tone, appearance);
   const previewOffset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -67,34 +96,37 @@ export default function RadioCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 20,
               transform: [{ translateY: previewOffset }],
             }}
           >
-            {OPTIONS.map((label, i) => (
-              <View
-                key={label}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <Badge
+                tone={tone}
+                appearance={appearance}
+                size={size}
+                dot={mode === 'dot'}
+                leadingIcon={
+                  mode === 'icon' ? (
+                    <StarIcon size={size === 'sm' ? 12 : 14} color={iconColor} />
+                  ) : undefined
+                }
               >
-                <Radio
-                  selected={selected === i}
-                  onSelect={() => setSelected(i)}
-                  appearance={appearance}
-                  size={size}
-                  disabled={state === 'disabled'}
-                  accessibilityLabel={label}
-                />
-                <Text
-                  style={{
-                    color: t.colors.textPrimary,
-                    fontFamily: 'Manrope',
-                    fontSize: 15,
-                  }}
-                >
-                  {label}
-                </Text>
-              </View>
-            ))}
+                Badge 1
+              </Badge>
+              <Badge
+                tone={tone}
+                appearance={appearance}
+                size={size}
+                dot={mode === 'dot'}
+                leadingIcon={
+                  mode === 'icon' ? (
+                    <StarIcon size={size === 'sm' ? 12 : 14} color={iconColor} />
+                  ) : undefined
+                }
+              >
+                Badge 2
+              </Badge>
+            </View>
           </Animated.View>
 
           {!sheetOpen ? (
@@ -108,7 +140,7 @@ export default function RadioCanvas() {
               }}
             >
               <CanvasPill
-                componentName="Radio"
+                componentName="Badge"
                 open={false}
                 onComponentPress={() => router.replace('/')}
                 onMenuPress={() => setSheetOpen(true)}
@@ -118,13 +150,23 @@ export default function RadioCanvas() {
 
           <VariantSheet
             visible={sheetOpen}
-            previous="Checkbox"
-            next="Toggle"
+            previous="Toggle"
+            next="Chip"
             onClose={() => setSheetOpen(false)}
-            onPrevious={() => router.replace('/checkbox')}
-            onNext={() => router.replace('/toggle')}
+            onPrevious={() => router.replace('/toggle')}
+            onNext={() => router.replace('/chip')}
           >
             <View style={{ gap: 14 }}>
+              <VariantControlRow label="Tone">
+                {TONES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={tone === value}
+                    onPress={() => setTone(value)}
+                  />
+                ))}
+              </VariantControlRow>
               <VariantControlRow label="Style">
                 {APPEARANCES.map((value) => (
                   <VariantChip
@@ -145,13 +187,13 @@ export default function RadioCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="State">
-                {STATES.map((value) => (
+              <VariantControlRow label="Mode">
+                {MODES.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
-                    active={state === value}
-                    onPress={() => setState(value)}
+                    active={mode === value}
+                    onPress={() => setMode(value)}
                   />
                 ))}
               </VariantControlRow>
