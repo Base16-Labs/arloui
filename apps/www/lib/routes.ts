@@ -57,7 +57,11 @@ export type ComponentGroup = ItemGroup;
 export const componentGroups: ComponentGroup[] = [
   {
     label: 'Layout & surface',
-    items: [{ label: 'Sheet', slug: 'sheet' }],
+    items: [
+      { label: 'Sheet', slug: 'sheet' },
+      { label: 'Carousel', slug: 'carousel' },
+      { label: 'Gallery', slug: 'gallery' },
+    ],
   },
   {
     label: 'Controls',

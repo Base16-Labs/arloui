@@ -253,6 +253,36 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'carousel',
+    kind: 'primitive',
+    title: 'Carousel',
+    description:
+      'A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/carousel/carousel.tsx', target: 'carousel/carousel.tsx' },
+      { source: 'components/carousel/index.ts', target: 'carousel/index.ts' },
+    ],
+    meta: {
+      tags: ['layout', 'scroll', 'gesture', 'motion', 'primitive'],
+    },
+  },
+  {
+    name: 'gallery',
+    kind: 'primitive',
+    title: 'Gallery',
+    description:
+      'A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/gallery/gallery.tsx', target: 'gallery/gallery.tsx' },
+      { source: 'components/gallery/index.ts', target: 'gallery/index.ts' },
+    ],
+    meta: {
+      tags: ['layout', 'grid', 'masonry', 'primitive'],
+    },
+  },
+  {
     name: 'date-picker',
     kind: 'primitive',
     title: 'Date Picker',

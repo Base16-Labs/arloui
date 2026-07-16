@@ -16,6 +16,19 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Carousel,
+  type CarouselIndicator,
+  type CarouselProps,
+  type CarouselRef,
+  type CarouselSnap,
+} from './components/carousel';
+export {
+  Gallery,
+  type GalleryColumns,
+  type GalleryProps,
+  type GalleryRadius,
+} from './components/gallery';
+export {
   Skeleton,
   type SkeletonAnimation,
   type SkeletonProps,

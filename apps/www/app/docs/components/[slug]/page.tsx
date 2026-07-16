@@ -18,6 +18,8 @@ import { SheetPhonePreview } from '@/components/docs/sheet-phone-preview';
 import { TabBarDocPlayground, TabBarPhonePreview } from '@/components/docs/tab-bar-preview';
 import { TabsDocPlayground, TabsPhonePreview } from '@/components/docs/tabs-preview';
 import { SkeletonDocPlayground, SkeletonPhonePreview } from '@/components/docs/skeleton-preview';
+import { CarouselDocPlayground, CarouselPhonePreview } from '@/components/docs/carousel-preview';
+import { GalleryDocPlayground, GalleryPhonePreview } from '@/components/docs/gallery-preview';
 import {
   DatePickerDocPlayground,
   DatePickerPhonePreview,
@@ -42,6 +44,8 @@ import {
   tabsData,
   textAreaData,
   toggleData,
+  carouselData,
+  galleryData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -96,6 +100,14 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'skeleton') {
     return <SkeletonDocPage />;
+  }
+
+  if (slug === 'carousel') {
+    return <CarouselDocPage />;
+  }
+
+  if (slug === 'gallery') {
+    return <GalleryDocPage />;
   }
 
   return (
@@ -1863,6 +1875,350 @@ function FormControlDocPage({
       </main>
 
       <RightRail headings={[...data.headings]} actions={[...data.actions]} />
+    </>
+  );
+}
+
+function CarouselDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(carouselData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{carouselData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {carouselData.title}
+        </h1>
+        <Lede>{carouselData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={carouselData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <CarouselPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A horizontal track driven by gesture velocity and spring physics."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="relative overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] px-4 py-6 dark:bg-[#09090B]">
+                <div className="mb-1 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                  <span>peek</span>
+                  <span>item</span>
+                  <span>peek</span>
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
+                  <div className="h-24 flex-1 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
+                </div>
+                <div className="mt-3 flex justify-center gap-1.5">
+                  <div className="h-[6px] w-5 rounded-full bg-[#155DFC]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                </div>
+                <div className="mt-1 text-center font-mono text-[10px] uppercase tracking-wide text-ink-3">dots</div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ['Container', 'clips overflow, measures width'],
+                ['Track', 'Animated row of items'],
+                ['Item', 'child wrapped at computed width'],
+                ['Peek', 'inset revealing adjacent items'],
+                ['Dots', 'pagination with tap navigation'],
+                ['Gap', 'spacing.1–4 between items'],
+                ['Snap', 'item (card) or page (full-width)'],
+                ['Spring', 'motion.spring.gentle / snappy'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For horizontally browsing a set of peers."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use for media galleries, onboarding flows, or featured content that fits a fixed viewport.</li>
+            <li>Enable peek so users see adjacent items and understand horizontal scrollability.</li>
+            <li>Use page snap for full-bleed hero images or onboarding steps.</li>
+          </ul>
+        </Section>
+
+        <CarouselDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add carousel
+
+import { Carousel } from "@/components/ui/carousel";
+
+<Carousel snap="item" peek indicator="dots" gap={12}>
+  <Card title="Mountain Lake" />
+  <Card title="Desert Sunset" />
+  <Card title="Forest Path" />
+</Carousel>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Full-width page mode with loop */}
+<Carousel snap="page" loop autoPlay autoPlayInterval={5000}>
+  <HeroSlide image={banner1} />
+  <HeroSlide image={banner2} />
+  <HeroSlide image={banner3} />
+</Carousel>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Imperative control via ref */}
+const ref = useRef<CarouselRef>(null);
+
+<Carousel ref={ref} indicator="none">
+  {items.map(item => <Slide key={item.id} {...item} />)}
+</Carousel>
+
+<Button onPress={() => ref.current?.next()}>Next</Button>`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Spring physics, spacing, and indicator styling."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {carouselData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Swipeable content stays navigable without gestures."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>The container exposes the adjustable role with an &quot;Item N of M&quot; value.</li>
+            <li>Each pagination dot is a tappable button with a clear label.</li>
+            <li>Reduced motion replaces spring animations with instant position changes.</li>
+            <li>RTL layouts reverse gesture and translation direction automatically.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep horizontal browsing discoverable.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Enable peek so users see there is more content to swipe.',
+                dont: 'Hide all adjacent items — users may not discover the carousel.',
+              },
+              {
+                do: 'Use dots or a visible item count for discoverability.',
+                dont: 'Put critical actions inside carousel items that scroll off-screen.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Choose the right container by axis and density."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Gallery', 'ScrollView', 'FlatList', 'Card'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...carouselData.headings]} actions={[...carouselData.actions]} />
+    </>
+  );
+}
+
+function GalleryDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(galleryData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{galleryData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {galleryData.title}
+        </h1>
+        <Lede>{galleryData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={galleryData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <GalleryPhonePreview />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A measured container that distributes children into equal-width columns."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="relative overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] px-4 py-6 dark:bg-[#09090B]">
+                <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                  <span>col 1</span>
+                  <span>gap</span>
+                  <span>col 2</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                </div>
+                <div className="mt-2 flex items-center justify-between px-1">
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">radius</span>
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">cell</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ['ScrollView', 'scrollable wrapper with onLayout'],
+                ['Row', 'flexDirection row per chunk of N'],
+                ['Cell', 'width-constrained, overflow clipped'],
+                ['Radius', 'radii.none–full per cell'],
+                ['Gap', 'spacing.0–4 between cells'],
+                ['Columns', '1 | 2 | 3 | 4'],
+                ['Masonry', 'absolute-positioned bin-packing'],
+                ['Measurement', 'onLayout for container width'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For vertical collections where items are visually similar."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use for photo grids, product catalogs, or any collection of visual cards.</li>
+            <li>Enable masonry when item heights vary naturally (e.g. images with different aspect ratios).</li>
+            <li>Use 1 column for detail-heavy list items, 3–4 for compact thumbnails.</li>
+          </ul>
+        </Section>
+
+        <GalleryDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add gallery
+
+import { Gallery } from "@/components/ui/gallery";
+
+{/* Uniform 2-column grid */}
+<Gallery columns={2} radius="lg" gap={8}>
+  {photos.map(photo => (
+    <Image key={photo.id} source={photo.src}
+      style={{ width: '100%', aspectRatio: 1 }} />
+  ))}
+</Gallery>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Masonry layout with 3 columns */}
+<Gallery columns={3} masonry radius="md">
+  {items.map(item => (
+    <View key={item.id} style={{ height: item.height }}>
+      <Image source={item.src}
+        style={{ width: '100%', height: '100%' }} />
+    </View>
+  ))}
+</Gallery>`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Spacing and radius tokens for consistent grid styling."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {galleryData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Grid content remains navigable by assistive tech."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>The gallery container exposes an accessibility label for screen readers.</li>
+            <li>Individual items maintain their own accessibility roles and labels.</li>
+            <li>Layout reflows to fewer columns on narrow viewports naturally.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep grid layouts scannable.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Keep items within the same grid visually similar in type and weight.',
+                dont: 'Mix landscape photos and tall cards in a non-masonry grid.',
+              },
+              {
+                do: 'Use masonry when aspect ratios genuinely vary.',
+                dont: 'Use masonry for uniform content — it adds complexity without benefit.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Choose the right layout by scroll direction and density."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Carousel', 'FlatList', 'Card', 'Stack'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...galleryData.headings]} actions={[...galleryData.actions]} />
     </>
   );
 }
