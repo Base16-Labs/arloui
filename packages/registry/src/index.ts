@@ -18,6 +18,7 @@ export { Card, type CardProps } from './components/card';
 export {
   Carousel,
   type CarouselIndicator,
+  type CarouselIndicatorPosition,
   type CarouselProps,
   type CarouselRef,
   type CarouselSnap,

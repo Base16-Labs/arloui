@@ -21,16 +21,20 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
 
 export type CarouselSnap = 'item' | 'page';
 export type CarouselIndicator = 'dots' | 'none';
+export type CarouselIndicatorPosition = 'below' | 'overlay';
 
 export type CarouselProps = {
   children: ReactNode;
   snap?: CarouselSnap;
   peek?: boolean;
   indicator?: CarouselIndicator;
+  indicatorPosition?: CarouselIndicatorPosition;
+  arrows?: boolean;
   loop?: boolean;
   gap?: number;
   autoPlay?: boolean;
@@ -54,6 +58,8 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
     snap = 'item',
     peek = false,
     indicator = 'dots',
+    indicatorPosition = 'below',
+    arrows = false,
     loop = false,
     gap,
     autoPlay = false,
@@ -83,7 +89,12 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
   const autoPlayTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const peekAmount = peek ? t.spacing[8] : 0;
-  const itemWidth = snap === 'page' ? containerWidth : containerWidth - peekAmount * 2;
+  const itemWidth =
+    snap === 'page'
+      ? containerWidth
+      : peek
+        ? containerWidth - peekAmount * 2
+        : containerWidth - t.spacing[4] * 2;
   const totalWidth = count * itemWidth + (count - 1) * resolvedGap;
 
   useEffect(() => {
@@ -96,9 +107,12 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
     };
   }, []);
 
+  const inset =
+    snap === 'page' ? 0 : peek ? peekAmount : t.spacing[4];
+
   const offsetForIndex = (index: number) => {
     const rtlSign = I18nManager.isRTL ? 1 : -1;
-    return rtlSign * (index * (itemWidth + resolvedGap) - (peek ? peekAmount : 0));
+    return rtlSign * (index * (itemWidth + resolvedGap) - inset);
   };
 
   const animateTo = (index: number, animated = true) => {
@@ -126,9 +140,9 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
   }));
 
   useEffect(() => {
-    translateX.setValue(offsetForIndex(initialIndex));
+    animateTo(indexRef.current, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [containerWidth]);
+  }, [containerWidth, snap, peek, resolvedGap]);
 
   useEffect(() => {
     if (!autoPlay || count <= 1) return;
@@ -183,13 +197,17 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
         },
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [itemWidth, resolvedGap, count, loop],
+    [itemWidth, resolvedGap, count, loop, inset],
   );
 
   const handleLayout = (e: LayoutChangeEvent) => {
     const w = e.nativeEvent.layout.width;
     if (w > 0 && w !== containerWidth) setContainerWidth(w);
   };
+
+  const showArrows = arrows && count > 1;
+  const canGoPrev = loop || currentIndex > 0;
+  const canGoNext = loop || currentIndex < count - 1;
 
   return (
     <View
@@ -201,27 +219,56 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
       onLayout={handleLayout}
       style={[{ overflow: 'hidden' }, style]}
     >
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={[
-          {
-            flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
-            width: totalWidth,
-            gap: resolvedGap,
-            transform: [{ translateX }],
-          },
-          contentContainerStyle,
-        ]}
-      >
-        {items.map((child, i) => (
-          <View key={i} style={{ width: itemWidth }}>
-            {child}
-          </View>
-        ))}
-      </Animated.View>
+      <View style={indicatorPosition === 'overlay' ? { position: 'relative' } : undefined}>
+        <Animated.View
+          {...panResponder.panHandlers}
+          style={[
+            {
+              flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+              width: totalWidth,
+              gap: resolvedGap,
+              transform: [{ translateX }],
+            },
+            contentContainerStyle,
+          ]}
+        >
+          {items.map((child, i) => (
+            <View key={i} style={{ width: itemWidth }}>
+              {child}
+            </View>
+          ))}
+        </Animated.View>
 
-      {indicator === 'dots' && count > 1 ? (
+        {indicator === 'dots' && count > 1 && indicatorPosition === 'overlay' ? (
+          <View style={{ position: 'absolute', bottom: t.spacing[3], left: 0, right: 0 }}>
+            <CarouselDots count={count} current={currentIndex} onPress={animateTo} overlay />
+          </View>
+        ) : null}
+      </View>
+
+      {indicator === 'dots' && count > 1 && indicatorPosition === 'below' && !showArrows ? (
         <CarouselDots count={count} current={currentIndex} onPress={animateTo} />
+      ) : null}
+
+      {showArrows ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: indicator === 'dots' && indicatorPosition === 'below' ? 'space-between' : 'flex-end',
+            paddingTop: t.spacing[3],
+            paddingBottom: t.spacing[1],
+            paddingHorizontal: inset,
+          }}
+        >
+          {indicator === 'dots' && count > 1 && indicatorPosition === 'below' ? (
+            <CarouselDots count={count} current={currentIndex} onPress={animateTo} />
+          ) : <View />}
+          <View style={{ flexDirection: 'row', gap: t.spacing[2] }}>
+            <CarouselArrow direction="left" onPress={() => animateTo(indexRef.current - 1)} disabled={!canGoPrev} />
+            <CarouselArrow direction="right" onPress={() => animateTo(indexRef.current + 1)} disabled={!canGoNext} />
+          </View>
+        </View>
       ) : null}
     </View>
   );
@@ -231,10 +278,12 @@ function CarouselDots({
   count,
   current,
   onPress,
+  overlay = false,
 }: {
   count: number;
   current: number;
   onPress: (index: number) => void;
+  overlay?: boolean;
 }) {
   const t = useTokens();
 
@@ -244,9 +293,9 @@ function CarouselDots({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: t.spacing[2],
-        paddingTop: t.spacing[3],
-        paddingBottom: t.spacing[1],
+        gap: 6,
+        paddingTop: overlay ? 0 : t.spacing[3],
+        paddingBottom: overlay ? 0 : t.spacing[1],
       }}
     >
       {Array.from({ length: count }, (_, i) => (
@@ -257,13 +306,67 @@ function CarouselDots({
           hitSlop={8}
           onPress={() => onPress(i)}
           style={{
-            width: i === current ? 20 : 7,
-            height: 7,
+            width: i === current ? 18 : 6,
+            height: 6,
             borderRadius: t.radii.full,
-            backgroundColor: i === current ? t.colors.accent : t.colors.borderStrong,
+            backgroundColor:
+              overlay
+                ? i === current
+                  ? t.colors.accent
+                  : 'rgba(128,128,128,0.5)'
+                : i === current
+                  ? t.colors.accent
+                  : t.colors.borderStrong,
           }}
         />
       ))}
     </View>
+  );
+}
+
+function CarouselArrow({
+  direction,
+  onPress,
+  disabled = false,
+}: {
+  direction: 'left' | 'right';
+  onPress: () => void;
+  disabled?: boolean;
+}) {
+  const t = useTokens();
+  const isLeft = direction === 'left';
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={isLeft ? 'Previous' : 'Next'}
+      onPress={onPress}
+      disabled={disabled}
+      style={({ pressed }) => ({
+        width: 36,
+        height: 36,
+        borderRadius: t.radii.full,
+        backgroundColor: pressed
+          ? t.colors.touchFeedbackMain
+          : t.colors.surfaceRaised,
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: disabled ? 0.35 : 1,
+      })}
+    >
+      <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+        <Path
+          d={
+            isLeft
+              ? 'M10 3L5 8L10 13'
+              : 'M6 3L11 8L6 13'
+          }
+          stroke={t.colors.textPrimary}
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </Svg>
+    </Pressable>
   );
 }

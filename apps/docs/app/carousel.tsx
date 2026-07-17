@@ -6,6 +6,7 @@ import {
   Carousel,
   useTokens,
   type CarouselIndicator,
+  type CarouselIndicatorPosition,
   type CarouselSnap,
 } from '@arloui/registry';
 import { BackButton } from '@/components/playground/back-button';
@@ -32,6 +33,8 @@ export default function CarouselCanvas() {
   const [peek, setPeek] = useState(true);
   const [indicator, setIndicator] = useState<CarouselIndicator>('dots');
   const [loop, setLoop] = useState(false);
+  const [arrows, setArrows] = useState(false);
+  const [indicatorPosition, setIndicatorPosition] = useState<CarouselIndicatorPosition>('below');
   const [gap, setGap] = useState<0 | 1 | 2 | 3 | 4>(3);
   const previewOffset = useRef(new Animated.Value(0)).current;
 
@@ -80,6 +83,8 @@ export default function CarouselCanvas() {
               snap={snap}
               peek={peek}
               indicator={indicator}
+              indicatorPosition={indicatorPosition}
+              arrows={arrows}
               loop={loop}
               gap={t.spacing[gap]}
             >
@@ -164,6 +169,26 @@ export default function CarouselCanvas() {
                     label={value}
                     active={loop === (value === 'on')}
                     onPress={() => setLoop(value === 'on')}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Arrows">
+                {['on', 'off'].map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={arrows === (value === 'on')}
+                    onPress={() => setArrows(value === 'on')}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Dots">
+                {(['below', 'overlay'] as const).map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={indicatorPosition === value}
+                    onPress={() => setIndicatorPosition(value)}
                   />
                 ))}
               </VariantControlRow>

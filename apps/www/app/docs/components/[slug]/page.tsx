@@ -1934,10 +1934,10 @@ function CarouselDocPage() {
                 ['Track', 'Animated row of items'],
                 ['Item', 'child wrapped at computed width'],
                 ['Peek', 'inset revealing adjacent items'],
-                ['Dots', 'pagination with tap navigation'],
-                ['Gap', 'spacing.1–4 between items'],
-                ['Snap', 'item (card) or page (full-width)'],
-                ['Spring', 'motion.spring.gentle / snappy'],
+                ['Dots', 'below or overlay on content'],
+                ['Arrows', 'prev / next below content, right'],
+                ['Gap', 'spacing.0–4 between items'],
+                ['Snap', 'item (inset) or page (full-width)'],
               ].map(([name, detail]) => (
                 <div
                   key={name}
@@ -1992,6 +1992,13 @@ const ref = useRef<CarouselRef>(null);
 </Carousel>
 
 <Button onPress={() => ref.current?.next()}>Next</Button>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Contained carousel with overlay dots and arrows */}
+<Carousel snap="page" indicatorPosition="overlay" arrows>
+  <Image source={photo1} style={{ width: '100%', aspectRatio: 4/3 }} />
+  <Image source={photo2} style={{ width: '100%', aspectRatio: 4/3 }} />
+  <Image source={photo3} style={{ width: '100%', aspectRatio: 4/3 }} />
+</Carousel>`}</CodeBlock>
           </div>
         </Section>
 
