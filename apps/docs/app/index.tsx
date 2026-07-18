@@ -21,17 +21,21 @@ type IndexItem = {
     | '/icons'
     | '/toggle'
     | '/checkbox'
-    | '/radio';
+    | '/radio'
+    | '/carousel'
+    | '/gallery';
 };
 
 const COMPONENTS: IndexItem[] = [
   { title: 'Button', category: 'Controls', href: '/button' },
   { title: 'Card', category: 'Layout' },
+  { title: 'Carousel', category: 'Layout', href: '/carousel' },
   { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
   { title: 'Chip', category: 'Controls' },
   { title: 'Date Picker', category: 'Controls', href: '/date-picker' },
   { title: 'Empty', category: 'Feedback' },
   { title: 'Field', category: 'Controls', href: '/input' },
+  { title: 'Gallery', category: 'Layout', href: '/gallery' },
   { title: 'Group', category: 'Layout' },
   { title: 'Header', category: 'Nav' },
   { title: 'Icons', category: 'Foundations', href: '/icons' },

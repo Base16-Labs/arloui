@@ -693,6 +693,81 @@ export const textAreaData = {
   ],
 } as const;
 
+export const carouselData = {
+  slug: 'carousel',
+  category: 'Layout & surface',
+  title: 'Carousel',
+  lede: 'A gesture-driven horizontal carousel for swiping through cards, images, or any content with spring physics, peek, pagination dots, and loop support.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/carousel',
+  states: ['default', 'swiping', 'settling', 'auto-play'],
+  tokens: [
+    'spacing.2',
+    'spacing.3',
+    'spacing.8',
+    'radii.full',
+    'colors.accent',
+    'colors.borderStrong',
+    'motion.spring.gentle',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/carousel',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/carousel' },
+  ],
+} as const;
+
+export const galleryData = {
+  slug: 'gallery',
+  category: 'Layout & surface',
+  title: 'Gallery',
+  lede: 'A flexible grid layout for displaying collections of images, cards, or content with 1–4 columns, optional masonry mode, and token-based gap and corner radius.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/gallery',
+  states: ['default', '1-col', '2-col', '3-col', '4-col', 'masonry'],
+  tokens: [
+    'spacing.2',
+    'radii.none',
+    'radii.sm',
+    'radii.md',
+    'radii.lg',
+    'radii.xl',
+    'radii.2xl',
+    'radii.full',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/gallery',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/gallery' },
+  ],
+} as const;
+
 /* ------------------------------------------------------------------ *
  * Path → markdown registry. One lookup powers every "Copy markdown"
  * surface — the per-page buttons and the global pill.
@@ -739,6 +814,8 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/checkbox': docDataToMarkdown(checkboxData),
   '/docs/components/radio': docDataToMarkdown(radioData),
   '/docs/components/text-area': docDataToMarkdown(textAreaData),
+  '/docs/components/carousel': docDataToMarkdown(carouselData),
+  '/docs/components/gallery': docDataToMarkdown(galleryData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [
