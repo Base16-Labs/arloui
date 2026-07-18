@@ -16,9 +16,13 @@ export function QRPopover({ url, className }: QRPopoverProps) {
         className
       )}
     >
-      <div className="rounded-xl bg-white p-2">
-        <QRCodeSVG value={url} size={140} className="text-black" />
-      </div>
+      <QRCodeSVG
+        value={url}
+        size={140}
+        bgColor="transparent"
+        fgColor="currentColor"
+        className="text-ink"
+      />
       <p className="text-[13px] text-ink-2">Scan to preview on device</p>
     </div>
   );

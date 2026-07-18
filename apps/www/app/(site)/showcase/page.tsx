@@ -15,17 +15,12 @@ export default function ShowcasePage() {
         </p>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { name: "Cash App", desc: "Payment confirmation flows" },
-            { name: "Flighty", desc: "Flight tracking detail screens" },
-            { name: "Family", desc: "Location sharing cards" },
-          ].map((app) => (
+          {[0, 1, 2].map((i) => (
             <div
-              key={app.name}
-              className="flex aspect-[3/4] flex-col justify-end rounded-2xl border border-line bg-[#f8f6ef] p-5 dark:bg-surface-raised"
+              key={i}
+              className="flex aspect-[3/4] items-center justify-center rounded-2xl border-2 border-dotted border-line-strong p-5 text-sm font-medium text-ink-3"
             >
-              <div className="text-base font-medium text-ink">{app.name}</div>
-              <div className="mt-1 text-sm text-ink-2">{app.desc}</div>
+              Your app
             </div>
           ))}
         </div>

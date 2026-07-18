@@ -96,7 +96,7 @@ export function InputDocPlayground({ states }: PlaygroundProps) {
 
           <div className="order-first md:order-2 md:self-center">
             <div className="sticky top-3">
-              <div className="flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-[#f8f6ef] p-6 dark:bg-surface-raised">
+              <div className="flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-surface-sunken p-6 dark:bg-surface-raised">
                 <InputStateSample
                   appearance={appearance}
                   size={size}

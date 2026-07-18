@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import { Chip } from '@/components/ui/Chip';
-import { PhoneFrame, PreviewCard } from '@/components/ui/PhoneFrame';
 import { cn } from '@/lib/cn';
 
 type Width = 'full' | 'floating';
@@ -16,16 +15,6 @@ const TABS = [
   { label: 'Saved', icon: 'star' as const },
   { label: 'Profile', icon: 'list' as const },
 ];
-
-export function TabBarPhonePreview() {
-  return (
-    <PreviewCard className="mb-12">
-      <PhoneFrame>
-        <TabBarScreen width="floating" surface="filled" behavior="on scroll" />
-      </PhoneFrame>
-    </PreviewCard>
-  );
-}
 
 export function TabBarDocPlayground() {
   const [width, setWidth] = useState<Width>('floating');

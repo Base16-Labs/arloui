@@ -231,7 +231,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
             <div className="sticky top-3">
               <div
                 className={cn(
-                  "flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-[#f8f6ef] p-6 dark:bg-surface-raised",
+                  "flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-surface-sunken p-6 dark:bg-surface-raised",
                   darkChrome && "border-zinc-700 bg-zinc-900"
                 )}
                 dir={rtl ? "rtl" : "ltr"}
@@ -259,7 +259,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
                 transitionCls,
                 showPressed && !reducedMotion && "scale-[0.97]",
                 showFocusRing &&
-                  "ring-2 ring-[#51A2FF] ring-offset-2 ring-offset-[#f8f6ef] dark:ring-offset-zinc-900"
+                  "ring-2 ring-[#51A2FF] ring-offset-2 ring-offset-surface-sunken dark:ring-offset-zinc-900"
               )}
               style={
                 fabShell
@@ -353,7 +353,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
           try the sample (hold to feel the press).
         </p>
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex min-h-[130px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] px-4 py-5 dark:bg-surface-raised">
+          <div className="flex min-h-[130px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-line-strong bg-surface-sunken px-4 py-5 dark:bg-surface-raised">
             <span className="text-center font-mono text-[11px] text-ink-3">
               motion.duration.instant · motion.pressed.scale
             </span>
@@ -370,7 +370,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
               <span className="pointer-events-none absolute inset-0 bg-black/10 opacity-0 transition-opacity duration-100 motion-safe:active:opacity-100 motion-reduce:opacity-0" />
             </button>
           </div>
-          <div className="flex min-h-[130px] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-line-strong bg-[#f8f6ef] px-4 py-5 dark:bg-surface-raised">
+          <div className="flex min-h-[130px] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-line-strong bg-surface-sunken px-4 py-5 dark:bg-surface-raised">
             <div className="flex w-full flex-col items-center gap-2">
               <span className="text-center font-mono text-[11px] text-ink-3">
                 touchFeedbackMain

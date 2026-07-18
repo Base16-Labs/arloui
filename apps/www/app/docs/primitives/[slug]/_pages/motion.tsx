@@ -171,7 +171,7 @@ export function MotionPage() {
 
         <Section id="curves" title="Easing curves">
           <p className="mb-4 text-[14px] leading-relaxed text-ink-2">
-            Never use <code className="rounded bg-[#f8f6ef] px-1.5 py-0.5 font-mono text-[12px] dark:bg-surface-raised">ease-in</code>{' '}
+            Never use <code className="rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-[12px] dark:bg-surface-raised">ease-in</code>{' '}
             for UI, and use stronger curves than the platform defaults. Tap a curve to watch the dot
             travel it.
           </p>
@@ -243,7 +243,7 @@ export function MotionPage() {
 
         <Section id="reduced" title="Reduced motion">
           <p className="mb-4 text-[14px] leading-relaxed text-ink-2">
-            <code className="rounded bg-[#f8f6ef] px-1.5 py-0.5 font-mono text-[12px] dark:bg-surface-raised">prefers-reduced-motion</code>{' '}
+            <code className="rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-[12px] dark:bg-surface-raised">prefers-reduced-motion</code>{' '}
             reduces, it does not remove. Position and scale become an opacity fade; loaders, spinners,
             and skeletons keep animating because they clarify state.
           </p>
