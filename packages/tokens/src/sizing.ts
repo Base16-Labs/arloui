@@ -17,7 +17,7 @@ export const sizing = {
     lg: 40,
   },
   buttonHeight: {
-    sm: 36,
+    sm: 32,
     md: 40,
     lg: 48,
     xl: 52,

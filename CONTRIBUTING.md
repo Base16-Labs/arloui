@@ -2,6 +2,27 @@
 
 Thanks for wanting to make Arlo UI better. This guide covers the day-to-day workflows.
 
+By participating, you agree to follow the [Code of Conduct](./CODE_OF_CONDUCT.md). Report vulnerabilities through the private process in [SECURITY.md](./SECURITY.md), not a public issue.
+
+## Contribution scope during beta
+
+Arlo UI is maintainer-led while its component vocabulary and APIs stabilize.
+
+- Pull requests are welcome for confirmed bugs, documentation, tests, examples, and scoped tooling improvements.
+- Improvements to existing components should start with an issue when they change API, interaction, visual language, accessibility behavior, or generated output.
+- New components are maintainer-led during beta. Propose one through the feature issue form and wait for explicit maintainer approval before implementing it.
+- Approval to explore a proposal is not a promise to merge it or ship it on a particular timeline. Maintainers may decline work that does not fit the product direction or maintenance budget.
+- Keep pull requests focused. Unrequested broad refactors or speculative component implementations may be closed without detailed review.
+
+Look for [`good first issue` and `help wanted`](./.github/LABELS.md) labels when you want work that maintainers have already scoped for outside contribution.
+
+## Before starting
+
+1. Search existing issues and pull requests.
+2. Open a bug report with a minimal reproduction, or a feature proposal that explains the user problem.
+3. Wait for scope agreement before substantial work. For new components, explicit maintainer approval is required.
+4. Keep discussion and implementation in the linked issue and pull request so decisions remain discoverable.
+
 ## Setup
 
 ```bash
@@ -24,7 +45,9 @@ npm run skill:sync       # mirror tokens + manifest into skills/references
 npm run changeset        # record a release-affecting change
 ```
 
-## Adding a component
+## Adding a component (maintainer or approved proposal)
+
+The steps below describe the implementation workflow after a new component has been approved. They are not an invitation to submit unrequested components during beta.
 
 1. Pick a name. Singular, lowercase, kebab-case (e.g. `button`, `bottom-sheet`).
 2. Create `packages/registry/src/components/<name>/<name>.tsx` and an `index.ts`.
@@ -90,6 +113,10 @@ Details: [`packages/icons/README.md`](./packages/icons/README.md).
 - No comments that narrate code. Reserve comments for intent the code can't convey.
 - Run `npm run format` before committing.
 
+## Versions and releases
+
+Read [VERSIONING.md](./VERSIONING.md) before changing a published package or registry source. In short: copied components use content hashes, supporting npm packages use Changesets, and the CLI has a CI-managed patch release line.
+
 ## PR checklist
 
 - [ ] `npm run typecheck` passes
@@ -99,3 +126,5 @@ Details: [`packages/icons/README.md`](./packages/icons/README.md).
 - [ ] `npm run skill:sync` is reflected in `skills/references/` (if tokens or registry changed)
 - [ ] Changeset added (if a published package changed)
 - [ ] Docs page added (if a new component was added)
+- [ ] Linked issue confirms scope (required for new components and substantial behavior changes)
+- [ ] Contribution follows the beta ownership policy above

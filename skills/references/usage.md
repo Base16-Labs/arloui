@@ -29,6 +29,7 @@ npx arloui diff button
 
 - **tokens** — Design tokens. Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.
 - **theme-provider** — Theme provider. React context that exposes tokens and follows the system color scheme.
+- **haptics** — Haptics. Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.
 
 ### primitive
 

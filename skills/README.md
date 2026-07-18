@@ -93,4 +93,4 @@ Pre-1.0. Skill content, token values, and install paths may change between minor
 
 ## License
 
-MIT © Base16 Labs
+[MIT](../LICENSE) © Base16 Labs and Arlo UI contributors.

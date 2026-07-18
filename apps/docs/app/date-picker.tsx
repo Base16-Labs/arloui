@@ -44,6 +44,7 @@ export default function DatePickerCanvas() {
   const [minuteInterval, setMinuteInterval] = useState<DateWheelPickerMinuteInterval>(5);
   const [weekStartsOn, setWeekStartsOn] = useState<DatePickerWeekStartsOn>(0);
   const [showOutsideDays, setShowOutsideDays] = useState(true);
+  const [monthYearDropdown, setMonthYearDropdown] = useState(false);
   const [state, setState] = useState<PreviewState>('default');
   const previewOffset = useRef(new Animated.Value(0)).current;
 
@@ -94,6 +95,7 @@ export default function DatePickerCanvas() {
                 defaultDisplayedMonth={new Date(2026, 5, 1)}
                 weekStartsOn={weekStartsOn}
                 showOutsideDays={showOutsideDays}
+                monthYearDropdown={monthYearDropdown}
                 disabled={state === 'disabled'}
                 isDateDisabled={
                   state === 'weekends disabled'
@@ -193,6 +195,16 @@ export default function DatePickerCanvas() {
                         label={option}
                         active={showOutsideDays === (option === 'show')}
                         onPress={() => setShowOutsideDays(option === 'show')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Header">
+                    {['arrows', 'dropdown'].map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option}
+                        active={monthYearDropdown === (option === 'dropdown')}
+                        onPress={() => setMonthYearDropdown(option === 'dropdown')}
                       />
                     ))}
                   </VariantControlRow>

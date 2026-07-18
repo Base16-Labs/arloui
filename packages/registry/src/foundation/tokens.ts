@@ -10,6 +10,7 @@
 export const lightSemanticColors = {
   surfaceBackground: '#F9FAFB',
   surfaceInput: '#F3F4F6',
+  surfaceInputActive: '#E5E7EB',
   surfaceElevated: '#FFFFFF',
   surfaceOverlay: 'rgba(16,24,40,0.4)',
   surfaceInverse: '#101828',
@@ -25,7 +26,7 @@ export const lightSemanticColors = {
   textInteractiveError: '#E7000B',
   interactivePrimary: '#155DFC',
   interactivePrimaryPressed: '#1447E6',
-  interactiveSecondary: '#F3F4F6',
+  interactiveSecondary: 'rgba(229,231,235,0.7)',
   interactiveSecondaryPressed: '#E5E7EB',
   interactiveTertiary: 'transparent',
   interactiveTertiaryPressed: 'rgba(243,244,246,0.4)',
@@ -58,6 +59,7 @@ export const lightSemanticColors = {
 export const darkSemanticColors = {
   surfaceBackground: '#09090B',
   surfaceInput: '#101828',
+  surfaceInputActive: '#1E2939',
   surfaceElevated: '#1E2939',
   surfaceOverlay: 'rgba(16,24,40,0.7)',
   surfaceInverse: '#F9FAFB',
@@ -247,7 +249,7 @@ export const radii = { none: 0, sm: 4, md: 8, lg: 12, xl: 16, '2xl': 24, full: 9
 export const sizing = {
   icon: { xs: 16, sm: 20, md: 24, lg: 32 },
   avatar: { xs: 16, sm: 24, md: 32, lg: 40 },
-  buttonHeight: { sm: 36, md: 40, lg: 48, xl: 52 },
+  buttonHeight: { sm: 32, md: 40, lg: 48, xl: 52 },
   touchTarget: { minimum: 44, comfortable: 48 },
 } as const;
 

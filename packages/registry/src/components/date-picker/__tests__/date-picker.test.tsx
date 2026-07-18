@@ -108,6 +108,38 @@ describe('DateWheelPicker', () => {
     expect(onValueChange).toHaveBeenLastCalledWith(new Date(2019, 5, 15, 9, 30));
   });
 
+  it('keeps date rows stable across consecutive scroll selections', () => {
+    const onValueChange = jest.fn();
+    const { rerender } = renderWithTheme(
+      <DateWheelPicker
+        mode="date-time"
+        value={new Date(2026, 5, 15, 13, 10)}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    // The rolling range is anchored on the initial date (2026-06-15) at the
+    // default 365-day radius, so index 365 is the 15th and 367 is the 17th.
+    fireEvent(screen.getByTestId('date-wheel'), 'momentumScrollEnd', {
+      nativeEvent: { contentOffset: { y: 367 * 44 } },
+    });
+    expect(onValueChange).toHaveBeenLastCalledWith(new Date(2026, 5, 17, 13, 10, 0));
+
+    rerender(
+      <DateWheelPicker
+        mode="date-time"
+        value={new Date(2026, 5, 17, 13, 10)}
+        onValueChange={onValueChange}
+      />,
+    );
+    // Anchor stays on the 15th, so one more row lands on the 18th — not a
+    // drifted date from a list that re-centered on the new selection.
+    fireEvent(screen.getByTestId('date-wheel'), 'momentumScrollEnd', {
+      nativeEvent: { contentOffset: { y: 368 * 44 } },
+    });
+    expect(onValueChange).toHaveBeenLastCalledWith(new Date(2026, 5, 18, 13, 10, 0));
+  });
+
   it('clamps emitted dates to the configured range', () => {
     const onValueChange = jest.fn();
     renderWithTheme(

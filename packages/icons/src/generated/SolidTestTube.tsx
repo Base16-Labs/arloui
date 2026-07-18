@@ -1,5 +1,0 @@
-import * as React from "react";
-import Svg, { Path } from "react-native-svg";
-import type { SvgProps } from "react-native-svg";
-const SolidTestTube = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M21.906 8.1 16.28 2.47a.78.78 0 0 0-.531-.22.782.782 0 0 0-.531.22L3.104 14.59a4.18 4.18 0 0 0-1.23 2.97c0 1.11.443 2.18 1.23 2.96a4.19 4.19 0 0 0 2.968 1.23c1.113 0 2.18-.44 2.968-1.23l10.49-10.49 2.082-.69c.12-.04.23-.11.317-.21q.13-.135.176-.33a.76.76 0 0 0-.008-.38.75.75 0 0 0-.191-.32m-3.018.57a.6.6 0 0 0-.294.18l-3.71 3.71c-.793.27-2.038.37-3.662-.47-.994-.52-1.892-.75-2.678-.82l7.206-7.21 4.236 4.24z" /></Svg>;
-export { SolidTestTube as ReactComponent };

@@ -14,7 +14,7 @@ import {
 type Tone = "primary" | "neutral" | "danger";
 type Appearance = "solid" | "soft" | "ghost" | "outline";
 type Size = "sm" | "md" | "lg" | "xl";
-type IconLayout = "none" | "leading" | "both";
+type IconLayout = "none" | "leading" | "trailing" | "both";
 
 type Palette = { bg: string; fg: string; border: string; bw: number };
 
@@ -186,7 +186,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
             Icons
           </span>
           <div className="flex flex-wrap gap-2">
-            {(["none", "leading", "both"] as const).map((il) => (
+            {(["none", "leading", "trailing", "both"] as const).map((il) => (
               <Chip
                 key={il}
                 active={iconLayout === il}
@@ -295,7 +295,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
               )}
               {!isIconOnly &&
                 !isLoading &&
-                iconLayout === "both" && (
+                (iconLayout === "trailing" || iconLayout === "both") && (
                   <DocIconArrowRight
                     className={cn(icn, "opacity-95")}
                     aria-hidden

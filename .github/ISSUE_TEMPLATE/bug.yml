@@ -1,0 +1,93 @@
+name: Bug report
+description: Report a reproducible problem in the CLI, registry, components, tokens, docs, or tooling.
+title: '[Bug]: '
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Arlo UI. Please search existing issues before filing a report.
+        Do not include security vulnerabilities here; use GitHub's private vulnerability reporting instead.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI
+        - Registry component
+        - Tokens or theme
+        - Icons
+        - Documentation
+        - Skill or agent tooling
+        - Repository tooling
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or registry hash
+      description: Include the arloui package version and, for copied components, the hash shown by `arloui diff` when available.
+      placeholder: arloui@0.1.10 / button 3efd4c5e5afd06f7
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Node, package manager, React Native or Expo version, platform, and OS.
+      placeholder: |
+        Node 22.14.0, npm 11
+        Expo SDK 57 / React Native 0.86
+        iOS 26 simulator / macOS
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Link a small repository or provide the shortest sequence of commands and code that reproduces the problem.
+      placeholder: |
+        1. npx arloui init
+        2. npx arloui add button
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the complete error message, screenshots, or recordings when useful. Remove secrets and personal data.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Submission checks
+      options:
+        - label: I searched existing issues and did not find a duplicate.
+          required: true
+        - label: I have removed secrets and personal information from the report.
+          required: true
+        - label: I agree to follow the Code of Conduct.
+          required: true

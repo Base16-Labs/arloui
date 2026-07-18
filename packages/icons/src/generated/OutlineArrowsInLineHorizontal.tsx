@@ -1,5 +1,0 @@
-import * as React from "react";
-import Svg, { Path } from "react-native-svg";
-import type { SvgProps } from "react-native-svg";
-const OutlineArrowsInLineHorizontal = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M12.75 3.75v16.5c0 .199-.079.39-.22.53a.747.747 0 0 1-1.06 0 .75.75 0 0 1-.22-.53V3.75c0-.199.079-.39.22-.53a.747.747 0 0 1 1.06 0c.141.14.22.331.22.53M6.531 8.469a.755.755 0 0 0-1.062 0 .754.754 0 0 0 0 1.062L7.19 11.25H1.5a.75.75 0 0 0-.53.22.747.747 0 0 0 0 1.06c.14.141.331.22.53.22h5.69l-1.721 1.719a.754.754 0 0 0 0 1.062.77.77 0 0 0 .531.219.74.74 0 0 0 .531-.219l3-3a.754.754 0 0 0 0-1.062zM22.5 11.25h-5.69l1.721-1.719a.754.754 0 0 0 0-1.062.754.754 0 0 0-1.062 0l-3 3a.754.754 0 0 0 0 1.062l3 3a.77.77 0 0 0 .531.219.74.74 0 0 0 .531-.219.754.754 0 0 0 0-1.062L16.81 12.75h5.69c.199 0 .39-.079.53-.22a.747.747 0 0 0 0-1.06.75.75 0 0 0-.53-.22" /></Svg>;
-export { OutlineArrowsInLineHorizontal as ReactComponent };

@@ -29,6 +29,18 @@
       ]
     },
     {
+      "name": "haptics",
+      "kind": "foundation",
+      "title": "Haptics",
+      "description": "Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.",
+      "registryDependencies": [],
+      "dependencies": [],
+      "tags": [
+        "foundation",
+        "haptics"
+      ]
+    },
+    {
       "name": "animated-icons",
       "kind": "icon",
       "title": "Animated icons",
@@ -54,10 +66,10 @@
       "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "haptics"
       ],
       "dependencies": [
-        "@arloui/utils",
         "expo-haptics",
         "react-native-svg"
       ],

@@ -135,11 +135,13 @@ export function DateWheelPicker({
   const [initialYear] = useState(() =>
     clampDate(value ?? fallbackValue, minDate, maxDate).getFullYear(),
   );
+  const [anchorTime] = useState(() =>
+    startOfDay(clampDate(value ?? fallbackValue, minDate, maxDate)).getTime(),
+  );
   const [internalValue, setInternalValue] = useState(() =>
     clampDate(fallbackValue, minDate, maxDate),
   );
   const selected = clampDate(value ?? internalValue, minDate, maxDate);
-  const selectedTime = selected.getTime();
   const selectedYear = selected.getFullYear();
   const selectedMonth = selected.getMonth();
   const minTime = minDate?.getTime();
@@ -174,11 +176,14 @@ export function DateWheelPicker({
     [selectedMonth, selectedYear],
   );
 
+  // Anchor the rolling range on a stable initial date (like the year range).
+  // Re-centering it on `selectedTime` shifts the value under each visible row
+  // mid-scroll, so a picked date lands on a different one after the list rebuilds.
   const rollingDates = useMemo(() => {
     const range = Math.max(1, Math.floor(dateRangeDays));
-    const selectedDate = new Date(selectedTime);
-    const first = startOfDay(minTime == null ? addDays(selectedDate, -range) : new Date(minTime));
-    const last = startOfDay(maxTime == null ? addDays(selectedDate, range) : new Date(maxTime));
+    const anchorDate = new Date(anchorTime);
+    const first = startOfDay(minTime == null ? addDays(anchorDate, -range) : new Date(minTime));
+    const last = startOfDay(maxTime == null ? addDays(anchorDate, range) : new Date(maxTime));
     const length = Math.max(1, Math.floor((last.getTime() - first.getTime()) / 86_400_000) + 1);
     return Array.from({ length }, (_, index) => {
       const date = addDays(first, index);
@@ -188,7 +193,7 @@ export function DateWheelPicker({
         accessibilityLabel: formatFullDate(date, locale),
       };
     });
-  }, [dateRangeDays, locale, maxTime, minTime, selectedTime]);
+  }, [anchorTime, dateRangeDays, locale, maxTime, minTime]);
 
   const hourItems = useMemo(
     () =>

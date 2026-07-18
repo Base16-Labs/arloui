@@ -93,7 +93,7 @@ function buttonVariants(t: Tokens): {
         solid: { bg: t.colors.textSecondary, fg: t.colors.textInverse, border: 'transparent', borderWidth: 0 },
         soft: { bg: t.colors.surfaceInput, fg: t.colors.textPrimary, border: 'transparent', borderWidth: 0 },
         ghost: transparent(t.colors.textPrimary),
-        outline: { bg: 'transparent', fg: t.colors.interactivePrimary, border: t.colors.borderPrimary, borderWidth: 1 },
+        outline: { bg: 'transparent', fg: t.colors.textPrimary, border: t.colors.borderPrimary, borderWidth: 1 },
       },
       danger: {
         solid: { bg: t.colors.feedbackError, fg: t.colors.textInteractivePrimary, border: 'transparent', borderWidth: 0 },

@@ -21,6 +21,7 @@ import * as p from '@clack/prompts';
 import { add, writeComponent } from '../commands/add';
 import { DEFAULT_CONFIG, type ArloConfig } from '../config';
 import type { ResolvedRegistryEntry } from '../registry-client';
+import { buildSourceTargetMap } from '../rewrite-imports';
 
 const config: ArloConfig = DEFAULT_CONFIG;
 
@@ -106,6 +107,59 @@ describe('writeComponent', () => {
     await expect(writeComponent({ cwd: dir, config, entry: evil })).rejects.toThrow(
       /outside the project directory/,
     );
+  });
+
+  it('rewrites registry-internal imports to consumer-relative paths', async () => {
+    const haptics = makeEntry({
+      name: 'haptics',
+      kind: 'foundation',
+      files: [
+        {
+          source: 'foundation/haptics.ts',
+          target: 'haptics.ts',
+          type: 'utility',
+          content: 'export const haptic = 1;',
+        },
+      ],
+    });
+    const themeProvider = makeEntry({
+      name: 'theme-provider',
+      kind: 'foundation',
+      files: [
+        {
+          source: 'foundation/theme-provider.tsx',
+          target: 'theme-provider.tsx',
+          type: 'theme',
+          content: 'export const useTokens = 1;',
+        },
+      ],
+    });
+    const button = makeEntry({
+      files: [
+        {
+          source: 'components/button/press-feedback.tsx',
+          target: 'button/press-feedback.tsx',
+          content:
+            "import { haptic } from '../../foundation/haptics';\n" +
+            "import { useTokens } from '../../foundation/theme-provider';\n",
+        },
+        { source: 'components/button/index.ts', target: 'button/index.ts', content: "export * from './press-feedback';\n" },
+      ],
+      registryDependencies: ['theme-provider', 'haptics'],
+    });
+
+    const map = buildSourceTargetMap(dir, config, [haptics, themeProvider, button]);
+    await writeComponent({ cwd: dir, config, entry: button, sourceTargetMap: map });
+
+    const pf = await readFile(join(dir, 'components/ui/button/press-feedback.tsx'), 'utf8');
+    // foundation lands under the lib alias; component under components/ui/button — three levels up.
+    expect(pf).toContain("from '../../../lib/arloui/haptics'");
+    expect(pf).toContain("from '../../../lib/arloui/theme-provider'");
+    expect(pf).not.toContain('foundation/');
+
+    // Same-directory barrel import is left correct.
+    const barrel = await readFile(join(dir, 'components/ui/button/index.ts'), 'utf8');
+    expect(barrel).toContain("from './press-feedback'");
   });
 });
 

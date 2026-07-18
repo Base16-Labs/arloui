@@ -1,0 +1,21 @@
+{
+  "name": "haptics",
+  "kind": "foundation",
+  "title": "Haptics",
+  "description": "Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.",
+  "files": [
+    {
+      "source": "foundation/haptics.ts",
+      "target": "haptics.ts",
+      "type": "utility",
+      "content": "import { Platform } from 'react-native';\n\ntype Strength = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error' | 'selection';\n\nconst isIOS = Platform.OS === 'ios';\nconst isAndroid = Platform.OS === 'android';\n\n/**\n * Thin haptics wrapper that no-ops when `expo-haptics` is not installed and\n * matches platform expectations: iOS gets the rich impact APIs, Android gets a\n * single short impulse, web gets nothing.\n *\n * `expo-haptics` is an optional peer dependency — components stay usable\n * without it. Always call this helper rather than importing expo-haptics\n * directly so haptics remain optional.\n */\nexport async function haptic(strength: Strength = 'light'): Promise<void> {\n  if (!isIOS && !isAndroid) return;\n  try {\n    const mod = await import('expo-haptics').catch(() => null);\n    if (!mod) return;\n    // `return await` (not a bare `return`) so a rejected haptics promise is\n    // caught here and swallowed — haptics are non-critical and must never throw.\n    switch (strength) {\n      case 'light':\n        return await mod.impactAsync(mod.ImpactFeedbackStyle.Light);\n      case 'medium':\n        return await mod.impactAsync(mod.ImpactFeedbackStyle.Medium);\n      case 'heavy':\n        return await mod.impactAsync(mod.ImpactFeedbackStyle.Heavy);\n      case 'selection':\n        return await mod.selectionAsync();\n      case 'success':\n        return await mod.notificationAsync(mod.NotificationFeedbackType.Success);\n      case 'warning':\n        return await mod.notificationAsync(mod.NotificationFeedbackType.Warning);\n      case 'error':\n        return await mod.notificationAsync(mod.NotificationFeedbackType.Error);\n    }\n  } catch {\n    // swallowed — haptics are non-critical\n  }\n}\n"
+    }
+  ],
+  "meta": {
+    "tags": [
+      "foundation",
+      "haptics"
+    ]
+  },
+  "hash": "6e91242ca8b47288"
+}
