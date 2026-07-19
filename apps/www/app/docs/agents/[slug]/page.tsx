@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
+import { RightRail } from "@/components/nav/RightRail";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 import { agentItems } from "@/lib/routes";
 
@@ -36,6 +37,14 @@ export default async function AgentPage({
   );
 }
 
+const headings = [
+  { id: "connect", label: "Connect" },
+  { id: "tools", label: "Tools" },
+  { id: "how-it-works", label: "How it works" },
+  { id: "prompts", label: "Example prompts" },
+  { id: "configuration", label: "Configuration" },
+];
+
 const TOOLS: Array<{ name: string; desc: string }> = [
   {
     name: "arlo_search",
@@ -59,8 +68,14 @@ const TOOLS: Array<{ name: string; desc: string }> = [
   },
   {
     name: "arlo_get_recipe",
-    desc: "Spec for a block/recipe (a full-screen example): composition tree, primitives, archetype, and code.",
+    desc: "Spec for a block/recipe (a full-screen example): composition tree, primitives used, archetype, and code.",
   },
+];
+
+const PROMPTS = [
+  "Add an Arlo UI bottom sheet to this screen.",
+  "What tone tokens does the Badge use, and what are their dark values?",
+  "Build a settings screen using Arlo UI primitives.",
 ];
 
 const CLAUDE_CODE = `claude mcp add arloui -- npx -y @arloui/mcp`;
@@ -74,88 +89,143 @@ const MCP_JSON = `{
   }
 }`;
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+const inlineCode =
+  "rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-[14px] text-ink dark:bg-surface-raised";
+
+function ClientHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="mt-14 mb-4 text-[22px] font-medium tracking-tight text-ink">
+    <h3 className="mt-8 mb-3 text-[17px] font-medium tracking-tight text-ink">
       {children}
-    </h2>
+    </h3>
   );
 }
 
 function McpDoc() {
   return (
-    <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
-      <Eyebrow>Agents</Eyebrow>
-      <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
-        MCP
-      </h1>
-      <Lede>
-        A read-only Model Context Protocol server that gives coding agents live
-        access to Arlo UI components, tokens, and docs — straight from your
-        editor.
-      </Lede>
+    <>
+      <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <Eyebrow>Agents</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          MCP
+        </h1>
+        <Lede>
+          A read-only Model Context Protocol server that gives coding agents
+          live access to Arlo UI components, tokens, and docs — straight from
+          your editor.
+        </Lede>
 
-      <p className="mt-8 text-[17px] leading-relaxed text-ink-2">
-        The server holds no content of its own. Every tool call resolves to a
-        fetch of a canonical Arlo UI URL, so an agent always sees exactly what
-        is published on the site — no bundled copy to drift out of date.
-      </p>
+        <p className="mt-8 text-[17px] leading-relaxed text-ink-2">
+          The server holds no content of its own. Every tool call resolves to a
+          fetch of a canonical Arlo UI URL, so an agent always sees exactly what
+          is published on the site — no bundled copy to drift out of date.
+        </p>
 
-      <SectionTitle>Connect</SectionTitle>
-      <p className="mb-4 text-[17px] leading-relaxed text-ink-2">
-        The server runs locally over stdio — your agent launches it as a
-        subprocess, no account or network endpoint to configure. In{" "}
-        <span className="text-ink">Claude Code</span>:
-      </p>
-      <CodeBlock language="bash">{CLAUDE_CODE}</CodeBlock>
-      <p className="mt-6 mb-4 text-[17px] leading-relaxed text-ink-2">
-        In <span className="text-ink">Claude Desktop</span> (
-        <code className="font-mono text-[14px] text-ink">
-          claude_desktop_config.json
-        </code>
-        ), <span className="text-ink">Cursor</span> (
-        <code className="font-mono text-[14px] text-ink">.cursor/mcp.json</code>
-        ), or any MCP client:
-      </p>
-      <CodeBlock language="json">{MCP_JSON}</CodeBlock>
+        <section id="connect" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Connect
+          </h2>
+          <p className="text-[17px] leading-relaxed text-ink-2">
+            The server runs locally over stdio — your agent launches it as a
+            subprocess, with no account or network endpoint to configure.
+          </p>
 
-      <SectionTitle>Tools</SectionTitle>
-      <div className="divide-y divide-line border-t border-line">
-        {TOOLS.map((t) => (
-          <div key={t.name} className="py-4">
-            <code className="font-mono text-[14px] text-ink">{t.name}</code>
-            <p className="mt-1.5 text-[15px] leading-relaxed text-ink-2">
-              {t.desc}
-            </p>
+          <ClientHeading>Claude Code</ClientHeading>
+          <CodeBlock language="bash">{CLAUDE_CODE}</CodeBlock>
+
+          <ClientHeading>Claude Desktop</ClientHeading>
+          <p className="mb-3 text-[17px] leading-relaxed text-ink-2">
+            Add the server to{" "}
+            <code className={inlineCode}>claude_desktop_config.json</code>:
+          </p>
+          <CodeBlock language="json">{MCP_JSON}</CodeBlock>
+
+          <ClientHeading>Cursor</ClientHeading>
+          <p className="mb-3 text-[17px] leading-relaxed text-ink-2">
+            Use the same configuration in{" "}
+            <code className={inlineCode}>.cursor/mcp.json</code> — or any other
+            MCP-compatible client.
+          </p>
+        </section>
+
+        <section id="tools" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Tools
+          </h2>
+          <div className="border-t border-line">
+            {TOOLS.map((t) => (
+              <div
+                key={t.name}
+                className="border-b border-line py-4 sm:flex sm:gap-6"
+              >
+                <code className="shrink-0 font-mono text-[14px] text-ink sm:w-52">
+                  {t.name}
+                </code>
+                <p className="mt-1.5 text-[17px] leading-relaxed text-ink-2 sm:mt-0">
+                  {t.desc}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </section>
 
-      <SectionTitle>How it works</SectionTitle>
-      <ul className="list-disc space-y-2 pl-5 text-[16px] leading-relaxed text-ink-2 marker:text-ink-3">
-        <li>
-          Your agent spawns the server and talks JSON-RPC to it over stdin and
-          stdout (the stdio transport). Nothing is exposed over the network.
-        </li>
-        <li>
-          Each tool fetches from arloui.com — the registry JSON under{" "}
-          <code className="font-mono text-[14px] text-ink">/r</code> and docs
-          pages via their <code className="font-mono text-[14px] text-ink">?as=md</code>{" "}
-          endpoint — and returns markdown to the agent.
-        </li>
-        <li>
-          Responses are cached briefly, so a burst of calls in one turn does not
-          refetch, and new components appear within a minute of a site deploy.
-        </li>
-      </ul>
+        <section id="how-it-works" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            How it works
+          </h2>
+          <ul className="list-disc space-y-2.5 pl-5 text-[17px] leading-relaxed text-ink-2 marker:text-ink-3">
+            <li>
+              Your agent spawns the server and talks JSON-RPC to it over stdin
+              and stdout (the stdio transport). Nothing is exposed over the
+              network.
+            </li>
+            <li>
+              Each tool fetches from arloui.com — the registry JSON under{" "}
+              <code className={inlineCode}>/r</code> and docs pages via their{" "}
+              <code className={inlineCode}>?as=md</code> endpoint — and returns
+              markdown to the agent.
+            </li>
+            <li>
+              Responses are cached briefly, so a burst of calls in one turn does
+              not refetch, and new components appear within a minute of a site
+              deploy.
+            </li>
+          </ul>
+        </section>
 
-      <p className="mt-12 text-[15px] leading-relaxed text-ink-3">
-        Point the server at a local site with the{" "}
-        <code className="font-mono text-[13px] text-ink-2">ARLO_BASE_URL</code>{" "}
-        environment variable; it defaults to the production site so{" "}
-        <code className="font-mono text-[13px] text-ink-2">npx @arloui/mcp</code>{" "}
-        just works.
-      </p>
-    </main>
+        <section id="prompts" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Example prompts
+          </h2>
+          <p className="mb-4 text-[17px] leading-relaxed text-ink-2">
+            Once connected, ask your agent in plain language:
+          </p>
+          <div className="space-y-2.5">
+            {PROMPTS.map((p) => (
+              <div
+                key={p}
+                className="rounded-xl border border-line px-5 py-3.5 text-[17px] leading-relaxed text-ink-2"
+              >
+                {p}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="configuration" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Configuration
+          </h2>
+          <p className="text-[17px] leading-relaxed text-ink-2">
+            Point the server at a local site with{" "}
+            <code className={inlineCode}>ARLO_BASE_URL</code> (and{" "}
+            <code className={inlineCode}>ARLO_REGISTRY_URL</code>, which defaults
+            to <code className={inlineCode}>&lt;base&gt;/r</code>) to develop
+            against unreleased components. It defaults to the production site, so{" "}
+            <code className={inlineCode}>npx @arloui/mcp</code> just works.
+          </p>
+        </section>
+      </main>
+      <RightRail headings={headings} />
+    </>
   );
 }
