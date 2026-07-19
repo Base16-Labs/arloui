@@ -1,0 +1,31 @@
+{
+  "name": "gallery",
+  "kind": "primitive",
+  "title": "Gallery",
+  "description": "A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.",
+  "registryDependencies": [
+    "tokens",
+    "theme-provider"
+  ],
+  "files": [
+    {
+      "source": "components/gallery/gallery.tsx",
+      "target": "gallery/gallery.tsx",
+      "content": "import { Children, forwardRef, isValidElement, useState, type ReactNode } from 'react';\nimport {\n  ScrollView,\n  View,\n  type LayoutChangeEvent,\n  type ScrollViewProps,\n  type StyleProp,\n  type ViewStyle,\n} from 'react-native';\nimport { useTokens } from '../../foundation/theme-provider';\n\nexport type GalleryColumns = 1 | 2 | 3 | 4;\nexport type GalleryRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';\n\nexport type GalleryProps = {\n  children: ReactNode;\n  columns?: GalleryColumns;\n  gap?: number;\n  radius?: GalleryRadius;\n  masonry?: boolean;\n  style?: StyleProp<ViewStyle>;\n  contentContainerStyle?: StyleProp<ViewStyle>;\n  accessibilityLabel?: string;\n} & Pick<ScrollViewProps, 'showsVerticalScrollIndicator' | 'onScroll' | 'scrollEventThrottle'>;\n\nexport const Gallery = forwardRef<ScrollView, GalleryProps>(function Gallery(\n  {\n    children,\n    columns = 2,\n    gap,\n    radius,\n    masonry = false,\n    style,\n    contentContainerStyle,\n    accessibilityLabel = 'Gallery',\n    ...scrollProps\n  },\n  ref,\n) {\n  const t = useTokens();\n  const resolvedGap = gap ?? t.spacing[2];\n  const resolvedRadius = radius != null ? t.radii[radius] : t.radii.lg;\n\n  const items = Children.toArray(children).filter(isValidElement);\n  const [containerWidth, setContainerWidth] = useState(0);\n\n  const colWidth =\n    containerWidth > 0 ? (containerWidth - resolvedGap * (columns - 1)) / columns : 0;\n\n  const handleLayout = (e: LayoutChangeEvent) => {\n    const w = e.nativeEvent.layout.width;\n    if (w > 0 && w !== containerWidth) setContainerWidth(w);\n  };\n\n  if (masonry) {\n    return (\n      <ScrollView\n        ref={ref}\n        accessibilityLabel={accessibilityLabel}\n        style={style}\n        contentContainerStyle={contentContainerStyle}\n        onLayout={handleLayout}\n        {...scrollProps}\n      >\n        <MasonryLayout\n          items={items}\n          columns={columns}\n          gap={resolvedGap}\n          radius={resolvedRadius}\n          containerWidth={containerWidth}\n        />\n      </ScrollView>\n    );\n  }\n\n  const rows: React.ReactElement[][] = [];\n  for (let i = 0; i < items.length; i += columns) {\n    rows.push(items.slice(i, i + columns) as React.ReactElement[]);\n  }\n\n  return (\n    <ScrollView\n      ref={ref}\n      accessibilityLabel={accessibilityLabel}\n      style={style}\n      contentContainerStyle={contentContainerStyle}\n      onLayout={handleLayout}\n      {...scrollProps}\n    >\n      <View style={{ gap: resolvedGap }}>\n        {rows.map((row, ri) => (\n          <View key={ri} style={{ flexDirection: 'row', gap: resolvedGap }}>\n            {row.map((child, ci) => (\n              <View\n                key={ci}\n                style={{\n                  width: colWidth > 0 ? colWidth : undefined,\n                  flex: colWidth > 0 ? undefined : 1,\n                  borderRadius: resolvedRadius,\n                  overflow: 'hidden',\n                }}\n              >\n                {child}\n              </View>\n            ))}\n          </View>\n        ))}\n      </View>\n    </ScrollView>\n  );\n});\n\nfunction MasonryLayout({\n  items,\n  columns,\n  gap,\n  radius,\n  containerWidth,\n}: {\n  items: React.ReactElement[];\n  columns: number;\n  gap: number;\n  radius: number;\n  containerWidth: number;\n}) {\n  const [heights, setHeights] = useState<Record<number, number>>({});\n\n  const colWidth = containerWidth > 0 ? (containerWidth - gap * (columns - 1)) / columns : 0;\n\n  const colHeights = new Array(columns).fill(0) as number[];\n  const positions: { col: number; top: number }[] = [];\n\n  items.forEach((_, i) => {\n    const shortest = colHeights.indexOf(Math.min(...colHeights));\n    positions.push({ col: shortest, top: colHeights[shortest]! });\n    colHeights[shortest]! += (heights[i] ?? 0) + gap;\n  });\n\n  const totalHeight = Math.max(...colHeights, 0);\n\n  return (\n    <View style={{ height: totalHeight > 0 ? totalHeight : undefined }}>\n      {containerWidth > 0 &&\n        items.map((child, i) => (\n          <View\n            key={i}\n            onLayout={(e) => {\n              const h = e.nativeEvent.layout.height;\n              setHeights((prev) => (prev[i] === h ? prev : { ...prev, [i]: h }));\n            }}\n            style={{\n              position: 'absolute',\n              top: positions[i]?.top ?? 0,\n              left: (positions[i]?.col ?? 0) * (colWidth + gap),\n              width: colWidth,\n              borderRadius: radius,\n              overflow: 'hidden',\n            }}\n          >\n            {child}\n          </View>\n        ))}\n    </View>\n  );\n}\n"
+    },
+    {
+      "source": "components/gallery/index.ts",
+      "target": "gallery/index.ts",
+      "content": "export {\n  Gallery,\n  type GalleryColumns,\n  type GalleryProps,\n  type GalleryRadius,\n} from './gallery';\n"
+    }
+  ],
+  "meta": {
+    "tags": [
+      "layout",
+      "grid",
+      "masonry",
+      "primitive"
+    ]
+  },
+  "hash": "4882ef858479de90"
+}

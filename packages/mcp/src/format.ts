@@ -99,7 +99,7 @@ export function componentMarkdown(entry: RegistryEntry, prose: string | null): s
 
 function extractBlock(src: string, exportName: string): string | null {
   const m = src.match(new RegExp(`export const ${exportName}\\s*=\\s*\\{([\\s\\S]*?)\\}\\s*as const`));
-  return m ? m[1] : null;
+  return m?.[1] ?? null;
 }
 
 function readKey(block: string | null, key: string): string | undefined {
