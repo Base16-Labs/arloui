@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { siteLinks } from '@/lib/routes';
 import { Icon } from '@/components/ui/Icon';
+import { GithubMark } from '@/components/ui/GithubMark';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const GITHUB_URL = 'https://github.com/Base16-Labs/arloui';
@@ -66,19 +67,19 @@ export function TopNav() {
             </button>
           </div>
 
-          <div className="hidden items-center gap-3.5 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex">
             <a
               href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="tabular-nums flex items-center gap-1.5 rounded-md border border-line bg-canvas px-2.5 py-1 text-[13px] text-ink-2"
+              className="tabular-nums flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-ink-2 transition-colors hover:bg-ink/[0.06] hover:text-ink"
             >
-              <Icon name="star" size={14} />
+              <GithubMark size={15} />
               <span>0</span>
             </a>
             <a
               href="#"
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-line bg-canvas text-ink-2"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-ink/[0.06] hover:text-ink"
               aria-label="Figma"
             >
               <img src="/icons/figma.svg" alt="" className="h-4 w-4" aria-hidden="true" />

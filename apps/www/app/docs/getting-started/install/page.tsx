@@ -34,7 +34,7 @@ export default function InstallPage() {
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
             Install
           </h2>
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-4 font-mono text-sm dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-4 font-mono text-sm dark:bg-surface-raised">
             npx arloui init
           </div>
         </section>

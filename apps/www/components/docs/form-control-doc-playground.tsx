@@ -109,7 +109,7 @@ export function FormControlDocPlayground({ control, states }: PlaygroundProps) {
             <div
               className={cn(
                 "flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong p-6",
-                dark ? "bg-[#09090B]" : "bg-[#f8f6ef] dark:bg-surface-raised",
+                dark ? "bg-[#09090B]" : "bg-surface-sunken dark:bg-surface-raised",
               )}
             >
               <div className={cn("flex items-center gap-3", disabled && "opacity-45")}>

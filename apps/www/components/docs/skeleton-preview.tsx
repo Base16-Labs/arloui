@@ -2,21 +2,10 @@
 
 import { useState } from 'react';
 import { Chip } from '@/components/ui/Chip';
-import { PhoneFrame, PreviewCard } from '@/components/ui/PhoneFrame';
 import { cn } from '@/lib/cn';
 
 type Pattern = 'feed' | 'article' | 'profile';
 type Motion = 'shimmer' | 'pulse' | 'none';
-
-export function SkeletonPhonePreview() {
-  return (
-    <PreviewCard className="mb-12">
-      <PhoneFrame>
-        <SkeletonScreen pattern="feed" motion="shimmer" />
-      </PhoneFrame>
-    </PreviewCard>
-  );
-}
 
 export function SkeletonDocPlayground() {
   const [pattern, setPattern] = useState<Pattern>('feed');

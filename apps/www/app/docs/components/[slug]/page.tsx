@@ -8,38 +8,30 @@ import { Chip } from '@/components/ui/Chip';
 import { CodeBlock } from '@/components/ui/CodeBlock';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { ButtonDocPlayground } from '@/components/docs/button-doc-playground';
-import { ButtonPhonePreview } from '@/components/docs/button-phone-preview';
 import { InputDocPlayground } from '@/components/docs/input-doc-playground';
-import { InputPhonePreview } from '@/components/docs/input-phone-preview';
 import { TextAreaDocPlayground } from '@/components/docs/textarea-doc-playground';
-import { TextAreaPhonePreview } from '@/components/docs/textarea-phone-preview';
 import { SheetDocPlayground } from '@/components/docs/sheet-doc-playground';
-import { SheetPhonePreview } from '@/components/docs/sheet-phone-preview';
-import { TabBarDocPlayground, TabBarPhonePreview } from '@/components/docs/tab-bar-preview';
-import { TabsDocPlayground, TabsPhonePreview } from '@/components/docs/tabs-preview';
-import { SkeletonDocPlayground, SkeletonPhonePreview } from '@/components/docs/skeleton-preview';
-import { CarouselDocPlayground, CarouselPhonePreview } from '@/components/docs/carousel-preview';
-import { GalleryDocPlayground, GalleryPhonePreview } from '@/components/docs/gallery-preview';
-import {
-  DatePickerDocPlayground,
-  DatePickerPhonePreview,
-} from '@/components/docs/date-picker-preview';
+import { TabBarDocPlayground } from '@/components/docs/tab-bar-preview';
+import { TabsDocPlayground } from '@/components/docs/tabs-preview';
+import { SkeletonDocPlayground } from '@/components/docs/skeleton-preview';
+import { DatePickerDocPlayground } from '@/components/docs/date-picker-preview';
 import {
   FormControlDocPlayground,
   type Control,
 } from '@/components/docs/form-control-doc-playground';
-import { FormControlPhonePreview } from '@/components/docs/form-control-phone-preview';
-import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
-import { componentGroups } from '@/lib/routes';
+import { CarouselDocPlayground, CarouselPhonePreview } from '@/components/docs/carousel-preview';
+import { GalleryDocPlayground, GalleryPhonePreview } from '@/components/docs/gallery-preview';
 import { BadgePhonePreview } from '@/components/docs/badge-phone-preview';
 import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
 import { ChipPhonePreview } from '@/components/docs/chip-phone-preview';
 import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
+import { DevicePreview } from '@/components/ui/DevicePreview';
+import { GithubMark } from '@/components/ui/GithubMark';
+import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
+import { componentGroups } from '@/lib/routes';
 import {
-  badgeData,
   buttonData,
   checkboxData,
-  chipData,
   datePickerData,
   docDataToMarkdown,
   inputData,
@@ -52,6 +44,8 @@ import {
   toggleData,
   carouselData,
   galleryData,
+  badgeData,
+  chipData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -154,11 +148,12 @@ function TabsDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={tabsData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <TabsPhonePreview />
+        <DevicePreview route="tabs" />
 
         <Section
           id="anatomy"
@@ -295,11 +290,12 @@ function SkeletonDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={skeletonData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <SkeletonPhonePreview />
+        <DevicePreview route="skeleton" />
 
         <Section
           id="anatomy"
@@ -448,11 +444,12 @@ function TabBarDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={tabBarData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <TabBarPhonePreview />
+        <DevicePreview route="tab-bar" />
 
         <Section
           id="anatomy"
@@ -607,11 +604,12 @@ function DatePickerDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={datePickerData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <DatePickerPhonePreview />
+        <DevicePreview route="date-picker" />
 
         <Section
           id="anatomy"
@@ -769,14 +767,16 @@ function SheetDocPage() {
         {/* Action pills */}
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={sheetData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={sheetData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <SheetPhonePreview />
+        <DevicePreview route="sheet" />
 
         {/* Anatomy */}
         <Section
@@ -784,9 +784,9 @@ function SheetDocPage() {
           title="Anatomy"
           sub="A sheet is a bottom-anchored surface with a handle, optional backdrop, content slots, and safe-area aware detents."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[360px]">
-              <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] dark:bg-[#09090B]">
+              <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-canvas">
                 <div className="px-5 pt-6">
                   <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
                   <div className="mt-4 grid grid-cols-2 gap-2.5">
@@ -983,21 +983,23 @@ function InputDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={inputData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={inputData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <InputPhonePreview />
+        <DevicePreview route="input" />
 
         <Section
           id="anatomy"
           title="Anatomy"
           sub="Named slots map directly to the registry Input props — sized, spaced, and coloured from tokens."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[320px]">
               <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
                 <span>leadingIcon</span>
@@ -1178,21 +1180,23 @@ function TextAreaDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={textAreaData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={textAreaData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <TextAreaPhonePreview />
+        <DevicePreview route="text-area" />
 
         <Section
           id="anatomy"
           title="Anatomy"
           sub="A multiline surface with optional label, leading/trailing slots, helper or error text, and an optional character count."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[360px]">
               <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
                 <span>label</span>
@@ -1359,21 +1363,23 @@ function ButtonDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={buttonData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={buttonData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <ButtonPhonePreview />
+        <DevicePreview route="button" />
 
         <Section
           id="anatomy"
           title="Anatomy"
           sub="Every Button is the same slots — an optional leading icon, the label, an optional trailing icon — sized and spaced entirely from tokens."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="flex flex-col items-center gap-3">
               <div className="mb-1 flex w-full max-w-[300px] justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
                 <span>leadingIcon</span>
@@ -1716,17 +1722,19 @@ function FormControlDocPage({
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={data.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={data.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <FormControlPhonePreview control={data.slug as Control} />
+        <DevicePreview route={data.slug} />
 
         <Section id="anatomy" title="Anatomy" sub={`The parts of a ${data.title}.`}>
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             {isToggle && (
               <div className="flex flex-col items-center gap-4">
                 <div className="flex items-center gap-6">
