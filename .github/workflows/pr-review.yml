@@ -1,0 +1,106 @@
+name: AI PR Review
+
+# Free AI review of pull requests opened against staging, using GitHub Models
+# (actions/ai-inference) — no paid API key, just the built-in GITHUB_TOKEN with
+# `models: read`. Posts a single summary comment on the PR.
+#
+# Prerequisite: GitHub Models must be enabled for the repo/org
+# (Settings → Models, or org owner enables it). No secrets required.
+
+on:
+  pull_request:
+    branches: [staging]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Claude-free review via GitHub Models
+    runs-on: ubuntu-latest
+    # Skip drafts and bot-authored PRs (e.g. the preview-target sync commit).
+    if: >
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.user.type != 'Bot'
+    permissions:
+      contents: read
+      pull-requests: write
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build review diff
+        id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Review source changes only — skip lockfiles, generated registry
+          # artifacts, generated icons, and snapshots (noise, and large).
+          git diff --no-color "$BASE...$HEAD" -- \
+            ':(exclude)package-lock.json' \
+            ':(exclude)apps/www/public/r/**' \
+            ':(exclude)packages/icons/src/generated/**' \
+            ':(exclude)**/*.snap' \
+            > full.diff || true
+
+          # Cap size to stay within the free GitHub Models context window.
+          MAX=30000
+          {
+            echo "Review the following pull request diff. Raise only concrete,"
+            echo "actionable issues; if it looks good, say so briefly."
+            echo ""
+            echo '```diff'
+            head -c "$MAX" full.diff
+            echo ''
+            if [ "$(wc -c < full.diff)" -gt "$MAX" ]; then
+              echo '...[diff truncated for length]...'
+            fi
+            echo '```'
+          } > review.txt
+
+          if [ -s full.diff ]; then echo "empty=false" >> "$GITHUB_OUTPUT"; else echo "empty=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Review with GitHub Models
+        if: steps.diff.outputs.empty == 'false'
+        id: inference
+        continue-on-error: true
+        uses: actions/ai-inference@v1
+        with:
+          model: openai/gpt-4o
+          max-completion-tokens: 1200
+          system-prompt: |
+            You are a senior engineer reviewing a pull request for Arlo UI, a React
+            Native component library monorepo:
+            - packages/registry holds the source-of-truth components; tokens, theme,
+              icons, cli, and mcp are sibling packages.
+            - apps/www is the Next.js docs site; apps/docs is the Expo playground.
+            - Manifest or token changes must be regenerated and committed:
+              `npm run registry:build` (apps/www/public/r) and `npm run skill:sync`
+              (skills/references) — both enforced by CI drift guards.
+
+            Review the diff for correctness bugs, edge cases, regressions, type
+            safety, missing test coverage, and consistency with existing conventions.
+            Flag it if the manifest/tokens changed but the generated artifacts did not.
+            Be concise and specific, cite file paths, and skip style nitpicks the
+            linter already covers. Output GitHub-flavored markdown.
+          prompt-file: review.txt
+
+      - name: Post review comment
+        if: steps.diff.outputs.empty == 'false' && steps.inference.outputs.response != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: ${{ steps.inference.outputs.response }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          {
+            echo "## 🤖 AI review"
+            echo "<sub>Automated review of the diff via GitHub Models — a first pass, not a substitute for human review.</sub>"
+            echo ""
+            echo "$BODY"
+          } > comment.md
+          gh pr comment "$PR" --body-file comment.md

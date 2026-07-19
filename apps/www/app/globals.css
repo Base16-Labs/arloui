@@ -38,6 +38,10 @@
   --glass-border: rgb(24 24 27 / 0.06);
   --glass-blur: 20px;
 
+  /* Device preview screen (phone bezel) — intentionally constant across
+     themes, like a physical device screen. */
+  --preview-screen: #101014;
+
   /* Radius */
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -103,6 +107,7 @@
   --color-scrim: var(--scrim);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
+  --color-preview-screen: var(--preview-screen);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);

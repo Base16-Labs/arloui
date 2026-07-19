@@ -57,12 +57,17 @@ export type ComponentGroup = ItemGroup;
 export const componentGroups: ComponentGroup[] = [
   {
     label: 'Layout & surface',
-    items: [{ label: 'Sheet', slug: 'sheet' }],
+    items: [
+      { label: 'Sheet', slug: 'sheet' },
+      { label: 'Carousel', slug: 'carousel' },
+      { label: 'Gallery', slug: 'gallery' },
+    ],
   },
   {
     label: 'Controls',
     items: [
       { label: 'Button', slug: 'button' },
+      { label: 'Chip', slug: 'chip' },
       { label: 'Toggle', slug: 'toggle' },
       { label: 'Checkbox', slug: 'checkbox' },
       { label: 'Radio', slug: 'radio' },
@@ -73,7 +78,10 @@ export const componentGroups: ComponentGroup[] = [
   },
   {
     label: 'Feedback',
-    items: [{ label: 'Skeleton', slug: 'skeleton' }],
+    items: [
+      { label: 'Skeleton', slug: 'skeleton' },
+      { label: 'Badge', slug: 'badge' },
+    ],
   },
   {
     label: 'Navigation',

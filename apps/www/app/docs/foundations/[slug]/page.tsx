@@ -82,7 +82,7 @@ function SheetCompanion() {
             ].map((row) => (
               <div
                 key={row}
-                className="flex h-[38px] items-center border-t border-[#f0eee7] px-4 text-xs text-ink-2"
+                className="flex h-[38px] items-center border-t border-line px-4 text-xs text-ink-2"
               >
                 {row}
               </div>
@@ -99,7 +99,7 @@ function OriginCompanion() {
     <CompanionContainer>
       <PhoneFrame>
         <div className="relative flex h-full flex-col items-center justify-center gap-3 px-6">
-          <div className="w-full rounded-xl border border-[#f0eee7] bg-white px-4 py-3 text-center text-xs font-medium text-ink">
+          <div className="w-full rounded-xl border border-line bg-white px-4 py-3 text-center text-xs font-medium text-ink">
             Origin Trigger
           </div>
           <svg
@@ -247,11 +247,11 @@ export default async function FoundationPage({
               </li>
               <li>
                 <strong>State</strong> — make a change in status legible.{" "}
-                <code className="rounded bg-[#f8f6ef] px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
+                <code className="rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
                   Continue
                 </code>{" "}
                 &rarr;{" "}
-                <code className="rounded bg-[#f8f6ef] px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
+                <code className="rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
                   Confirm
                 </code>
                 . Loading &rarr; loaded.
@@ -309,11 +309,11 @@ export default async function FoundationPage({
             </h3>
             <p className="mb-[18px] text-[17px] leading-relaxed">
               Nothing in the real world appears from nothing. Start at{" "}
-              <code className="rounded bg-[#f8f6ef] px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
+              <code className="rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
                 scale(0.94–0.97)
               </code>{" "}
               with{" "}
-              <code className="rounded bg-[#f8f6ef] px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
+              <code className="rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-sm dark:bg-surface-raised">
                 opacity: 0
               </code>
               .

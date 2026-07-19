@@ -8,25 +8,23 @@ import { Chip } from '@/components/ui/Chip';
 import { CodeBlock } from '@/components/ui/CodeBlock';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { ButtonDocPlayground } from '@/components/docs/button-doc-playground';
-import { ButtonPhonePreview } from '@/components/docs/button-phone-preview';
 import { InputDocPlayground } from '@/components/docs/input-doc-playground';
-import { InputPhonePreview } from '@/components/docs/input-phone-preview';
 import { TextAreaDocPlayground } from '@/components/docs/textarea-doc-playground';
-import { TextAreaPhonePreview } from '@/components/docs/textarea-phone-preview';
 import { SheetDocPlayground } from '@/components/docs/sheet-doc-playground';
-import { SheetPhonePreview } from '@/components/docs/sheet-phone-preview';
-import { TabBarDocPlayground, TabBarPhonePreview } from '@/components/docs/tab-bar-preview';
-import { TabsDocPlayground, TabsPhonePreview } from '@/components/docs/tabs-preview';
-import { SkeletonDocPlayground, SkeletonPhonePreview } from '@/components/docs/skeleton-preview';
-import {
-  DatePickerDocPlayground,
-  DatePickerPhonePreview,
-} from '@/components/docs/date-picker-preview';
+import { TabBarDocPlayground } from '@/components/docs/tab-bar-preview';
+import { TabsDocPlayground } from '@/components/docs/tabs-preview';
+import { SkeletonDocPlayground } from '@/components/docs/skeleton-preview';
+import { DatePickerDocPlayground } from '@/components/docs/date-picker-preview';
 import {
   FormControlDocPlayground,
   type Control,
 } from '@/components/docs/form-control-doc-playground';
-import { FormControlPhonePreview } from '@/components/docs/form-control-phone-preview';
+import { CarouselDocPlayground } from '@/components/docs/carousel-preview';
+import { GalleryDocPlayground } from '@/components/docs/gallery-preview';
+import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
+import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
+import { DevicePreview } from '@/components/ui/DevicePreview';
+import { GithubMark } from '@/components/ui/GithubMark';
 import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
 import { componentGroups } from '@/lib/routes';
 import {
@@ -42,6 +40,10 @@ import {
   tabsData,
   textAreaData,
   toggleData,
+  carouselData,
+  galleryData,
+  badgeData,
+  chipData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -98,6 +100,22 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
     return <SkeletonDocPage />;
   }
 
+  if (slug === 'carousel') {
+    return <CarouselDocPage />;
+  }
+
+  if (slug === 'gallery') {
+    return <GalleryDocPage />;
+  }
+
+  if (slug === 'badge') {
+    return <BadgeDocPage />;
+  }
+
+  if (slug === 'chip') {
+    return <ChipDocPage />;
+  }
+
   return (
     <>
       <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
@@ -128,11 +146,12 @@ function TabsDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={tabsData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <TabsPhonePreview />
+        <DevicePreview route="tabs" />
 
         <Section
           id="anatomy"
@@ -269,11 +288,12 @@ function SkeletonDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={skeletonData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <SkeletonPhonePreview />
+        <DevicePreview route="skeleton" />
 
         <Section
           id="anatomy"
@@ -422,11 +442,12 @@ function TabBarDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={tabBarData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <TabBarPhonePreview />
+        <DevicePreview route="tab-bar" />
 
         <Section
           id="anatomy"
@@ -581,11 +602,12 @@ function DatePickerDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={datePickerData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <DatePickerPhonePreview />
+        <DevicePreview route="date-picker" />
 
         <Section
           id="anatomy"
@@ -743,14 +765,16 @@ function SheetDocPage() {
         {/* Action pills */}
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={sheetData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={sheetData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <SheetPhonePreview />
+        <DevicePreview route="sheet" />
 
         {/* Anatomy */}
         <Section
@@ -758,9 +782,9 @@ function SheetDocPage() {
           title="Anatomy"
           sub="A sheet is a bottom-anchored surface with a handle, optional backdrop, content slots, and safe-area aware detents."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[360px]">
-              <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] dark:bg-[#09090B]">
+              <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-canvas">
                 <div className="px-5 pt-6">
                   <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
                   <div className="mt-4 grid grid-cols-2 gap-2.5">
@@ -957,21 +981,23 @@ function InputDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={inputData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={inputData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <InputPhonePreview />
+        <DevicePreview route="input" />
 
         <Section
           id="anatomy"
           title="Anatomy"
           sub="Named slots map directly to the registry Input props — sized, spaced, and coloured from tokens."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[320px]">
               <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
                 <span>leadingIcon</span>
@@ -1152,21 +1178,23 @@ function TextAreaDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={textAreaData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={textAreaData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <TextAreaPhonePreview />
+        <DevicePreview route="text-area" />
 
         <Section
           id="anatomy"
           title="Anatomy"
           sub="A multiline surface with optional label, leading/trailing slots, helper or error text, and an optional character count."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[360px]">
               <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
                 <span>label</span>
@@ -1333,21 +1361,23 @@ function ButtonDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={buttonData.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={buttonData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <ButtonPhonePreview />
+        <DevicePreview route="button" />
 
         <Section
           id="anatomy"
           title="Anatomy"
           sub="Every Button is the same slots — an optional leading icon, the label, an optional trailing icon — sized and spaced entirely from tokens."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="flex flex-col items-center gap-3">
               <div className="mb-1 flex w-full max-w-[300px] justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
                 <span>leadingIcon</span>
@@ -1690,17 +1720,19 @@ function FormControlDocPage({
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={data.figma}>
-            ◆ Figma <span className="opacity-50">↗</span>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
           <Pill as="a" href={data.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
-        <FormControlPhonePreview control={data.slug as Control} />
+        <DevicePreview route={data.slug} />
 
         <Section id="anatomy" title="Anatomy" sub={`The parts of a ${data.title}.`}>
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             {isToggle && (
               <div className="flex flex-col items-center gap-4">
                 <div className="flex items-center gap-6">
@@ -1863,6 +1895,682 @@ function FormControlDocPage({
       </main>
 
       <RightRail headings={[...data.headings]} actions={[...data.actions]} />
+    </>
+  );
+}
+
+function CarouselDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(carouselData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{carouselData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {carouselData.title}
+        </h1>
+        <Lede>{carouselData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={carouselData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="carousel" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A horizontal track driven by gesture velocity and spring physics."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="relative overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] px-4 py-6 dark:bg-[#09090B]">
+                <div className="mb-1 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                  <span>peek</span>
+                  <span>item</span>
+                  <span>peek</span>
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
+                  <div className="h-24 flex-1 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
+                </div>
+                <div className="mt-3 flex justify-center gap-1.5">
+                  <div className="h-[6px] w-5 rounded-full bg-[#155DFC]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                </div>
+                <div className="mt-1 text-center font-mono text-[10px] uppercase tracking-wide text-ink-3">dots</div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ['Container', 'clips overflow, measures width'],
+                ['Track', 'Animated row of items'],
+                ['Item', 'child wrapped at computed width'],
+                ['Peek', 'inset revealing adjacent items'],
+                ['Dots', 'below or overlay on content'],
+                ['Arrows', 'prev / next below content, right'],
+                ['Gap', 'spacing.0–4 between items'],
+                ['Snap', 'item (inset) or page (full-width)'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For horizontally browsing a set of peers."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use for media galleries, onboarding flows, or featured content that fits a fixed viewport.</li>
+            <li>Enable peek so users see adjacent items and understand horizontal scrollability.</li>
+            <li>Use page snap for full-bleed hero images or onboarding steps.</li>
+          </ul>
+        </Section>
+
+        <CarouselDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add carousel
+
+import { Carousel } from "@/components/ui/carousel";
+
+<Carousel snap="item" peek indicator="dots" gap={12}>
+  <Card title="Mountain Lake" />
+  <Card title="Desert Sunset" />
+  <Card title="Forest Path" />
+</Carousel>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Full-width page mode with loop */}
+<Carousel snap="page" loop autoPlay autoPlayInterval={5000}>
+  <HeroSlide image={banner1} />
+  <HeroSlide image={banner2} />
+  <HeroSlide image={banner3} />
+</Carousel>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Imperative control via ref */}
+const ref = useRef<CarouselRef>(null);
+
+<Carousel ref={ref} indicator="none">
+  {items.map(item => <Slide key={item.id} {...item} />)}
+</Carousel>
+
+<Button onPress={() => ref.current?.next()}>Next</Button>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Contained carousel with overlay dots and arrows */}
+<Carousel snap="page" indicatorPosition="overlay" arrows>
+  <Image source={photo1} style={{ width: '100%', aspectRatio: 4/3 }} />
+  <Image source={photo2} style={{ width: '100%', aspectRatio: 4/3 }} />
+  <Image source={photo3} style={{ width: '100%', aspectRatio: 4/3 }} />
+</Carousel>`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Spring physics, spacing, and indicator styling."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {carouselData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Swipeable content stays navigable without gestures."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>The container exposes the adjustable role with an &quot;Item N of M&quot; value.</li>
+            <li>Each pagination dot is a tappable button with a clear label.</li>
+            <li>Reduced motion replaces spring animations with instant position changes.</li>
+            <li>RTL layouts reverse gesture and translation direction automatically.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep horizontal browsing discoverable.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Enable peek so users see there is more content to swipe.',
+                dont: 'Hide all adjacent items — users may not discover the carousel.',
+              },
+              {
+                do: 'Use dots or a visible item count for discoverability.',
+                dont: 'Put critical actions inside carousel items that scroll off-screen.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Choose the right container by axis and density."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Gallery', 'ScrollView', 'FlatList', 'Card'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...carouselData.headings]} actions={[...carouselData.actions]} />
+    </>
+  );
+}
+
+function GalleryDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(galleryData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{galleryData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {galleryData.title}
+        </h1>
+        <Lede>{galleryData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={galleryData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="gallery" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A measured container that distributes children into equal-width columns."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="relative overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] px-4 py-6 dark:bg-[#09090B]">
+                <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                  <span>col 1</span>
+                  <span>gap</span>
+                  <span>col 2</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                </div>
+                <div className="mt-2 flex items-center justify-between px-1">
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">radius</span>
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">cell</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ['ScrollView', 'scrollable wrapper with onLayout'],
+                ['Row', 'flexDirection row per chunk of N'],
+                ['Cell', 'width-constrained, overflow clipped'],
+                ['Radius', 'radii.none–full per cell'],
+                ['Gap', 'spacing.0–4 between cells'],
+                ['Columns', '1 | 2 | 3 | 4'],
+                ['Masonry', 'absolute-positioned bin-packing'],
+                ['Measurement', 'onLayout for container width'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For vertical collections where items are visually similar."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use for photo grids, product catalogs, or any collection of visual cards.</li>
+            <li>Enable masonry when item heights vary naturally (e.g. images with different aspect ratios).</li>
+            <li>Use 1 column for detail-heavy list items, 3–4 for compact thumbnails.</li>
+          </ul>
+        </Section>
+
+        <GalleryDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add gallery
+
+import { Gallery } from "@/components/ui/gallery";
+
+{/* Uniform 2-column grid */}
+<Gallery columns={2} radius="lg" gap={8}>
+  {photos.map(photo => (
+    <Image key={photo.id} source={photo.src}
+      style={{ width: '100%', aspectRatio: 1 }} />
+  ))}
+</Gallery>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Masonry layout with 3 columns */}
+<Gallery columns={3} masonry radius="md">
+  {items.map(item => (
+    <View key={item.id} style={{ height: item.height }}>
+      <Image source={item.src}
+        style={{ width: '100%', height: '100%' }} />
+    </View>
+  ))}
+</Gallery>`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Spacing and radius tokens for consistent grid styling."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {galleryData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Grid content remains navigable by assistive tech."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>The gallery container exposes an accessibility label for screen readers.</li>
+            <li>Individual items maintain their own accessibility roles and labels.</li>
+            <li>Layout reflows to fewer columns on narrow viewports naturally.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep grid layouts scannable.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Keep items within the same grid visually similar in type and weight.',
+                dont: 'Mix landscape photos and tall cards in a non-masonry grid.',
+              },
+              {
+                do: 'Use masonry when aspect ratios genuinely vary.',
+                dont: 'Use masonry for uniform content — it adds complexity without benefit.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Choose the right layout by scroll direction and density."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Carousel', 'FlatList', 'Card', 'Stack'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...galleryData.headings]} actions={[...galleryData.actions]} />
+    </>
+  );
+}
+
+function BadgeDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(badgeData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{badgeData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">{badgeData.title}</h1>
+        <Lede>{badgeData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={badgeData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="badge" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A compact pill with optional dot or leading icon, sized and colored from tokens."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2" style={{ height: 24 }}>
+                  <span className="size-2 rounded-full bg-[#155DFC]" />
+                  <span className="text-[12px] text-[#155DFC]">Active</span>
+                </div>
+                <div className="flex items-center gap-1 rounded-full bg-[#155DFC] px-2" style={{ height: 24 }}>
+                  <span className="text-[12px] text-white">3 new</span>
+                </div>
+                <div className="flex items-center gap-1 rounded-full border border-[#00C950] px-2" style={{ height: 24 }}>
+                  <span className="text-[12px] text-[#00C950]">Verified</span>
+                </div>
+              </div>
+              <div className="flex gap-6 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                <span>dot + label</span>
+                <span>solid</span>
+                <span>outline</span>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Label", "typography 11–12px · weight 400"],
+                ["Dot", "6px (sm) · 8px (md) circle"],
+                ["Leading icon", "sizing.icon.xs (16px)"],
+                ["Height", "20px (sm) · 24px (md)"],
+                ["Corner radius", "radii.full (pill)"],
+                ["Padding", "spacing.2 horizontal"],
+                ["Solid inset", "1–1.5px rgba(255,255,255,0.12–0.15)"],
+                ["Icon ↔ label gap", "spacing.1 (4px)"],
+              ].map(([name, token]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Three rules for status labels.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use a badge to surface status, count, or category without demanding a tap.</li>
+            <li>Use dot mode for a minimal alive/offline indicator next to an avatar or row.</li>
+            <li>If the label needs to be interactive (dismissible, selectable), use a Chip instead.</li>
+          </ul>
+        </Section>
+
+        <BadgeDocPlayground states={badgeData.states} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <CodeBlock language="tsx">{`npx arloui add badge
+
+import { Badge } from "@/components/ui/badge";
+
+{/* Label badge */}
+<Badge tone="info" appearance="soft">Active</Badge>
+
+{/* Solid with count */}
+<Badge tone="error" appearance="solid">3</Badge>
+
+{/* Dot indicator */}
+<Badge tone="success" dot>Online</Badge>
+
+{/* Leading icon */}
+<Badge tone="warning" appearance="outline" leadingIcon={<StarIcon />}>
+  Featured
+</Badge>
+
+{/* Icon-only */}
+<Badge tone="info" leadingIcon={<BellIcon />} />`}</CodeBlock>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Semantic tokens driving tone, size, and appearance.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {badgeData.tokens.map((t) => (
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Non-interactive labels that announce clearly.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Exposes accessibilityRole &quot;text&quot; with the label from children or an explicit accessibilityLabel.</li>
+            <li>Dot-only and icon-only badges require accessibilityLabel — without it, the badge announces nothing useful.</li>
+            <li>Color is never the sole differentiator — tone names and labels carry the meaning.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Common pitfalls, paired.">
+          <DoDont
+            pairs={[
+              {
+                do: "Use semantic tones (success, error, warning) to communicate status at a glance.",
+                dont: "Use badge colors decoratively — each tone should carry meaning.",
+              },
+              {
+                do: "Keep badge labels short — one or two words, or a number.",
+                dont: "Put sentences or long phrases inside a badge — use body text instead.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Complements and alternatives.">
+          <div className="flex flex-wrap gap-2">
+            {["Chip", "Toast", "Banner", "Button", "Pill"].map((r) => (
+              <Chip key={r}>→ {r}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...badgeData.headings]} actions={[...badgeData.actions]} />
+    </>
+  );
+}
+
+function ChipDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(chipData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{chipData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">{chipData.title}</h1>
+        <Lede>{chipData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={chipData.source}>
+            ⌘ Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="chip" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="An interactive pill with optional check, leading icon, and remove button — sized from tokens with press feedback."
+        >
+          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 rounded-full border border-[#155DFC] bg-[#EFF6FF] px-3" style={{ height: 32 }}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 7.5L5.5 10L11 4" stroke="#155DFC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="text-[14px] text-[#155DFC]">Filter</span>
+                </div>
+                <div className="flex items-center gap-1 rounded-full border border-[#D1D5DC] px-3" style={{ height: 32 }}>
+                  <span className="text-[14px] text-[#101828]">Token</span>
+                  <span className="flex size-6 items-center justify-center">
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                      <path d="M4 4L10 10M10 4L4 10" stroke="#101828" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+                <div className="flex items-center rounded-full border border-[#D1D5DC] px-3" style={{ height: 32 }}>
+                  <span className="text-[14px] text-[#101828]">Assist</span>
+                </div>
+              </div>
+              <div className="flex gap-6 font-mono text-[10px] uppercase tracking-wide text-ink-3">
+                <span>filter (selected)</span>
+                <span>input (remove)</span>
+                <span>assist</span>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ["Label", "typography 12–14px · weight 400"],
+                ["Check icon", "14–16px SVG (filter selected)"],
+                ["Remove button", "12–14px ✕ with hitSlop"],
+                ["Leading icon", "sizing.icon.xs–sm"],
+                ["Height", "28px (sm) · 32px (md)"],
+                ["Corner radius", "radii.full or radii.lg"],
+                ["Padding", "spacing.3 horizontal"],
+                ["Touch target", "44pt via hitSlop"],
+              ].map(([name, token]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{token}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="Three types, three jobs.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Use <code className="font-mono text-[13px]">filter</code> chips for toggling a set of criteria — each chip is independently selectable.</li>
+            <li>Use <code className="font-mono text-[13px]">input</code> chips for tokenised values the user can remove (tags, recipients, skills).</li>
+            <li>Use <code className="font-mono text-[13px]">assist</code> chips for single-tap contextual actions (share, export, duplicate).</li>
+          </ul>
+        </Section>
+
+        <ChipDocPlayground states={chipData.states} />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add chip
+
+import { Chip } from "@/components/ui/chip";`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Filter chips — toggleable */}
+<Chip type="filter" selected={isActive} onPress={toggle}>
+  Active
+</Chip>
+
+{/* Input chips — removable tokens */}
+<Chip type="input" onRemove={() => remove(tag)}>
+  {tag}
+</Chip>
+
+{/* Assist chips — single-tap actions */}
+<Chip type="assist" onPress={handleShare}>
+  Share
+</Chip>
+
+{/* Visual options */}
+<Chip chipStyle="fill" accent="neutral" radius="lg">
+  Rounded
+</Chip>
+
+{/* Selection indicator — icon stays visible */}
+<Chip
+  type="filter"
+  selectionIndicator="none"
+  selected={on}
+  leadingIcon={<CalendarIcon />}
+>
+  Today
+</Chip>
+
+{/* Icon-only */}
+<Chip leadingIcon={<FilterIcon />} />`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Semantic tokens driving type, style, accent, and interaction states.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {chipData.tokens.map((t) => (
+              <div key={t} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{t}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Semantics, selection state, and touch targets.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Exposes accessibilityRole &quot;button&quot; with the label from children or an explicit accessibilityLabel.</li>
+            <li>Filter chips expose accessibilityState selected so screen readers announce toggle state.</li>
+            <li>The remove button on input chips has its own accessibilityLabel (&quot;Remove {'{'}label{'}'}&quot;) and hitSlop.</li>
+            <li>All chips expand to a 44pt touch target via hitSlop when the visible height is smaller.</li>
+            <li>Press feedback uses haptics and scale animation via the shared usePressFeedback hook.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Common pitfalls, paired.">
+          <DoDont
+            pairs={[
+              {
+                do: "Use filter chips for multi-select filtering; each chip toggles independently.",
+                dont: "Use filter chips for mutually exclusive choices — use radio or a segmented control.",
+              },
+              {
+                do: "Use input chips for user-generated tokens that can be individually removed.",
+                dont: "Use input chips for static labels that never change — use Badge instead.",
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Complements and alternatives.">
+          <div className="flex flex-wrap gap-2">
+            {["Badge", "Button", "Pill", "Toggle", "Radio"].map((r) => (
+              <Chip key={r}>→ {r}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+
+      <RightRail headings={[...chipData.headings]} actions={[...chipData.actions]} />
     </>
   );
 }

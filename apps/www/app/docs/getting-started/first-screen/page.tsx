@@ -37,7 +37,7 @@ export default function FirstScreenPage() {
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
             Scaffold
           </h2>
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-4 font-mono text-sm dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-4 font-mono text-sm dark:bg-surface-raised">
             {'<Stack spacing="lg">'}
             <br />
             {'  <Title level={2}>Confirm payment?</Title>'}

@@ -1,13 +1,12 @@
 import { jest } from '@jest/globals';
 
 // Spy on the haptics helper without pulling in the real expo-haptics native call.
-jest.mock('@arloui/utils', () => ({
-  ...jest.requireActual('@arloui/utils'),
+jest.mock('../../../foundation/haptics', () => ({
   haptic: jest.fn(),
 }));
 
 import { Text } from 'react-native';
-import { haptic } from '@arloui/utils';
+import { haptic } from '../../../foundation/haptics';
 import { Button } from '../button';
 import { renderWithTheme, screen, fireEvent } from '../../../../test/render';
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 import {
   docsSections,
@@ -14,12 +15,50 @@ import {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showTop, setShowTop] = useState(false);
+  const [showBottom, setShowBottom] = useState(false);
+
+  const updateFades = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setShowTop(el.scrollTop > 4);
+    setShowBottom(el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateFades();
+    el.addEventListener('scroll', updateFades, { passive: true });
+    const observer = new ResizeObserver(updateFades);
+    observer.observe(el);
+    window.addEventListener('resize', updateFades);
+    return () => {
+      el.removeEventListener('scroll', updateFades);
+      observer.disconnect();
+      window.removeEventListener('resize', updateFades);
+    };
+  }, [updateFades, pathname]);
 
   return (
-    <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[264px] shrink-0 self-start overflow-hidden border-r border-line lg:block">
-      {/* Top blur */}
+    <aside className="sticky top-[68px] hidden h-[calc(100dvh-68px)] w-[264px] shrink-0 self-start overflow-hidden lg:block">
+      {/* Right divider — fades out at the top and bottom so it doesn't read as
+          a hard full-height rule when the header scrolls away. */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
+        className="pointer-events-none absolute inset-y-0 right-0 z-20 w-px"
+        style={{
+          background:
+            'linear-gradient(to bottom, transparent 0%, var(--line) 12%, var(--line) 88%, transparent 100%)',
+        }}
+      />
+
+      {/* Top blur — only when scrolled down */}
+      <div
+        className={cn(
+          'pointer-events-none absolute inset-x-0 top-0 z-10 h-24 transition-opacity duration-200',
+          showTop ? 'opacity-100' : 'opacity-0',
+        )}
         style={{
           background:
             'linear-gradient(to bottom, var(--canvas) 0%, var(--canvas) 34%, color-mix(in srgb, var(--canvas) 82%, transparent) 58%, transparent 100%)',
@@ -27,7 +66,10 @@ export function Sidebar() {
       />
 
       {/* Scroll container */}
-      <div className="h-full overflow-y-auto overscroll-contain px-[18px] py-7 scrollbar-none">
+      <div
+        ref={scrollRef}
+        className="h-full overflow-y-auto overscroll-contain px-[18px] py-7 scrollbar-none"
+      >
         {/* Sections */}
         <div className="mb-1 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
           Sections
@@ -114,9 +156,12 @@ export function Sidebar() {
         )}
       </div>
 
-      {/* Bottom blur */}
+      {/* Bottom blur — only when more content below */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24"
+        className={cn(
+          'pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 transition-opacity duration-200',
+          showBottom ? 'opacity-100' : 'opacity-0',
+        )}
         style={{
           background:
             'linear-gradient(to top, var(--canvas) 0%, var(--canvas) 34%, color-mix(in srgb, var(--canvas) 82%, transparent) 58%, transparent 100%)',

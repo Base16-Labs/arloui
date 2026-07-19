@@ -18,13 +18,13 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
-type IconLayout = 'none' | 'leading' | 'both' | 'icon-only';
+type IconLayout = 'none' | 'leading' | 'trailing' | 'both' | 'icon-only';
 type PreviewState = 'default' | 'pressed' | 'loading' | 'disabled';
 
 const TONES: ButtonTone[] = ['primary', 'neutral', 'danger'];
 const APPEARANCES: ButtonAppearance[] = ['solid', 'soft', 'ghost', 'outline'];
 const SIZES: ButtonSize[] = ['sm', 'md', 'lg', 'xl'];
-const ICONS: IconLayout[] = ['none', 'leading', 'both', 'icon-only'];
+const ICONS: IconLayout[] = ['none', 'leading', 'trailing', 'both', 'icon-only'];
 const STATES: PreviewState[] = ['default', 'pressed', 'loading', 'disabled'];
 const HAPTICS: ButtonHaptic[] = ['light', 'medium', 'none'];
 
@@ -116,12 +116,12 @@ export default function ButtonCanvas() {
               iconOnly={icons === 'icon-only'}
               accessibilityLabel={icons === 'icon-only' ? 'Proceed' : undefined}
               leadingIcon={
-                icons === 'none' ? undefined : (
+                icons === 'leading' || icons === 'both' || icons === 'icon-only' ? (
                   <Ionicons name="bag-outline" size={iconSize} color={iconColor} />
-                )
+                ) : undefined
               }
               trailingIcon={
-                icons === 'both' ? (
+                icons === 'trailing' || icons === 'both' ? (
                   <Ionicons
                     name="arrow-forward"
                     size={Math.max(iconSize - 2, 12)}

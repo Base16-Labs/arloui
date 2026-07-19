@@ -105,8 +105,9 @@ describe('published CLI (e2e)', () => {
     const out = await runCli(['add', 'button', '--yes'], projectDir);
     expect(out).toMatch(/Done/i);
 
-    // component + its foundation deps landed under the configured aliases
-    expect(existsSync(join(projectDir, 'components/ui/button.tsx'))).toBe(true);
+    // multi-file component nests under its own folder; foundation deps land
+    // under the configured aliases
+    expect(existsSync(join(projectDir, 'components/ui/button/button.tsx'))).toBe(true);
     expect(existsSync(join(projectDir, 'lib/arloui/tokens.ts'))).toBe(true);
     expect(existsSync(join(projectDir, 'lib/arloui/theme-provider.tsx'))).toBe(true);
 
@@ -114,11 +115,17 @@ describe('published CLI (e2e)', () => {
     expect(out).toMatch(/expo-haptics/);
   });
 
-  it('writes byte-for-byte what the registry served', async () => {
-    const entry = JSON.parse(await readFile(join(REGISTRY_DIR, 'button.json'), 'utf8'));
-    const buttonFile = entry.files.find((f: { target: string }) => f.target === 'button.tsx');
-    const written = await readFile(join(projectDir, 'components/ui/button.tsx'), 'utf8');
-    expect(written).toBe(buttonFile.content);
+  it('rewrites registry-internal imports for the consumer layout', async () => {
+    const written = await readFile(
+      join(projectDir, 'components/ui/button/button.tsx'),
+      'utf8',
+    );
+    // the foundation import is recomputed against the configured lib alias…
+    expect(written).toMatch(/from '(\.\.\/)+lib\/arloui\/theme-provider'/);
+    expect(written).not.toContain('foundation/theme-provider');
+    // …while intra-component and external imports are left untouched
+    expect(written).toContain("from './press-feedback'");
+    expect(written).toContain("from 'react-native-svg'");
   });
 
   it('reports installed components as up to date via diff', async () => {
@@ -128,7 +135,7 @@ describe('published CLI (e2e)', () => {
   });
 
   it('is non-empty on disk (sanity: files actually written)', async () => {
-    const info = await stat(join(projectDir, 'components/ui/button.tsx'));
+    const info = await stat(join(projectDir, 'components/ui/button/button.tsx'));
     expect(info.size).toBeGreaterThan(0);
   });
 });

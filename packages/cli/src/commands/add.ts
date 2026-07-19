@@ -4,6 +4,7 @@ import kleur from 'kleur';
 import { aliasFor, loadConfig, type ArloConfig } from '../config';
 import { fileExists, resolveWithin, writeFileEnsuringDir } from '../fs-utils';
 import { RegistryClient, type ResolvedRegistryEntry } from '../registry-client';
+import { buildSourceTargetMap, rewriteFileImports } from '../rewrite-imports';
 
 type Options = {
   cwd: string;
@@ -56,8 +57,9 @@ export async function add({ cwd, names, yes, overwrite }: Options): Promise<void
     throw err;
   }
 
+  const sourceTargetMap = buildSourceTargetMap(cwd, config, [...allEntries.values()]);
   for (const entry of allEntries.values()) {
-    await writeComponent({ cwd, config, entry, overwrite, yes });
+    await writeComponent({ cwd, config, entry, overwrite, yes, sourceTargetMap });
   }
 
   const npmDeps = new Set<string>();
@@ -90,13 +92,19 @@ export async function writeComponent({
   entry,
   overwrite,
   yes,
+  sourceTargetMap,
 }: {
   cwd: string;
   config: ArloConfig;
   entry: ResolvedRegistryEntry;
   overwrite?: boolean;
   yes?: boolean;
+  sourceTargetMap?: Map<string, string>;
 }): Promise<void> {
+  // When no explicit map is supplied (single-entry writes), a map built from
+  // this entry alone still rewrites intra-entry imports correctly.
+  const map = sourceTargetMap ?? buildSourceTargetMap(cwd, config, [entry]);
+
   for (const file of entry.files) {
     const aliasRoot = aliasFor(config, file.type);
     const target = resolveWithin(cwd, aliasRoot, file.target);
@@ -116,7 +124,7 @@ export async function writeComponent({
       }
     }
 
-    await writeFileEnsuringDir(target, file.content);
+    await writeFileEnsuringDir(target, rewriteFileImports(file, cwd, config, map));
     p.log.success(`wrote ${kleur.cyan(rel(cwd, target))}`);
   }
 }

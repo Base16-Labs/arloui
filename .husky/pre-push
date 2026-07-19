@@ -1,0 +1,31 @@
+# Arlo UI pre-push — mirrors the build workflow so CI failures surface locally
+# before they reach GitHub Actions: full build, CLI end-to-end, and the registry
+# + skill drift guards. Turbo-cached, so unchanged parts are instant.
+set -e
+
+echo "▶ build (packages + apps, excluding www)"
+npm run build -- --filter='!@arloui/www'
+
+# Build www through the Cloudflare/OpenNext path (runs next build internally),
+# so Workers-runtime build breaks surface here instead of on Cloudflare.
+echo "▶ build www → Cloudflare Workers (opennext)"
+npm run build:cloudflare -w @arloui/www
+
+echo "▶ CLI e2e"
+npm run test:e2e -w arloui
+
+echo "▶ registry drift"
+npm run registry:build
+if ! git diff --quiet -- apps/www/public/r; then
+  echo "✖ apps/www/public/r drifted — run 'npm run registry:build' and commit it."
+  exit 1
+fi
+
+echo "▶ skill drift"
+npm run skill:sync
+if ! git diff --quiet -- skills; then
+  echo "✖ skills/ drifted — run 'npm run skill:sync' and commit it."
+  exit 1
+fi
+
+echo "✓ pre-push checks passed"

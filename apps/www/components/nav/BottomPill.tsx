@@ -5,6 +5,7 @@ import { flushSync } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
+import { GithubMark } from '@/components/ui/GithubMark';
 import { useTheme } from '@/lib/theme';
 import { markdownForPath } from '@/lib/docs-markdown';
 
@@ -107,16 +108,16 @@ export function BottomPill() {
       {!menuOpen && (
         <div className="rounded-full shadow-[0_6px_20px_rgb(24_24_27/0.14),0_2px_6px_rgb(24_24_27/0.08)] dark:shadow-none">
           <div
-            className="bottom-pill-surface flex h-8 w-40 items-center justify-between rounded-[100px] border-[0.5px] border-[#D4D4D8] bg-[#FAFAFA] px-1 py-2.5 text-[#3F3F46] backdrop-blur-[40px] dark:border-glass-border dark:bg-glass-bg dark:text-ink"
+            className="bottom-pill-surface flex w-44 items-center justify-between rounded-[100px] border-[0.5px] border-[#D4D4D8] bg-[#FAFAFA] p-1.5 text-[#3F3F46] backdrop-blur-[40px] dark:border-glass-border dark:bg-glass-bg dark:text-ink"
             style={morphStyle}
           >
             <button
               type="button"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 px-1.5 text-left text-[12px] leading-none"
+              className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 px-1.5 text-left text-[13.5px] leading-tight"
               aria-label={`Scroll to top of ${displayLabel}`}
             >
-              <span className="h-2 w-2 shrink-0 rounded-full bg-[#71717A]" />
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#71717A]" />
               <span className="truncate">{displayLabel}</span>
             </button>
             <button
@@ -126,7 +127,7 @@ export function BottomPill() {
               onMouseLeave={() => setMenuHovered(false)}
               onFocus={() => setMenuHovered(true)}
               onBlur={() => setMenuHovered(false)}
-              className="flex h-6 w-[64px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full px-2 text-[12px] leading-none transition-colors"
+              className="flex h-7 w-[68px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full px-2 text-[13.5px] leading-none transition-colors"
               style={{
                 backgroundColor: menuHovered
                   ? resolved === 'dark'
@@ -152,22 +153,22 @@ export function BottomPill() {
             className="bottom-pill-surface w-[360px] rounded-3xl border border-glass-border bg-glass-bg p-4 backdrop-blur-[20px]"
             style={morphStyle}
           >
-            <div className="mb-3 flex justify-end">
+            <div className="mb-3 flex items-center gap-2">
+              <div className="flex flex-1 items-center gap-2 rounded-full border border-line bg-ink/[0.04] px-3.5 py-2 text-[13px] text-ink-3">
+                <Icon name="magnifying-glass" size={12} />
+                <span>Search…</span>
+                <span className="ml-auto rounded bg-ink/[0.06] px-1.5 py-0.5 font-mono text-[11px]">
+                  ⌘K
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={closeMenu}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-ink/[0.06] text-ink"
+                className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-ink/[0.06] text-ink"
                 aria-label="Close menu"
               >
                 <Icon name="x" size={14} />
               </button>
-            </div>
-            <div className="mb-3 flex items-center gap-2 rounded-full border border-line bg-ink/[0.04] px-3.5 py-2 text-[13px] text-ink-3">
-              <Icon name="magnifying-glass" size={12} />
-              <span>Search…</span>
-              <span className="ml-auto rounded bg-ink/[0.06] px-1.5 py-0.5 font-mono text-[11px]">
-                ⌘K
-              </span>
             </div>
 
             <div className="mx-1.5 mt-3.5 mb-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
@@ -205,7 +206,7 @@ export function BottomPill() {
               <div className="flex items-center gap-1.5">
                 <a
                   href="#"
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-ink/[0.06] text-ink-2 transition hover:bg-canvas hover:text-ink"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-ink-2 transition hover:bg-ink/[0.06] hover:text-ink"
                   aria-label="Open Figma"
                 >
                   <img src="/icons/figma.svg" alt="" className="h-4 w-4" aria-hidden="true" />
@@ -214,16 +215,14 @@ export function BottomPill() {
                   href={GITHUB_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-ink/[0.06] text-ink-2 transition hover:bg-canvas hover:text-ink"
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-ink-2 transition hover:bg-ink/[0.06] hover:text-ink"
                   aria-label="Open GitHub"
                 >
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white">
-                    <img src="/icons/github.svg" alt="" className="h-4 w-4" aria-hidden="true" />
-                  </span>
+                  <GithubMark size={16} />
                 </a>
                 <button
                   type="button"
-                  className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-ink/[0.06] text-ink-2 transition hover:bg-canvas hover:text-ink"
+                  className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-ink-2 transition hover:bg-ink/[0.06] hover:text-ink"
                   aria-label="Scan to preview"
                 >
                   <Icon name="qr-code" size={14} />

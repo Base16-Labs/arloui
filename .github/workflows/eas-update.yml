@@ -1,0 +1,99 @@
+name: EAS Update
+
+# Publishes the Expo playground (apps/docs) to EAS Update on every merge to main
+# so the docs-site QR codes always open the latest build in Expo Go, then writes
+# the new update's manifest URL back to apps/www/lib/preview-target.json so the
+# next www deploy points the QR at it.
+#
+# Requires repo secret EXPO_TOKEN — an access token for the base16 Expo account
+# (https://expo.dev/settings/access-tokens).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/docs/**'
+      - 'packages/**'
+      - '.github/workflows/eas-update.yml'
+
+concurrency:
+  group: eas-update-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish playground · sync preview target
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm install --global npm@11.5.1
+      - run: npm ci
+
+      # Regenerates @arloui/icons + builds workspace deps the playground bundle
+      # imports (the generated icon files are not committed).
+      - run: npm run build
+
+      - name: Publish EAS Update
+        id: publish
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        working-directory: apps/docs
+        run: |
+          npx eas-cli@latest update \
+            --branch production \
+            --message "CI: ${{ github.sha }}" \
+            --non-interactive \
+            --json > update.json
+          cat update.json
+          # Deep-search the eas output for the update group UUID, robust to the
+          # exact JSON wrapper shape (array of platform updates, or an object).
+          GROUP_ID=$(node -e "
+            const u = require('./update.json');
+            const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+            let found = '';
+            (function walk(v){
+              if (found || v == null) return;
+              if (Array.isArray(v)) return v.forEach(walk);
+              if (typeof v === 'object') {
+                if (typeof v.group === 'string' && UUID.test(v.group)) { found = v.group; return; }
+                Object.values(v).forEach(walk);
+              }
+            })(u);
+            if (!found) { console.error('no group id in eas update output'); process.exit(1); }
+            process.stdout.write(found);
+          ")
+          echo "group_id=$GROUP_ID" >> "$GITHUB_OUTPUT"
+          echo "Published update group $GROUP_ID"
+
+      - name: Sync www preview target
+        env:
+          PROJECT_ID: 0e137cd5-9ad3-436d-a976-0fab95640f4b
+          GROUP_ID: ${{ steps.publish.outputs.group_id }}
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = 'apps/www/lib/preview-target.json';
+            const j = JSON.parse(fs.readFileSync(path, 'utf8'));
+            j.manifestUrl = \`exp://u.expo.dev/\${process.env.PROJECT_ID}/group/\${process.env.GROUP_ID}\`;
+            fs.writeFileSync(path, JSON.stringify(j, null, 2) + '\n');
+          "
+
+      - name: Commit preview target if changed
+        run: |
+          if git diff --quiet -- apps/www/lib/preview-target.json; then
+            echo "preview-target.json unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/www/lib/preview-target.json
+          git commit -m "chore(www): point preview QR at latest playground update [skip ci]"
+          git push

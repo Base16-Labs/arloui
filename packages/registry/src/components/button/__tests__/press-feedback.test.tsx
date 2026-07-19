@@ -1,14 +1,13 @@
 import { jest } from '@jest/globals';
 
-jest.mock('@arloui/utils', () => ({
-  ...jest.requireActual('@arloui/utils'),
+jest.mock('../../../foundation/haptics', () => ({
   haptic: jest.fn(),
 }));
 
 import { type ReactNode } from 'react';
 import { AccessibilityInfo } from 'react-native';
 import { renderHook, act, waitFor } from '@testing-library/react-native';
-import { haptic } from '@arloui/utils';
+import { haptic } from '../../../foundation/haptics';
 import { ThemeProvider } from '../../../foundation/theme-provider';
 import { usePressFeedback, useReducedMotion } from '../press-feedback';
 

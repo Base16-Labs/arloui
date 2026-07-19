@@ -29,6 +29,18 @@
       ]
     },
     {
+      "name": "haptics",
+      "kind": "foundation",
+      "title": "Haptics",
+      "description": "Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.",
+      "registryDependencies": [],
+      "dependencies": [],
+      "tags": [
+        "foundation",
+        "haptics"
+      ]
+    },
+    {
       "name": "animated-icons",
       "kind": "icon",
       "title": "Animated icons",
@@ -54,10 +66,10 @@
       "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "haptics"
       ],
       "dependencies": [
-        "@arloui/utils",
         "expo-haptics",
         "react-native-svg"
       ],
@@ -254,6 +266,81 @@
         "motion",
         "primitive"
       ]
+    },
+    {
+      "name": "carousel",
+      "kind": "primitive",
+      "title": "Carousel",
+      "description": "A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "layout",
+        "scroll",
+        "gesture",
+        "motion",
+        "primitive"
+      ]
+    },
+    {
+      "name": "gallery",
+      "kind": "primitive",
+      "title": "Gallery",
+      "description": "A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "layout",
+        "grid",
+        "masonry",
+        "primitive"
+      ]
+    },
+    {
+      "name": "badge",
+      "kind": "primitive",
+      "title": "Badge",
+      "description": "A non-interactive status label with dot, count, and icon variants across five semantic tones.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "label",
+        "status",
+        "primitive"
+      ],
+      "figma": "Components/Badge/Default"
+    },
+    {
+      "name": "chip",
+      "kind": "primitive",
+      "title": "Chip",
+      "description": "An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "button"
+      ],
+      "dependencies": [
+        "react-native-svg",
+        "@arloui/utils",
+        "expo-haptics"
+      ],
+      "tags": [
+        "filter",
+        "tag",
+        "interactive",
+        "primitive"
+      ],
+      "figma": "Components/Chip/Default"
     },
     {
       "name": "date-picker",

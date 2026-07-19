@@ -60,4 +60,4 @@ After installing **`@arloui/icons`**, you can also open **`node_modules/@arloui/
 
 ## License
 
-MIT
+[MIT](../../LICENSE) © Base16 Labs and Arlo UI contributors.

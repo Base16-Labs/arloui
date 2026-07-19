@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Chip } from '@/components/ui/Chip';
-import { PhoneFrame, PreviewCard } from '@/components/ui/PhoneFrame';
 import { cn } from '@/lib/cn';
 
 type Appearance = 'plain' | 'underline' | 'filled';
@@ -10,16 +9,6 @@ type Tone = 'neutral' | 'accent';
 type Layout = 'content' | 'equal';
 
 const ITEMS = ['For you', 'Following', 'Saved'];
-
-export function TabsPhonePreview() {
-  return (
-    <PreviewCard className="mb-12">
-      <PhoneFrame>
-        <TabsScreen appearance="underline" tone="accent" layout="equal" />
-      </PhoneFrame>
-    </PreviewCard>
-  );
-}
 
 export function TabsDocPlayground() {
   const [appearance, setAppearance] = useState<Appearance>('underline');

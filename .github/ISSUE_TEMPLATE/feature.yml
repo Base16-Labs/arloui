@@ -1,0 +1,80 @@
+name: Feature or component proposal
+description: Propose an improvement or discuss a new component before implementation.
+title: '[Proposal]: '
+labels:
+  - enhancement
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Arlo UI is maintainer-led during beta. Bug fixes, documentation, tests, and approved improvements are welcome.
+        New components must be proposed and accepted here before implementation; an accepted proposal does not guarantee inclusion or a timeline.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Proposal type
+      options:
+        - Existing component improvement
+        - New component
+        - CLI or registry workflow
+        - Tokens or theme
+        - Documentation
+        - Skill or agent tooling
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user need or workflow problem without prescribing an implementation first.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed direction
+      description: Explain the API, behavior, states, accessibility needs, or design-system fit you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Could existing Arlo components be composed or customized to solve this?
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: References or examples
+      description: Add screenshots, comparable APIs, or prior art if useful. Do not paste copyrighted source.
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Would you like to help after maintainer approval?
+      options:
+        - Yes, I can open a PR
+        - Yes, I can help test or document it
+        - No, I am proposing only
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Submission checks
+      options:
+        - label: I searched existing issues and the roadmap for similar proposals.
+          required: true
+        - label: I understand that new components are maintainer-led during beta and should not be implemented before approval.
+          required: true
+        - label: I agree to follow the Code of Conduct.
+          required: true

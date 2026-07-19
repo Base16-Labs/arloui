@@ -11,6 +11,7 @@ import {
   type DateWheelPickerMode,
   type DatePickerWeekStartsOn,
 } from '@arloui/registry';
+import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -44,6 +45,7 @@ export default function DatePickerCanvas() {
   const [minuteInterval, setMinuteInterval] = useState<DateWheelPickerMinuteInterval>(5);
   const [weekStartsOn, setWeekStartsOn] = useState<DatePickerWeekStartsOn>(0);
   const [showOutsideDays, setShowOutsideDays] = useState(true);
+  const [monthYearDropdown, setMonthYearDropdown] = useState(false);
   const [state, setState] = useState<PreviewState>('default');
   const previewOffset = useRef(new Animated.Value(0)).current;
 
@@ -74,7 +76,10 @@ export default function DatePickerCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <LiveBadge />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <BackButton />
+              <LiveBadge />
+            </View>
             <ThemeToggle />
           </View>
 
@@ -94,6 +99,7 @@ export default function DatePickerCanvas() {
                 defaultDisplayedMonth={new Date(2026, 5, 1)}
                 weekStartsOn={weekStartsOn}
                 showOutsideDays={showOutsideDays}
+                monthYearDropdown={monthYearDropdown}
                 disabled={state === 'disabled'}
                 isDateDisabled={
                   state === 'weekends disabled'
@@ -193,6 +199,16 @@ export default function DatePickerCanvas() {
                         label={option}
                         active={showOutsideDays === (option === 'show')}
                         onPress={() => setShowOutsideDays(option === 'show')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Header">
+                    {['arrows', 'dropdown'].map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option}
+                        active={monthYearDropdown === (option === 'dropdown')}
+                        onPress={() => setMonthYearDropdown(option === 'dropdown')}
                       />
                     ))}
                   </VariantControlRow>

@@ -4,6 +4,7 @@ import * as p from '@clack/prompts';
 import kleur from 'kleur';
 import { DEFAULT_CONFIG, CONFIG_FILE, saveConfig, type ArloConfig } from '../config';
 import { RegistryClient } from '../registry-client';
+import { buildSourceTargetMap } from '../rewrite-imports';
 import { writeComponent } from './add';
 
 type Options = {
@@ -39,10 +40,15 @@ export async function init({ cwd, yes }: Options): Promise<void> {
     const tokens = await client.resolve('tokens');
     const theme = await client.resolve('theme-provider');
     const seen = new Set<string>();
+    const foundation: typeof tokens = [];
     for (const entry of [...tokens, ...theme]) {
       if (seen.has(entry.name)) continue;
       seen.add(entry.name);
-      await writeComponent({ cwd, config, entry });
+      foundation.push(entry);
+    }
+    const sourceTargetMap = buildSourceTargetMap(cwd, config, foundation);
+    for (const entry of foundation) {
+      await writeComponent({ cwd, config, entry, sourceTargetMap });
     }
     spinner.stop('foundation installed');
   } catch (err) {

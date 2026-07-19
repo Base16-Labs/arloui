@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { Chip } from '@/components/ui/Chip';
-import { PhoneFrame, PreviewCard } from '@/components/ui/PhoneFrame';
 import { cn } from '@/lib/cn';
 
 type WeekStart = 0 | 1;
@@ -372,18 +371,6 @@ function WheelColumn({
         </button>
       ))}
     </div>
-  );
-}
-
-export function DatePickerPhonePreview() {
-  return (
-    <PreviewCard className="mb-12">
-      <PhoneFrame>
-        <div className="flex h-full items-center justify-center bg-canvas px-4">
-          <DateWheelPickerDemo compact />
-        </div>
-      </PhoneFrame>
-    </PreviewCard>
   );
 }
 

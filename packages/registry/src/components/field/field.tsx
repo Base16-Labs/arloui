@@ -197,7 +197,7 @@ function FieldLabel({ children, style }: { children: ReactNode; style?: StylePro
 /** The field surface — the bordered/filled row that holds icons, the input, and actions. */
 function FieldControl({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const t = useTokens();
-  const { hasError, disabled } = useField();
+  const { hasError, disabled, focused } = useField();
   const { dims, isPlain, multiline, stretches } = useFieldDims();
   return (
     <View
@@ -205,7 +205,11 @@ function FieldControl({ children, style }: { children: ReactNode; style?: StyleP
         {
           minHeight: dims.minHeight,
           borderRadius: isPlain ? 0 : multiline ? t.radii.xl : t.radii.md,
-          backgroundColor: isPlain ? 'transparent' : t.colors.surfaceInput,
+          backgroundColor: isPlain
+            ? 'transparent'
+            : focused
+              ? t.colors.surfaceInputActive
+              : t.colors.surfaceInput,
           borderWidth: !isPlain && hasError ? 1 : 0,
           borderColor: hasError ? t.colors.borderError : 'transparent',
           paddingHorizontal: isPlain ? 0 : dims.paddingX,

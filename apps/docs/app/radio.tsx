@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Radio, useTokens, type RadioAppearance, type RadioSize } from '@arloui/registry';
+import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -54,7 +55,10 @@ export default function RadioCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <LiveBadge />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <BackButton />
+              <LiveBadge />
+            </View>
             <ThemeToggle />
           </View>
 

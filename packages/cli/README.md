@@ -131,4 +131,4 @@ exact component source used by your app.
 
 ## License
 
-MIT
+[MIT](../../LICENSE) © Base16 Labs and Arlo UI contributors.

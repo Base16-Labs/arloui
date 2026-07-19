@@ -1,0 +1,74 @@
+name: Publish MCP
+
+# Publishes @arloui/mcp to npm when its version in package.json changes.
+# Bump packages/mcp/package.json "version" and merge to main to release.
+# Requires repo secret NPM_TOKEN (same npm account that owns the arloui CLI).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/mcp/**'
+      - '.github/workflows/publish-mcp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-mcp
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Validate and publish @arloui/mcp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # npm trusted publishing requires npm 11.5.1 or newer.
+      - name: Install release npm version
+        run: npm install --global npm@11.5.1
+
+      - run: npm ci
+
+      - name: Validate
+        run: |
+          npm run typecheck --workspace @arloui/mcp
+          npm run build --workspace @arloui/mcp
+
+      - name: Check whether this version is already published
+        id: version
+        run: |
+          version=$(node -p "require('./packages/mcp/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if npm view "@arloui/mcp@$version" version >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pack (dry run)
+        if: steps.version.outputs.exists == 'false'
+        run: npm pack --workspace @arloui/mcp --dry-run
+
+      - name: Publish
+        if: steps.version.outputs.exists == 'false'
+        run: npm publish --workspace @arloui/mcp --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.version.outputs.exists }}" = "true" ]; then
+            echo "@arloui/mcp@${{ steps.version.outputs.version }} already published; nothing to do." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Published @arloui/mcp@${{ steps.version.outputs.version }} to npm." >> "$GITHUB_STEP_SUMMARY"
+          fi

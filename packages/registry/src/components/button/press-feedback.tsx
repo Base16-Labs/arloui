@@ -7,13 +7,13 @@
  * easing, and accessibility behaviour live in exactly one place.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { haptic as triggerHaptic } from '@arloui/utils';
 import {
   AccessibilityInfo,
   Animated,
   Easing,
   type GestureResponderEvent,
 } from 'react-native';
+import { haptic as triggerHaptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 
 export type ButtonHaptic = 'light' | 'medium' | 'none';

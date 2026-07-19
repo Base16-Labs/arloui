@@ -16,6 +16,20 @@ export {
 } from './components/button';
 export { Card, type CardProps } from './components/card';
 export {
+  Carousel,
+  type CarouselIndicator,
+  type CarouselIndicatorPosition,
+  type CarouselProps,
+  type CarouselRef,
+  type CarouselSnap,
+} from './components/carousel';
+export {
+  Gallery,
+  type GalleryColumns,
+  type GalleryProps,
+  type GalleryRadius,
+} from './components/gallery';
+export {
   Skeleton,
   type SkeletonAnimation,
   type SkeletonProps,
@@ -52,7 +66,9 @@ export {
   type InputSize,
   type InputState,
 } from './components/input';
+export { Badge, type BadgeAppearance, type BadgeProps, type BadgeSize, type BadgeTone } from './components/badge';
 export { Checkbox, type CheckboxProps, type CheckboxSize } from './components/checkbox';
+export { Chip, type ChipAccent, type ChipProps, type ChipRadius, type ChipSelectionIndicator, type ChipSize, type ChipStyle, type ChipType } from './components/chip';
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
 export { Toggle, type ToggleProps, type ToggleSize } from './components/toggle';
 export {

@@ -19,6 +19,7 @@ const E = error;
 export const lightSemanticColors = {
   surfaceBackground: G[50],
   surfaceInput: G[100],
+  surfaceInputActive: G[200],
   surfaceElevated: base.white,
   surfaceOverlay: alphaRamp.black[40],
   surfaceInverse: G[900],
@@ -36,7 +37,7 @@ export const lightSemanticColors = {
 
   interactivePrimary: P[600],
   interactivePrimaryPressed: P[700],
-  interactiveSecondary: G[100],
+  interactiveSecondary: rgbaFromHex(G[200], 0.7),
   interactiveSecondaryPressed: G[200],
   interactiveTertiary: 'transparent',
   interactiveTertiaryPressed: alphaRamp.white[40],
@@ -76,6 +77,7 @@ export const lightSemanticColors = {
 export const darkSemanticColors = {
   surfaceBackground: G[950],
   surfaceInput: G[900],
+  surfaceInputActive: G[800],
   surfaceElevated: G[800],
   surfaceOverlay: alphaRamp.black[70],
   surfaceInverse: G[50],

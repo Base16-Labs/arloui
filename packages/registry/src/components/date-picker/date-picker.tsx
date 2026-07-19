@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Animated,
   Pressable,
   Text,
   View,
@@ -8,6 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { DateWheelPicker } from './date-wheel-picker';
 
 export type DatePickerWeekStartsOn = 0 | 1;
 
@@ -25,6 +27,11 @@ export type DatePickerProps = Omit<ViewProps, 'style'> & {
   showOutsideDays?: boolean;
   locale?: string;
   disabled?: boolean;
+  /**
+   * iOS-style header: renders the month/year as a tappable dropdown that
+   * expands an inline month-year wheel in place of the day grid.
+   */
+  monthYearDropdown?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -113,11 +120,14 @@ export function DatePicker({
   showOutsideDays = true,
   locale,
   disabled = false,
+  monthYearDropdown = false,
   style,
   ...rest
 }: DatePickerProps) {
   const t = useTokens();
   const today = useMemo(() => startOfDay(new Date()), []);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const chevron = useRef(new Animated.Value(0)).current;
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const selected = value === undefined ? internalValue : value;
   const initialMonth = defaultDisplayedMonth ?? selected ?? today;
@@ -130,6 +140,15 @@ export function DatePicker({
   const weekdayLabels = weekStartsOn === 1 ? MONDAY_LABELS : SUNDAY_LABELS;
   const minimum = minDate ? startOfDay(minDate) : null;
   const maximum = maxDate ? startOfDay(maxDate) : null;
+  const wheelOpen = monthYearDropdown && pickerOpen;
+
+  useEffect(() => {
+    Animated.timing(chevron, {
+      toValue: pickerOpen ? 1 : 0,
+      duration: 160,
+      useNativeDriver: true,
+    }).start();
+  }, [chevron, pickerOpen]);
 
   function changeMonth(amount: number) {
     if (disabled) return;
@@ -145,6 +164,13 @@ export function DatePicker({
       setInternalMonth(startOfMonth(date));
     }
     onValueChange?.(date);
+  }
+
+  function setMonthFromWheel(next: Date) {
+    if (disabled) return;
+    const nextMonth = startOfMonth(next);
+    if (displayedMonth === undefined) setInternalMonth(nextMonth);
+    onDisplayedMonthChange?.(nextMonth);
   }
 
   return (
@@ -174,33 +200,90 @@ export function DatePicker({
           marginBottom: 8,
         }}
       >
-        <Text
-          accessibilityRole="header"
-          style={{
-            color: t.colors.textPrimary,
-            fontFamily: 'Manrope SemiBold',
-            fontSize: 17,
-            lineHeight: 22,
-          }}
-        >
-          {monthLabel(month, locale)}
-        </Text>
-        <View style={{ flexDirection: 'row', gap: 4 }}>
-          <MonthButton
-            label="Previous month"
-            glyph="‹"
-            disabled={disabled || Boolean(minimum && addMonths(month, -1) < startOfMonth(minimum))}
-            onPress={() => changeMonth(-1)}
-          />
-          <MonthButton
-            label="Next month"
-            glyph="›"
-            disabled={disabled || Boolean(maximum && addMonths(month, 1) > startOfMonth(maximum))}
-            onPress={() => changeMonth(1)}
-          />
-        </View>
+        {monthYearDropdown ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${monthLabel(month, locale)}, choose month and year`}
+            accessibilityState={{ expanded: pickerOpen, disabled }}
+            disabled={disabled}
+            hitSlop={6}
+            onPress={() => setPickerOpen((open) => !open)}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+          >
+            <Text
+              style={{
+                color: t.colors.textPrimary,
+                fontFamily: 'Manrope SemiBold',
+                fontSize: 17,
+                lineHeight: 22,
+              }}
+            >
+              {monthLabel(month, locale)}
+            </Text>
+            <Animated.View
+              style={{
+                marginTop: -2,
+                transform: [
+                  { rotate: chevron.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] }) },
+                ],
+              }}
+            >
+              <View
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRightWidth: 2,
+                  borderBottomWidth: 2,
+                  borderColor: t.colors.textPrimary,
+                  transform: [{ rotate: '45deg' }],
+                }}
+              />
+            </Animated.View>
+          </Pressable>
+        ) : (
+          <Text
+            accessibilityRole="header"
+            style={{
+              color: t.colors.textPrimary,
+              fontFamily: 'Manrope SemiBold',
+              fontSize: 17,
+              lineHeight: 22,
+            }}
+          >
+            {monthLabel(month, locale)}
+          </Text>
+        )}
+        {!wheelOpen ? (
+          <View style={{ flexDirection: 'row', gap: 4 }}>
+            <MonthButton
+              label="Previous month"
+              glyph="‹"
+              disabled={disabled || Boolean(minimum && addMonths(month, -1) < startOfMonth(minimum))}
+              onPress={() => changeMonth(-1)}
+            />
+            <MonthButton
+              label="Next month"
+              glyph="›"
+              disabled={disabled || Boolean(maximum && addMonths(month, 1) > startOfMonth(maximum))}
+              onPress={() => changeMonth(1)}
+            />
+          </View>
+        ) : null}
       </View>
 
+      {wheelOpen ? (
+        <DateWheelPicker
+          mode="month-year"
+          value={month}
+          onValueChange={setMonthFromWheel}
+          minDate={minDate}
+          maxDate={maxDate}
+          locale={locale}
+          disabled={disabled}
+          style={{ borderWidth: 0, backgroundColor: 'transparent', width: '100%' }}
+        />
+      ) : (
+        <>
       <View style={{ flexDirection: 'row' }}>
         {weekdayLabels.map((label, index) => (
           <View key={`${label}-${index}`} style={{ width: `${100 / 7}%`, alignItems: 'center' }}>
@@ -283,6 +366,8 @@ export function DatePicker({
           );
         })}
       </View>
+        </>
+      )}
     </View>
   );
 }

@@ -145,6 +145,15 @@ node scripts/install-skill.mjs claude --symlink
 
 After install, the skill activates whenever you ask Cursor / Claude for Arlo UI work. See [`skills/README.md`](./skills/README.md) for project-level installs and the full compatibility matrix.
 
+## Contributing
+
+Bug fixes, documentation, tests, and scoped improvements are welcome. During beta, new components are maintainer-led and must be proposed in an issue before implementation.
+
+- [Contribution guide](./CONTRIBUTING.md)
+- [Versioning and updates](./VERSIONING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+- [Security policy](./SECURITY.md)
+
 ## Releasing
 
 Every push to `main` validates, packs, and publishes a new patch of the `arloui` CLI. The checked-in
@@ -167,4 +176,4 @@ Components themselves don't version through npm — they version by content hash
 
 ## License
 
-MIT
+[MIT](./LICENSE) © Base16 Labs and Arlo UI contributors.

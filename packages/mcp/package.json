@@ -1,0 +1,30 @@
+{
+  "name": "@arloui/mcp",
+  "version": "0.1.0",
+  "description": "Read-only Model Context Protocol server that exposes Arlo UI components, tokens, and docs to coding agents.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "arloui-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@arloui/tsconfig": "file:../tsconfig",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  }
+}

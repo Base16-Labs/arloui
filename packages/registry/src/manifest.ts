@@ -36,6 +36,15 @@ export const FOUNDATION: RegistryEntry[] = [
     ],
     meta: { tags: ['foundation', 'provider'] },
   },
+  {
+    name: 'haptics',
+    kind: 'foundation',
+    title: 'Haptics',
+    description:
+      'Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.',
+    files: [{ source: 'foundation/haptics.ts', target: 'haptics.ts', type: 'utility' }],
+    meta: { tags: ['foundation', 'haptics'] },
+  },
 ];
 
 export const COMPONENTS: RegistryEntry[] = [
@@ -64,14 +73,14 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Button',
     description:
       'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.',
-    dependencies: ['@arloui/utils', 'expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider'],
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
     files: [
-      { source: 'components/button/button.tsx', target: 'button.tsx' },
-      { source: 'components/button/ghost-button.tsx', target: 'ghost-button.tsx' },
-      { source: 'components/button/fab-button.tsx', target: 'fab-button.tsx' },
-      { source: 'components/button/social-auth-button.tsx', target: 'social-auth-button.tsx' },
-      { source: 'components/button/press-feedback.tsx', target: 'press-feedback.tsx' },
+      { source: 'components/button/button.tsx', target: 'button/button.tsx' },
+      { source: 'components/button/ghost-button.tsx', target: 'button/ghost-button.tsx' },
+      { source: 'components/button/fab-button.tsx', target: 'button/fab-button.tsx' },
+      { source: 'components/button/social-auth-button.tsx', target: 'button/social-auth-button.tsx' },
+      { source: 'components/button/press-feedback.tsx', target: 'button/press-feedback.tsx' },
       { source: 'components/button/index.ts', target: 'button/index.ts' },
     ],
     meta: {
@@ -87,7 +96,7 @@ export const COMPONENTS: RegistryEntry[] = [
       'A flexible surface for grouping related content with header, body, footer, and hierarchy options.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
-      { source: 'components/card/card.tsx', target: 'card.tsx' },
+      { source: 'components/card/card.tsx', target: 'card/card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
@@ -133,7 +142,7 @@ export const COMPONENTS: RegistryEntry[] = [
       'A bottom drawer with a grabber, drag-to-dismiss, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
-      { source: 'components/sheet/sheet.tsx', target: 'sheet.tsx' },
+      { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
     ],
     meta: {
@@ -181,7 +190,7 @@ export const COMPONENTS: RegistryEntry[] = [
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
-      { source: 'components/checkbox/checkbox.tsx', target: 'checkbox.tsx' },
+      { source: 'components/checkbox/checkbox.tsx', target: 'checkbox/checkbox.tsx' },
       { source: 'components/checkbox/index.ts', target: 'checkbox/index.ts' },
     ],
     meta: {
@@ -197,7 +206,7 @@ export const COMPONENTS: RegistryEntry[] = [
       'An animated radio button with a scaling dot indicator, two sizes, and disabled state.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
-      { source: 'components/radio/radio.tsx', target: 'radio.tsx' },
+      { source: 'components/radio/radio.tsx', target: 'radio/radio.tsx' },
       { source: 'components/radio/index.ts', target: 'radio/index.ts' },
     ],
     meta: {
@@ -213,7 +222,7 @@ export const COMPONENTS: RegistryEntry[] = [
       'An animated on/off switch with two sizes, disabled state, and smooth thumb transition.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
-      { source: 'components/toggle/toggle.tsx', target: 'toggle.tsx' },
+      { source: 'components/toggle/toggle.tsx', target: 'toggle/toggle.tsx' },
       { source: 'components/toggle/index.ts', target: 'toggle/index.ts' },
     ],
     meta: {
@@ -250,6 +259,69 @@ export const COMPONENTS: RegistryEntry[] = [
     ],
     meta: {
       tags: ['navigation', 'tabs', 'motion', 'primitive'],
+    },
+  },
+  {
+    name: 'carousel',
+    kind: 'primitive',
+    title: 'Carousel',
+    description:
+      'A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/carousel/carousel.tsx', target: 'carousel/carousel.tsx' },
+      { source: 'components/carousel/index.ts', target: 'carousel/index.ts' },
+    ],
+    meta: {
+      tags: ['layout', 'scroll', 'gesture', 'motion', 'primitive'],
+    },
+  },
+  {
+    name: 'gallery',
+    kind: 'primitive',
+    title: 'Gallery',
+    description:
+      'A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/gallery/gallery.tsx', target: 'gallery/gallery.tsx' },
+      { source: 'components/gallery/index.ts', target: 'gallery/index.ts' },
+    ],
+    meta: {
+      tags: ['layout', 'grid', 'masonry', 'primitive'],
+    },
+  },
+  {
+    name: 'badge',
+    kind: 'primitive',
+    title: 'Badge',
+    description:
+      'A non-interactive status label with dot, count, and icon variants across five semantic tones.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/badge/badge.tsx', target: 'badge.tsx' },
+      { source: 'components/badge/index.ts', target: 'badge/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Badge/Default',
+      tags: ['label', 'status', 'primitive'],
+    },
+  },
+  {
+    name: 'chip',
+    kind: 'primitive',
+    title: 'Chip',
+    description:
+      'An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.',
+    dependencies: ['react-native-svg', '@arloui/utils', 'expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'button'],
+    files: [
+      { source: 'components/chip/chip.tsx', target: 'chip.tsx' },
+      { source: 'components/chip/index.ts', target: 'chip/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Chip/Default',
+      tags: ['filter', 'tag', 'interactive', 'primitive'],
     },
   },
   {
