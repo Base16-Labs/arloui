@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
 import { RightRail } from "@/components/nav/RightRail";
-import { CodeBlock } from "@/components/ui/CodeBlock";
+import { McpClientTabs } from "@/components/docs/mcp-clients";
 import { agentItems } from "@/lib/routes";
 
 const slugs: readonly string[] = agentItems.map((i) => i.slug);
@@ -78,27 +78,8 @@ const PROMPTS = [
   "Build a settings screen using Arlo UI primitives.",
 ];
 
-const CLAUDE_CODE = `claude mcp add arloui -- npx -y @arloui/mcp`;
-
-const MCP_JSON = `{
-  "mcpServers": {
-    "arloui": {
-      "command": "npx",
-      "args": ["-y", "@arloui/mcp"]
-    }
-  }
-}`;
-
 const inlineCode =
   "rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-[14px] text-ink dark:bg-surface-raised";
-
-function ClientHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="mt-8 mb-3 text-[17px] font-medium tracking-tight text-ink">
-      {children}
-    </h3>
-  );
-}
 
 function McpDoc() {
   return (
@@ -129,22 +110,9 @@ function McpDoc() {
             subprocess, with no account or network endpoint to configure.
           </p>
 
-          <ClientHeading>Claude Code</ClientHeading>
-          <CodeBlock language="bash">{CLAUDE_CODE}</CodeBlock>
-
-          <ClientHeading>Claude Desktop</ClientHeading>
-          <p className="mb-3 text-[17px] leading-relaxed text-ink-2">
-            Add the server to{" "}
-            <code className={inlineCode}>claude_desktop_config.json</code>:
-          </p>
-          <CodeBlock language="json">{MCP_JSON}</CodeBlock>
-
-          <ClientHeading>Cursor</ClientHeading>
-          <p className="mb-3 text-[17px] leading-relaxed text-ink-2">
-            Use the same configuration in{" "}
-            <code className={inlineCode}>.cursor/mcp.json</code> — or any other
-            MCP-compatible client.
-          </p>
+          <div className="mt-6">
+            <McpClientTabs />
+          </div>
         </section>
 
         <section id="tools" className="mt-12">
