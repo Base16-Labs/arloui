@@ -18,10 +18,25 @@
       "bundler": "metro",
       "output": "static"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "experiments": {
       "typedRoutes": true,
       "autolinkingModuleResolution": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0e137cd5-9ad3-436d-a976-0fab95640f4b"
+      }
+    },
+    "owner": "base16",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0e137cd5-9ad3-436d-a976-0fab95640f4b"
     }
   }
 }
