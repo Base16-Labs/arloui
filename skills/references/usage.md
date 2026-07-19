@@ -45,6 +45,10 @@ npx arloui diff button
 - **toggle** — Toggle. An animated on/off switch with two sizes, disabled state, and smooth thumb transition.
 - **text-area** — TextArea. A multiline text field for comments, notes, bios, support messages, and long-form form content.
 - **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.
+- **carousel** — Carousel. A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.
+- **gallery** — Gallery. A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.
+- **badge** — Badge. A non-interactive status label with dot, count, and icon variants across five semantic tones.
+- **chip** — Chip. An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.
 - **date-picker** — Date Picker. Accessible calendar and wheel surfaces for date, time, date-time, and month-year selection.
 
 ### icon
