@@ -3,8 +3,13 @@
 # + skill drift guards. Turbo-cached, so unchanged parts are instant.
 set -e
 
-echo "▶ build"
-npm run build
+echo "▶ build (packages + apps, excluding www)"
+npm run build -- --filter='!@arloui/www'
+
+# Build www through the Cloudflare/OpenNext path (runs next build internally),
+# so Workers-runtime build breaks surface here instead of on Cloudflare.
+echo "▶ build www → Cloudflare Workers (opennext)"
+npm run build:cloudflare -w @arloui/www
 
 echo "▶ CLI e2e"
 npm run test:e2e -w arloui
