@@ -10,18 +10,22 @@
  * The `/--/` separator tells Expo Go that everything after it is the in-app
  * deep-link path rather than part of the manifest URL.
  *
- * The default below is pinned to a specific published update group, so it works
- * out of the box. Each `eas update --branch production` prints a new group ID —
- * point NEXT_PUBLIC_EXPO_PREVIEW_URL at it (CI can do this automatically) to
- * serve a newer build without editing this file. A channel-based manifest URL
- * (`exp://u.expo.dev/<projectId>?channel-name=production`) also works — the
- * query string is preserved and re-appended after the `/--/<route>` segment.
+ * The default manifest URL lives in preview-target.json, which the EAS Update
+ * CI workflow (.github/workflows/eas-update.yml) rewrites on every merge to main
+ * so the QR always points at the newest published playground. Override per
+ * deploy with NEXT_PUBLIC_EXPO_PREVIEW_URL if needed.
+ *
+ * Note: a channel-based manifest URL (…?channel-name=production) is NOT used for
+ * deep links — Expo Go needs channel-name on the manifest request, but the query
+ * string on an `exp://…/--/<route>` URL is delivered to the app, not the manifest
+ * server, so the update would fail to resolve. The group-based URL needs no
+ * manifest query, which is why CI keeps the group ID fresh instead.
  *
  * Project: @base16/arloui-playground (projectId 0e137cd5-9ad3-436d-a976-0fab95640f4b)
  */
-const PREVIEW_BASE =
-  process.env.NEXT_PUBLIC_EXPO_PREVIEW_URL ??
-  'exp://u.expo.dev/0e137cd5-9ad3-436d-a976-0fab95640f4b/group/27a1fe79-0946-4499-9e96-e7f64d8232ce';
+import previewTarget from './preview-target.json';
+
+const PREVIEW_BASE = process.env.NEXT_PUBLIC_EXPO_PREVIEW_URL ?? previewTarget.manifestUrl;
 
 /** Doc slugs whose Expo route filename differs from the slug. */
 const ROUTE_ALIASES: Record<string, string> = {
