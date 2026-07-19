@@ -19,11 +19,9 @@ import {
   FormControlDocPlayground,
   type Control,
 } from '@/components/docs/form-control-doc-playground';
-import { CarouselDocPlayground, CarouselPhonePreview } from '@/components/docs/carousel-preview';
-import { GalleryDocPlayground, GalleryPhonePreview } from '@/components/docs/gallery-preview';
-import { BadgePhonePreview } from '@/components/docs/badge-phone-preview';
+import { CarouselDocPlayground } from '@/components/docs/carousel-preview';
+import { GalleryDocPlayground } from '@/components/docs/gallery-preview';
 import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
-import { ChipPhonePreview } from '@/components/docs/chip-phone-preview';
 import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
 import { DevicePreview } from '@/components/ui/DevicePreview';
 import { GithubMark } from '@/components/ui/GithubMark';
@@ -1921,7 +1919,7 @@ function CarouselDocPage() {
           </Pill>
         </div>
 
-        <CarouselPhonePreview />
+        <DevicePreview route="carousel" />
 
         <Section
           id="anatomy"
@@ -2103,7 +2101,7 @@ function GalleryDocPage() {
           </Pill>
         </div>
 
-        <GalleryPhonePreview />
+        <DevicePreview route="gallery" />
 
         <Section
           id="anatomy"
@@ -2270,7 +2268,7 @@ function BadgeDocPage() {
           </Pill>
         </div>
 
-        <BadgePhonePreview />
+        <DevicePreview route="badge" />
 
         <Section
           id="anatomy"
@@ -2419,7 +2417,7 @@ function ChipDocPage() {
           </Pill>
         </div>
 
-        <ChipPhonePreview />
+        <DevicePreview route="chip" />
 
         <Section
           id="anatomy"
