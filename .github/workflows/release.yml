@@ -3,6 +3,13 @@ name: Publish CLI
 on:
   push:
     branches: [main]
+    # Only release when the published CLI artifact can actually change. The CLI
+    # fetches the registry at runtime, so component/registry edits do not alter
+    # its bytes — only its own source, the version script, or this workflow do.
+    paths:
+      - 'packages/cli/**'
+      - 'scripts/cli-release-version.mjs'
+      - '.github/workflows/release.yml'
   workflow_dispatch:
 
 permissions:
