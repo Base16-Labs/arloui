@@ -67,6 +67,7 @@ export const componentGroups: ComponentGroup[] = [
     label: 'Controls',
     items: [
       { label: 'Button', slug: 'button' },
+      { label: 'Chip', slug: 'chip' },
       { label: 'Toggle', slug: 'toggle' },
       { label: 'Checkbox', slug: 'checkbox' },
       { label: 'Radio', slug: 'radio' },
@@ -77,7 +78,10 @@ export const componentGroups: ComponentGroup[] = [
   },
   {
     label: 'Feedback',
-    items: [{ label: 'Skeleton', slug: 'skeleton' }],
+    items: [
+      { label: 'Skeleton', slug: 'skeleton' },
+      { label: 'Badge', slug: 'badge' },
+    ],
   },
   {
     label: 'Navigation',

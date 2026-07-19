@@ -638,6 +638,115 @@ export const radioData = {
   ],
 } as const;
 
+export const badgeData = {
+  slug: "badge",
+  category: "Feedback",
+  title: "Badge",
+  lede:
+    "A non-interactive status label — five semantic tones, three appearances, optional dot and leading icon, with a subtle solid inset border for craft. Use it to surface state without demanding a tap.",
+  figma: "#",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/badge",
+  states: [
+    "label",
+    "dot",
+    "icon",
+    "icon-only",
+    "sm",
+    "md",
+  ],
+  tokens: [
+    "colors.surfaceInput",
+    "colors.textSecondary",
+    "colors.textInteractivePrimary",
+    "colors.feedbackInfo",
+    "colors.feedbackInfoBg",
+    "colors.feedbackSuccess",
+    "colors.feedbackSuccessBg",
+    "colors.feedbackWarning",
+    "colors.feedbackWarningBg",
+    "colors.feedbackError",
+    "colors.feedbackErrorBg",
+    "colors.borderPrimary",
+    "radii.full",
+    "spacing.1",
+    "spacing.2",
+    "sizing.icon.xs",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/badge" },
+    { label: "Open playground ↗", href: "http://localhost:8081/badge" },
+  ],
+} as const;
+
+export const chipData = {
+  slug: "chip",
+  category: "Controls",
+  title: "Chip",
+  lede:
+    "An interactive compact element for filtering, tokenised input, and one-tap actions. Three types — filter, input, assist — with press feedback, selection indicators, and icon-only mode.",
+  figma: "#",
+  source:
+    "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chip",
+  states: [
+    "default",
+    "selected",
+    "disabled",
+    "filter",
+    "input",
+    "assist",
+    "icon-only",
+  ],
+  tokens: [
+    "colors.interactivePrimary",
+    "colors.interactiveSecondary",
+    "colors.interactiveDisabled",
+    "colors.textPrimary",
+    "colors.textInverse",
+    "colors.textTertiary",
+    "colors.textInteractivePrimary",
+    "colors.feedbackInfoBg",
+    "colors.surfaceInput",
+    "colors.borderSecondary",
+    "radii.full",
+    "radii.lg",
+    "spacing.1",
+    "spacing.2",
+    "spacing.3",
+    "sizing.icon.xs",
+    "sizing.icon.sm",
+    "sizing.touchTarget.minimum",
+    "motion.duration.instant",
+    "motion.easing.easeOut",
+  ],
+  headings: [
+    { id: "anatomy", label: "Anatomy" },
+    { id: "when-to-use", label: "When to use" },
+    { id: "variants", label: "Variants" },
+    { id: "states", label: "States" },
+    { id: "code", label: "Code" },
+    { id: "tokens", label: "Tokens" },
+    { id: "accessibility", label: "Accessibility" },
+    { id: "do-dont", label: "Do · Don't" },
+    { id: "related", label: "Related" },
+  ],
+  actions: [
+    { label: "View registry source ↗", href: "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chip" },
+    { label: "Open playground ↗", href: "http://localhost:8081/chip" },
+  ],
+} as const;
+
 export const textAreaData = {
   slug: 'text-area',
   category: 'Controls',
@@ -816,6 +925,8 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/text-area': docDataToMarkdown(textAreaData),
   '/docs/components/carousel': docDataToMarkdown(carouselData),
   '/docs/components/gallery': docDataToMarkdown(galleryData),
+  '/docs/components/badge': docDataToMarkdown(badgeData),
+  '/docs/components/chip': docDataToMarkdown(chipData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [

@@ -292,6 +292,39 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'badge',
+    kind: 'primitive',
+    title: 'Badge',
+    description:
+      'A non-interactive status label with dot, count, and icon variants across five semantic tones.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/badge/badge.tsx', target: 'badge.tsx' },
+      { source: 'components/badge/index.ts', target: 'badge/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Badge/Default',
+      tags: ['label', 'status', 'primitive'],
+    },
+  },
+  {
+    name: 'chip',
+    kind: 'primitive',
+    title: 'Chip',
+    description:
+      'An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.',
+    dependencies: ['react-native-svg', '@arloui/utils', 'expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'button'],
+    files: [
+      { source: 'components/chip/chip.tsx', target: 'chip.tsx' },
+      { source: 'components/chip/index.ts', target: 'chip/index.ts' },
+    ],
+    meta: {
+      figma: 'Components/Chip/Default',
+      tags: ['filter', 'tag', 'interactive', 'primitive'],
+    },
+  },
+  {
     name: 'date-picker',
     kind: 'primitive',
     title: 'Date Picker',

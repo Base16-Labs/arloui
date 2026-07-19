@@ -47,7 +47,9 @@ function ThemedStack() {
         <Stack.Screen name="tab-bar" options={{ title: 'Tab Bar' }} />
         <Stack.Screen name="tabs" options={{ title: 'Tabs' }} />
         <Stack.Screen name="icons" options={{ title: 'Icons' }} />
+        <Stack.Screen name="badge" options={{ title: 'Badge' }} />
         <Stack.Screen name="checkbox" options={{ title: 'Checkbox' }} />
+        <Stack.Screen name="chip" options={{ title: 'Chip' }} />
         <Stack.Screen name="radio" options={{ title: 'Radio' }} />
         <Stack.Screen name="toggle" options={{ title: 'Toggle' }} />
         <Stack.Screen name="carousel" options={{ title: 'Carousel' }} />
