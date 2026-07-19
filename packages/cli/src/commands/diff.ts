@@ -3,6 +3,7 @@ import kleur from 'kleur';
 import { aliasFor, loadConfig } from '../config';
 import { fileExists, resolveWithin } from '../fs-utils';
 import { RegistryClient } from '../registry-client';
+import { buildSourceTargetMap, rewriteFileImports } from '../rewrite-imports';
 
 type Options = { cwd: string; name?: string };
 
@@ -33,7 +34,13 @@ export async function diff({ cwd, name }: Options): Promise<void> {
   }
 
   for (const item of items) {
-    const entry = await client.get(item.name);
+    // Resolve the component with its transitive deps and build the same
+    // source→target map `add` uses, so the comparison accounts for the import
+    // rewriting `add` applies — otherwise every rewritten file reads as drifted.
+    const entries = await client.resolve(item.name);
+    const map = buildSourceTargetMap(cwd, config, entries);
+    const entry = entries.find((e) => e.name === item.name) ?? entries[0];
+    if (!entry) continue;
     let drifted = 0;
     let missing = 0;
 
@@ -44,7 +51,7 @@ export async function diff({ cwd, name }: Options): Promise<void> {
         continue;
       }
       const local = await readFile(target, 'utf8');
-      if (local !== file.content) drifted++;
+      if (local !== rewriteFileImports(file, cwd, config, map)) drifted++;
     }
 
     if (missing === entry.files.length) continue; // not installed

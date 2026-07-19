@@ -2,6 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
 import { Badge, useTokens, type BadgeAppearance, type BadgeSize, type BadgeTone } from '@arloui/registry';
 import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -18,8 +19,6 @@ type BadgeMode = 'label' | 'dot' | 'icon';
 const MODES: BadgeMode[] = ['label', 'dot', 'icon'];
 
 function StarIcon({ size, color }: { size: number; color: string }) {
-  const Svg = require('react-native-svg').default;
-  const Path = require('react-native-svg').Path;
   return (
     <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
       <Path
