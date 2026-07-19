@@ -1,5 +1,6 @@
-# Arlo UI pre-commit gate.
-# Runs the test suite — Turbo-cached, so it's instant when nothing relevant
-# changed. Security scanning (Trivy) and audits run in CI (.github/workflows).
-echo "▶ running tests…"
-npm test
+# Arlo UI pre-commit — fast, Turbo-cached checks that mirror the lint + test CI
+# workflows. Instant when nothing relevant changed. Heavier build / e2e / drift
+# checks run on pre-push (.husky/pre-push). Security scanning (Trivy) and audits
+# run in CI (.github/workflows).
+echo "▶ typecheck · lint · test"
+npm run typecheck && npm run lint && npm test
