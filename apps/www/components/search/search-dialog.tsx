@@ -45,8 +45,10 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
 
   const results = useMemo<SearchEntry[]>(() => {
     const q = query.trim();
+    // Group by category (each appears once) while preserving relevance order
+    // within a category — orderByCategory is a stable sort.
     if (!q) return orderByCategory(searchEntries);
-    return fuse.search(q).map((r) => r.item);
+    return orderByCategory(fuse.search(q).map((r) => r.item));
   }, [query, fuse]);
 
   // Reset when the dialog opens.
