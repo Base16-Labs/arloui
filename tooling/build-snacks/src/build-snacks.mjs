@@ -61,6 +61,24 @@ const docsPkg = JSON.parse(readFileSync(join(DOCS, 'package.json'), 'utf8'));
 const allDeps = { ...docsPkg.dependencies, ...docsPkg.devDependencies };
 const PROVIDED = new Set(['react', 'react-native', 'react-dom']);
 
+/**
+ * Snack must store a CONCRETE version, not a range: a cold Expo Go deep link
+ * asks Snackager to build the version string verbatim, and "^0.4.2" isn't a
+ * buildable target ("unable to fetch module ...@^0.4.2"). Read the resolved
+ * version from node_modules; fall back to the package.json range.
+ */
+function resolveVersion(pkg) {
+  // Deps may live in apps/docs/node_modules (unhoisted) or the root.
+  for (const base of [join(DOCS, 'node_modules'), join(REPO, 'node_modules')]) {
+    try {
+      return JSON.parse(readFileSync(join(base, pkg, 'package.json'), 'utf8')).version;
+    } catch {
+      // try the next location
+    }
+  }
+  return allDeps[pkg] ?? '*';
+}
+
 async function bundleScreen(screen) {
   // Entry wraps the real screen in the providers the app root supplies — and
   // loads the same Manrope / Space Mono fonts so text matches the playground.
@@ -147,7 +165,7 @@ export default function App() {
   const dependencies = {};
   for (const pkg of externals) {
     if (PROVIDED.has(pkg) || pkg.startsWith('react/')) continue;
-    dependencies[pkg] = { version: allDeps[pkg] ?? '*' };
+    dependencies[pkg] = { version: resolveVersion(pkg) };
   }
   return { code: result.outputFiles[0].text, dependencies };
 }
