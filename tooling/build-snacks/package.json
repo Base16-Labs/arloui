@@ -1,0 +1,14 @@
+{
+  "name": "@arloui/build-snacks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generates a live Expo Snack per component by inlining its apps/docs playground screen, and writes apps/www/lib/snack-map.json.",
+  "type": "module",
+  "scripts": {
+    "generate": "node src/build-snacks.mjs"
+  },
+  "dependencies": {
+    "esbuild": "^0.25.0",
+    "snack-sdk": "^6.6.2"
+  }
+}
