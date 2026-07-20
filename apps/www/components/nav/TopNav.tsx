@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { siteLinks } from '@/lib/routes';
+import { useSearch } from '@/components/search/search-provider';
 import { Icon } from '@/components/ui/Icon';
 import { GithubMark } from '@/components/ui/GithubMark';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -13,6 +14,7 @@ const GITHUB_URL = 'https://github.com/Base16-Labs/arloui';
 
 export function TopNav() {
   const pathname = usePathname();
+  const { open: openSearch } = useSearch();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -59,11 +61,16 @@ export function TopNav() {
           <div className="mx-auto hidden min-w-0 w-full max-w-[520px] flex-1 lg:block">
             <button
               type="button"
-              className="flex h-[38px] w-full items-center gap-2.5 rounded-[10px] border border-line bg-surface-sunken px-3.5 text-left text-sm text-ink-3"
+              onClick={openSearch}
+              className="flex h-[38px] w-full items-center gap-2.5 rounded-[10px] border border-line bg-surface-sunken px-3.5 text-left text-sm text-ink-3 transition-colors hover:border-line-strong"
+              style={{ transitionDuration: 'var(--dur-fast)' }}
               aria-label="Search"
             >
               <Icon name="magnifying-glass" size={14} />
               <span className="truncate">Search components, archetypes, foundations…</span>
+              <kbd className="ml-auto shrink-0 rounded bg-ink/[0.06] px-1.5 py-0.5 font-mono text-[11px] text-ink-3">
+                ⌘K
+              </kbd>
             </button>
           </div>
 
@@ -130,6 +137,10 @@ export function TopNav() {
 
               <button
                 type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  openSearch();
+                }}
                 className="mb-3 flex h-[38px] w-full items-center gap-2.5 rounded-[10px] border border-line bg-ink/[0.04] px-3.5 text-left text-sm text-ink-3"
                 aria-label="Search"
               >
