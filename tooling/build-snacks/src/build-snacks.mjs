@@ -72,11 +72,27 @@ import { useFonts } from 'expo-font';
 import { ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from '@arloui/registry';
-import { playgroundFontAssets } from ${JSON.stringify(join(DOCS, 'providers/playground-fonts'))};
+import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope';
+import { SpaceGrotesk_400Regular, SpaceGrotesk_500Medium, SpaceGrotesk_600SemiBold } from '@expo-google-fonts/space-grotesk';
+import { SpaceMono_400Regular } from '@expo-google-fonts/space-mono';
 import Screen from ${JSON.stringify(join(DOCS, 'app', `${screen}.tsx`))};
 
+// Mirrors apps/docs playground-fonts (keys match the token fontFamilies) minus
+// Doto, which isn't referenced by any component/chrome and fails to resolve in
+// Snack. Keep in sync if the playground's font set changes.
+const fontAssets = {
+  Manrope: Manrope_400Regular,
+  'Manrope Medium': Manrope_500Medium,
+  'Manrope SemiBold': Manrope_600SemiBold,
+  'Manrope Bold': Manrope_700Bold,
+  'Space Grotesk': SpaceGrotesk_400Regular,
+  'Space Grotesk Medium': SpaceGrotesk_500Medium,
+  'Space Grotesk SemiBold': SpaceGrotesk_600SemiBold,
+  'Space Mono': SpaceMono_400Regular,
+};
+
 export default function App() {
-  const [loaded] = useFonts(playgroundFontAssets);
+  const [loaded] = useFonts(fontAssets);
   if (!loaded) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
