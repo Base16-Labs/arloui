@@ -1,220 +1,105 @@
 # Arlo UI Components
 
-Use these patterns as the system baseline. They should be easy to express in Figma, React Native, and SwiftUI without depending on a large external component library.
+The registry primitives below are the source of truth — this is the **current** set with their key props. Everything is token-driven (see `references/tokens.md`) and expressible in Figma, React Native, and SwiftUI without a heavy external library. Below the primitives are composition and screen patterns you build _from_ those primitives.
 
-## Core Primitives
+## Registry primitives
 
-### App Header
+### Controls
 
-- Left side: screen title, context label, or profile.
-- Right side: 1-2 utility actions maximum.
+**`Button`** — **`tone`** (`primary` | `neutral` | `danger`) × **`appearance`** (`solid` | `soft` | `ghost` | `outline`), sizes **`sm`–`xl`**, optional **`leadingIcon`** / **`trailingIcon`**, **`iconOnly`** (circle), and **`loading`**. Legacy **`variant`** (`primary` | `secondary` | `ghost` | `danger`) still maps to tone + appearance. Solid fills use rounded corners + pressed elevation; ghost & outline use pill radius (`radii.full`). Heights follow `sizing.buttonHeight`.
+
+- **`GhostButton`** — low-emphasis text/icon button.
+- **`FabButton`** — circular FAB (`tone`: `primary` | `neutral`); diameter follows `sizing.buttonHeight`, rest uses `shadows.sm`, pressed darkens the semantic fill. **`accessibilityLabel`** required.
+- **`SocialAuthButton`** — pill OAuth rows for **`facebook`** | **`x`** with **`appearance`** `brandSolid` | `brandSoft` | `brandOutline` | `neutralSolid` | `neutralOutline`. Default leading marks are minimal Text glyphs; use **`renderLeading`** for official SVGs.
+
+**`Chip`** — interactive compact element for filters, input tokens, and actions. **`type`** (`filter` | `input` | `assist`), **`style`** (`fill` | `outline`), **`accent`** (`primary` | `neutral`), **`size`** (`sm` | `md`), **`radius`** (`full` | `lg`), **`selectionIndicator`** (`check` | `none`). Press feedback plus an optional remove affordance. Reads clearly with or without its icon.
+
+**`Toggle`** — animated on/off switch. **`size`** (`sm` | `md`), disabled state, smooth thumb transition.
+
+**`Checkbox`** — animated check box. Two **`size`s** (`sm` | `md`), check icon, disabled state.
+
+**`Radio`** — animated radio button with a scaling dot indicator. Two sizes, disabled state.
+
+### Text input
+
+**`Field`** — composable text-field primitive shared by Input and TextArea: `Field.Label`, `Field.Control`, `Field.Icon`, `Field.Action`, `Field.Input`, `Field.Toolbar`, `Field.Helper`. Quiet borders, strong cursor color, generous vertical padding.
+
+**`Input`** — filled text input with labels, helper text, validation, leading/trailing icons, actions, and password / search patterns. Leading icons are fine when they clarify purpose; avoid trailing clutter.
+
+**`TextArea`** — multiline field for comments, notes, bios, support messages, and long-form content. Composer-style fields may stretch taller than standard inputs but keep a clear resting state.
+
+**`DatePicker`** — accessible calendar and wheel surfaces; **`mode`** (`date` | `time` | `date-time` | `month-year`).
+
+### Layout & surface
+
+**`Card`** — surface for grouping related content with header, body, footer, and hierarchy; **`tone`** (`default` | `raised` | `floating`). Good for grouped stats, account identity, or primary entry points — an instrument, not a poster.
+
+**`Sheet`** — bottom drawer with a grabber and drag-to-dismiss. **`surface`** (`solid` | `glass` / Liquid-Glass), **`width`** (`default` | `stack`), **`height`** (`auto` | `half` | `full`), **`padding`** (`none` | `md` | `lg`), **`backdrop`** (`scrim` | `passthrough`), **`presentation`** (`edge` | `inset` | `stack`). Use for secondary tasks, settings, or confirmation detail.
+
+**`Carousel`** — gesture-driven horizontal carousel. **`snap`** (`item` | `page`), peek, **`indicator`** (`dots` | `none`) with position (`below` | `overlay`), auto-play, and loop support.
+
+**`Gallery`** — flexible grid layout, 1–4 columns, optional masonry mode, token-based gap, **`radius`** (`none` | `sm` | `md` | `lg` | `xl` | `2xl` | `full`).
+
+### Feedback
+
+**`Badge`** — non-interactive status label with dot, count, and icon variants. **`tone`** (`neutral` | `info` | `success` | `warning` | `error`), **`appearance`** (`soft` | `solid` | `outline`), **`size`** (`sm` | `md`).
+
+**`Skeleton`** — reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation. Match the shape and scale of real content. Do not skeleton interactive controls — disable or hide them. Show for the first data load; use spinners or optimistic updates for subsequent refreshes.
+
+### Navigation
+
+**`TabBar`** — animated bottom navigation. **`width`** (`full` | `floating`), **`surface`** (`transparent` | `filled`), badges, labels, and scroll-aware visibility. 3–5 destinations maximum; icons primary, labels always present; keep it anchored to the safe-area bottom and never overlap content.
+
+**`Tabs`** — secondary navigation for categorising content or switching views. **`appearance`** (`plain` | `underline` | `filled`), **`tone`** (`neutral` | `accent`), **`layout`** (`content` | `equal`). Keep labels short; use for comparable views, not unrelated destinations.
+
+## Composition patterns
+
+Build these _from_ the primitives above — they are not separate registry components.
+
+### App header
+
+- Left side: screen title, context label, or profile. Right side: 1–2 utility actions maximum.
 - Allow a hero title only when the first content block is visually lighter.
 
-### Button Family
+### Data-rich
 
-Registry **`Button`** uses **`tone`** (`primary` | `neutral` | `danger`) × **`appearance`** (`solid` | `soft` | `ghost` | `outline`), sizes **`sm`–`xl`**, optional **`leadingIcon`** / **`trailingIcon`**, **`iconOnly`** (circle), and **`loading`**. Legacy **`variant`** (`primary` | `secondary` | `ghost` | `danger`) still maps to tone + appearance.
+- **Metric hero** — large value, compact descriptor, small delta or context label. Keep supporting text tight so the number owns the screen.
+- **Metric / entity row** — left: entity label + context; right: latest value, state, or delta. Optional trailing sparkline stays secondary to the number.
+- **Activity row** — event/item name first, then time or category, then the most important trailing value. Use color on the trailing value sparingly.
+- **Goal / progress module** — segmented progress, stepped rings, or stacked bars only when the label and value stay obvious. Never let the visual hide the numeric truth.
 
-**`SocialAuthButton`** — pill OAuth rows for **`facebook`** | **`x`** with **`appearance`**: `brandSolid`, `brandSoft`, `brandOutline`, `neutralSolid`, `neutralOutline`. Default leading marks are minimal Text glyphs; use **`renderLeading`** for official SVGs.
+### Assistant & workflow
 
-**`FabButton`** — circular FAB (`tone`: `primary` | `neutral`), diameter follows **`sizing.buttonHeight`**. Rest uses **`shadows.sm`**; pressed darkens the semantic fill; disabled opacity ~28%; on web, focus uses **`outline`** + offset and **`focusRingMain`**. **`accessibilityLabel`** is required.
+- **Assistant composer** — an expanding `TextArea` with attach, optional voice, and send actions. Calm at rest, capable when active; one accent moment only (cursor, send, or selected mode).
+- **Message cluster** — group adjacent messages; differentiate user vs assistant with spacing, fill, or alignment before adding chrome.
+- **Prompt suggestion card** — one prompt seed, one short explanation, one obvious tap target. Good for empty states and onboarding.
+- **Tool run row** — tool name, status, result summary; stays readable across several consecutive runs.
+- **Result card** — for generated summaries, extracted data, or workflow outputs. Prefer structured sections over unbroken paragraphs.
 
-Solid fills use rounded corners + pressed elevation; ghost & outline use pill radius (`radii.full`). See `references/tokens.md` for heights (`sizing.buttonHeight`).
+### States (beyond `Skeleton`)
 
-### Text Field and Search
+- **Empty state** — one headline, one supporting sentence, one optional CTA placed where the first list item would appear. For filtered views, surface a clear "clear filters" action.
+- **Error state** — distinguish network / permission / empty-result errors in copy and color; `--danger` for critical, neutral surfaces for recoverable. Always offer a recovery action; never dead-end. Inline field errors sit below the field in `--danger` at `body-sm`.
+- **Toast / snackbar** — from the bottom edge, above the tab bar / safe area. One active toast at a time; auto-dismiss confirmations after 3–4s, persist errors. Keep copy under two lines; don't toast actions the user can already see.
 
-- Use quiet borders, strong cursor color, and generous vertical padding.
-- Leading icons are fine when they clarify purpose; trailing clutter is not.
-- Composer-style fields can stretch taller than standard inputs, but still need a clear resting state.
+## Screen structures
 
-### Chips and Pills
+### Summary home
 
-- Best for filters, model selectors, tags, and small states.
-- Mono labels work well for status-like information.
-- A chip should read clearly with or without its icon.
+App header (profile / context / utilities) → hero metric or summary → quick-actions row → key entities or categories → recent activity, recommendations, or insights. Use when the product needs a strong first-glance overview.
 
-### Segmented Control
+### Detail & activity
 
-- Keep labels short and obvious.
-- Use strong container contrast and subtle selection motion.
-- Best for toggling between comparable views, not unrelated destinations.
+Detail header (title, context, view controls) → hero value/state → primary visual/media/chart → key metrics grid → related updates or activity list → persistent bottom action bar when the main task needs it. Use for depth without losing action clarity.
 
-### Sheet and Bottom Action Bar
+### Conversation workspace
 
-- Use sheets for secondary tasks, settings, or confirmation detail.
-- Use bottom action bars for high-commitment actions that should stay thumb-reachable.
+Lightweight top bar (workspace / mode / filter) → scrollable message or result area → suggestion cards or recent prompts in the empty state → bottom composer anchored to the safe area. Use for chat, support, assistant, or guided workflows.
 
-## Data-Rich Patterns
+### Result & tooling screen
 
-### Metric Hero
+Task summary or hero question → result card with structured sections → tool-run list or status timeline → follow-up actions row. Use when the app is about execution and outputs more than conversation.
 
-- Large value, compact descriptor, small delta or context label.
-- Use for account summaries, fitness progress, delivery status, portfolio value, or any high-signal top-line number.
-- Keep supporting text tight so the number owns the screen.
+### Onboarding or paywall
 
-### Metric or Entity Row
-
-- Left: entity label and supporting context.
-- Right: latest value, state, or delta.
-- Optional center or trailing sparkline only if it stays secondary to the number.
-
-### Activity Row
-
-- Event or item name first, then time or category, then the most important trailing value.
-- Use color on the trailing value sparingly; typography should still do most of the work.
-
-### Summary Card
-
-- Good for grouped stats, account identity, profile summaries, or primary entry points.
-- Avoid over-decorating; the card should feel like an instrument, not a poster.
-
-### Goal or Progress Module
-
-- Use segmented progress, stepped rings, or stacked bars only when the label and value remain obvious.
-- Never let the visual hide the numeric truth.
-
-## Assistant and Workflow Patterns
-
-### Assistant Composer
-
-- Expanding text area, attach action, optional voice action, send action.
-- Must feel calm at rest and capable when active.
-- Use one accent moment only: cursor, send button, or selected mode.
-
-### Message Cluster
-
-- Group adjacent messages to reduce visual noise.
-- Differentiate user and assistant with spacing, fill, or alignment before adding extra chrome.
-
-### Prompt Suggestion Card
-
-- One clear prompt seed, one short explanation, one obvious tap target.
-- Good for empty states and onboarding.
-
-### Tool Run Row
-
-- Show the tool name, status, and result summary.
-- Keep the row readable even when there are several consecutive tool runs.
-
-### Result Card
-
-- Use for generated summaries, extracted data, or workflow outputs.
-- Prefer structured sections over large unbroken paragraphs.
-
-## Navigation
-
-### Tab Bar
-
-- 3–5 destinations maximum. More than five requires a different navigation model.
-- Icons are primary; labels are secondary but should always be present for clarity.
-- Active tab uses `--accent` or `--text-primary`; inactive tabs use `--text-tertiary`.
-- Keep the bar anchored to the safe area bottom — never overlap content.
-- Avoid badge-heavy tabs; one notification count is fine, multiple is noise.
-
-## State Patterns
-
-### Skeleton / Loading State
-
-- Match the shape and scale of the real content as closely as possible.
-- Use `--surface-raised` as the base fill and `--surface-strong` as the shimmer layer.
-- Animate with a horizontal shimmer sweep (`180-280ms`, ease-in-out, looped) or a gentle opacity pulse.
-- Do not skeleton-load interactive controls — disable or hide them instead.
-- Show skeleton for the first data load; use inline spinners or optimistic updates for subsequent refreshes.
-
-### Empty State
-
-- One concise headline, one short supporting sentence, one optional CTA.
-- Illustration or icon is acceptable but must not overpower the copy.
-- Place the CTA where the first item in the list would appear — make the empty zone feel intentional.
-- For filtered views, surface a clear "clear filters" action alongside the empty state.
-
-### Error State
-
-- Distinguish network errors, permission errors, and empty-result errors visually and in copy.
-- Use `--danger` for critical errors; neutral surfaces for soft or recoverable states.
-- Always offer a recovery action (retry, go back, contact support). Never dead-end the user.
-- Inline field errors live below the field and use `--danger` text at `body-sm` scale.
-
-### Toast / Snackbar
-
-- Appear from the bottom edge, above the tab bar or safe area.
-- Maximum one active toast at a time; queue additional messages.
-- Auto-dismiss after `3–4s` for confirmations; persist until dismissed for errors.
-- Keep copy under two lines. If more context is needed, use a sheet instead.
-- Avoid using toasts for actions the user just took and can clearly see — they create noise.
-
-## Shared Utilities
-
-### Status Pill
-
-- Tiny but high-signal. Good for `Live`, `Syncing`, `Profitable`, `Needs Review`, `Draft`.
-- Works best with mono labels or compact icon-plus-label combos.
-
-### Inline Metric Capsule
-
-- Compact value with context label for dense dashboards or tool outputs.
-- Use when a full card would waste space.
-
-### Chart Strip
-
-- Reserve for trend confirmation, not detailed analysis.
-- Pair every chart with a visible value and timeframe selector.
-
-## Screen Structures
-
-### Summary Home
-
-- App header with profile, context switch, or utility actions.
-- Hero metric or top-level summary.
-- Quick actions row.
-- Key entities, collections, or categories.
-- Recent activity, recommendations, or insights.
-
-Use when the product needs a strong first-glance overview.
-
-### Detail and Activity
-
-- Detail header with title, context, and view controls.
-- Hero value, state, or status summary.
-- Primary visual, media, or chart area.
-- Key metrics grid or capsules.
-- Related updates, logs, items, or activity list.
-- Persistent bottom action bar when the main task needs it.
-
-Use when the product needs depth without losing action clarity.
-
-### Conversation Workspace
-
-- Lightweight top bar with workspace, mode, or filter switch.
-- Scrollable message or result area.
-- Suggestion cards or recent prompts in the empty state.
-- Bottom composer anchored to the safe area.
-
-Use when the product is chat, support, assistant, or guided workflow heavy.
-
-### Result and Tooling Screen
-
-- Task summary or hero question.
-- Result card with structured sections.
-- Tool run list or status timeline.
-- Follow-up actions row.
-
-Use when the app is more about execution and outputs than back-and-forth conversation.
-
-### Guided Insight Screen
-
-- Summary hero or key context block.
-- Insight card pinned near the top.
-- Supporting metrics, examples, or recent actions.
-- Follow-up prompts, actions, or composer.
-
-Use when the product mixes user data, recommendations, and next steps.
-
-### Onboarding or Paywall
-
-- Simple top affordance to close or continue.
-- One strong headline.
-- Compact visual proof point or component demo.
-- Benefit list with restrained icons.
-- Primary CTA and secondary reassurance.
-
-Keep these screens cleaner than the product itself. They sell trust, not feature density.
+Simple close/continue affordance → one strong headline → compact visual proof or component demo → benefit list with restrained icons → primary CTA and secondary reassurance. Keep these screens cleaner than the product itself — they sell trust, not feature density.
