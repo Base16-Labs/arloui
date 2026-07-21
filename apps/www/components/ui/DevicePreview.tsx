@@ -27,7 +27,7 @@ export function DevicePreview({ route, className }: DevicePreviewProps) {
   return (
     <div className={cn("mb-12", className)}>
       {/* Desktop / tablet: scan with a phone, or open the playground here. */}
-      <div className="hidden flex-col items-center gap-5 rounded-2xl border border-line py-10 text-ink sm:flex">
+      <div className="hidden flex-col items-center gap-5 rounded-2xl border border-line bg-[#f8f6ef] py-10 text-ink sm:flex dark:bg-surface-raised">
         <QRCodeSVG
           value={url}
           size={180}
@@ -53,7 +53,7 @@ export function DevicePreview({ route, className }: DevicePreviewProps) {
       </div>
 
       {/* Phone: open the Snack, then Run launches it in Expo Go. */}
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-line py-8 text-ink sm:hidden">
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-line bg-[#f8f6ef] py-8 text-ink sm:hidden dark:bg-surface-raised">
         <a
           href={url}
           target="_blank"
