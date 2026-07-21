@@ -8,6 +8,7 @@ import { Icon } from '@/components/ui/Icon';
 import { GithubMark } from '@/components/ui/GithubMark';
 import { useTheme } from '@/lib/theme';
 import { markdownForPath } from '@/lib/docs-markdown';
+import { siteLinks } from '@/lib/routes';
 
 const MORPH_NAME = 'bottom-pill' as const;
 const GITHUB_URL = 'https://github.com/Base16-Labs/arloui';
@@ -174,7 +175,7 @@ export function BottomPill() {
             <div className="mx-1.5 mt-3.5 mb-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
               Site
             </div>
-            {['Docs', 'Showcase', 'Roadmap'].map((label) => (
+            {siteLinks.map(({ label }) => (
               <div
                 key={label}
                 className="flex items-center justify-between rounded-md px-2.5 py-2 text-[13.5px] text-ink hover:bg-ink/[0.04]"
