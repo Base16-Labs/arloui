@@ -46,8 +46,8 @@ export function DevicePreview({ route, className }: DevicePreviewProps) {
           className="group inline-flex items-center gap-1.5 text-[14px] font-medium text-ink transition-colors hover:text-ink-2"
         >
           Open playground in your browser
-          <span className="transition-transform group-hover:translate-x-0.5">
-            →
+          <span className="opacity-50 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+            ↗
           </span>
         </a>
       </div>
@@ -61,7 +61,7 @@ export function DevicePreview({ route, className }: DevicePreviewProps) {
           className="flex h-11 items-center gap-2 rounded-full bg-ink px-6 text-[15px] font-medium text-canvas"
         >
           Open the playground
-          <span>→</span>
+          <span className="opacity-70">↗</span>
         </a>
         <p className="max-w-[250px] text-center font-mono text-[12px] leading-relaxed text-ink-3">
           Tap <span className="text-ink">Run</span> to launch it natively in Expo
