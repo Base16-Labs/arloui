@@ -44,6 +44,7 @@
     "registry:build": "turbo run emit --filter=@arloui/build-registry",
   "registry:emit": "npm run emit --workspace @arloui/build-registry",
     "icons:build": "turbo run build --filter=@arloui/icons",
+    "snacks:build": "npm run generate --workspace @arloui/build-snacks",
     "skill:sync": "tsx scripts/sync-skill.ts",
     "skill:install:cursor": "node scripts/install-skill.mjs cursor",
     "skill:install:claude": "node scripts/install-skill.mjs claude",

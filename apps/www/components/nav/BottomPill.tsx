@@ -6,8 +6,10 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { GithubMark } from '@/components/ui/GithubMark';
+import { useSearch } from '@/components/search/search-provider';
 import { useTheme } from '@/lib/theme';
 import { markdownForPath } from '@/lib/docs-markdown';
+import { siteLinks } from '@/lib/routes';
 
 const MORPH_NAME = 'bottom-pill' as const;
 const GITHUB_URL = 'https://github.com/Base16-Labs/arloui';
@@ -46,6 +48,7 @@ export function BottomPill() {
 
   const pageMarkdown = markdownForPath(pathname);
   const [copied, setCopied] = useState(false);
+  const { open: openSearch } = useSearch();
 
   const copyMarkdown = useCallback(() => {
     if (!pageMarkdown) return;
@@ -154,13 +157,21 @@ export function BottomPill() {
             style={morphStyle}
           >
             <div className="mb-3 flex items-center gap-2">
-              <div className="flex flex-1 items-center gap-2 rounded-full border border-line bg-ink/[0.04] px-3.5 py-2 text-[13px] text-ink-3">
+              <button
+                type="button"
+                onClick={() => {
+                  closeMenu();
+                  openSearch();
+                }}
+                className="flex flex-1 cursor-pointer items-center gap-2 rounded-full border border-line bg-ink/[0.04] px-3.5 py-2 text-left text-[13px] text-ink-3"
+                aria-label="Search"
+              >
                 <Icon name="magnifying-glass" size={12} />
                 <span>Search…</span>
                 <span className="ml-auto rounded bg-ink/[0.06] px-1.5 py-0.5 font-mono text-[11px]">
                   ⌘K
                 </span>
-              </div>
+              </button>
               <button
                 type="button"
                 onClick={closeMenu}
@@ -174,7 +185,7 @@ export function BottomPill() {
             <div className="mx-1.5 mt-3.5 mb-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
               Site
             </div>
-            {['Docs', 'Showcase', 'Roadmap'].map((label) => (
+            {siteLinks.map(({ label }) => (
               <div
                 key={label}
                 className="flex items-center justify-between rounded-md px-2.5 py-2 text-[13.5px] text-ink hover:bg-ink/[0.04]"

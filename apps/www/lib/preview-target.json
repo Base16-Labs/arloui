@@ -1,4 +1,0 @@
-{
-  "$comment": "Auto-updated by .github/workflows/eas-update.yml on merge to main. Manifest URL of the latest published Arlo UI Playground EAS Update. preview.ts appends the per-component /--/<route> deep link. Override at deploy time with NEXT_PUBLIC_EXPO_PREVIEW_URL.",
-  "manifestUrl": "exp://u.expo.dev/0e137cd5-9ad3-436d-a976-0fab95640f4b/group/57d8a0d5-b3fe-454c-bac0-b6ca0b765903"
-}

@@ -1,12 +1,26 @@
+import Link from "next/link";
 import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
 import { RightRail } from "@/components/nav/RightRail";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 
 const headings = [
-  { id: "skill-pack", label: "The skill pack" },
-  { id: "editors", label: "Editor setup" },
+  { id: "mcp", label: "MCP server" },
+  { id: "skill-pack", label: "Skill pack" },
   { id: "usage", label: "Usage" },
 ];
+
+const inlineCode =
+  "rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-[14px] text-ink dark:bg-surface-raised";
+
+const MCP_JSON = `{
+  "mcpServers": {
+    "arloui": {
+      "command": "npx",
+      "args": ["-y", "@arloui/mcp"]
+    }
+  }
+}`;
 
 export default function WithAIPage() {
   return (
@@ -17,28 +31,43 @@ export default function WithAIPage() {
           With AI
         </h1>
         <Lede>
-          Drop the skill pack into your editor and let your AI build screens
-          that look like ArloUI from the start.
+          Arlo UI is built for agents. Give yours live access to the components,
+          tokens, and docs so it builds screens that look like Arlo UI from the
+          first draft.
         </Lede>
 
-        <section id="skill-pack" className="mt-12">
+        <section id="mcp" className="mt-12">
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
-            The skill pack
+            MCP server
           </h2>
-          <p className="text-[17px] leading-relaxed text-ink-2">
-            The ArloUI skill pack is a markdown document that teaches your AI
-            assistant the design system — tokens, components, patterns, and
-            motion rules.
+          <p className="mb-4 text-[17px] leading-relaxed text-ink-2">
+            The quickest path. <code className={inlineCode}>@arloui/mcp</code> is a
+            read-only Model Context Protocol server that lets your agent search
+            components, read their source, and resolve tokens on demand — no
+            checkout required. Add it to Claude Code, Cursor, or any MCP client:
+          </p>
+          <CodeBlock language="json">{MCP_JSON}</CodeBlock>
+          <p className="mt-4 text-[17px] leading-relaxed text-ink-2">
+            Full tool list and per-client setup on the{" "}
+            <Link href="/docs/agents/mcp" className="text-ink underline underline-offset-2">
+              MCP page
+            </Link>
+            .
           </p>
         </section>
 
-        <section id="editors" className="mt-12">
+        <section id="skill-pack" className="mt-12">
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
-            Editor setup
+            Skill pack
           </h2>
           <p className="text-[17px] leading-relaxed text-ink-2">
-            Works with Claude Code, Cursor, Windsurf, and any editor that
-            supports system prompts or context files.
+            A markdown skill that teaches the design system itself — tokens,
+            component APIs, composition patterns, and motion rules — so the agent
+            makes Arlo-shaped choices even before it fetches anything. See the{" "}
+            <Link href="/docs/agents/skill-pack" className="text-ink underline underline-offset-2">
+              skill pack page
+            </Link>{" "}
+            for install steps (Claude Code, Cursor).
           </p>
         </section>
 
@@ -47,9 +76,11 @@ export default function WithAIPage() {
             Usage
           </h2>
           <p className="text-[17px] leading-relaxed text-ink-2">
-            &ldquo;Build a Question screen that asks the user to pick a payment
-            method&rdquo; — and the AI will compose the right primitives with
-            the right tokens.
+            With either connected, ask in plain language — &ldquo;Build a settings
+            screen using Arlo UI primitives&rdquo; or &ldquo;Add a bottom sheet to
+            confirm this action&rdquo; — and the agent composes the right
+            primitives with the right tokens, pulling any missing component in
+            with <code className={inlineCode}>npx arloui add</code>.
           </p>
         </section>
       </main>

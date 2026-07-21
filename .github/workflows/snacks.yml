@@ -1,0 +1,58 @@
+name: Snacks
+
+# Regenerates the per-component Expo Snacks when a component, its tokens/icons,
+# or a playground screen changes, and commits the refreshed slug -> Snack id map
+# (apps/www/lib/snack-map.json). Anonymous Snacks — no secret required.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/registry/**'
+      - 'packages/tokens/**'
+      - 'packages/theme/**'
+      - 'packages/icons/**'
+      - 'apps/docs/app/**'
+      - 'apps/docs/components/**'
+      - 'apps/docs/providers/**'
+      - 'tooling/build-snacks/**'
+      - '.github/workflows/snacks.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: snacks
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: regenerate component Snacks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm install --global npm@11.5.1
+      - run: npm ci
+
+      # The bundler inlines @arloui/icons' generated files, which aren't committed.
+      - run: npm run icons:build
+
+      - run: npm run snacks:build
+
+      - name: Commit refreshed map if changed
+        run: |
+          if git diff --quiet -- apps/www/lib/snack-map.json; then
+            echo "snack-map.json unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/www/lib/snack-map.json
+          git commit -m "chore(www): regenerate component Snacks [skip ci]"
+          git push

@@ -1,13 +1,41 @@
+import Link from "next/link";
 import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
 import { RightRail } from "@/components/nav/RightRail";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 
 const headings = [
-  { id: "the-question", label: "The archetype" },
-  { id: "scaffold", label: "Scaffold" },
-  { id: "add-motion", label: "Add motion" },
-  { id: "result", label: "Result" },
+  { id: "archetype", label: "The archetype" },
+  { id: "add", label: "Add the pieces" },
+  { id: "compose", label: "Compose the screen" },
+  { id: "next", label: "Next" },
 ];
+
+const inlineCode =
+  "rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-[14px] text-ink dark:bg-surface-raised";
+
+const SCREEN = `import { View, Text } from "react-native";
+import { Button } from "@/components/ui/button";
+
+export function ConfirmPayment({ onConfirm, onCancel }) {
+  return (
+    <View style={{ padding: 24, gap: 12 }}>
+      <Text style={{ fontSize: 22, fontWeight: "600" }}>Confirm payment?</Text>
+      <Text style={{ fontSize: 15, color: "#667085" }}>
+        $12.00 will be charged to your card.
+      </Text>
+
+      <View style={{ gap: 8, marginTop: 8 }}>
+        <Button tone="primary" onPress={onConfirm}>
+          Confirm
+        </Button>
+        <Button appearance="ghost" onPress={onCancel}>
+          Cancel
+        </Button>
+      </View>
+    </View>
+  );
+}`;
 
 export default function FirstScreenPage() {
   return (
@@ -18,55 +46,61 @@ export default function FirstScreenPage() {
           First screen
         </h1>
         <Lede>
-          Build a Question archetype in five minutes — from blank file to
-          production-ready screen.
+          Build a Question archetype — a title, a bit of context, and one or two
+          actions — from real Arlo UI primitives.
         </Lede>
 
-        <section id="the-question" className="mt-12">
+        <section id="archetype" className="mt-12">
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
-            The Question archetype
+            The archetype
           </h2>
           <p className="text-[17px] leading-relaxed text-ink-2">
-            Question is the simplest Arlo archetype: a title, a body, one or two
-            actions. It covers confirmation dialogs, permission prompts, and
-            single-input forms.
+            Question is the simplest of the nine{" "}
+            <Link href="/docs/archetypes" className="text-ink underline underline-offset-2">
+              archetypes
+            </Link>
+            : a headline, supporting text, and clear actions. It covers
+            confirmations, permission prompts, and single-input forms.
           </p>
         </section>
 
-        <section id="scaffold" className="mt-12">
+        <section id="add" className="mt-12">
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
-            Scaffold
+            Add the pieces
           </h2>
-          <div className="rounded-xl border border-line bg-surface-sunken p-4 font-mono text-sm dark:bg-surface-raised">
-            {'<Stack spacing="lg">'}
-            <br />
-            {'  <Title level={2}>Confirm payment?</Title>'}
-            <br />
-            {'  <Body muted>$12.00 will be charged.</Body>'}
-            <br />
-            {'  <Button label="Confirm" />'}
-            <br />
-            {"</Stack>"}
-          </div>
-        </section>
-
-        <section id="add-motion" className="mt-12">
-          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
-            Add motion
-          </h2>
-          <p className="text-[17px] leading-relaxed text-ink-2">
-            Wrap in a Sheet, apply the Fluidity rules, and every transition
-            explains itself.
+          <p className="mb-4 text-[17px] leading-relaxed text-ink-2">
+            Assuming you&apos;ve run <code className={inlineCode}>npx arloui init</code>{" "}
+            (see <Link href="/docs/getting-started/install" className="text-ink underline underline-offset-2">Install</Link>),
+            pull in the button:
           </p>
+          <CodeBlock language="bash">npx arloui add button</CodeBlock>
         </section>
 
-        <section id="result" className="mt-12">
+        <section id="compose" className="mt-12">
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
-            Result
+            Compose the screen
+          </h2>
+          <p className="mb-4 text-[17px] leading-relaxed text-ink-2">
+            Buttons take their label as <code className={inlineCode}>children</code>,
+            with <code className={inlineCode}>tone</code> and{" "}
+            <code className={inlineCode}>appearance</code> for hierarchy. Everything
+            reads from the theme, so it&apos;s correct in light and dark out of the box:
+          </p>
+          <CodeBlock language="tsx">{SCREEN}</CodeBlock>
+        </section>
+
+        <section id="next" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Next
           </h2>
           <p className="text-[17px] leading-relaxed text-ink-2">
-            A fully accessible, motion-correct screen that matches the ArloUI
-            spec — in under five minutes.
+            Present it modally by adding <code className={inlineCode}>sheet</code>{" "}
+            (<code className={inlineCode}>npx arloui add sheet</code>), or browse the
+            full set on the{" "}
+            <Link href="/docs/components" className="text-ink underline underline-offset-2">
+              Components
+            </Link>{" "}
+            page — each has a live playground you can open in Expo Go.
           </p>
         </section>
       </main>

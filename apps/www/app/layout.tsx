@@ -3,6 +3,7 @@ import Script from 'next/script';
 import '@fontsource-variable/manrope';
 import './globals.css';
 import { ThemeProvider } from '@/lib/theme';
+import { SearchProvider } from '@/components/search/search-provider';
 
 export const metadata: Metadata = {
   title: {
@@ -27,7 +28,9 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-dvh antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <SearchProvider>{children}</SearchProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
