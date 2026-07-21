@@ -5,14 +5,28 @@ import './globals.css';
 import { ThemeProvider } from '@/lib/theme';
 import { SearchProvider } from '@/components/search/search-provider';
 
+const description =
+  'Copy-paste React Native components with strong defaults, full state coverage, and motion specs.';
+
 export const metadata: Metadata = {
   title: {
     default: 'ArloUI',
     template: '%s — ArloUI',
   },
-  description:
-    'Copy-paste React Native components with strong defaults, full state coverage, and motion specs.',
+  description,
   metadataBase: new URL('https://arloui.com'),
+  openGraph: {
+    type: 'website',
+    siteName: 'ArloUI',
+    url: 'https://arloui.com',
+    title: 'ArloUI',
+    description,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ArloUI',
+    description,
+  },
 };
 
 export default function RootLayout({
