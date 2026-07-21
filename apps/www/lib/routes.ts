@@ -1,7 +1,6 @@
 export const siteLinks = [
   { label: 'Docs', href: '/docs' },
   { label: 'Showcase', href: '/showcase' },
-  { label: 'Roadmap', href: '/roadmap' },
 ] as const;
 
 export const docsSections = [

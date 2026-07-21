@@ -1915,7 +1915,8 @@ function CarouselDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={carouselData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
@@ -1926,7 +1927,7 @@ function CarouselDocPage() {
           title="Anatomy"
           sub="A horizontal track driven by gesture velocity and spring physics."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[360px]">
               <div className="relative overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] px-4 py-6 dark:bg-[#09090B]">
                 <div className="mb-1 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
@@ -2097,7 +2098,8 @@ function GalleryDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={galleryData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
@@ -2108,7 +2110,7 @@ function GalleryDocPage() {
           title="Anatomy"
           sub="A measured container that distributes children into equal-width columns."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="mx-auto max-w-[360px]">
               <div className="relative overflow-hidden rounded-[28px] border border-line-strong bg-[#F9FAFB] px-4 py-6 dark:bg-[#09090B]">
                 <div className="mb-2 flex justify-between px-1 font-mono text-[10px] uppercase tracking-wide text-ink-3">
@@ -2264,7 +2266,8 @@ function BadgeDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={badgeData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
@@ -2275,7 +2278,7 @@ function BadgeDocPage() {
           title="Anatomy"
           sub="A compact pill with optional dot or leading icon, sized and colored from tokens."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1 rounded-full bg-[#EFF6FF] px-2" style={{ height: 24 }}>
@@ -2413,7 +2416,8 @@ function ChipDocPage() {
 
         <div className="mb-9 flex gap-2">
           <Pill as="a" href={chipData.source}>
-            ⌘ Source <span className="opacity-50">↗</span>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
           </Pill>
         </div>
 
@@ -2424,7 +2428,7 @@ function ChipDocPage() {
           title="Anatomy"
           sub="An interactive pill with optional check, leading icon, and remove button — sized from tokens with press feedback."
         >
-          <div className="rounded-xl border border-line bg-[#f8f6ef] p-6 sm:p-10 dark:bg-surface-raised">
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full border border-[#155DFC] bg-[#EFF6FF] px-3" style={{ height: 32 }}>

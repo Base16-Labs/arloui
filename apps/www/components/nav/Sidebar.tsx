@@ -143,6 +143,7 @@ export function Sidebar() {
             items={archetypeItems}
             basePath="/docs/archetypes"
             pathname={pathname}
+            anchor
           />
         )}
 
@@ -192,11 +193,14 @@ function SidebarGroup({
   items,
   basePath,
   pathname,
+  anchor = false,
 }: {
   title: string;
   items: readonly { label: string; slug: string }[];
   basePath: string;
   pathname: string;
+  /** Link to in-page sections (`basePath#slug`) instead of separate routes. */
+  anchor?: boolean;
 }) {
   return (
     <>
@@ -206,9 +210,9 @@ function SidebarGroup({
       {items.map((item) => (
         <SidebarLink
           key={item.slug}
-          href={`${basePath}/${item.slug}`}
+          href={anchor ? `${basePath}#${item.slug}` : `${basePath}/${item.slug}`}
           label={item.label}
-          active={pathname === `${basePath}/${item.slug}`}
+          active={!anchor && pathname === `${basePath}/${item.slug}`}
         />
       ))}
     </>

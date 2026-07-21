@@ -30,10 +30,17 @@ export function TopNav() {
     };
   }, [mobileOpen]);
 
+  const isHome = pathname === '/';
+
   return (
     <>
-      <header className="relative z-40 h-[68px] border-b border-line bg-canvas">
-        <div className="mx-auto flex h-full w-full max-w-[1440px] items-center gap-4 px-4 lg:gap-6 lg:px-7">
+      <header
+        className={cn(
+          'relative z-40 h-[68px] bg-canvas',
+          !isHome && 'border-b border-line',
+        )}
+      >
+        <div className="flex h-full w-full items-center gap-4 px-4 lg:gap-6 lg:px-7">
           <div className="flex items-center gap-4 lg:gap-7">
             <Link href="/" className="text-[22px] font-medium tracking-tight text-ink">
               ArloUI

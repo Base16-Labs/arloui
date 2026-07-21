@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
 import { RightRail } from "@/components/nav/RightRail";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { McpClientTabs } from "@/components/docs/mcp-clients";
 import { agentItems } from "@/lib/routes";
 
@@ -20,6 +22,7 @@ export default async function AgentPage({
   if (!slugs.includes(slug)) notFound();
 
   if (slug === "mcp") return <McpDoc />;
+  if (slug === "skill-pack") return <SkillPackDoc />;
 
   const item = agentItems.find((i) => i.slug === slug)!;
 
@@ -194,6 +197,210 @@ function McpDoc() {
         </section>
       </main>
       <RightRail headings={headings} />
+    </>
+  );
+}
+
+const skillHeadings = [
+  { id: "inside", label: "What's inside" },
+  { id: "install", label: "Install" },
+  { id: "usage", label: "How agents use it" },
+  { id: "prompts", label: "Example prompts" },
+  { id: "compatibility", label: "Compatibility" },
+];
+
+const SKILL_FILES: Array<{ name: string; desc: string }> = [
+  {
+    name: "SKILL.md",
+    desc: "The entry point. The five facets, the fixed working order agents follow, and the output conventions — the design contract itself.",
+  },
+  {
+    name: "references/tokens.md",
+    desc: "Type scale, color roles, spacing, radii, and motion — hand-authored with the reasoning behind each value.",
+  },
+  {
+    name: "references/components.md",
+    desc: "The primitives, their variants, and full-screen recipes composed from them.",
+  },
+  {
+    name: "references/platform-mapping.md",
+    desc: "How each pattern translates across Figma, React Native, and SwiftUI.",
+  },
+  {
+    name: "references/*.json · usage.md",
+    desc: "Generated machine-readable tokens, registry, and usage — kept in sync with the packages by npm run skill:sync.",
+  },
+];
+
+const SKILL_PROMPTS = [
+  "Design a settings screen with Arlo UI — group the rows and pick the tokens.",
+  "Refine this React Native sheet so it follows Arlo UI's fluidity rules.",
+  "Translate this Arlo UI screen concept to SwiftUI.",
+];
+
+const CLIENTS: Array<{ label: string; code: string }> = [
+  {
+    label: "Cursor",
+    code: `# user-level (available in every project)
+cp -R skills ~/.cursor/skills-cursor/arloui
+
+# or symlink during local dev so updates flow automatically
+ln -s "$(pwd)/skills" ~/.cursor/skills-cursor/arloui`,
+  },
+  {
+    label: "Claude Code",
+    code: `# user-level
+cp -R skills ~/.claude/skills/arloui
+
+# project-level
+mkdir -p .claude/skills && cp -R skills .claude/skills/arloui`,
+  },
+  {
+    label: "Codex CLI / AGENTS.md",
+    code: `cp -R skills ./arloui
+# then point your agent at it from AGENTS.md:
+#   For mobile UI work, follow the Arlo UI skill at ./arloui/SKILL.md`,
+  },
+];
+
+function SkillPackDoc() {
+  return (
+    <>
+      <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <Eyebrow>Agents</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          Skill pack
+        </h1>
+        <Lede>
+          A portable bundle of Arlo UI&apos;s design rules, tokens, and patterns
+          that coding agents — Claude Code, Cursor, Codex — load on demand.
+        </Lede>
+
+        <p className="mt-8 text-[17px] leading-relaxed text-ink-2">
+          The skill is the design language written for machines: a{" "}
+          <code className={inlineCode}>SKILL.md</code> entry point plus a{" "}
+          <code className={inlineCode}>references/</code> folder. Installing it is
+          a folder copy — no account, no network. Once present, an agent picks it
+          up automatically whenever you ask for Arlo UI or mobile UI work.
+        </p>
+
+        <section id="inside" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            What&apos;s inside
+          </h2>
+          <div className="border-t border-line">
+            {SKILL_FILES.map((f) => (
+              <div
+                key={f.name}
+                className="border-b border-line py-4 sm:flex sm:gap-6"
+              >
+                <code className="shrink-0 font-mono text-[14px] text-ink sm:w-56">
+                  {f.name}
+                </code>
+                <p className="mt-1.5 text-[17px] leading-relaxed text-ink-2 sm:mt-0">
+                  {f.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="install" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Install
+          </h2>
+          <p className="mb-6 text-[17px] leading-relaxed text-ink-2">
+            Copy the repo&apos;s <code className={inlineCode}>skills</code> folder
+            into your agent&apos;s skills directory as{" "}
+            <code className={inlineCode}>arloui</code>. From the repo root,{" "}
+            <code className={inlineCode}>
+              node scripts/install-skill.mjs cursor --symlink
+            </code>{" "}
+            does the same thing.
+          </p>
+          <div className="space-y-6">
+            {CLIENTS.map((c) => (
+              <div key={c.label}>
+                <div className="mb-2 text-[13px] font-medium text-ink">
+                  {c.label}
+                </div>
+                <CodeBlock language="bash">{c.code}</CodeBlock>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="usage" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            How agents use it
+          </h2>
+          <p className="mb-4 text-[17px] leading-relaxed text-ink-2">
+            Once installed, the agent loads the skill on demand and works in a
+            fixed order:
+          </p>
+          <ol className="list-decimal space-y-2.5 pl-5 text-[17px] leading-relaxed text-ink-2 marker:text-ink-3">
+            <li>
+              Read <code className={inlineCode}>SKILL.md</code> to load the design
+              language and the five facets.
+            </li>
+            <li>
+              Pull values from{" "}
+              <code className={inlineCode}>references/tokens.md</code>.
+            </li>
+            <li>
+              Pull primitives and screen recipes from{" "}
+              <code className={inlineCode}>references/components.md</code>.
+            </li>
+            <li>
+              Translate to the target platform via{" "}
+              <code className={inlineCode}>references/platform-mapping.md</code>.
+            </li>
+          </ol>
+          <p className="mt-5 text-[17px] leading-relaxed text-ink-2">
+            The skill carries the design intent; pair it with the{" "}
+            <Link
+              href="/docs/agents/mcp"
+              className="text-ink underline underline-offset-4 hover:opacity-70"
+            >
+              MCP server
+            </Link>{" "}
+            when the agent needs live component source and resolved token values.
+          </p>
+        </section>
+
+        <section id="prompts" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Example prompts
+          </h2>
+          <p className="mb-4 text-[17px] leading-relaxed text-ink-2">
+            With the skill installed, ask in plain language:
+          </p>
+          <div className="space-y-2.5">
+            {SKILL_PROMPTS.map((p) => (
+              <div
+                key={p}
+                className="rounded-xl border border-line px-5 py-3.5 text-[17px] leading-relaxed text-ink-2"
+              >
+                {p}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="compatibility" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Compatibility
+          </h2>
+          <p className="text-[17px] leading-relaxed text-ink-2">
+            Supported in Cursor, Claude Code, and Codex CLI, and best-effort in
+            any agent that reads <code className={inlineCode}>SKILL.md</code> or{" "}
+            <code className={inlineCode}>AGENTS.md</code>. It&apos;s pre-1.0 —
+            content, token values, and install paths may still change between
+            minor releases.
+          </p>
+        </section>
+      </main>
+      <RightRail headings={skillHeadings} />
     </>
   );
 }
