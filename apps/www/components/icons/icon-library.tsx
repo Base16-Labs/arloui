@@ -165,7 +165,7 @@ export function IconLibrary({
                   className="group flex aspect-square min-w-0 flex-col items-center justify-center gap-3 rounded-md border border-line bg-canvas p-2 text-ink transition-colors hover:border-line-strong hover:bg-surface"
                 >
                   <img
-                    src={`/arlo-icons/${name}?preview=1`}
+                    src={`/arlo-icons/${name}.preview.svg`}
                     alt=""
                     width={30}
                     height={30}
@@ -276,7 +276,7 @@ function StaticIconDialog({ name, onClose }: { name: string; onClose: () => void
   const component = componentName(name);
 
   async function copySvg() {
-    const response = await fetch(`/arlo-icons/${name}`);
+    const response = await fetch(`/arlo-icons/${name}.svg`);
     await copyText(await response.text());
     setCopied('svg');
   }
@@ -292,7 +292,7 @@ function StaticIconDialog({ name, onClose }: { name: string; onClose: () => void
     <DialogShell title={displayName(name)} onClose={onClose}>
       <div className="flex h-48 items-center justify-center rounded-md border border-line bg-white text-black">
         <img
-          src={`/arlo-icons/${name}?preview=1`}
+          src={`/arlo-icons/${name}.preview.svg`}
           alt=""
           width={72}
           height={72}
