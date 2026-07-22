@@ -4,7 +4,7 @@
   "private": true,
   "description": "ArloUI documentation site — arloui.com",
   "scripts": {
-    "icons:generate": "tsx scripts/generate-icon-assets.ts",
+    "icons:generate": "node scripts/generate-icon-assets.mjs",
     "dev": "npm run icons:generate && next dev --port 4321",
     "build": "npm run icons:generate && NEXT_IGNORE_INCORRECT_LOCKFILE=1 next build",
     "registry:build": "cd ../.. && npm run registry:emit",
