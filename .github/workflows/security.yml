@@ -70,7 +70,10 @@ jobs:
       - run: npm install --global npm@11.5.1
       - run: npm ci
 
-      # Gate only on what ships to consumers: HIGH+ in production dependencies.
+      # Gate only on what ships to consumers: HIGH+ in production dependencies
+      # that have a *safe* (non-breaking) fix. High/critical vulns whose only
+      # remedy is a breaking major downgrade — or that have no fix at all — are
+      # logged but allowed, and re-block automatically once a real fix ships.
       # (Dev-only tooling advisories show up in the Trivy report-only step above.)
       - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
+        run: node scripts/audit-gate.mjs

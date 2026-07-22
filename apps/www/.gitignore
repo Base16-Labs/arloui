@@ -1,0 +1,5 @@
+# Generated at build time by scripts/generate-icon-assets.ts (12MB × 2 of SVGs).
+# The committed source lives in packages/icons/assets/svg; these are emitted
+# copies served as static assets. lib/generated/icon-data.ts is NOT ignored — it
+# is small and committed so typecheck/SSR resolve without a build step.
+/public/arlo-icons/
