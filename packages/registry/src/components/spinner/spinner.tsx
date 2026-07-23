@@ -189,7 +189,13 @@ function ArcSpinner({ px, color, track, still }: GlyphProps & { track: string })
   );
 }
 
-/** Runs one looping value per element, each offset by `stagger` ms. */
+/**
+ * Runs one looping value per element, each offset by `stagger` ms.
+ *
+ * The offset is a one-shot timer rather than a leading `Animated.delay`, so it
+ * shifts the phase without also padding every iteration — and it keeps the
+ * looped sequence purely native-driven, since `Animated.delay` is not.
+ */
 function useStaggered(count: number, cycle: number, stagger: number, still: boolean) {
   const values = useRef(Array.from({ length: count }, () => new Animated.Value(0))).current;
 
@@ -199,10 +205,9 @@ function useStaggered(count: number, cycle: number, stagger: number, still: bool
       value.setValue(0);
     }
     if (still) return;
-    const loops = values.map((value, index) =>
+    const loops = values.map((value) =>
       Animated.loop(
         Animated.sequence([
-          Animated.delay(index * stagger),
           Animated.timing(value, {
             toValue: 1,
             duration: cycle / 2,
@@ -215,12 +220,14 @@ function useStaggered(count: number, cycle: number, stagger: number, still: bool
             easing: Easing.in(Easing.quad),
             useNativeDriver: true,
           }),
-          Animated.delay((count - index - 1) * stagger),
         ]),
       ),
     );
-    for (const loop of loops) loop.start();
+    const timers = loops.map((loop, index) =>
+      setTimeout(() => loop.start(), index * stagger),
+    );
     return () => {
+      for (const timer of timers) clearTimeout(timer);
       for (const loop of loops) loop.stop();
     };
   }, [count, cycle, stagger, still, values]);
@@ -301,21 +308,24 @@ function PulseSpinner({ px, color, still }: GlyphProps) {
       ring.setValue(0);
     }
     if (still) return;
-    const loops = rings.map((ring, index) =>
+    // Each ring loops one uninterrupted sweep; the half-cycle offset is a
+    // one-shot timer. Putting it inside the loop as an `Animated.delay` instead
+    // would re-run the wait every iteration, stalling the ring between sweeps.
+    const loops = rings.map((ring) =>
       Animated.loop(
-        Animated.sequence([
-          Animated.delay((index * PULSE_CYCLE) / PULSE_RINGS),
-          Animated.timing(ring, {
-            toValue: 1,
-            duration: PULSE_CYCLE,
-            easing: Easing.out(Easing.quad),
-            useNativeDriver: true,
-          }),
-        ]),
+        Animated.timing(ring, {
+          toValue: 1,
+          duration: PULSE_CYCLE,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
       ),
     );
-    for (const loop of loops) loop.start();
+    const timers = loops.map((loop, index) =>
+      setTimeout(() => loop.start(), (index * PULSE_CYCLE) / PULSE_RINGS),
+    );
     return () => {
+      for (const timer of timers) clearTimeout(timer);
       for (const loop of loops) loop.stop();
     };
   }, [rings, still]);
