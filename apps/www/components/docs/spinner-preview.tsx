@@ -129,7 +129,8 @@ function Dots({ px, color }: GlyphProps) {
               height: diameter,
               borderRadius: '50%',
               background: color,
-              opacity: 0.32,
+              // Resting opacity, matching the component's reduce-motion state.
+              opacity: 0.6,
               '--arlo-lift': `${-diameter * 0.45}px`,
               animation: `arlo-spinner-dot 760ms ease-in-out ${index * 140}ms infinite`,
             } as CSSProperties
@@ -156,7 +157,9 @@ function Bars({ px, color }: GlyphProps) {
             height: px,
             borderRadius: width / 2,
             background: color,
-            transform: 'scaleY(0.35)',
+            // Resting height, matching the component's reduce-motion state.
+            opacity: 0.6,
+            transform: 'scaleY(0.6)',
             animation: `arlo-spinner-bar 840ms ease-in-out ${index * 110}ms infinite`,
           }}
         />
@@ -165,7 +168,12 @@ function Bars({ px, color }: GlyphProps) {
   );
 }
 
-/** Rings pushing outward from the centre and fading, radar-style. */
+/**
+ * Rings pushing outward from the centre and fading, radar-style. The resting
+ * style is a visible disc rather than a transparent one, so the glyph still
+ * reads when the animation is off — under reduce-motion the ring would
+ * otherwise be nothing at all.
+ */
 function Pulse({ px, color }: GlyphProps) {
   return (
     <span className="relative block" style={{ width: px, height: px }}>
@@ -177,7 +185,8 @@ function Pulse({ px, color }: GlyphProps) {
             inset: 0,
             borderRadius: '50%',
             background: color,
-            opacity: 0,
+            opacity: 0.45,
+            transform: 'scale(0.7)',
             animation: `arlo-spinner-pulse 1200ms ease-out ${index * 600}ms infinite`,
           }}
         />
