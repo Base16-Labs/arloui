@@ -18,7 +18,7 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type TabValue = 'for-you' | 'following' | 'saved';
 
-const APPEARANCES: TabsAppearance[] = ['plain', 'underline', 'filled'];
+const APPEARANCES: TabsAppearance[] = ['plain', 'underline', 'filled', 'segmented'];
 const TONES: TabsTone[] = ['neutral', 'accent'];
 const LAYOUTS: TabsLayout[] = ['content', 'equal'];
 

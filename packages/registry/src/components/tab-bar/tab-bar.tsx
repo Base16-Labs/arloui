@@ -50,6 +50,8 @@ export type TabBarProps = {
   showLabels?: boolean;
   hidden?: boolean;
   bottomInset?: number;
+  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a transparent surface for legibility. */
+  blurComponent?: ReactNode;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -107,6 +109,7 @@ function TabBarRoot({
   showLabels = false,
   hidden = false,
   bottomInset = 0,
+  blurComponent,
   style,
 }: TabBarProps) {
   const t = useTokens();
@@ -180,9 +183,11 @@ function TabBarRoot({
           }),
         },
       ];
+  // A filled surface stays fully opaque while hiding so it keeps reading as
+  // "filled" even mid-scroll; only transparent/floating bars fade for de-emphasis.
   const hideOpacity = visibility.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, floating ? 0.55 : 0.2],
+    outputRange: [1, surface === 'filled' ? 1 : floating ? 0.55 : 0.2],
   });
 
   return (
@@ -211,21 +216,26 @@ function TabBarRoot({
         style,
       ]}
     >
-      {barWidth > 0 && items.length > 0 ? (
+      {surface === 'transparent' && blurComponent ? (
+        <View
+          pointerEvents="none"
+          style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+        >
+          {blurComponent}
+        </View>
+      ) : null}
+
+      {floating && barWidth > 0 && items.length > 0 ? (
         <Animated.View
           pointerEvents="none"
           style={{
             position: 'absolute',
-            top: floating ? 4 : 0,
+            top: 4,
             left: innerPadding,
             width: indicatorWidth,
-            height: floating ? barHeight - 8 : 2,
-            borderRadius: floating ? t.radii.full : 1,
-            backgroundColor: floating
-              ? surface === 'filled'
-                ? t.colors.surfaceStrong
-                : t.colors.surfaceElevated
-              : t.colors.navIndicator,
+            height: barHeight - 8,
+            borderRadius: t.radii.full,
+            backgroundColor: surface === 'filled' ? t.colors.surfaceStrong : t.colors.surfaceElevated,
             transform: [{ translateX: indicatorTranslate }],
           }}
         />

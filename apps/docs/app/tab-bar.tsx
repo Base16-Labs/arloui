@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   TabBar,
@@ -172,6 +173,15 @@ export default function TabBarCanvas() {
                   surface={surface}
                   showLabels={showLabels}
                   hidden={scrollBehavior === 'on scroll' ? scroll.hidden : false}
+                  blurComponent={
+                    surface === 'transparent' ? (
+                      <BlurView
+                        intensity={40}
+                        tint={t.name === 'dark' ? 'dark' : 'light'}
+                        style={StyleSheet.absoluteFill}
+                      />
+                    ) : undefined
+                  }
                 >
                   <TabBar.Item
                     value="home"
