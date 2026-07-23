@@ -17,6 +17,7 @@ type IndexItem = {
     | '/textarea'
     | '/sheet'
     | '/skeleton'
+    | '/spinner'
     | '/tabs'
     | '/date-picker'
     | '/tab-bar'
@@ -51,6 +52,7 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Row', category: 'Lists' },
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
   { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
+  { title: 'Spinner', category: 'Feedback', href: '/spinner' },
   { title: 'Tab Bar', category: 'Nav', href: '/tab-bar' },
   { title: 'Tabs', category: 'Nav', href: '/tabs' },
   { title: 'TextArea', category: 'Controls', href: '/textarea' },

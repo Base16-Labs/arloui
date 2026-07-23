@@ -36,6 +36,13 @@ export {
   type SkeletonShape,
 } from './components/skeleton';
 export {
+  Spinner,
+  type SpinnerAppearance,
+  type SpinnerProps,
+  type SpinnerSize,
+  type SpinnerTone,
+} from './components/spinner';
+export {
   Tabs,
   type TabsAppearance,
   type TabsItemProps,

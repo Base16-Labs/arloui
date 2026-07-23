@@ -105,10 +105,10 @@ export default function SkeletonCanvas() {
           <VariantSheet
             visible={menuOpen}
             previous="Sheet"
-            next="Tab Bar"
+            next="Spinner"
             onClose={() => setMenuOpen(false)}
             onPrevious={() => router.replace('/sheet')}
-            onNext={() => router.replace('/tab-bar')}
+            onNext={() => router.replace('/spinner')}
           >
             <View style={{ gap: 14 }}>
               <VariantControlRow label="Pattern">
