@@ -15,12 +15,24 @@ const animatedNames = Object.keys(animatedIconDefinitions) as AnimatedIconName[]
 // Keep the initial DOM and SVG request burst small; the full catalogue remains
 // available through search and incremental loading.
 const PAGE_SIZE = 96;
+// The `autoResetAfter` each one-shot documents in its usage snippet — these
+// mirror the component's real defaults, so they are not ours to tune.
 const ONE_SHOT_DURATIONS: Partial<Record<AnimatedIconName, number>> = {
   'copy-check': 1500,
   'spinner-x': 1400,
   'circle-progress-check': 1600,
   'bell-shake': 800,
   'dot-pulse': 1200,
+};
+
+// How long a preview card holds its end state before returning to rest. Only
+// copy-check needs to differ: it finishes morphing in ~130ms, so reusing its
+// documented 1500ms reset would park the card on a static check for 1.4s — over
+// ten times the animation. The others stay visibly in motion for most of their
+// window (spinner-x spins, circle-progress-check fills, dot-pulse pulses), so
+// their reset doubles as a sensible hold.
+const PREVIEW_HOLDS: Partial<Record<AnimatedIconName, number>> = {
+  'copy-check': 700,
 };
 
 function componentName(fileBase: string) {
@@ -394,14 +406,14 @@ const [active, setActive] = useState(false);
 function useAnimatedIconPreview(name: AnimatedIconName) {
   const [active, setActive] = useState(false);
   const [runId, setRunId] = useState(0);
-  const resetAfter = ONE_SHOT_DURATIONS[name];
-  const isOneShot = resetAfter !== undefined;
+  const isOneShot = ONE_SHOT_DURATIONS[name] !== undefined;
+  const holdFor = PREVIEW_HOLDS[name] ?? ONE_SHOT_DURATIONS[name];
 
   useEffect(() => {
-    if (!active || resetAfter === undefined) return;
-    const timer = window.setTimeout(() => setActive(false), resetAfter);
+    if (!active || holdFor === undefined) return;
+    const timer = window.setTimeout(() => setActive(false), holdFor);
     return () => window.clearTimeout(timer);
-  }, [active, resetAfter, runId]);
+  }, [active, holdFor, runId]);
 
   function preview() {
     if (!isOneShot) {
