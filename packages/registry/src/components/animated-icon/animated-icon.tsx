@@ -71,7 +71,9 @@ export type AnimatedIconProps = {
   strokeWidth?: number;
   duration?: number;
   accessibilityLabel?: string;
-  /** Visual reset delay for momentary actions. Defaults to 1500ms for `copy-check`. */
+  /** Reverts to the inactive glyph this many ms after activating. Opt-in: set it
+   *  for momentary actions (a copy button confirming, say). Omitted, the icon
+   *  stays where you put it and `active` is yours to drive. */
   autoResetAfter?: number;
   onAutoReset?: () => void;
   /** Error color used by `spinner-x` after it resolves. */
@@ -545,14 +547,13 @@ export function AnimatedIcon(props: AnimatedIconProps) {
 
   useEffect(() => {
     setVisualActive(active);
-    const resetDelay = autoResetAfter ?? (name === 'copy-check' ? 1500 : undefined);
-    if (!active || resetDelay == null) return;
+    if (!active || autoResetAfter == null) return;
     const timer = setTimeout(() => {
       setVisualActive(false);
       onAutoReset?.();
-    }, resetDelay);
+    }, autoResetAfter);
     return () => clearTimeout(timer);
-  }, [active, autoResetAfter, name, onAutoReset]);
+  }, [active, autoResetAfter, onAutoReset]);
 
   if (isSpecialName(name)) {
     return (

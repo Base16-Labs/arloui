@@ -85,17 +85,17 @@ describe('AnimatedIcon', () => {
       jest.useRealTimers();
     });
 
-    it('auto-resets copy-check after the default 1500ms and calls onAutoReset', () => {
+    it('leaves copy-check latched until autoResetAfter is asked for', () => {
       const onAutoReset = jest.fn();
       renderWithTheme(<AnimatedIcon name="copy-check" active onAutoReset={onAutoReset} />);
-      expect(onAutoReset).not.toHaveBeenCalled();
       act(() => {
-        jest.advanceTimersByTime(1500);
+        jest.advanceTimersByTime(5000);
       });
-      expect(onAutoReset).toHaveBeenCalledTimes(1);
+      expect(onAutoReset).not.toHaveBeenCalled();
+      expect(screen.getByLabelText('Copied icon')).toBeTruthy();
     });
 
-    it('honors a custom autoResetAfter', () => {
+    it('honors autoResetAfter', () => {
       const onAutoReset = jest.fn();
       renderWithTheme(
         <AnimatedIcon name="download-check" active autoResetAfter={300} onAutoReset={onAutoReset} />,

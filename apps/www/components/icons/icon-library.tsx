@@ -15,24 +15,18 @@ const animatedNames = Object.keys(animatedIconDefinitions) as AnimatedIconName[]
 // Keep the initial DOM and SVG request burst small; the full catalogue remains
 // available through search and incremental loading.
 const PAGE_SIZE = 96;
-// The `autoResetAfter` each one-shot documents in its usage snippet — these
-// mirror the component's real defaults, so they are not ours to tune.
+// Icons that play once and return to rest on their own. Each stays visibly in
+// motion for most of its window — spinner-x spins, circle-progress-check fills,
+// dot-pulse pulses — so the reset doubles as the card's hold.
+//
+// copy-check is deliberately absent: it is the same outline-into-checkmark morph
+// as download-check and upload-check, finishes in ~130ms, and reverting on a
+// timer just left the card waiting to become clickable again. It toggles instead.
 const ONE_SHOT_DURATIONS: Partial<Record<AnimatedIconName, number>> = {
-  'copy-check': 1500,
   'spinner-x': 1400,
   'circle-progress-check': 1600,
   'bell-shake': 800,
   'dot-pulse': 1200,
-};
-
-// How long a preview card holds its end state before returning to rest. Only
-// copy-check needs to differ: it finishes morphing in ~130ms, so reusing its
-// documented 1500ms reset would park the card on a static check for 1.4s — over
-// ten times the animation. The others stay visibly in motion for most of their
-// window (spinner-x spins, circle-progress-check fills, dot-pulse pulses), so
-// their reset doubles as a sensible hold.
-const PREVIEW_HOLDS: Partial<Record<AnimatedIconName, number>> = {
-  'copy-check': 700,
 };
 
 function componentName(fileBase: string) {
@@ -406,14 +400,14 @@ const [active, setActive] = useState(false);
 function useAnimatedIconPreview(name: AnimatedIconName) {
   const [active, setActive] = useState(false);
   const [runId, setRunId] = useState(0);
-  const isOneShot = ONE_SHOT_DURATIONS[name] !== undefined;
-  const holdFor = PREVIEW_HOLDS[name] ?? ONE_SHOT_DURATIONS[name];
+  const resetAfter = ONE_SHOT_DURATIONS[name];
+  const isOneShot = resetAfter !== undefined;
 
   useEffect(() => {
-    if (!active || holdFor === undefined) return;
-    const timer = window.setTimeout(() => setActive(false), holdFor);
+    if (!active || resetAfter === undefined) return;
+    const timer = window.setTimeout(() => setActive(false), resetAfter);
     return () => window.clearTimeout(timer);
-  }, [active, holdFor, runId]);
+  }, [active, resetAfter, runId]);
 
   function preview() {
     if (!isOneShot) {
@@ -422,8 +416,8 @@ function useAnimatedIconPreview(name: AnimatedIconName) {
     }
 
     // Go straight to active and let `runId` restart the run. Dropping back to
-    // inactive first would play the reverse morph for a frame, which on
-    // copy-check means the copy glyph swings back in before the check appears.
+    // inactive first would play the reverse morph for a frame, so the rest
+    // glyph swings back in before the animation gets going.
     setActive(true);
     setRunId((value) => value + 1);
   }
