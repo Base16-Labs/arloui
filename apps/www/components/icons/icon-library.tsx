@@ -17,7 +17,6 @@ const animatedNames = Object.keys(animatedIconDefinitions) as AnimatedIconName[]
 const PAGE_SIZE = 96;
 const ONE_SHOT_DURATIONS: Partial<Record<AnimatedIconName, number>> = {
   'copy-check': 1500,
-  'spinner-check': 1400,
   'spinner-x': 1400,
   'circle-progress-check': 1600,
   'bell-shake': 800,
