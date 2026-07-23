@@ -230,19 +230,26 @@ export function AnimatedIconPreview({
   name,
   active,
   size = 32,
+  runId = 0,
 }: {
   name: AnimatedIconName;
   active: boolean;
   size?: number;
+  /** Bumping this replays a one-shot that is already active. */
+  runId?: number;
 }) {
   const definition = isSpecialName(name) ? null : lineDefinitions[name];
   const target = active ? 1 : 0;
   const currentRef = useRef(target);
+  const lastRunRef = useRef(runId);
   const [progress, setProgress] = useState(target);
   const [motion, setMotion] = useState(0);
   const [resolved, setResolved] = useState(active);
 
   useEffect(() => {
+    const replaying = runId !== lastRunRef.current;
+    lastRunRef.current = runId;
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) {
       currentRef.current = target;
@@ -252,6 +259,11 @@ export function AnimatedIconPreview({
       return;
     }
 
+    // A replay restarts from the rest state in one commit. Easing back to it
+    // instead would rewind the morph on screen — `easeOut` gives up ~28% in its
+    // first frame — which reads as the "from" glyph flashing in before the
+    // animation plays.
+    if (replaying) currentRef.current = 0;
     const start = currentRef.current;
     const startedAt = performance.now();
     let frame = 0;
@@ -297,7 +309,7 @@ export function AnimatedIconPreview({
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [active, name, target]);
+  }, [active, name, target, runId]);
 
   const rotation = definition?.rotation
     ? mix(definition.rotation[0], definition.rotation[1], progress)
