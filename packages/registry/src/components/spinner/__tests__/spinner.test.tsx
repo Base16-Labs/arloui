@@ -4,7 +4,7 @@ import { Spinner, type SpinnerAppearance } from '../spinner';
 import { themes } from '../../../foundation/tokens';
 import { renderWithTheme, screen, waitFor } from '../../../../test/render';
 
-const APPEARANCES: SpinnerAppearance[] = ['spokes', 'arc', 'dots'];
+const APPEARANCES: SpinnerAppearance[] = ['spokes', 'arc', 'dots', 'bars', 'pulse'];
 
 /** Flattened styles of every View rendered under the spinner root. */
 function styles() {
@@ -29,26 +29,19 @@ describe('Spinner', () => {
     expect(screen.getByLabelText('Loading')).toBeTruthy();
   });
 
-  it('promotes a visible label to the accessibility label', () => {
-    renderWithTheme(<Spinner label="Uploading photo" />);
-    expect(screen.getByText('Uploading photo')).toBeTruthy();
+  it('names the specific work when given an accessibilityLabel', () => {
+    renderWithTheme(<Spinner accessibilityLabel="Uploading photo" />);
     expect(screen.getByLabelText('Uploading photo')).toBeTruthy();
   });
 
-  it('lets accessibilityLabel win over the visible label', () => {
-    renderWithTheme(<Spinner label="Uploading" accessibilityLabel="Uploading photo, please wait" />);
-    expect(screen.getByLabelText('Uploading photo, please wait')).toBeTruthy();
-  });
-
   it('maps named sizes and accepts an exact diameter', () => {
-    // The root is a column wrapper for the optional label; the ring below it is
-    // the square that carries the diameter.
-    const diameter = () => {
-      const squares = styles()
-        .filter((style) => style?.width !== undefined && style?.width === style?.height)
-        .map((style) => style.width as number);
-      return Math.max(...squares);
-    };
+    // The root is a centring wrapper; the glyph below it carries the diameter.
+    const diameter = () =>
+      Math.max(
+        ...styles()
+          .filter((style) => style?.width !== undefined && style?.width === style?.height)
+          .map((style) => style.width as number),
+      );
 
     const { rerender } = renderWithTheme(<Spinner appearance="arc" size="sm" testID="spinner" />);
     expect(diameter()).toBe(16);
@@ -86,13 +79,19 @@ describe('Spinner', () => {
     expect(backgrounds()).toContain('#FF00FF');
   });
 
-  it('drops the transforms when reduce-motion is on', async () => {
+  it.each(APPEARANCES)('holds "%s" still when reduce-motion is on', async (appearance) => {
     jest.mocked(AccessibilityInfo.isReduceMotionEnabled).mockResolvedValueOnce(true);
-    renderWithTheme(<Spinner appearance="spokes" size={24} testID="spinner" />);
+    renderWithTheme(<Spinner appearance={appearance} size={24} testID="spinner" />);
 
     await waitFor(() => {
-      const ring = styles().find((style) => style?.width === 24 && style?.height === 24);
-      expect(ring?.transform).toBeUndefined();
+      // Depth-first, so [0] is the root wrapper and [1] the glyph container —
+      // the only node that spins. Individual spokes keep their static layout
+      // rotations, which are geometry rather than motion.
+      const container = styles()[1];
+      const spins = (container?.transform as { rotate?: string }[] | undefined)?.some(
+        (entry) => entry?.rotate !== undefined,
+      );
+      expect(spins).toBeFalsy();
     });
   });
 });

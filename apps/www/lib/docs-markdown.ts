@@ -318,6 +318,40 @@ export const skeletonData = {
   ],
 };
 
+export const spinnerData = {
+  slug: 'spinner',
+  category: 'Feedback',
+  title: 'Spinner',
+  lede: 'An activity indicator for work with no measurable progress, in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/spinner',
+  states: ['spokes', 'arc', 'dots', 'bars', 'pulse', 'reduced motion'],
+  tokens: [
+    'colors.textSecondary',
+    'colors.accent',
+    'colors.surfaceStrong',
+    'accessibility.reduceMotion',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/spinner',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/spinner' },
+  ],
+};
+
 export const tabsData = {
   slug: 'tabs',
   category: 'Navigation',
@@ -916,6 +950,7 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/date-picker': docDataToMarkdown(datePickerData),
   '/docs/components/tab-bar': docDataToMarkdown(tabBarData),
   '/docs/components/skeleton': docDataToMarkdown(skeletonData),
+  '/docs/components/spinner': docDataToMarkdown(spinnerData),
   '/docs/components/tabs': docDataToMarkdown(tabsData),
   '/docs/components/button': docDataToMarkdown(buttonData),
   '/docs/components/input': docDataToMarkdown(inputData),

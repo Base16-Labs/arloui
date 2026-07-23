@@ -14,6 +14,7 @@ import { SheetDocPlayground } from '@/components/docs/sheet-doc-playground';
 import { TabBarDocPlayground } from '@/components/docs/tab-bar-preview';
 import { TabsDocPlayground } from '@/components/docs/tabs-preview';
 import { SkeletonDocPlayground } from '@/components/docs/skeleton-preview';
+import { SpinnerDocPlayground } from '@/components/docs/spinner-preview';
 import { DatePickerDocPlayground } from '@/components/docs/date-picker-preview';
 import {
   FormControlDocPlayground,
@@ -36,6 +37,7 @@ import {
   radioData,
   sheetData,
   skeletonData,
+  spinnerData,
   tabBarData,
   tabsData,
   textAreaData,
@@ -98,6 +100,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'skeleton') {
     return <SkeletonDocPage />;
+  }
+
+  if (slug === 'spinner') {
+    return <SpinnerDocPage />;
   }
 
   if (slug === 'carousel') {
@@ -422,6 +428,159 @@ import { Skeleton } from "@/components/ui/skeleton";
         </Section>
       </main>
       <RightRail headings={[...skeletonData.headings]} actions={[...skeletonData.actions]} />
+    </>
+  );
+}
+
+function SpinnerDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(spinnerData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{spinnerData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {spinnerData.title}
+        </h1>
+        <Lede>{spinnerData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={spinnerData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="spinner" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="One indicator, sized and toned to the surface it sits on."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Appearance', 'spokes, arc, dots, bars, or pulse'],
+                ['Size', 'sm 16 · md 24 · lg 32, or an exact diameter'],
+                ['Tone', 'neutral, accent, or an explicit colour'],
+                ['Motion', 'held still under reduce-motion'],
+                ['Announcement', 'a busy progressbar with an accessible name'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For waiting that has no measurable progress."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use for indeterminate work — submitting a form, reaching the network, resolving an
+              action whose duration you cannot predict.
+            </li>
+            <li>
+              Prefer a skeleton when the incoming content has a known shape, so the layout does not
+              jump when it arrives.
+            </li>
+            <li>
+              Reach for a determinate progress bar the moment you can actually measure completion.
+            </li>
+          </ul>
+        </Section>
+
+        <SpinnerDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add spinner
+
+import { View } from "react-native";
+import { Spinner } from "@/components/ui/spinner";
+
+// Centred in a loading region
+<View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+  <Spinner appearance="spokes" size="lg" accessibilityLabel="Loading your feed" />
+</View>
+
+// Inline in a busy button, tinted to the label beside it
+<Spinner size="sm" color="#FFFFFF" />`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Foreground tones and the reduced-motion foundation."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {spinnerData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Say what is loading, once."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Reports as a busy <code className="font-mono text-[12.5px]">progressbar</code>, so
+              assistive tech announces the wait without a live region.
+            </li>
+            <li>
+              Defaults to an accessible name of &ldquo;Loading&rdquo;; pass{' '}
+              <code className="font-mono text-[12.5px]">accessibilityLabel</code> to name the
+              specific work in flight.
+            </li>
+            <li>
+              Under reduce-motion every transform is dropped and the shape holds still, so the
+              indicator still reads as one.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep waiting states calm and singular.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Show one spinner for one unit of work, and say what it is waiting on.',
+                dont: 'Scatter several spinners across a screen that is loading as a whole.',
+              },
+              {
+                do: 'Pick one appearance and keep it consistent across the product.',
+                dont: 'Mix spokes, arcs, and dots in the same flow.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Other ways to represent work in flight."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Skeleton', 'Progress', 'Button', 'Empty'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...spinnerData.headings]} actions={[...spinnerData.actions]} />
     </>
   );
 }

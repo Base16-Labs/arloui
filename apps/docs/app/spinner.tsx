@@ -1,6 +1,6 @@
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Spinner,
@@ -15,9 +15,9 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
-const APPEARANCES: SpinnerAppearance[] = ['spokes', 'arc', 'dots'];
+const APPEARANCES: SpinnerAppearance[] = ['spokes', 'arc', 'dots', 'bars', 'pulse'];
 const SIZES: SpinnerSize[] = ['sm', 'md', 'lg'];
-const TONES: SpinnerTone[] = ['neutral', 'accent', 'inverse'];
+const TONES: SpinnerTone[] = ['neutral', 'accent'];
 
 export default function SpinnerCanvas() {
   const t = useTokens();
@@ -38,9 +38,6 @@ export default function SpinnerCanvas() {
       useNativeDriver: true,
     }).start();
   }, [menuOpen, previewOffset]);
-
-  // `inverse` is meant for coloured surfaces, so give it one to sit on.
-  const stageColor = tone === 'inverse' ? t.colors.textPrimary : t.colors.surface;
 
   return (
     <>
@@ -83,59 +80,13 @@ export default function SpinnerCanvas() {
                 borderRadius: 34,
                 borderWidth: 1,
                 borderColor: t.colors.border,
-                backgroundColor: stageColor,
+                backgroundColor: t.colors.surface,
                 padding: 20,
+                alignItems: 'center',
                 justifyContent: 'center',
-                gap: 34,
               }}
             >
-              <View style={{ alignItems: 'center' }}>
-                <Spinner appearance={appearance} size={size} tone={tone} label="Loading" />
-              </View>
-
-              <View style={{ gap: 12 }}>
-                <SectionLabel tone={tone}>Every size</SectionLabel>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 26,
-                  }}
-                >
-                  {SIZES.map((option) => (
-                    <Spinner key={option} appearance={appearance} size={option} tone={tone} />
-                  ))}
-                </View>
-              </View>
-
-              <View style={{ gap: 12 }}>
-                <SectionLabel tone={tone}>In a button</SectionLabel>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 10,
-                    alignSelf: 'center',
-                    height: 44,
-                    paddingHorizontal: 20,
-                    borderRadius: t.radii.full,
-                    backgroundColor: t.colors.accent,
-                  }}
-                >
-                  <Spinner appearance={appearance} size="sm" color={t.colors.textInverse} />
-                  <Text
-                    style={{
-                      color: t.colors.textInverse,
-                      fontFamily: 'Manrope SemiBold',
-                      fontSize: 15,
-                    }}
-                  >
-                    Submitting
-                  </Text>
-                </View>
-              </View>
+              <Spinner appearance={appearance} size={size} tone={tone} />
             </View>
           </Animated.View>
 
@@ -205,20 +156,3 @@ export default function SpinnerCanvas() {
   );
 }
 
-function SectionLabel({ children, tone }: { children: string; tone: SpinnerTone }) {
-  const t = useTokens();
-  return (
-    <Text
-      style={{
-        color: tone === 'inverse' ? t.colors.textInverse : t.colors.textTertiary,
-        fontFamily: 'Manrope Medium',
-        fontSize: 11,
-        letterSpacing: 0.8,
-        textAlign: 'center',
-        textTransform: 'uppercase',
-      }}
-    >
-      {children}
-    </Text>
-  );
-}

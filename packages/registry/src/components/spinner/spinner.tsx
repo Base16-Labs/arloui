@@ -3,26 +3,23 @@ import {
   AccessibilityInfo,
   Animated,
   Easing,
-  Text,
   View,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
 
-export type SpinnerAppearance = 'spokes' | 'arc' | 'dots';
+export type SpinnerAppearance = 'spokes' | 'arc' | 'dots' | 'bars' | 'pulse';
 export type SpinnerSize = 'sm' | 'md' | 'lg';
-export type SpinnerTone = 'neutral' | 'accent' | 'inverse';
+export type SpinnerTone = 'neutral' | 'accent';
 
 export type SpinnerProps = {
   appearance?: SpinnerAppearance;
   /** One of the named sizes, or an exact diameter in px. */
   size?: SpinnerSize | number;
   tone?: SpinnerTone;
-  /** Overrides `tone`. */
+  /** Overrides `tone` — pass the colour of whatever surface it sits on. */
   color?: string;
-  /** Rendered under the spinner and used as the accessibility label. */
-  label?: string;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
   testID?: string;
@@ -36,13 +33,17 @@ const SPOKE_REVOLUTION = 900;
 const ARC_REVOLUTION = 750;
 const DOT_CYCLE = 480;
 const DOT_STAGGER = 140;
+const BARS = 4;
+const BAR_CYCLE = 420;
+const BAR_STAGGER = 110;
+const PULSE_RINGS = 2;
+const PULSE_CYCLE = 1200;
 
 export function Spinner({
   appearance = 'spokes',
   size = 'md',
   tone = 'neutral',
   color,
-  label,
   accessibilityLabel,
   style,
   testID,
@@ -50,13 +51,7 @@ export function Spinner({
   const t = useTokens();
   const [reduceMotion, setReduceMotion] = useState(false);
   const px = typeof size === 'number' ? size : SIZES[size];
-  const resolvedColor =
-    color ??
-    (tone === 'accent'
-      ? t.colors.accent
-      : tone === 'inverse'
-        ? t.colors.textInverse
-        : t.colors.textSecondary);
+  const resolvedColor = color ?? (tone === 'accent' ? t.colors.accent : t.colors.textSecondary);
 
   useEffect(() => {
     let active = true;
@@ -68,64 +63,59 @@ export function Spinner({
     };
   }, []);
 
-  const glyph =
-    appearance === 'arc' ? (
-      <ArcSpinner px={px} color={resolvedColor} track={t.colors.surfaceStrong} still={reduceMotion} />
-    ) : appearance === 'dots' ? (
-      <DotsSpinner px={px} color={resolvedColor} still={reduceMotion} />
-    ) : (
-      <SpokesSpinner px={px} color={resolvedColor} still={reduceMotion} />
-    );
+  const shared = { px, color: resolvedColor, still: reduceMotion };
 
   return (
     <View
       testID={testID}
       accessibilityRole="progressbar"
-      accessibilityLabel={accessibilityLabel ?? label ?? 'Loading'}
+      accessibilityLabel={accessibilityLabel ?? 'Loading'}
       accessibilityState={{ busy: true }}
-      style={[{ alignItems: 'center', gap: label ? 10 : 0 }, style]}
+      style={[{ alignItems: 'center', justifyContent: 'center' }, style]}
     >
-      {glyph}
-      {label ? (
-        <Text
-          style={{
-            color: t.colors.textSecondary,
-            fontFamily: 'Manrope Medium',
-            fontSize: 13,
-            lineHeight: 18,
-          }}
-        >
-          {label}
-        </Text>
-      ) : null}
+      {appearance === 'arc' ? (
+        <ArcSpinner {...shared} track={t.colors.surfaceStrong} />
+      ) : appearance === 'dots' ? (
+        <DotsSpinner {...shared} />
+      ) : appearance === 'bars' ? (
+        <BarsSpinner {...shared} />
+      ) : appearance === 'pulse' ? (
+        <PulseSpinner {...shared} />
+      ) : (
+        <SpokesSpinner {...shared} />
+      )}
     </View>
   );
 }
 
-/**
- * The system activity indicator: spokes hold a fixed opacity ramp and the whole
- * ring steps round one spoke at a time, rather than sweeping continuously.
- */
-function SpokesSpinner({ px, color, still }: { px: number; color: string; still: boolean }) {
+type GlyphProps = { px: number; color: string; still: boolean };
+
+/** Drives a looping 0→1 value, unless motion is being held still. */
+function useLoop(duration: number, still: boolean, easing = Easing.linear) {
   const progress = useRef(new Animated.Value(0)).current;
-  const spokeLength = Math.max(3, px * 0.28);
-  const spokeWidth = Math.max(1.5, px * 0.085);
 
   useEffect(() => {
     progress.stopAnimation();
     progress.setValue(0);
     if (still) return;
     const loop = Animated.loop(
-      Animated.timing(progress, {
-        toValue: 1,
-        duration: SPOKE_REVOLUTION,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
+      Animated.timing(progress, { toValue: 1, duration, easing, useNativeDriver: true }),
     );
     loop.start();
     return () => loop.stop();
-  }, [progress, still]);
+  }, [duration, easing, progress, still]);
+
+  return progress;
+}
+
+/**
+ * The system activity indicator: spokes hold a fixed opacity ramp and the whole
+ * ring steps round one spoke at a time, rather than sweeping continuously.
+ */
+function SpokesSpinner({ px, color, still }: GlyphProps) {
+  const progress = useLoop(SPOKE_REVOLUTION, still);
+  const spokeLength = Math.max(3, px * 0.28);
+  const spokeWidth = Math.max(1.5, px * 0.085);
 
   // A staircase interpolation: hold each angle for a full step, then jump.
   const rotate = useMemo(() => {
@@ -142,9 +132,7 @@ function SpokesSpinner({ px, color, still }: { px: number; color: string; still:
   }, [progress]);
 
   return (
-    <Animated.View
-      style={{ width: px, height: px, transform: still ? undefined : [{ rotate }] }}
-    >
+    <Animated.View style={{ width: px, height: px, transform: still ? undefined : [{ rotate }] }}>
       {Array.from({ length: SPOKES }, (_, index) => (
         <View
           key={index}
@@ -169,36 +157,9 @@ function SpokesSpinner({ px, color, still }: { px: number; color: string; still:
 }
 
 /** A faint closed track with one bright segment sweeping round it. */
-function ArcSpinner({
-  px,
-  color,
-  track,
-  still,
-}: {
-  px: number;
-  color: string;
-  track: string;
-  still: boolean;
-}) {
-  const progress = useRef(new Animated.Value(0)).current;
+function ArcSpinner({ px, color, track, still }: GlyphProps & { track: string }) {
+  const progress = useLoop(ARC_REVOLUTION, still);
   const width = Math.max(2, px * 0.11);
-
-  useEffect(() => {
-    progress.stopAnimation();
-    progress.setValue(0);
-    if (still) return;
-    const loop = Animated.loop(
-      Animated.timing(progress, {
-        toValue: 1,
-        duration: ARC_REVOLUTION,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [progress, still]);
-
   const rotate = progress.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
   const ring: ViewStyle = {
     position: 'absolute',
@@ -228,35 +189,33 @@ function ArcSpinner({
   );
 }
 
-/** Three dots lifting and fading in sequence. */
-function DotsSpinner({ px, color, still }: { px: number; color: string; still: boolean }) {
-  const dots = useRef([0, 1, 2].map(() => new Animated.Value(0))).current;
-  const diameter = Math.max(3, px * 0.3);
-  const gap = Math.max(2, px * 0.18);
+/** Runs one looping value per element, each offset by `stagger` ms. */
+function useStaggered(count: number, cycle: number, stagger: number, still: boolean) {
+  const values = useRef(Array.from({ length: count }, () => new Animated.Value(0))).current;
 
   useEffect(() => {
-    for (const dot of dots) {
-      dot.stopAnimation();
-      dot.setValue(0);
+    for (const value of values) {
+      value.stopAnimation();
+      value.setValue(0);
     }
     if (still) return;
-    const loops = dots.map((dot, index) =>
+    const loops = values.map((value, index) =>
       Animated.loop(
         Animated.sequence([
-          Animated.delay(index * DOT_STAGGER),
-          Animated.timing(dot, {
+          Animated.delay(index * stagger),
+          Animated.timing(value, {
             toValue: 1,
-            duration: DOT_CYCLE / 2,
+            duration: cycle / 2,
             easing: Easing.out(Easing.quad),
             useNativeDriver: true,
           }),
-          Animated.timing(dot, {
+          Animated.timing(value, {
             toValue: 0,
-            duration: DOT_CYCLE / 2,
+            duration: cycle / 2,
             easing: Easing.in(Easing.quad),
             useNativeDriver: true,
           }),
-          Animated.delay((dots.length - index - 1) * DOT_STAGGER),
+          Animated.delay((count - index - 1) * stagger),
         ]),
       ),
     );
@@ -264,7 +223,16 @@ function DotsSpinner({ px, color, still }: { px: number; color: string; still: b
     return () => {
       for (const loop of loops) loop.stop();
     };
-  }, [dots, still]);
+  }, [count, cycle, stagger, still, values]);
+
+  return values;
+}
+
+/** Three dots lifting and fading in sequence. */
+function DotsSpinner({ px, color, still }: GlyphProps) {
+  const dots = useStaggered(3, DOT_CYCLE, DOT_STAGGER, still);
+  const diameter = Math.max(3, px * 0.3);
+  const gap = Math.max(2, px * 0.18);
 
   return (
     <View style={{ height: px, flexDirection: 'row', alignItems: 'center', gap }}>
@@ -276,9 +244,7 @@ function DotsSpinner({ px, color, still }: { px: number; color: string; still: b
             height: diameter,
             borderRadius: diameter / 2,
             backgroundColor: color,
-            opacity: still
-              ? 0.6
-              : dot.interpolate({ inputRange: [0, 1], outputRange: [0.32, 1] }),
+            opacity: still ? 0.6 : dot.interpolate({ inputRange: [0, 1], outputRange: [0.32, 1] }),
             transform: still
               ? undefined
               : [
@@ -289,6 +255,101 @@ function DotsSpinner({ px, color, still }: { px: number; color: string; still: b
                     }),
                   },
                 ],
+          }}
+        />
+      ))}
+    </View>
+  );
+}
+
+/** An equaliser of bars breathing in sequence. */
+function BarsSpinner({ px, color, still }: GlyphProps) {
+  const bars = useStaggered(BARS, BAR_CYCLE, BAR_STAGGER, still);
+  const width = Math.max(2, px * 0.15);
+  const gap = Math.max(1.5, px * 0.1);
+
+  return (
+    <View style={{ height: px, flexDirection: 'row', alignItems: 'center', gap }}>
+      {bars.map((bar, index) => (
+        <Animated.View
+          key={index}
+          style={{
+            width,
+            height: px,
+            borderRadius: width / 2,
+            backgroundColor: color,
+            opacity: still ? 0.6 : 1,
+            transform: still
+              ? [{ scaleY: 0.6 }]
+              : [{ scaleY: bar.interpolate({ inputRange: [0, 1], outputRange: [0.35, 1] }) }],
+          }}
+        />
+      ))}
+    </View>
+  );
+}
+
+/** Rings pushing outward from the centre and fading, radar-style. */
+function PulseSpinner({ px, color, still }: GlyphProps) {
+  const rings = useRef(
+    Array.from({ length: PULSE_RINGS }, () => new Animated.Value(0)),
+  ).current;
+
+  useEffect(() => {
+    for (const ring of rings) {
+      ring.stopAnimation();
+      ring.setValue(0);
+    }
+    if (still) return;
+    const loops = rings.map((ring, index) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay((index * PULSE_CYCLE) / PULSE_RINGS),
+          Animated.timing(ring, {
+            toValue: 1,
+            duration: PULSE_CYCLE,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true,
+          }),
+        ]),
+      ),
+    );
+    for (const loop of loops) loop.start();
+    return () => {
+      for (const loop of loops) loop.stop();
+    };
+  }, [rings, still]);
+
+  if (still) {
+    return (
+      <View
+        style={{
+          width: px,
+          height: px,
+          borderRadius: px / 2,
+          backgroundColor: color,
+          opacity: 0.45,
+          transform: [{ scale: 0.7 }],
+        }}
+      />
+    );
+  }
+
+  return (
+    <View style={{ width: px, height: px }}>
+      {rings.map((ring, index) => (
+        <Animated.View
+          key={index}
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            borderRadius: px / 2,
+            backgroundColor: color,
+            opacity: ring.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0] }),
+            transform: [{ scale: ring.interpolate({ inputRange: [0, 1], outputRange: [0.3, 1] }) }],
           }}
         />
       ))}

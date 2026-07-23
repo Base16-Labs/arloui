@@ -124,7 +124,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Spinner',
     description:
-      'A reduced-motion-aware activity indicator in three iOS idioms — stepped spokes, a sweeping arc, or staggered dots — at three sizes with an optional label.',
+      'A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/spinner/spinner.tsx', target: 'spinner/spinner.tsx' },

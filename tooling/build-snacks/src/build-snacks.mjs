@@ -25,7 +25,8 @@ mkdirSync(TMP, { recursive: true });
 const SCREENS = {
   badge: 'badge', button: 'button', carousel: 'carousel', checkbox: 'checkbox',
   chip: 'chip', 'date-picker': 'date-picker', gallery: 'gallery', input: 'input',
-  radio: 'radio', sheet: 'sheet', skeleton: 'skeleton', 'tab-bar': 'tab-bar',
+  radio: 'radio', sheet: 'sheet', skeleton: 'skeleton', spinner: 'spinner',
+  'tab-bar': 'tab-bar',
   tabs: 'tabs', textarea: 'text-area', toggle: 'toggle',
 };
 
