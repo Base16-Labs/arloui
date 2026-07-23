@@ -1,0 +1,5 @@
+import * as React from "react";
+import Svg, { Path } from "react-native-svg";
+import type { SvgProps } from "react-native-svg";
+const SolidBell = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.79 16.495c-.52-.897-1.29-3.433-1.29-6.744 0-1.99-.79-3.897-2.2-5.303A7.48 7.48 0 0 0 12 2.25c-1.99 0-3.9.79-5.3 2.198A7.49 7.49 0 0 0 4.5 9.75c0 3.313-.77 5.848-1.29 6.743a1.43 1.43 0 0 0-.21.752c0 .264.07.523.2.752a1.512 1.512 0 0 0 1.3.753h3.83c.17.846.63 1.607 1.3 2.153.67.547 1.51.846 2.37.846s1.7-.299 2.37-.846a3.73 3.73 0 0 0 1.3-2.154h3.83a1.503 1.503 0 0 0 1.5-1.505c0-.264-.07-.523-.21-.75M12 20.25a2.25 2.25 0 0 1-2.12-1.5h4.24a2.247 2.247 0 0 1-2.12 1.5" /></Svg>;
+export { SolidBell as ReactComponent };
