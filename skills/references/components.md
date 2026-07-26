@@ -116,7 +116,7 @@ Solid fills use rounded corners + pressed elevation; ghost & outline use pill ra
 
 - Match the shape and scale of the real content as closely as possible.
 - Use `--surface-raised` as the base fill and `--surface-strong` as the shimmer layer.
-- Animate with a horizontal shimmer sweep (`180-280ms`, ease-in-out, looped) or a gentle opacity pulse.
+- Animate with a slow horizontal shimmer sweep (a ~`1.2s` linear loop — ambient, never a fast flash) or a gentle opacity pulse (~`600ms` ease-in-out each way).
 - Do not skeleton-load interactive controls — disable or hide them instead.
 - Show skeleton for the first data load; use inline spinners or optimistic updates for subsequent refreshes.
 

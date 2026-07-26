@@ -1,6 +1,6 @@
 # Arlo UI skill (`skills/`)
 
-The Arlo UI design skill: a portable bundle of design rules, tokens, and patterns that AI agents (Cursor, Claude Code, Codex, …) load on demand. It blends Nothing-inspired restraint, data-forward composition, and Emil-style interaction polish into a system that feels like its own.
+The Arlo UI design skill: a portable bundle of design rules, tokens, and patterns that AI agents (Cursor, Claude Code, Codex, …) load on demand. It blends disciplined restraint, data-forward composition, and meticulous interaction polish into a system that feels like its own.
 
 This folder lives at the **repo root** (same pattern as [HeroUI v3 `skills/`](https://github.com/heroui-inc/heroui/tree/v3/skills)) so skills stay visible alongside `apps/` and `packages/`. There is **no extra `arloui/` subfolder in git**—`SKILL.md` and `references/` sit directly under `skills/`. When you install into an agent, you still copy or symlink into a directory named **`arloui`** so the skill id matches tooling defaults (`~/.cursor/skills-cursor/arloui`, etc.).
 
@@ -12,6 +12,7 @@ The hand-authored markdown is the design contract; `npm run skill:sync` (run fro
 skills/
 ├── README.md                 maintainer-facing (optional to copy into agents)
 ├── SKILL.md                  entry point: rules, workflow, output conventions
+├── component-debt.md         maintainer-facing: where the shipped code owes the spec
 └── references/
     ├── tokens.md             hand-authored: type, color, spacing, radius, motion
     ├── components.md         hand-authored: primitives, variants, screen recipes
