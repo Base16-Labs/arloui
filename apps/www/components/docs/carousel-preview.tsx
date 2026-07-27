@@ -158,7 +158,7 @@ function CarouselScreen({
             {CARD_LABELS.map((label) => (
               <div
                 key={label}
-                className="shrink-0 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]"
+                className="shrink-0 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]"
                 style={{ width: cardW, height: 180 }}
               />
             ))}

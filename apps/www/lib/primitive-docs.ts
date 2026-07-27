@@ -137,13 +137,13 @@ export const primitiveDocs: Record<string, PrimitiveDoc> = {
       'Keep raw brand changes in tokens.ts so copied registry components inherit them automatically.',
     ],
     specs: [
-      { name: 'paletteMain.grey.950', value: '#09090B', note: 'Dark background' },
+      { name: 'paletteSecondary.zinc.950', value: '#09090B', note: 'Dark background' },
       { name: 'paletteMain.primary.600', value: '#155DFC', note: 'Light interactive primary' },
       { name: 'paletteMain.error.500', value: '#FB2C36', note: 'Error fill and border' },
       { name: 'paletteSecondary.zinc.200', value: '#E4E4E7', note: 'Neutral UI utility' },
       { name: 'alphaRamp.black.40', value: 'rgba(16,24,40,0.4)', note: 'Light overlay' },
       { name: 'lightSemanticColors.surfaceInput', value: '#F3F4F6', note: 'Input surface' },
-      { name: 'darkSemanticColors.surfaceInput', value: '#1E2939', note: 'Dark input surface' },
+      { name: 'darkSemanticColors.surfaceInput', value: '#18181B', note: 'Dark input surface' },
       { name: 'lightSemanticColors.interactivePrimary', value: '#155DFC', note: 'Primary action' },
     ],
     snippet: `import { useTheme } from "@/foundation/theme-provider";
