@@ -114,6 +114,24 @@
       ]
     },
     {
+      "name": "spinner",
+      "kind": "primitive",
+      "title": "Spinner",
+      "description": "A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "feedback",
+        "loading",
+        "progress",
+        "motion",
+        "primitive"
+      ]
+    },
+    {
       "name": "tabs",
       "kind": "primitive",
       "title": "Tabs",

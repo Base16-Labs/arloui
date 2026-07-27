@@ -36,6 +36,7 @@ npx arloui diff button
 - **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
 - **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
 - **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
+- **spinner** — Spinner. A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.
 - **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.
 - **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.
 - **field** — Field. Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.
