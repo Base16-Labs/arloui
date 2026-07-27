@@ -12,7 +12,6 @@ import {
   type SheetSurface,
   type SheetWidth,
 } from '@arloui/registry';
-import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -78,7 +77,6 @@ export default function SheetCanvas() {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <BackButton />
               <LiveBadge />
             </View>
             <ThemeToggle />

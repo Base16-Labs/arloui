@@ -134,13 +134,15 @@ Solid fills use rounded corners + pressed elevation; ghost & outline use pill ra
 - Always offer a recovery action (retry, go back, contact support). Never dead-end the user.
 - Inline field errors live below the field and use `--danger` text at `body-sm` scale.
 
-### Toast / Snackbar
+### Toast
 
-- Appear from the bottom edge, above the tab bar or safe area.
+Registry **`Toast`** — positioned at **`top`** or **`bottom`** edge, offset by safe-area insets passed via **`topInset`** / **`bottomInset`**. Color styles: **`contrast`** (inverted fill) or **`same`** (elevated surface). Optional **`icon`** slot, optional **`showDismiss`** close button. Swipe-to-dismiss built in (swipe up for top, down for bottom). Spring entrance (`motion.spring.snappy`), easeOut exit. Border radius is **`radii.xl`** (opinionated, not configurable). Shadow: `shadows.md` in dark, `shadows.lg` in light. Imperative **`ToastRef`** exposes `dismiss()`.
+
 - Maximum one active toast at a time; queue additional messages.
-- Auto-dismiss after `3–4s` for confirmations; persist until dismissed for errors.
+- Auto-dismiss after `3.5s` by default; set **`duration`** to `0` to persist until dismissed.
 - Keep copy under two lines. If more context is needed, use a sheet instead.
 - Avoid using toasts for actions the user just took and can clearly see — they create noise.
+- `prefers-reduced-motion`: replaces position/scale with opacity-only transitions.
 
 ## Shared Utilities
 

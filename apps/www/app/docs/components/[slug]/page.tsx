@@ -44,6 +44,7 @@ import {
   galleryData,
   badgeData,
   chipData,
+  toastData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -114,6 +115,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'chip') {
     return <ChipDocPage />;
+  }
+
+  if (slug === 'toast') {
+    return <ToastDocPage />;
   }
 
   return (
@@ -2575,6 +2580,169 @@ import { Chip } from "@/components/ui/chip";`}</CodeBlock>
       </main>
 
       <RightRail headings={[...chipData.headings]} actions={[...chipData.actions]} />
+    </>
+  );
+}
+
+function ToastDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(toastData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{toastData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {toastData.title}
+        </h1>
+        <Lede>{toastData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={toastData.source}>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="toast" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A floating bar with icon, message, and dismiss — positioned at the screen edge."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Container', 'floating surface with shadow'],
+                ['Icon', 'optional filled leading icon'],
+                ['Message', 'up to two lines of body text'],
+                ['Dismiss', 'optional close button'],
+                ['Position', 'top or bottom edge'],
+                ['Color style', 'contrast or same'],
+                ['Elevation', 'shadows.lg (not configurable)'],
+                ['Radius', 'radii.xl / 16px (opinionated)'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For transient, non-blocking confirmations and alerts."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use for confirmations the user doesn&apos;t need to act on — saved, copied, sent.
+            </li>
+            <li>
+              Use persistent toasts (duration 0) for errors that need acknowledgement.
+            </li>
+            <li>
+              If the message needs more than two lines or an action beyond dismiss, use a sheet instead.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste.">
+          <CodeBlock language="tsx">{`npx arloui add toast
+
+import { useState } from "react";
+import { Toast } from "@/components/ui/toast";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const insets = useSafeAreaInsets();
+const [visible, setVisible] = useState(false);
+
+<Toast
+  visible={visible}
+  message="Changes saved successfully"
+  position="bottom"
+  colorStyle="contrast"
+  showDismiss
+  topInset={insets.top}
+  bottomInset={insets.bottom}
+  onDismiss={() => setVisible(false)}
+/>
+
+{/* Persistent error toast */}
+<Toast
+  visible={hasError}
+  message="Connection lost"
+  position="top"
+  colorStyle="same"
+  duration={0}
+  showDismiss
+  icon={<ErrorIcon />}
+  topInset={insets.top}
+  onDismiss={() => setHasError(false)}
+/>`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Color, elevation, radius, motion, and type foundations."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {toastData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Announce once, don't overwhelm."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Uses accessibilityRole &quot;alert&quot; with accessibilityLiveRegion &quot;assertive&quot;.</li>
+            <li>Screen readers announce the message immediately without requiring focus.</li>
+            <li>Reduced motion disables the slide animation while preserving the state change.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep toasts brief and non-blocking.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Auto-dismiss confirmations after 3–4 seconds.',
+                dont: 'Auto-dismiss error toasts — persist them until the user dismisses.',
+              },
+              {
+                do: 'Keep copy under two lines. If more context is needed, use a sheet.',
+                dont: 'Toast an action the user just performed and can clearly see — it creates noise.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Feedback pieces for different contexts."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Sheet', 'Badge', 'Skeleton', 'Alert'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...toastData.headings]} actions={[...toastData.actions]} />
     </>
   );
 }

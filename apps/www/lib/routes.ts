@@ -80,6 +80,7 @@ export const componentGroups: ComponentGroup[] = [
     items: [
       { label: 'Skeleton', slug: 'skeleton' },
       { label: 'Badge', slug: 'badge' },
+      { label: 'Toast', slug: 'toast' },
     ],
   },
   {

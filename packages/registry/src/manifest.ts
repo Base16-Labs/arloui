@@ -325,6 +325,22 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'toast',
+    kind: 'primitive',
+    title: 'Toast',
+    description:
+      'A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/toast/toast.tsx', target: 'toast/toast.tsx' },
+      { source: 'components/toast/index.ts', target: 'toast/index.ts' },
+    ],
+    meta: {
+      tags: ['feedback', 'notification', 'overlay', 'primitive'],
+    },
+  },
+  {
     name: 'date-picker',
     kind: 'primitive',
     title: 'Date Picker',
