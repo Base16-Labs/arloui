@@ -281,35 +281,35 @@ export const motion = {
 /** Grey-900 tint shadows — mirrors `@arloui/tokens` shadow scale (RN shadow props). */
 export const shadows = {
   none: {
-    shadowColor: '#18181B',
+    shadowColor: '#101828',
     shadowOpacity: 0,
     shadowRadius: 0,
     shadowOffset: { width: 0, height: 0 },
     elevation: 0,
   },
   sm: {
-    shadowColor: '#18181B',
+    shadowColor: '#101828',
     shadowOpacity: 0.06,
     shadowRadius: 2,
     shadowOffset: { width: 0, height: 0 },
     elevation: 2,
   },
   md: {
-    shadowColor: '#18181B',
+    shadowColor: '#101828',
     shadowOpacity: 0.08,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 1 },
     elevation: 4,
   },
   lg: {
-    shadowColor: '#18181B',
+    shadowColor: '#101828',
     shadowOpacity: 0.1,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 2 },
     elevation: 8,
   },
   xl: {
-    shadowColor: '#18181B',
+    shadowColor: '#101828',
     shadowOpacity: 0.12,
     shadowRadius: 28,
     shadowOffset: { width: 0, height: 4 },
