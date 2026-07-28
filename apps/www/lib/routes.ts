@@ -79,6 +79,7 @@ export const componentGroups: ComponentGroup[] = [
     label: 'Feedback',
     items: [
       { label: 'Skeleton', slug: 'skeleton' },
+      { label: 'Spinner', slug: 'spinner' },
       { label: 'Badge', slug: 'badge' },
       { label: 'Toast', slug: 'toast' },
     ],

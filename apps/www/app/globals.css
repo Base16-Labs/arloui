@@ -220,6 +220,55 @@ html:has([data-pill-transition='closing']) ::view-transition-new(bottom-pill) {
   contain: layout paint;
 }
 
+/* Spinner previews — mirrors packages/registry/src/components/spinner. */
+@keyframes arlo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes arlo-spinner-dot {
+  0%,
+  100% {
+    opacity: 0.32;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(var(--arlo-lift));
+  }
+}
+
+@keyframes arlo-spinner-bar {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes arlo-spinner-pulse {
+  from {
+    opacity: 0.55;
+    transform: scale(0.3);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arlo-spinner-motion {
+    animation: none !important;
+  }
+}
+
 .bottom-pill-shadow {
   box-shadow:
     0 18px 48px rgb(24 24 27 / 0.12),

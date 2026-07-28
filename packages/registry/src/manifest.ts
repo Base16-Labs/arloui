@@ -120,6 +120,21 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'spinner',
+    kind: 'primitive',
+    title: 'Spinner',
+    description:
+      'A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/spinner/spinner.tsx', target: 'spinner/spinner.tsx' },
+      { source: 'components/spinner/index.ts', target: 'spinner/index.ts' },
+    ],
+    meta: {
+      tags: ['feedback', 'loading', 'progress', 'motion', 'primitive'],
+    },
+  },
+  {
     name: 'tabs',
     kind: 'primitive',
     title: 'Tabs',
