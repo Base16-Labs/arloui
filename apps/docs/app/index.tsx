@@ -26,7 +26,8 @@ type IndexItem = {
     | '/checkbox'
     | '/radio'
     | '/carousel'
-    | '/gallery';
+    | '/gallery'
+    | '/toast';
 };
 
 const COMPONENTS: IndexItem[] = [
@@ -56,6 +57,7 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Tab Bar', category: 'Nav', href: '/tab-bar' },
   { title: 'Tabs', category: 'Nav', href: '/tabs' },
   { title: 'TextArea', category: 'Controls', href: '/textarea' },
+  { title: 'Toast', category: 'Feedback', href: '/toast' },
   { title: 'Toggle', category: 'Controls', href: '/toggle' },
 ];
 
