@@ -75,7 +75,11 @@ export function usePressFeedback({ haptic = 'light', onPressIn, onPressOut }: Pr
       }).start();
       onPressIn?.(e);
     },
-    [haptic, onPressIn, press, duration, easing],
+    // `setPressed` is a stable setter and needs no listing — except that esbuild
+    // renames the `useState` import when bundling for Snack, which defeats the
+    // exhaustive-deps stability check and warns in their editor. Listing it is a
+    // runtime no-op.
+    [haptic, onPressIn, press, duration, easing, setPressed],
   );
 
   const handlePressOut = useCallback(
@@ -89,7 +93,7 @@ export function usePressFeedback({ haptic = 'light', onPressIn, onPressOut }: Pr
       }).start();
       onPressOut?.(e);
     },
-    [onPressOut, press, duration, easing],
+    [onPressOut, press, duration, easing, setPressed],
   );
 
   const animatedStyle = reduceMotion

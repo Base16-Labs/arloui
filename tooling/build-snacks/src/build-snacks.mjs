@@ -62,22 +62,56 @@ const docsPkg = JSON.parse(readFileSync(join(DOCS, 'package.json'), 'utf8'));
 const allDeps = { ...docsPkg.dependencies, ...docsPkg.devDependencies };
 const PROVIDED = new Set(['react', 'react-native', 'react-dom']);
 
+// Deps may live in apps/docs/node_modules (unhoisted) or the root.
+const NODE_MODULES = [join(DOCS, 'node_modules'), join(REPO, 'node_modules')];
+
 /**
- * Snack must store a CONCRETE version, not a range: a cold Expo Go deep link
- * asks Snackager to build the version string verbatim, and "^0.4.2" isn't a
- * buildable target ("unable to fetch module ...@^0.4.2"). Read the resolved
- * version from node_modules; fall back to the package.json range.
+ * The SDK's recommended version range for every module Expo Go ships with.
+ * Snack's editor lints each dependency against this exact map and warns
+ * ("'expo-font@14.0.11' is not the recommended version for SDK 54.0.0") on any
+ * other string — including a concrete version that satisfies the range.
  */
-function resolveVersion(pkg) {
-  // Deps may live in apps/docs/node_modules (unhoisted) or the root.
-  for (const base of [join(DOCS, 'node_modules'), join(REPO, 'node_modules')]) {
+const bundledNativeModules = (() => {
+  for (const base of NODE_MODULES) {
+    try {
+      return JSON.parse(readFileSync(join(base, 'expo/bundledNativeModules.json'), 'utf8'));
+    } catch {
+      // try the next location
+    }
+  }
+  console.warn('! expo/bundledNativeModules.json not found — Snacks may warn about dep versions');
+  return {};
+})();
+
+// The recommendations above only match the editor's if the installed SDK is the
+// one we publish against.
+const installedSdk = resolveInstalledVersion('expo');
+if (installedSdk && installedSdk.split('.')[0] !== SDK_VERSION.split('.')[0]) {
+  console.warn(`! installed expo ${installedSdk} != SDK_VERSION ${SDK_VERSION} — bump SDK_VERSION`);
+}
+
+function resolveInstalledVersion(pkg) {
+  for (const base of NODE_MODULES) {
     try {
       return JSON.parse(readFileSync(join(base, pkg, 'package.json'), 'utf8')).version;
     } catch {
       // try the next location
     }
   }
-  return allDeps[pkg] ?? '*';
+  return null;
+}
+
+/**
+ * Modules Expo Go bundles resolve to the SDK's recommended range verbatim — the
+ * runtime provides them, so Snackager never builds them and a range is safe.
+ *
+ * Everything else must store a CONCRETE version: a cold Expo Go deep link asks
+ * Snackager to build the version string verbatim, and "^0.4.2" isn't a buildable
+ * target ("unable to fetch module ...@^0.4.2"). Read the resolved version from
+ * node_modules; fall back to the package.json range.
+ */
+function resolveVersion(pkg) {
+  return bundledNativeModules[pkg] ?? resolveInstalledVersion(pkg) ?? allDeps[pkg] ?? '*';
 }
 
 async function bundleScreen(screen) {
