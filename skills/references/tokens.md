@@ -4,32 +4,32 @@
 
 - Mobile-first and premium.
 - Dark-first, but light mode must feel intentional rather than inverted.
-- Nothing-inspired in discipline and restraint, not in direct imitation.
-- Emil-inspired in interaction feel: the "why does this feel so clean?" layer of craft.
+- Disciplined and restrained by default — decoration is earned, never assumed.
+- Meticulous in interaction feel: the "why does this feel so clean?" layer of craft.
 
 ## Typography
 
-Default families:
+Default families (shipped in `theme.fontFamilies`):
 
-- `--font-sans`: `"Space Grotesk", system-ui, sans-serif`
-- `--font-mono`: `"Space Mono", ui-monospace, monospace`
-- `--font-display-optional`: `"Doto", "Space Grotesk", system-ui, sans-serif` — Doto is available on Google Fonts; treat as a progressive enhancement and always supply a fallback.
+- `sans`: `Manrope` — every UI and display size.
+- `mono`: `Space Mono` — numeric and status contexts (see rules below).
+- `display`: `Manrope` — there is no separate display face; the display sizes are Manrope at semibold.
 
-Scale for mobile (size/line-height, weight, numeric weight):
+Scale for mobile (token → size/line-height, weight, letter-spacing). These mirror the shipped `theme.typography` tokens — reference the token, never hardcode the numbers:
 
-- `display-xl`: `40/44`, semibold `600`, hero metrics or launch moments only
-- `display-lg`: `32/36`, semibold `600`, top-of-screen numbers or titles
-- `title-1`: `24/30`, semibold `600`
-- `title-2`: `20/26`, semibold `600`
-- `title-3`: `17/22`, medium `500` or semibold `600`
-- `body`: `15/21`, regular `400` or medium `500`
-- `body-sm`: `13/18`, regular `400`
-- `label`: `11/14`, medium `500`, uppercase or mono when useful; apply `0.06em` letter-spacing when uppercase
+- `displayXl`: `34/42.5`, semibold `600`, `-0.68` — hero metrics or launch moments only
+- `displayLg`: `28/35`, semibold `600`, `-0.56` — top-of-screen numbers or titles
+- `title1`: `24/30`, semibold `600`, `-0.48`
+- `title2`: `20/26`, semibold `600`, `-0.2`
+- `title3`: `17/22`, medium `500`, `-0.17`
+- `body`: `14/20`, regular `400`
+- `bodySm`: `12/17`, regular `400`
+- `label`: `11/13`, medium `500` — uppercase or mono when useful; add `0.06em` letter-spacing when uppercase
 
 Rules:
 
 - Use `Space Mono` for prices, timestamps, percentages, status labels, and tabular data.
-- Use the optional display face only for one hero element, never for body copy.
+- Reserve the largest display sizes for a single hero element, never for body copy.
 - Let whitespace and scale create luxury before typography tries to.
 
 ## Color
@@ -207,7 +207,7 @@ Rules:
 - Use a strong ease-out or a restrained spring.
 - Never animate from `scale(0)`.
 - Avoid `transition: all` patterns.
-- Press states should feel immediate: `scale(0.98)` or slight opacity reduction.
+- Press states should feel immediate: `scale(0.97)` or slight opacity reduction (`opacity: 0.85`).
 - Entrance motion should usually start from `opacity: 0` plus `translateY(6-10)` or `scale(0.985)`.
 - Gesture-driven elements can use spring behavior, but standard UI controls should stay crisp.
 
