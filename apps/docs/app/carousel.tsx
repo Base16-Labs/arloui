@@ -9,7 +9,6 @@ import {
   type CarouselIndicatorPosition,
   type CarouselSnap,
 } from '@arloui/registry';
-import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -66,7 +65,6 @@ export default function CarouselCanvas() {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <BackButton />
               <LiveBadge />
             </View>
             <ThemeToggle />

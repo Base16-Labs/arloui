@@ -877,6 +877,46 @@ export const galleryData = {
   ],
 } as const;
 
+export const toastData = {
+  slug: 'toast',
+  category: 'Feedback',
+  title: 'Toast',
+  lede: 'A transient notification surface that appears from the top or bottom edge. Two color styles — contrast and same — with optional icon, dismiss button, swipe-to-dismiss, and auto-dismiss.',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toast',
+  states: ['contrast', 'same', 'with-icon', 'with-dismiss', 'top', 'bottom'],
+  tokens: [
+    'colors.textPrimary',
+    'colors.surfaceBackground',
+    'colors.surfaceElevated',
+    'shadows.lg',
+    'radii.xl',
+    'spacing.3',
+    'spacing.4',
+    'typography.body',
+    'motion.spring.snappy',
+    'motion.duration.fast',
+    'motion.easing.easeOut',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toast',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/toast' },
+  ],
+} as const;
+
 /* ------------------------------------------------------------------ *
  * Path → markdown registry. One lookup powers every "Copy markdown"
  * surface — the per-page buttons and the global pill.
@@ -927,6 +967,7 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/gallery': docDataToMarkdown(galleryData),
   '/docs/components/badge': docDataToMarkdown(badgeData),
   '/docs/components/chip': docDataToMarkdown(chipData),
+  '/docs/components/toast': docDataToMarkdown(toastData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [

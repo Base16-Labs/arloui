@@ -12,7 +12,6 @@ import {
   type ButtonTone,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
-import { BackButton } from '@/components/playground/back-button';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
@@ -92,7 +91,6 @@ export default function ButtonCanvas() {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <BackButton />
               <LiveBadge />
             </View>
             <ThemeToggle />

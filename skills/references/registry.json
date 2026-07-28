@@ -343,6 +343,25 @@
       "figma": "Components/Chip/Default"
     },
     {
+      "name": "toast",
+      "kind": "primitive",
+      "title": "Toast",
+      "description": "A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [
+        "react-native-svg"
+      ],
+      "tags": [
+        "feedback",
+        "notification",
+        "overlay",
+        "primitive"
+      ]
+    },
+    {
       "name": "date-picker",
       "kind": "primitive",
       "title": "Date Picker",

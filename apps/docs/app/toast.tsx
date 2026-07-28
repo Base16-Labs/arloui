@@ -1,30 +1,40 @@
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Radio, useTokens, type RadioAppearance, type RadioSize } from '@arloui/registry';
+import Svg, { Path } from 'react-native-svg';
+import { Button, Toast, useTokens, type ToastColorStyle, type ToastPosition } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
-type PreviewState = 'default' | 'disabled';
+const POSITIONS: ToastPosition[] = ['top', 'bottom'];
+const COLOR_STYLES: ToastColorStyle[] = ['contrast', 'same'];
 
-const APPEARANCES: RadioAppearance[] = ['outlined', 'filled'];
-const SIZES: RadioSize[] = ['sm', 'md', 'lg'];
-const STATES: PreviewState[] = ['default', 'disabled'];
-const OPTIONS = ['Option A', 'Option B', 'Option C'];
+function CheckIcon({ color }: { color: string }) {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
+      <Path
+        d="M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2ZM8.5 13.5L5 10L6.41 8.59L8.5 10.67L13.09 6.09L14.5 7.5L8.5 13.5Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
 
-export default function RadioCanvas() {
+export default function ToastCanvas() {
   const t = useTokens();
+  const dark = t.name === 'dark';
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [appearance, setAppearance] = useState<RadioAppearance>('outlined');
-  const [size, setSize] = useState<RadioSize>('md');
-  const [state, setState] = useState<PreviewState>('default');
-  const [selected, setSelected] = useState(0);
+  const [position, setPosition] = useState<ToastPosition>('bottom');
+  const [colorStyle, setColorStyle] = useState<ToastColorStyle>('contrast');
+  const [showIcon, setShowIcon] = useState(false);
+  const [showDismiss, setShowDismiss] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
   const previewOffset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -36,6 +46,13 @@ export default function RadioCanvas() {
       useNativeDriver: true,
     }).start();
   }, [previewOffset, sheetOpen]);
+
+  const isContrast = colorStyle === 'contrast';
+  const iconColor = isContrast
+    ? dark
+      ? t.colors.surfaceBackground
+      : t.colors.surfaceBackground
+    : t.colors.feedbackSuccess;
 
   return (
     <>
@@ -65,34 +82,12 @@ export default function RadioCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 20,
               transform: [{ translateY: previewOffset }],
             }}
           >
-            {OPTIONS.map((label, i) => (
-              <View
-                key={label}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}
-              >
-                <Radio
-                  selected={selected === i}
-                  onSelect={() => setSelected(i)}
-                  appearance={appearance}
-                  size={size}
-                  disabled={state === 'disabled'}
-                  accessibilityLabel={label}
-                />
-                <Text
-                  style={{
-                    color: t.colors.textPrimary,
-                    fontFamily: 'Manrope',
-                    fontSize: 15,
-                  }}
-                >
-                  {label}
-                </Text>
-              </View>
-            ))}
+            <Button onPress={() => setToastVisible(true)}>
+              Show Toast
+            </Button>
           </Animated.View>
 
           {!sheetOpen ? (
@@ -106,7 +101,7 @@ export default function RadioCanvas() {
               }}
             >
               <CanvasPill
-                componentName="Radio"
+                componentName="Toast"
                 open={false}
                 onComponentPress={() => router.replace('/')}
                 onMenuPress={() => setSheetOpen(true)}
@@ -116,45 +111,67 @@ export default function RadioCanvas() {
 
           <VariantSheet
             visible={sheetOpen}
-            previous="Checkbox"
-            next="Toggle"
+            previous="Gallery"
+            next="Badge"
             onClose={() => setSheetOpen(false)}
-            onPrevious={() => router.replace('/checkbox')}
-            onNext={() => router.replace('/toggle')}
+            onPrevious={() => router.replace('/gallery')}
+            onNext={() => router.replace('/badge')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Style">
-                {APPEARANCES.map((value) => (
+              <VariantControlRow label="Position">
+                {POSITIONS.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
-                    active={appearance === value}
-                    onPress={() => setAppearance(value)}
+                    active={position === value}
+                    onPress={() => setPosition(value)}
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Size">
-                {SIZES.map((value) => (
+              <VariantControlRow label="Color">
+                {COLOR_STYLES.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
-                    active={size === value}
-                    onPress={() => setSize(value)}
+                    active={colorStyle === value}
+                    onPress={() => setColorStyle(value)}
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="State">
-                {STATES.map((value) => (
+              <VariantControlRow label="Icon">
+                {(['off', 'on'] as const).map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
-                    active={state === value}
-                    onPress={() => setState(value)}
+                    active={showIcon === (value === 'on')}
+                    onPress={() => setShowIcon(value === 'on')}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Dismiss">
+                {(['off', 'on'] as const).map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={showDismiss === (value === 'on')}
+                    onPress={() => setShowDismiss(value === 'on')}
                   />
                 ))}
               </VariantControlRow>
             </View>
           </VariantSheet>
+
+          <Toast
+            visible={toastVisible}
+            message="Changes saved successfully"
+            position={position}
+            colorStyle={colorStyle}
+            icon={showIcon ? <CheckIcon color={iconColor} /> : undefined}
+            showDismiss={showDismiss}
+            topInset={insets.top}
+            bottomInset={insets.bottom + 60}
+            onDismiss={() => setToastVisible(false)}
+          />
         </View>
       </SafeAreaView>
     </>
