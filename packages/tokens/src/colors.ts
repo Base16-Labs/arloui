@@ -155,11 +155,18 @@ export const lightColors = {
   danger: lightSemanticColors.feedbackError,
 } as const;
 
+/**
+ * Dark elevation ascends: each step up the `surface` → `surfaceRaised` →
+ * `surfaceStrong` ladder moves one shade *away* from the `#09090B` canvas
+ * (900 → 800), where light mode steps down from white (White → 100 → 200).
+ * So the two flat aliases resolve to the opposite semantic roles per mode —
+ * `surface` is the input shade here, not the elevated one.
+ */
 export const darkColors = {
   ...darkSemanticColors,
   bg: darkSemanticColors.surfaceBackground,
-  surface: darkSemanticColors.surfaceElevated,
-  surfaceRaised: darkSemanticColors.surfaceInput,
+  surface: darkSemanticColors.surfaceInput,
+  surfaceRaised: darkSemanticColors.surfaceElevated,
   surfaceStrong: Z[800],
   border: darkSemanticColors.borderSecondary,
   borderStrong: darkSemanticColors.borderPrimary,

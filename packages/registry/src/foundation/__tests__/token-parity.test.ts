@@ -9,12 +9,16 @@ import {
   radii as canonicalRadii,
   lightSemanticColors as canonicalLight,
   darkSemanticColors as canonicalDark,
+  lightColors as canonicalLightFlat,
+  darkColors as canonicalDarkFlat,
 } from '@arloui/tokens';
 import {
   spacing as registrySpacing,
   radii as registryRadii,
   lightSemanticColors as registryLight,
   darkSemanticColors as registryDark,
+  lightColors as registryLightFlat,
+  darkColors as registryDarkFlat,
 } from '../tokens';
 
 describe('registry foundation tokens ↔ @arloui/tokens parity', () => {
@@ -36,5 +40,19 @@ describe('registry foundation tokens ↔ @arloui/tokens parity', () => {
 
   it('light and dark expose the same semantic color keys', () => {
     expect(Object.keys(registryLight).sort()).toEqual(Object.keys(registryDark).sort());
+  });
+
+  /**
+   * The flat aliases (`surface`, `surfaceRaised`, `accent`, …) went uncovered
+   * for long enough that dark `surface` and `surfaceRaised` drifted into each
+   * other's roles between the two files. Components read these directly, so a
+   * mismatch renders differently in a consumer's app than in our own docs.
+   */
+  it('light flat color aliases match exactly', () => {
+    expect(registryLightFlat).toEqual(canonicalLightFlat);
+  });
+
+  it('dark flat color aliases match exactly', () => {
+    expect(registryDarkFlat).toEqual(canonicalDarkFlat);
   });
 });
