@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "description": "Arlo UI design tokens — color, type, spacing, radius, motion, shadows, focus rings, blurs, and glass materials. Single source of truth shared by the registry components, docs, and the arlo-ui design skill.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Base16-Labs/arloui.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://arloui.com",
+  "bugs": "https://github.com/Base16-Labs/arloui/issues",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {

@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "description": "Read-only Model Context Protocol server that exposes Arlo UI components, tokens, and docs to coding agents.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Base16-Labs/arloui.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://arloui.com",
+  "bugs": "https://github.com/Base16-Labs/arloui/issues",
   "type": "module",
   "bin": {
     "arloui-mcp": "./dist/index.js"

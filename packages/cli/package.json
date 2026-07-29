@@ -22,6 +22,7 @@
     "dist"
   ],
   "homepage": "https://arloui.com",
+  "bugs": "https://github.com/Base16-Labs/arloui/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Base16-Labs/arloui.git",
