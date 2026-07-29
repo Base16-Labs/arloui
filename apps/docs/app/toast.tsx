@@ -3,7 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import { Button, Toast, useTokens, type ToastColorStyle, type ToastPosition } from '@arloui/registry';
+import {
+  Button,
+  Toaster,
+  useToast,
+  useTokens,
+  type ToastColorStyle,
+  type ToastPosition,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -12,6 +19,17 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 
 const POSITIONS: ToastPosition[] = ['top', 'bottom'];
 const COLOR_STYLES: ToastColorStyle[] = ['contrast', 'same'];
+
+// Cycled so repeated presses build a legible deck rather than three identical rows.
+const MESSAGES: [string, ...string[]] = [
+  'Changes saved successfully',
+  'Draft autosaved',
+  'Profile updated',
+  'Invite sent to the team',
+  'Copied to clipboard',
+];
+
+const messageAt = (index: number) => MESSAGES[index % MESSAGES.length] ?? MESSAGES[0];
 
 function CheckIcon({ color }: { color: string }) {
   return (
@@ -34,8 +52,9 @@ export default function ToastCanvas() {
   const [colorStyle, setColorStyle] = useState<ToastColorStyle>('contrast');
   const [showIcon, setShowIcon] = useState(false);
   const [showDismiss, setShowDismiss] = useState(false);
-  const [toastVisible, setToastVisible] = useState(false);
   const previewOffset = useRef(new Animated.Value(0)).current;
+  const { toast } = useToast();
+  const pressCount = useRef(0);
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -85,7 +104,15 @@ export default function ToastCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
-            <Button onPress={() => setToastVisible(true)}>
+            <Button
+              onPress={() =>
+                toast(messageAt(pressCount.current++), {
+                  colorStyle,
+                  icon: showIcon ? <CheckIcon color={iconColor} /> : undefined,
+                  showDismiss,
+                })
+              }
+            >
               Show Toast
             </Button>
           </Animated.View>
@@ -161,16 +188,11 @@ export default function ToastCanvas() {
             </View>
           </VariantSheet>
 
-          <Toast
-            visible={toastVisible}
-            message="Changes saved successfully"
+          <Toaster
             position={position}
             colorStyle={colorStyle}
-            icon={showIcon ? <CheckIcon color={iconColor} /> : undefined}
-            showDismiss={showDismiss}
             topInset={insets.top}
             bottomInset={insets.bottom + 60}
-            onDismiss={() => setToastVisible(false)}
           />
         </View>
       </SafeAreaView>

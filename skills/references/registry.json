@@ -364,7 +364,7 @@
       "name": "toast",
       "kind": "primitive",
       "title": "Toast",
-      "description": "A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss.",
+      "description": "A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.",
       "registryDependencies": [
         "tokens",
         "theme-provider"

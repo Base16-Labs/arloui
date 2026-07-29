@@ -100,10 +100,17 @@ export {
 } from './components/date-picker';
 export {
   Toast,
+  Toaster,
+  useToast,
+  toast,
+  dismissToast,
   type ToastColorStyle,
+  type ToastOptions,
   type ToastPosition,
   type ToastProps,
+  type ToastRecord,
   type ToastRef,
+  type ToasterProps,
 } from './components/toast';
 export {
   TextArea,

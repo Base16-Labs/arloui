@@ -915,7 +915,7 @@ export const toastData = {
   slug: 'toast',
   category: 'Feedback',
   title: 'Toast',
-  lede: 'A transient notification surface that appears from the top or bottom edge. Two color styles — contrast and same — with optional icon, dismiss button, swipe-to-dismiss, and auto-dismiss.',
+  lede: 'A transient notification surface that appears from the top or bottom edge. Two color styles — contrast and same — with optional icon, dismiss button, swipe-to-dismiss, and auto-dismiss. Mount the Toaster to stack several into a deck.',
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toast',
   states: ['contrast', 'same', 'with-icon', 'with-dismiss', 'top', 'bottom'],

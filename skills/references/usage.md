@@ -50,7 +50,7 @@ npx arloui diff button
 - **gallery** — Gallery. A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.
 - **badge** — Badge. A non-interactive status label with dot, count, and icon variants across five semantic tones.
 - **chip** — Chip. An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.
-- **toast** — Toast. A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss.
+- **toast** — Toast. A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.
 - **date-picker** — Date Picker. Accessible calendar and wheel surfaces for date, time, date-time, and month-year selection.
 
 ### icon

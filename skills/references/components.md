@@ -138,7 +138,9 @@ Solid fills use rounded corners + pressed elevation; ghost & outline use pill ra
 
 Registry **`Toast`** — positioned at **`top`** or **`bottom`** edge, offset by safe-area insets passed via **`topInset`** / **`bottomInset`**. Color styles: **`contrast`** (inverted fill) or **`same`** (elevated surface). Optional **`icon`** slot, optional **`showDismiss`** close button. Swipe-to-dismiss built in (swipe up for top, down for bottom). Spring entrance (`motion.spring.snappy`), easeOut exit. Border radius is **`radii.xl`** (opinionated, not configurable). Shadow: `shadows.md` in dark, `shadows.lg` in light. Imperative **`ToastRef`** exposes `dismiss()`.
 
-- Maximum one active toast at a time; queue additional messages.
+Registry **`Toaster`** — the stacking host. Mount one near the app root inside `ThemeProvider`, then call **`useToast().toast(message, options)`** from anywhere. Newest toast sits in front; older ones peek out behind it, offset `14px` and scaled down `0.05` per depth. **`visibleToasts`** (default `3`) caps how many show at once; the rest wait, and hold their auto-dismiss timer until they surface. **`dismiss(id)`** and **`dismissAll()`** play the exit animation. Reusing an **`id`** replaces a live toast in place instead of stacking a duplicate.
+
+- Use `Toaster` when more than one message can arrive at once; the controlled `Toast` is for a single, app-owned notification.
 - Auto-dismiss after `3.5s` by default; set **`duration`** to `0` to persist until dismissed.
 - Keep copy under two lines. If more context is needed, use a sheet instead.
 - Avoid using toasts for actions the user just took and can clearly see — they create noise.

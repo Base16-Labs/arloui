@@ -2808,6 +2808,11 @@ function ToastDocPage() {
               Use persistent toasts (duration 0) for errors that need acknowledgement.
             </li>
             <li>
+              Mount a <code className="font-mono text-[13px]">Toaster</code> when several messages
+              can arrive at once — newest sits in front, older ones peek out behind it, three at a
+              time.
+            </li>
+            <li>
               If the message needs more than two lines or an action beyond dismiss, use a sheet instead.
             </li>
           </ul>
@@ -2816,11 +2821,30 @@ function ToastDocPage() {
         <Section id="code" title="Code" sub="React Native, copy-paste.">
           <CodeBlock language="tsx">{`npx arloui add toast
 
-import { useState } from "react";
-import { Toast } from "@/components/ui/toast";
+{/* Mount one Toaster near the root, inside ThemeProvider */}
+import { Toaster } from "@/components/ui/toast";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const insets = useSafeAreaInsets();
+
+<Toaster position="bottom" topInset={insets.top} bottomInset={insets.bottom} />
+
+{/* Then queue toasts from anywhere — they stack into a deck */}
+import { useToast } from "@/components/ui/toast";
+
+const { toast, dismiss, dismissAll } = useToast();
+
+toast("Changes saved successfully");
+toast("Connection lost", { colorStyle: "same", duration: 0, showDismiss: true });
+
+{/* Reuse an id to replace a live toast in place */}
+const id = toast("Uploading…", { duration: 0 });
+toast("Uploaded", { id });
+
+{/* Or drive a single toast yourself, without the Toaster */}
+import { useState } from "react";
+import { Toast } from "@/components/ui/toast";
+
 const [visible, setVisible] = useState(false);
 
 <Toast
