@@ -1,6 +1,6 @@
 import { OutlineArrowUp, OutlineMicrophone } from '@arloui/icons';
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Keyboard, KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -40,7 +40,7 @@ export default function TextAreaCanvas() {
   const [counter, setCounter] = useState<CounterMode>('on');
   const [value, setValue] = useState('This is a calm place to write longer content.');
   const [keyboardOpen, setKeyboardOpen] = useState(false);
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

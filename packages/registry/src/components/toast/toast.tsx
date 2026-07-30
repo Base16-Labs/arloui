@@ -1,13 +1,4 @@
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -103,13 +94,13 @@ export const ToastItem = forwardRef<ToastItemRef, ToastItemProps>(function Toast
 
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  const translateY = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const [translateY] = useState(() => new Animated.Value(0));
+  const [opacity] = useState(() => new Animated.Value(0));
   // Deck placement lives on its own values so the gesture and entrance
   // animations above can keep owning `translateY` / `opacity` untouched.
-  const stackY = useRef(new Animated.Value(0)).current;
-  const stackScale = useRef(new Animated.Value(1)).current;
-  const stackOpacity = useRef(new Animated.Value(1)).current;
+  const [stackY] = useState(() => new Animated.Value(0));
+  const [stackScale] = useState(() => new Animated.Value(1));
+  const [stackOpacity] = useState(() => new Animated.Value(1));
   const closing = useRef(false);
   const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -255,6 +246,9 @@ export const ToastItem = forwardRef<ToastItemRef, ToastItemProps>(function Toast
 
   const panResponder = useMemo(
     () =>
+      // Refs here are read inside gesture handlers, which run on touch rather than
+      // during render. See eslint-config/index.js.
+      // eslint-disable-next-line react-hooks/refs
       PanResponder.create({
         onMoveShouldSetPanResponder: (_, g) => {
           if (!interactive) return false;

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -45,7 +45,7 @@ export default function InputCanvas() {
   const [appearance, setAppearance] = useState<InputAppearance>('filled');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [value, setValue] = useState('Allan Thomas');
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

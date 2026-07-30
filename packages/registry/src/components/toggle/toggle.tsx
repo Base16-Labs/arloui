@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -63,7 +63,7 @@ export const Toggle = forwardRef<View, ToggleProps>(function Toggle(
   const dims = useMemo(() => toggleDims(t)[size], [t, size]);
   const colors = useMemo(() => toggleColors(t, disabled), [t, disabled]);
 
-  const position = useRef(new Animated.Value(value ? 1 : 0)).current;
+  const [position] = useState(() => new Animated.Value(value ? 1 : 0));
 
   const [x1, y1, x2, y2] = t.motion.easing.easeOut;
   const easing = useMemo(() => Easing.bezier(x1, y1, x2, y2), [x1, y1, x2, y2]);

@@ -92,7 +92,7 @@ type GlyphProps = { px: number; color: string; still: boolean };
 
 /** Drives a looping 0→1 value, unless motion is being held still. */
 function useLoop(duration: number, still: boolean, easing = Easing.linear) {
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     progress.stopAnimation();
@@ -197,7 +197,7 @@ function ArcSpinner({ px, color, track, still }: GlyphProps & { track: string })
  * looped sequence purely native-driven, since `Animated.delay` is not.
  */
 function useStaggered(count: number, cycle: number, stagger: number, still: boolean) {
-  const values = useRef(Array.from({ length: count }, () => new Animated.Value(0))).current;
+  const [values] = useState(() => Array.from({ length: count }, () => new Animated.Value(0)));
 
   useEffect(() => {
     for (const value of values) {
@@ -298,9 +298,7 @@ function BarsSpinner({ px, color, still }: GlyphProps) {
 
 /** Rings pushing outward from the centre and fading, radar-style. */
 function PulseSpinner({ px, color, still }: GlyphProps) {
-  const rings = useRef(
-    Array.from({ length: PULSE_RINGS }, () => new Animated.Value(0)),
-  ).current;
+  const [rings] = useState(() => Array.from({ length: PULSE_RINGS }, () => new Animated.Value(0)));
 
   useEffect(() => {
     for (const ring of rings) {

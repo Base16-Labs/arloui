@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Skeleton, useTokens, type SkeletonAnimation } from '@arloui/registry';
@@ -22,7 +22,7 @@ export default function SkeletonCanvas() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pattern, setPattern] = useState<SkeletonPattern>('feed');
   const [animation, setAnimation] = useState<SkeletonAnimation>('shimmer');
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

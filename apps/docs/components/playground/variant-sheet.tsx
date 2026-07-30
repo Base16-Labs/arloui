@@ -42,7 +42,7 @@ export function VariantSheet({
   const sheetHeight = Math.max(420, Math.round(windowHeight * 0.57));
   const bottomBleed = Math.max(insets.bottom, 24) + 32;
   const closedY = sheetHeight + bottomBleed;
-  const translateY = useRef(new Animated.Value(closedY)).current;
+  const [translateY] = useState(() => new Animated.Value(closedY));
   const dragStart = useRef(0);
   const closing = useRef(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

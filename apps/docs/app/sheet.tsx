@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -39,7 +39,7 @@ export default function SheetCanvas() {
   const [height, setHeight] = useState<SheetHeight>('auto');
   const [padding, setPadding] = useState<SheetPadding>('md');
   const [state, setState] = useState<PreviewState>('open');
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

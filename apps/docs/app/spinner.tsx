@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -27,7 +27,7 @@ export default function SpinnerCanvas() {
   const [appearance, setAppearance] = useState<SpinnerAppearance>('spokes');
   const [size, setSize] = useState<SpinnerSize>('lg');
   const [tone, setTone] = useState<SpinnerTone>('neutral');
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

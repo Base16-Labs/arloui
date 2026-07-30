@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -127,7 +127,7 @@ export function DatePicker({
   const t = useTokens();
   const today = useMemo(() => startOfDay(new Date()), []);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const chevron = useRef(new Animated.Value(0)).current;
+  const [chevron] = useState(() => new Animated.Value(0));
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const selected = value === undefined ? internalValue : value;
   const initialMonth = defaultDisplayedMonth ?? selected ?? today;

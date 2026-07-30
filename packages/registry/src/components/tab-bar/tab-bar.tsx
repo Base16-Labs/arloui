@@ -1,14 +1,4 @@
-import {
-  Children,
-  cloneElement,
-  isValidElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useRef, useState, Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -122,8 +112,8 @@ function TabBarRoot({
     0,
     items.findIndex((item) => item.props.value === value),
   );
-  const selection = useRef(new Animated.Value(activeIndex)).current;
-  const visibility = useRef(new Animated.Value(hidden ? 1 : 0)).current;
+  const [selection] = useState(() => new Animated.Value(activeIndex));
+  const [visibility] = useState(() => new Animated.Value(hidden ? 1 : 0));
   const floating = width === 'floating';
   const innerPadding = floating ? 4 : 0;
   const itemWidth = items.length > 0 ? Math.max(0, barWidth - innerPadding * 2) / items.length : 0;

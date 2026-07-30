@@ -6,7 +6,7 @@
  * motion" is on) plus an optional haptic tap. Keeping it here means the timing,
  * easing, and accessibility behaviour live in exactly one place.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -52,7 +52,7 @@ type PressFeedbackOptions = {
  */
 export function usePressFeedback({ haptic = 'light', onPressIn, onPressOut }: PressFeedbackOptions) {
   const { motion } = useTokens();
-  const press = useRef(new Animated.Value(0)).current;
+  const [press] = useState(() => new Animated.Value(0));
   const [pressed, setPressed] = useState(false);
   const reduceMotion = useReducedMotion();
 

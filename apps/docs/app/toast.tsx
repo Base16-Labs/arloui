@@ -52,7 +52,7 @@ export default function ToastCanvas() {
   const [colorStyle, setColorStyle] = useState<ToastColorStyle>('contrast');
   const [showIcon, setShowIcon] = useState(false);
   const [showDismiss, setShowDismiss] = useState(false);
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
   const { toast } = useToast();
   const pressCount = useRef(0);
 

@@ -16,7 +16,7 @@
  * Every visual decision lives in `buttonVariants` below — edit colors, sizes, and
  * spacing there in one place.
  */
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -138,7 +138,7 @@ function ButtonSpinner({
   size: number;
   reduceMotion?: boolean;
 }) {
-  const rotation = useRef(new Animated.Value(0)).current;
+  const [rotation] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const animation = Animated.loop(

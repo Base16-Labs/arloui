@@ -1,13 +1,4 @@
-import {
-  Children,
-  cloneElement,
-  isValidElement,
-  useEffect,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useEffect, useState, Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -74,7 +65,7 @@ function TabsRoot({
     0,
     items.findIndex((item) => item.props.value === value),
   );
-  const selection = useRef(new Animated.Value(activeIndex)).current;
+  const [selection] = useState(() => new Animated.Value(activeIndex));
 
   useEffect(() => {
     let active = true;
@@ -209,7 +200,7 @@ function TabsItemView({
   onPress,
 }: InternalTabsItemProps) {
   const t = useTokens();
-  const selection = useRef(new Animated.Value(active ? 1 : 0)).current;
+  const [selection] = useState(() => new Animated.Value(active ? 1 : 0));
   const selectedColor = tone === 'accent' ? t.colors.accent : t.colors.textPrimary;
 
   useEffect(() => {

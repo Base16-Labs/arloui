@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -46,7 +46,7 @@ export default function DatePickerCanvas() {
   const [showOutsideDays, setShowOutsideDays] = useState(true);
   const [monthYearDropdown, setMonthYearDropdown] = useState(false);
   const [state, setState] = useState<PreviewState>('default');
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

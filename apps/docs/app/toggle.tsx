@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Toggle, useTokens, type ToggleSize } from '@arloui/registry';
@@ -22,7 +22,7 @@ export default function ToggleCanvas() {
   const [size, setSize] = useState<ToggleSize>('md');
   const [state, setState] = useState<PreviewState>('default');
   const [checked, setChecked] = useState(false);
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -35,7 +35,7 @@ export default function CarouselCanvas() {
   const [arrows, setArrows] = useState(false);
   const [indicatorPosition, setIndicatorPosition] = useState<CarouselIndicatorPosition>('below');
   const [gap, setGap] = useState<0 | 1 | 2 | 3 | 4>(3);
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {

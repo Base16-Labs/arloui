@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -50,7 +50,7 @@ export const Radio = forwardRef<View, RadioProps>(function Radio(
   const t = useTokens();
   const dims = useMemo(() => radioDims()[size], [size]);
 
-  const fillAnim = useRef(new Animated.Value(selected ? 1 : 0)).current;
+  const [fillAnim] = useState(() => new Animated.Value(selected ? 1 : 0));
 
   const [x1, y1, x2, y2] = t.motion.easing.easeOut;
   const easing = useMemo(() => Easing.bezier(x1, y1, x2, y2), [x1, y1, x2, y2]);

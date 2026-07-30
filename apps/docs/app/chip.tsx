@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
@@ -82,7 +82,7 @@ export default function ChipCanvas() {
   const [iconMode, setIconMode] = useState<IconMode>('none');
   const [selectedFilters, setSelectedFilters] = useState<Set<string>>(new Set(['Active']));
   const [tokens, setTokens] = useState(INPUT_TOKENS);
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   const iconSize = size === 'sm' ? 14 : 16;
 
