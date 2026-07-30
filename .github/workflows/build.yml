@@ -57,3 +57,52 @@ jobs:
             git --no-pager diff -- skills
             exit 1
           fi
+
+  # Runs the real deploy build on Linux, because the pre-push hook only ever
+  # builds on a contributor's machine. Two Cloudflare failures got through that
+  # way: a lockfile missing linux binaries installed fine on macOS, then died on
+  # the runner — once at `npm ci`, once at "Cannot find native binding" when
+  # @ast-grep/napi loaded inside opennextjs-cloudflare.
+  #
+  # Deliberately mirrors the Cloudflare build environment rather than this
+  # repo's pinned versions: node 24 and npm 11.16.0 are what the runner
+  # reports, and the npm version is what decided whether `npm ci` accepted the
+  # lockfile at all.
+  cloudflare-build:
+    name: cloudflare build (linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - run: npm install --global npm@11.16.0
+
+      - name: Lockfile platform completeness
+        run: node scripts/lockfile-platform-guard.mjs
+
+      # `npm clean-install` is what Cloudflare runs; it is the step that failed first.
+      - run: npm clean-install --progress=false
+
+      # The deploy path: `opennextjs-cloudflare build`, not `next build`. This is
+      # where native bindings are actually loaded and executed.
+      - name: Build for Cloudflare Workers
+        run: npm run build:cloudflare -w @arloui/www
+
+      # public/md is committed rather than generated at deploy time, so assert it
+      # actually reaches the Worker's static assets.
+      - name: Verify docs markdown ships as static assets
+        run: |
+          test -f apps/www/.open-next/assets/md/index.json
+          count=$(find apps/www/.open-next/assets/md -name '*.md' | wc -l)
+          echo "markdown pages in Worker assets: $count"
+          if [ "$count" -lt 1 ]; then
+            echo "::error::No docs markdown in .open-next/assets/md — the MCP server reads these over HTTP."
+            exit 1
+          fi
+
+      - name: Verify the Worker bundle exists
+        run: test -f apps/www/.open-next/worker.js
