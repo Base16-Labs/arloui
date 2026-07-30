@@ -3,6 +3,11 @@
 # + skill drift guards. Turbo-cached, so unchanged parts are instant.
 set -e
 
+# Cheap and first: a lockfile missing linux binaries installs fine here and
+# only fails on the deploy runner.
+echo "▶ lockfile platform completeness"
+node scripts/lockfile-platform-guard.mjs
+
 echo "▶ build (packages + apps, excluding www)"
 npm run build -- --filter='!@arloui/www'
 
