@@ -105,25 +105,51 @@ export async function writeComponent({
   // this entry alone still rewrites intra-entry imports correctly.
   const map = sourceTargetMap ?? buildSourceTargetMap(cwd, config, [entry]);
 
-  for (const file of entry.files) {
-    const aliasRoot = aliasFor(config, file.type);
-    const target = resolveWithin(cwd, aliasRoot, file.target);
+  const targets = entry.files.map((file) => ({
+    file,
+    target: resolveWithin(cwd, aliasFor(config, file.type), file.target),
+  }));
+  const present = await Promise.all(targets.map(({ target }) => fileExists(target)));
+  const existing = targets.filter((_, i) => present[i]);
 
-    if ((await fileExists(target)) && !overwrite) {
-      if (yes) {
-        p.log.warn(`skip ${kleur.dim(rel(cwd, target))} (exists; pass --overwrite to replace)`);
-        continue;
-      }
-      const replace = await p.confirm({
-        message: `${rel(cwd, target)} already exists. Overwrite?`,
-        initialValue: false,
-      });
-      if (p.isCancel(replace) || !replace) {
-        p.log.warn(`skip ${kleur.dim(rel(cwd, target))}`);
-        continue;
-      }
+  // Decide once for the whole component rather than file by file. Prompting per
+  // file lets you answer "no" to an entry point and "yes" to everything it pulls
+  // in, which leaves the component half from the registry and half your own —
+  // the files land but nothing re-exports them.
+  if (existing.length > 0 && !overwrite) {
+    const label = kleur.cyan(entry.name);
+
+    // A partial install is the case worth calling out: it usually means the
+    // component already lives here under different filenames, so the missing
+    // files are additions rather than an update.
+    if (existing.length < targets.length) {
+      p.log.warn(
+        [
+          `${label} is partially installed — ${existing.length} of ${targets.length} files already exist:`,
+          ...existing.map(({ target }) => `    ${kleur.dim(rel(cwd, target))}`),
+          `  Writing only the missing files would mix registry code with yours.`,
+        ].join('\n'),
+      );
     }
 
+    if (yes) {
+      p.log.warn(
+        `skip ${label} — already installed (pass --overwrite to replace all ${targets.length} file${targets.length === 1 ? '' : 's'})`,
+      );
+      return;
+    }
+
+    const replace = await p.confirm({
+      message: `${entry.name} is already installed. Overwrite all ${targets.length} file${targets.length === 1 ? '' : 's'}?`,
+      initialValue: false,
+    });
+    if (p.isCancel(replace) || !replace) {
+      p.log.warn(`skip ${label}`);
+      return;
+    }
+  }
+
+  for (const { file, target } of targets) {
     await writeFileEnsuringDir(target, rewriteFileImports(file, cwd, config, map));
     p.log.success(`wrote ${kleur.cyan(rel(cwd, target))}`);
   }

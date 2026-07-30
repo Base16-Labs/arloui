@@ -5,6 +5,8 @@ import kleur from 'kleur';
 import { DEFAULT_CONFIG, CONFIG_FILE, saveConfig, type ArloConfig } from '../config';
 import { RegistryClient } from '../registry-client';
 import { buildSourceTargetMap } from '../rewrite-imports';
+import { FONTS_MODULE, FONT_PACKAGES, FONT_PLUGIN_SNIPPET } from '../fonts';
+import { fileExists, resolveWithin, writeFileEnsuringDir } from '../fs-utils';
 import { writeComponent } from './add';
 
 type Options = {
@@ -56,14 +58,29 @@ export async function init({ cwd, yes }: Options): Promise<void> {
     throw err;
   }
 
+  // The tokens name Manrope, so a project that never registers it renders every
+  // component in the platform default. Scaffold the loader rather than only
+  // mentioning it — an unwritten setup step is the one people skip.
+  const fontsTarget = resolveWithin(cwd, config.aliases.lib, 'fonts.ts');
+  if (await fileExists(fontsTarget)) {
+    p.log.warn(`skip ${kleur.dim(config.aliases.lib + '/fonts.ts')} (exists)`);
+  } else {
+    await writeFileEnsuringDir(fontsTarget, FONTS_MODULE);
+    p.log.success(`wrote ${kleur.cyan(config.aliases.lib + '/fonts.ts')}`);
+  }
+
   p.outro(
     [
       kleur.green('Setup complete.'),
       '',
       'Next steps:',
-      `  ${kleur.dim('1.')} Wrap your app with ${kleur.cyan('<ThemeProvider>')} from ${kleur.cyan(config.aliases.theme + '/theme-provider')}`,
-      `  ${kleur.dim('2.')} Add a component:  ${kleur.cyan('npx arloui add button')}`,
-      `  ${kleur.dim('3.')} Browse all:      ${kleur.cyan('npx arloui list')}`,
+      `  ${kleur.dim('1.')} Install fonts:     ${kleur.cyan(`npx expo install ${FONT_PACKAGES.join(' ')}`)}`,
+      `  ${kleur.dim('2.')} Load them:         call ${kleur.cyan('useArloFonts()')} from ${kleur.cyan(config.aliases.lib + '/fonts')} and hold render until it resolves,`,
+      `     ${kleur.dim('or')} add this to ${kleur.cyan('app.json')} under ${kleur.cyan('expo.plugins')} and skip the hook:`,
+      kleur.dim(FONT_PLUGIN_SNIPPET.split('\n').map((l) => '       ' + l).join('\n')),
+      `  ${kleur.dim('3.')} Wrap your app with ${kleur.cyan('<ThemeProvider>')} from ${kleur.cyan(config.aliases.theme + '/theme-provider')}`,
+      `  ${kleur.dim('4.')} Add a component:   ${kleur.cyan('npx arloui add button')}`,
+      `  ${kleur.dim('5.')} Browse all:        ${kleur.cyan('npx arloui list')}`,
     ].join('\n'),
   );
 }

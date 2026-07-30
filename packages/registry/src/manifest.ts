@@ -328,7 +328,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Chip',
     description:
       'An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.',
-    dependencies: ['react-native-svg', '@arloui/utils', 'expo-haptics'],
+    dependencies: ['react-native-svg', 'expo-haptics'],
     registryDependencies: ['tokens', 'theme-provider', 'button'],
     files: [
       { source: 'components/chip/chip.tsx', target: 'chip.tsx' },

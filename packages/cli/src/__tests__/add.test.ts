@@ -100,6 +100,47 @@ describe('writeComponent', () => {
     expect(await readFile(target, 'utf8')).toBe('OLD');
   });
 
+  it('decides once for the whole component instead of file by file', async () => {
+    // Button ships several files behind one entry point. Answering per file lets
+    // you decline the entry point but accept everything it re-exports, leaving a
+    // half-registry component — this asserts a single decision covers all files.
+    const multi = makeEntry({
+      files: [
+        { source: 'button.tsx', target: 'button.tsx', content: 'NEW button' },
+        { source: 'ghost.tsx', target: 'ghost-button.tsx', content: 'NEW ghost' },
+        { source: 'index.ts', target: 'button/index.ts', content: 'NEW index' },
+      ],
+    });
+    await mkdir(join(dir, 'components/ui/button'), { recursive: true });
+    await writeFile(join(dir, 'components/ui/button/index.ts'), 'MINE');
+
+    vi.mocked(p.confirm).mockResolvedValue(false);
+    await writeComponent({ cwd: dir, config, entry: multi });
+
+    expect(p.confirm).toHaveBeenCalledOnce();
+    // Declining leaves the existing entry point AND writes none of its siblings.
+    expect(await readFile(join(dir, 'components/ui/button/index.ts'), 'utf8')).toBe('MINE');
+    await expect(readFile(join(dir, 'components/ui/button.tsx'), 'utf8')).rejects.toThrow();
+    await expect(readFile(join(dir, 'components/ui/ghost-button.tsx'), 'utf8')).rejects.toThrow();
+  });
+
+  it('skips a partially installed component under --yes rather than mixing files', async () => {
+    const multi = makeEntry({
+      files: [
+        { source: 'button.tsx', target: 'button.tsx', content: 'NEW button' },
+        { source: 'index.ts', target: 'button/index.ts', content: 'NEW index' },
+      ],
+    });
+    await mkdir(join(dir, 'components/ui/button'), { recursive: true });
+    await writeFile(join(dir, 'components/ui/button/index.ts'), 'MINE');
+
+    await writeComponent({ cwd: dir, config, entry: multi, yes: true });
+
+    expect(p.confirm).not.toHaveBeenCalled();
+    expect(await readFile(join(dir, 'components/ui/button/index.ts'), 'utf8')).toBe('MINE');
+    await expect(readFile(join(dir, 'components/ui/button.tsx'), 'utf8')).rejects.toThrow();
+  });
+
   it('refuses a path-traversal target from the registry', async () => {
     const evil = makeEntry({
       files: [{ source: 'x', target: '../../../evil.tsx', content: 'pwned' }],
