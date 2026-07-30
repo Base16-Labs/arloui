@@ -484,7 +484,8 @@ function WheelColumn({
                 minimumFontScale={0.72}
                 style={{
                   color: distance === 0 ? t.colors.textPrimary : t.colors.textTertiary,
-                  fontFamily: distance === 0 ? 'Manrope SemiBold' : 'Manrope Medium',
+                  fontFamily: t.fontFamilies.sans,
+                  fontWeight: distance === 0 ? t.fontWeights.semibold : t.fontWeights.medium,
                   fontSize: distance === 0 ? 17 : 15,
                   lineHeight: 22,
                   opacity: distance === 0 ? 1 : distance === 1 ? 0.62 : 0.3,

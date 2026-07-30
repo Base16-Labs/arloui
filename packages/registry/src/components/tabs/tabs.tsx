@@ -277,7 +277,8 @@ function TabsItemView({
                   appearance === 'plain'
                   ? t.colors.textTertiary
                   : t.colors.textSecondary,
-          fontFamily: active ? 'Manrope SemiBold' : 'Manrope Medium',
+          fontFamily: t.fontFamilies.sans,
+          fontWeight: active ? t.fontWeights.semibold : t.fontWeights.medium,
           fontSize: 14,
           lineHeight: 20,
         }}

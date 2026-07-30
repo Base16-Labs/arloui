@@ -170,7 +170,7 @@ export const Badge = forwardRef<View, BadgeProps>(function Badge(
         <Text
           numberOfLines={1}
           style={{
-            fontFamily: 'Manrope',
+            fontFamily: t.fontFamilies.sans,
             fontSize: dims.type.fontSize,
             lineHeight: dims.type.lineHeight,
             fontWeight: dims.type.fontWeight as '400',

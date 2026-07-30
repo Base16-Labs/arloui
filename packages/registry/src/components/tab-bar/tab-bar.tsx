@@ -318,7 +318,8 @@ function TabBarItemView({
             <Text
               style={{
                 color: '#FFFFFF',
-                fontFamily: 'Manrope SemiBold',
+                fontFamily: t.fontFamilies.sans,
+                fontWeight: t.fontWeights.semibold,
                 fontSize: 9,
                 lineHeight: 12,
               }}
@@ -334,7 +335,8 @@ function TabBarItemView({
           style={{
             maxWidth: '100%',
             color,
-            fontFamily: active ? 'Manrope SemiBold' : 'Manrope Medium',
+            fontFamily: t.fontFamilies.sans,
+            fontWeight: active ? t.fontWeights.semibold : t.fontWeights.medium,
             fontSize: 10,
             lineHeight: 13,
           }}
