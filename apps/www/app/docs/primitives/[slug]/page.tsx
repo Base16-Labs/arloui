@@ -342,7 +342,7 @@ function MaterialsPreview() {
           <div className="absolute top-8 right-8 size-24 rounded-lg bg-[#FB2C36]" />
           <div className="absolute bottom-7 left-10 h-16 w-36 rounded-lg bg-[#00C950]" />
           <div className="relative z-10 flex h-full min-h-54 items-end">
-            <div className="w-full rounded-lg border border-white/60 bg-white/70 p-4 text-[#101828] shadow-lg backdrop-blur-[24px] dark:border-white/15 dark:bg-[#101828]/75 dark:text-white">
+            <div className="w-full rounded-lg border border-white/60 bg-white/70 p-4 text-[#101828] shadow-lg backdrop-blur-[24px] dark:border-white/15 dark:bg-[#18181B]/75 dark:text-white">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="text-[12px] font-medium uppercase tracking-[0.1em] opacity-60">

@@ -7,9 +7,17 @@
  */
 import { rgbaFromHex } from './colorUtils';
 import { base, error, grey, paletteMain, primary, success, warning } from './paletteMain';
-import { alphaRamp } from './paletteSecondary';
+import { alphaRamp, paletteSecondary } from './paletteSecondary';
 
 const G = grey;
+/**
+ * Dark mode runs on Zinc, not Grey. Grey's dark shades are blue-tinted
+ * (900 `#101828`, 800 `#1E2939`), which reads as navy once it covers whole
+ * surfaces. Zinc is hue-neutral and shares Grey's 950 (`#09090B`), so the
+ * canvas is unchanged — only the raised surfaces, borders, and muted text
+ * lose the blue cast.
+ */
+const Z = paletteSecondary.zinc;
 const P = primary;
 const S = success;
 const W = warning;
@@ -73,43 +81,43 @@ export const lightSemanticColors = {
   pullIndicator: G[300],
 } as const;
 
-/** Dark — same token names; values derived from Main palette (no separate Figma table yet). */
+/** Dark — same token names; neutrals run on Zinc (see `Z` above), accents on the Main palette. */
 export const darkSemanticColors = {
-  surfaceBackground: G[950],
-  surfaceInput: G[900],
-  surfaceInputActive: G[800],
-  surfaceElevated: G[800],
+  surfaceBackground: Z[950],
+  surfaceInput: Z[900],
+  surfaceInputActive: Z[800],
+  surfaceElevated: Z[800],
   surfaceOverlay: alphaRamp.black[70],
-  surfaceInverse: G[50],
+  surfaceInverse: Z[50],
 
-  textPrimary: G[50],
-  textSecondary: G[400],
-  textTertiary: G[500],
-  textDisabled: rgbaFromHex(G[50], 0.38),
-  textInverse: G[900],
-  textPlaceholder: G[600],
+  textPrimary: Z[50],
+  textSecondary: Z[400],
+  textTertiary: Z[500],
+  textDisabled: rgbaFromHex(Z[50], 0.38),
+  textInverse: Z[900],
+  textPlaceholder: Z[600],
   textInteractivePrimary: base.white,
-  textInteractiveSecondary: G[200],
+  textInteractiveSecondary: Z[200],
   textInteractiveTertiary: P[400],
   textInteractiveError: E[400],
 
   interactivePrimary: P[500],
   interactivePrimaryPressed: P[600],
-  interactiveSecondary: G[800],
-  interactiveSecondaryPressed: G[700],
+  interactiveSecondary: Z[800],
+  interactiveSecondaryPressed: Z[700],
   interactiveTertiary: 'transparent',
-  interactiveTertiaryPressed: rgbaFromHex(G[800], 0.55),
-  interactiveDisabled: G[800],
+  interactiveTertiaryPressed: rgbaFromHex(Z[800], 0.55),
+  interactiveDisabled: Z[800],
   interactiveError: E[500],
 
   focusRingMain: P[400],
   focusRingError: E[400],
 
-  touchFeedbackMain: rgbaFromHex(G[50], 0.08),
-  touchFeedbackLight: rgbaFromHex(G[800], 0.5),
+  touchFeedbackMain: rgbaFromHex(Z[50], 0.08),
+  touchFeedbackLight: rgbaFromHex(Z[800], 0.5),
 
-  borderPrimary: G[700],
-  borderSecondary: G[800],
+  borderPrimary: Z[700],
+  borderSecondary: Z[800],
   borderFocus: P[400],
   borderError: E[500],
 
@@ -122,13 +130,13 @@ export const darkSemanticColors = {
   feedbackInfo: P[400],
   feedbackInfoBg: P[950],
 
-  navBackground: G[900],
-  navBorder: G[800],
+  navBackground: Z[900],
+  navBorder: Z[800],
   navActive: P[400],
-  navInactive: G[500],
+  navInactive: Z[500],
   navIndicator: P[400],
 
-  pullIndicator: G[600],
+  pullIndicator: Z[600],
 } as const;
 
 /** Prefer semantic names (`surfaceBackground`, `interactivePrimary`, …). Legacy keys kept for registry. */
@@ -147,12 +155,19 @@ export const lightColors = {
   danger: lightSemanticColors.feedbackError,
 } as const;
 
+/**
+ * Dark elevation ascends: each step up the `surface` → `surfaceRaised` →
+ * `surfaceStrong` ladder moves one shade *away* from the `#09090B` canvas
+ * (900 → 800), where light mode steps down from white (White → 100 → 200).
+ * So the two flat aliases resolve to the opposite semantic roles per mode —
+ * `surface` is the input shade here, not the elevated one.
+ */
 export const darkColors = {
   ...darkSemanticColors,
   bg: darkSemanticColors.surfaceBackground,
-  surface: darkSemanticColors.surfaceElevated,
-  surfaceRaised: darkSemanticColors.surfaceInput,
-  surfaceStrong: G[800],
+  surface: darkSemanticColors.surfaceInput,
+  surfaceRaised: darkSemanticColors.surfaceElevated,
+  surfaceStrong: Z[800],
   border: darkSemanticColors.borderSecondary,
   borderStrong: darkSemanticColors.borderPrimary,
   accent: darkSemanticColors.interactivePrimary,

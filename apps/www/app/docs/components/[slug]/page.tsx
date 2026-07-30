@@ -950,7 +950,7 @@ function SheetDocPage() {
             <div className="mx-auto max-w-[360px]">
               <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-canvas">
                 <div className="px-5 pt-6">
-                  <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                   <div className="mt-4 grid grid-cols-2 gap-2.5">
                     {['#155DFC', '#00C950', '#F54900', '#FB2C36'].map((color) => (
                       <div
@@ -963,7 +963,7 @@ function SheetDocPage() {
                 </div>
 
                 <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#111827]/85">
-                  <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">
                       header
@@ -2100,14 +2100,14 @@ function CarouselDocPage() {
                   <span>peek</span>
                 </div>
                 <div className="flex gap-2">
-                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
-                  <div className="h-24 flex-1 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#3F3F46]/40" />
+                  <div className="h-24 flex-1 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#3F3F46]/40" />
                 </div>
                 <div className="mt-3 flex justify-center gap-1.5">
                   <div className="h-[6px] w-5 rounded-full bg-[#155DFC]" />
-                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                 </div>
                 <div className="mt-1 text-center font-mono text-[10px] uppercase tracking-wide text-ink-3">dots</div>
               </div>
@@ -2283,10 +2283,10 @@ function GalleryDocPage() {
                   <span>col 2</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                 </div>
                 <div className="mt-2 flex items-center justify-between px-1">
                   <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">radius</span>
