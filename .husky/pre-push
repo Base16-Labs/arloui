@@ -21,6 +21,16 @@ if ! git diff --quiet -- apps/www/public/r; then
   exit 1
 fi
 
+# public/md is committed and served as static assets, like public/r — the
+# Cloudflare build does not regenerate it (tsx is a devDependency and the deploy
+# runner has no reason to have it). This guard is what keeps it current.
+echo "▶ docs markdown drift"
+npm run docs:md -w @arloui/www
+if ! git diff --quiet -- apps/www/public/md; then
+  echo "✖ apps/www/public/md drifted — run 'npm run docs:md -w @arloui/www' and commit it."
+  exit 1
+fi
+
 echo "▶ skill drift"
 npm run skill:sync
 if ! git diff --quiet -- skills; then
