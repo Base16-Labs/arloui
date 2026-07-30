@@ -170,7 +170,7 @@ function TextAreaStateSample({
     <div className={cn("w-full max-w-[360px] rounded-xl p-5", darkMode && "bg-[#09090B]")}>
       <div className={cn("space-y-2", isDisabled && "opacity-45")}>
         {!isPlain ? (
-          <div className={cn("text-[12px] font-medium leading-4", isError ? "text-[#FB2C36]" : darkMode ? "text-[#9AA4B2]" : "text-[#65758B]")}>
+          <div className={cn("text-[12px] font-medium leading-4", isError ? "text-[#FB2C36]" : darkMode ? "text-[#A1A1AA]" : "text-[#65758B]")}>
             Message
           </div>
         ) : null}
@@ -182,7 +182,7 @@ function TextAreaStateSample({
                 ? "min-h-[118px]"
                 : "min-h-[86px]"
               : "min-h-24 rounded-[16px] px-3 py-3",
-            !isPlain && (darkMode ? "bg-[#101828]" : "bg-[#F3F4F6]"),
+            !isPlain && (darkMode ? "bg-[#18181B]" : "bg-[#F3F4F6]"),
             !isPlain && isError && "ring-1 ring-[#FB2C36]",
           )}
         >
@@ -190,7 +190,13 @@ function TextAreaStateSample({
             className={cn(
               "min-w-0 flex-1 whitespace-pre-wrap",
               size === "md" ? "text-[14px] leading-5" : "text-[12px] leading-4",
-              empty ? "text-[#99A1AF]" : darkMode ? "text-[#E5E7EB]" : "text-[#364153]",
+              empty
+                ? darkMode
+                  ? "text-[#A1A1AA]"
+                  : "text-[#99A1AF]"
+                : darkMode
+                  ? "text-[#E4E4E7]"
+                  : "text-[#364153]",
             )}
           >
             {value || "Write a message"}
@@ -208,7 +214,7 @@ function TextAreaStateSample({
           <div
             className={cn(
               "flex items-center justify-between gap-3 text-[11px] leading-4",
-              isError ? "text-[#FB2C36]" : darkMode ? "text-[#94A3B8]" : "text-[#65758B]",
+              isError ? "text-[#FB2C36]" : darkMode ? "text-[#A1A1AA]" : "text-[#65758B]",
             )}
           >
             <div className="flex min-w-0 items-center gap-1">
@@ -228,7 +234,7 @@ function MicButtonGlyph({ dark = false }: { dark?: boolean }) {
     <span
       className={cn(
         "flex size-8 shrink-0 items-center justify-center rounded-full",
-        dark ? "bg-[#1E2939] text-[#99A1AF]" : "bg-[#E5E7EBB2] text-[#6A7282]",
+        dark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E5E7EBB2] text-[#6A7282]",
       )}
     >
       <svg viewBox="0 0 24 24" fill="currentColor" className="size-4" aria-hidden="true">

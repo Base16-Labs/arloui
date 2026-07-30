@@ -283,14 +283,14 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'surface-input*',
         semanticKey: 'surfaceInput',
         palette: 'Grey-100',
-        darkPalette: 'Zinc-800',
+        darkPalette: 'Zinc-900',
         usage: 'Input backgrounds',
       },
       {
         token: 'surface-elevated',
         semanticKey: 'surfaceElevated',
         palette: 'Base-White',
-        darkPalette: 'Zinc-900',
+        darkPalette: 'Zinc-800',
         usage: 'Cards, sheets, modals (above background)',
       },
       {
@@ -337,7 +337,7 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         token: 'text-disabled**',
         semanticKey: 'textDisabled',
         palette: 'Grey-900 @ 5%',
-        darkPalette: 'Zinc-50 @ 12%',
+        darkPalette: 'Zinc-50 @ 38%',
         usage: 'Disabled states',
       },
       {
@@ -404,7 +404,7 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
       {
         token: 'interactive-secondary',
         semanticKey: 'interactiveSecondary',
-        palette: 'Grey-100',
+        palette: 'Grey-200 @ 70%',
         darkPalette: 'Zinc-800',
         usage: 'Secondary buttons, tabs',
       },

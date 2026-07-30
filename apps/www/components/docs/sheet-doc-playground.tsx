@@ -153,17 +153,17 @@ function SheetSample({
   rows: string[];
 }) {
   const canvas = dark ? "#09090B" : "#F9FAFB";
-  const title = dark ? "#F9FAFB" : "#101828";
-  const rowText = dark ? "#E5E7EB" : "#364153";
-  const divider = dark ? "#1E2939" : "#F3F4F6";
-  const handle = dark ? "#364153" : "#D1D5DC";
+  const title = dark ? "#FAFAFA" : "#101828";
+  const rowText = dark ? "#E4E4E7" : "#364153";
+  const divider = dark ? "#27272A" : "#F3F4F6";
+  const handle = dark ? "#3F3F46" : "#D1D5DC";
 
   const sheetBg = glass
     ? dark
-      ? "rgba(16,24,40,0.72)"
+      ? "rgba(24,24,27,0.72)"
       : "rgba(255,255,255,0.72)"
     : dark
-      ? "#1E2939"
+      ? "#27272A"
       : "#FFFFFF";
   const sheetBorder = glass
     ? dark
@@ -211,8 +211,8 @@ function SheetSample({
           className="absolute left-5 right-5 h-8 rounded-[18px] border opacity-90 shadow-sm"
           style={{
             bottom: `calc(44% + ${inset + 12}px)`,
-            backgroundColor: glass ? "rgba(255,255,255,0.48)" : dark ? "#293142" : "#EEF0F3",
-            borderColor: glass ? "rgba(255,255,255,0.46)" : dark ? "#364153" : "#E5E7EB",
+            backgroundColor: glass ? "rgba(255,255,255,0.48)" : dark ? "#3F3F46" : "#EEF0F3",
+            borderColor: glass ? "rgba(255,255,255,0.46)" : dark ? "#52525B" : "#E5E7EB",
           }}
         />
       ) : null}
@@ -253,7 +253,7 @@ function SheetSample({
               style={{ color: rowText, borderTop: i === 0 ? undefined : `1px solid ${divider}` }}
             >
               <span>{row}</span>
-              <span style={{ color: dark ? "#94A3B8" : "#99A1AF" }}>›</span>
+              <span style={{ color: dark ? "#A1A1AA" : "#99A1AF" }}>›</span>
             </div>
           ))}
         </div>

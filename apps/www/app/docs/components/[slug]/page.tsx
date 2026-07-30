@@ -962,7 +962,7 @@ function SheetDocPage() {
                   </div>
                 </div>
 
-                <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#111827]/85">
+                <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#27272A]/85">
                   <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">
