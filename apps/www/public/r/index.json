@@ -366,7 +366,6 @@
       "description": "An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.",
       "dependencies": [
         "react-native-svg",
-        "@arloui/utils",
         "expo-haptics"
       ],
       "registryDependencies": [
