@@ -12,6 +12,7 @@
  */
 
 import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
+import { archetypeDescriptions, archetypeItems } from './routes';
 
 const SITE = 'https://arloui.com';
 
@@ -984,8 +985,45 @@ function primitiveMarkdown(doc: PrimitiveDoc): string {
   return out.join('\n');
 }
 
+/**
+ * Archetype pages render as sections of a single index route, but agents ask for
+ * them one at a time (`arlo_get_archetype`), so each gets its own markdown doc.
+ */
+function archetypeMarkdown(slug: string, label: string, index: number): string {
+  return [
+    `# ${label}`,
+    '',
+    `> ${archetypeDescriptions[slug]}`,
+    '',
+    '**Type:** Archetype',
+    `**Position:** ${String(index + 1).padStart(2, '0')} of ${archetypeItems.length}`,
+    '',
+    '## Overview',
+    '',
+    'Archetypes are compositional patterns, not components — each describes how',
+    'primitives, tokens, and motion wire together to make one shape of screen.',
+    '',
+    '## Related',
+    '',
+    archetypeItems
+      .filter((a) => a.slug !== slug)
+      .map((a) => a.label)
+      .join(' · '),
+    '',
+    '---',
+    `Source: ${SITE}/docs/archetypes#${slug}`,
+    '',
+  ].join('\n');
+}
+
 const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/foundations/fluidity': ESSAYS.fluidity,
+  ...Object.fromEntries(
+    archetypeItems.map((item, i) => [
+      `/docs/archetypes/${item.slug}`,
+      archetypeMarkdown(item.slug, item.label, i),
+    ]),
+  ),
   '/docs/components/sheet': docDataToMarkdown(sheetData),
   '/docs/components/date-picker': docDataToMarkdown(datePickerData),
   '/docs/components/tab-bar': docDataToMarkdown(tabBarData),
@@ -1016,4 +1054,17 @@ const PAGE_MARKDOWN: Record<string, string> = {
 export function markdownForPath(pathname: string): string | null {
   const key = pathname.replace(/\/+$/, '');
   return PAGE_MARKDOWN[key] ?? null;
+}
+
+/**
+ * Every path that has markdown, for the build step that emits `public/md`.
+ *
+ * The site runs on Cloudflare Workers, where there is no request-time
+ * filesystem, so markdown cannot be read from disk on demand — it is written to
+ * static assets at build time and served from there.
+ */
+export function allMarkdownPages(): { path: string; markdown: string }[] {
+  return Object.entries(PAGE_MARKDOWN)
+    .map(([path, markdown]) => ({ path, markdown }))
+    .sort((a, b) => a.path.localeCompare(b.path));
 }

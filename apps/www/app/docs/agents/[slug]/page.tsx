@@ -70,8 +70,8 @@ const TOOLS: Array<{ name: string; desc: string }> = [
     desc: "Pull a foundation topic as markdown — spacing, type, motion, color, effects, icons, or a facet essay.",
   },
   {
-    name: "arlo_get_recipe",
-    desc: "Spec for a block/recipe (a full-screen example): composition tree, primitives used, archetype, and code.",
+    name: "arlo_list_docs",
+    desc: "List every docs page that has markdown, grouped by section — so an agent can see what exists instead of guessing slugs.",
   },
 ];
 
@@ -151,9 +151,11 @@ function McpDoc() {
             </li>
             <li>
               Each tool fetches from arloui.com — the registry JSON under{" "}
-              <code className={inlineCode}>/r</code> and docs pages via their{" "}
-              <code className={inlineCode}>?as=md</code> endpoint — and returns
-              markdown to the agent.
+              <code className={inlineCode}>/r</code> and docs markdown under{" "}
+              <code className={inlineCode}>/md</code> — and returns markdown to
+              the agent. Every docs page is also readable in a browser by adding{" "}
+              <code className={inlineCode}>?as=md</code> or a{" "}
+              <code className={inlineCode}>.md</code> suffix to its URL.
             </li>
             <li>
               Responses are cached briefly, so a burst of calls in one turn does
