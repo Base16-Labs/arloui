@@ -38,7 +38,7 @@ or any MCP client:
 | `arlo_get_token` | A semantic colour token resolved to its light + dark values |
 | `arlo_get_archetype` | One of the nine screen archetypes: hierarchy, composition, gotchas |
 | `arlo_get_foundation` | A foundation topic as markdown (spacing, type, motion, color, …) |
-| `arlo_get_recipe` | A block/recipe: composition tree, primitives, archetype, and code |
+| `arlo_list_docs` | Every docs page that has markdown, grouped by section |
 
 ## Configuration
 

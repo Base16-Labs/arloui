@@ -203,7 +203,9 @@ function InputStateSample({
                 : "min-h-9",
             isPlain
               ? "bg-transparent"
-              : "rounded-md bg-[#F3F4F6] px-3 py-2",
+              : darkMode
+                ? "rounded-md bg-[#18181B] px-3 py-2"
+                : "rounded-md bg-[#F3F4F6] px-3 py-2",
             !isPlain && isError && "ring-1 ring-[#FB2C36]",
             isDisabled && "opacity-45",
           )}
@@ -259,22 +261,22 @@ function InputStateSample({
 
 function labelTone(isPlain: boolean, isError: boolean, darkMode: boolean) {
   if (isError) return "text-[#FB2C36]";
-  if (isPlain) return darkMode ? "text-[#65758B]" : "text-[#6A7282]";
-  return "text-[#99A1AF]";
+  if (isPlain) return darkMode ? "text-[#71717A]" : "text-[#6A7282]";
+  return darkMode ? "text-[#A1A1AA]" : "text-[#99A1AF]";
 }
 
 function textTone(isPlain: boolean, isError: boolean, isEmpty: boolean, darkMode: boolean) {
-  if (isEmpty) return "text-[#D1D5DC]";
-  return isPlain && darkMode ? "text-[#D1D5DC]" : "text-[#364153]";
+  if (isEmpty) return darkMode ? "text-[#D4D4D8]" : "text-[#D1D5DC]";
+  return darkMode ? "text-[#D4D4D8]" : "text-[#364153]";
 }
 
 function helperTone(isError: boolean, isPlain: boolean, darkMode: boolean) {
   if (isError) return "text-[#FB2C36]";
-  return isPlain && darkMode ? "text-[#65758B]" : "text-[#6A7282]";
+  return darkMode ? "text-[#71717A]" : "text-[#6A7282]";
 }
 
 function iconTone(isPlain: boolean, isError: boolean, darkMode: boolean) {
-  return isPlain && darkMode ? "text-[#65758B]" : "text-[#6A7282]";
+  return darkMode ? "text-[#71717A]" : "text-[#6A7282]";
 }
 
 function CopyGlyph({ className }: { className?: string }) {

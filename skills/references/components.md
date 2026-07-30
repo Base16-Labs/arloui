@@ -116,7 +116,7 @@ Solid fills use rounded corners + pressed elevation; ghost & outline use pill ra
 
 - Match the shape and scale of the real content as closely as possible.
 - Use `--surface-raised` as the base fill and `--surface-strong` as the shimmer layer.
-- Animate with a horizontal shimmer sweep (`180-280ms`, ease-in-out, looped) or a gentle opacity pulse.
+- Animate with a slow horizontal shimmer sweep (a ~`1.2s` linear loop — ambient, never a fast flash) or a gentle opacity pulse (~`600ms` ease-in-out each way).
 - Do not skeleton-load interactive controls — disable or hide them instead.
 - Show skeleton for the first data load; use inline spinners or optimistic updates for subsequent refreshes.
 
@@ -134,13 +134,17 @@ Solid fills use rounded corners + pressed elevation; ghost & outline use pill ra
 - Always offer a recovery action (retry, go back, contact support). Never dead-end the user.
 - Inline field errors live below the field and use `--danger` text at `body-sm` scale.
 
-### Toast / Snackbar
+### Toast
 
-- Appear from the bottom edge, above the tab bar or safe area.
-- Maximum one active toast at a time; queue additional messages.
-- Auto-dismiss after `3–4s` for confirmations; persist until dismissed for errors.
+Registry **`Toast`** — positioned at **`top`** or **`bottom`** edge, offset by safe-area insets passed via **`topInset`** / **`bottomInset`**. Color styles: **`contrast`** (inverted fill) or **`same`** (elevated surface). Optional **`icon`** slot, optional **`showDismiss`** close button. Swipe-to-dismiss built in (swipe up for top, down for bottom). Spring entrance (`motion.spring.snappy`), easeOut exit. Border radius is **`radii.xl`** (opinionated, not configurable). Shadow: `shadows.md` in dark, `shadows.lg` in light. Imperative **`ToastRef`** exposes `dismiss()`.
+
+Registry **`Toaster`** — the stacking host. Mount one near the app root inside `ThemeProvider`, then call **`useToast().toast(message, options)`** from anywhere. Newest toast sits in front; older ones peek out behind it, offset `14px` and scaled down `0.05` per depth. **`visibleToasts`** (default `3`) caps how many show at once; the rest wait, and hold their auto-dismiss timer until they surface. **`dismiss(id)`** and **`dismissAll()`** play the exit animation. Reusing an **`id`** replaces a live toast in place instead of stacking a duplicate.
+
+- Use `Toaster` when more than one message can arrive at once; the controlled `Toast` is for a single, app-owned notification.
+- Auto-dismiss after `3.5s` by default; set **`duration`** to `0` to persist until dismissed.
 - Keep copy under two lines. If more context is needed, use a sheet instead.
 - Avoid using toasts for actions the user just took and can clearly see — they create noise.
+- `prefers-reduced-motion`: replaces position/scale with opacity-only transitions.
 
 ## Shared Utilities
 

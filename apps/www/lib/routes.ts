@@ -39,6 +39,22 @@ export const archetypeItems = [
   { label: 'Empty', slug: 'empty' },
 ] as const;
 
+/**
+ * One-line summary per archetype. Lives here rather than in the page component
+ * because the markdown pipeline (lib/docs-markdown) renders the same text.
+ */
+export const archetypeDescriptions: Record<string, string> = {
+  question: 'A title, a body, one or two actions. Confirmation, permission, single-input.',
+  decision: 'Multiple options, comparison, selection. Picking a plan, choosing a card.',
+  status: 'Real-time state of a process. Order tracking, upload progress, sync.',
+  feed: 'Chronological or ranked stream. Timeline, notifications, activity log.',
+  detail: 'Deep view of a single entity. Profile, transaction receipt, flight info.',
+  creation: 'Multi-step form or wizard. Onboarding flow, checkout, compose.',
+  settings: 'Grouped toggles, pickers, navigation rows. App preferences, account.',
+  onboarding: 'First-run experience. Permissions, value props, account setup.',
+  empty: 'Zero-data state. First launch, no results, error recovery.',
+};
+
 export const agentItems = [
   { label: 'Skill pack', slug: 'skill-pack' },
   { label: 'MCP', slug: 'mcp' },
@@ -79,7 +95,9 @@ export const componentGroups: ComponentGroup[] = [
     label: 'Feedback',
     items: [
       { label: 'Skeleton', slug: 'skeleton' },
+      { label: 'Spinner', slug: 'spinner' },
       { label: 'Badge', slug: 'badge' },
+      { label: 'Toast', slug: 'toast' },
     ],
   },
   {

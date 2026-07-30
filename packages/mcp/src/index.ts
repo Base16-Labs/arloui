@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
-import { getEntry, getIndex, getMarkdown } from './client.js';
+import { getEntry, getIndex, getMarkdown, getMarkdownIndex } from './client.js';
 import { componentMarkdown, pagePathFor, searchMarkdown, tokenMarkdown } from './format.js';
 import { SERVER_NAME, SERVER_VERSION } from './config.js';
 
@@ -20,7 +20,7 @@ async function guard(fn: () => Promise<Result>): Promise<Result> {
 
 const notYet = (kind: string, name: string, section: string) =>
   text(
-    `No ${kind} named “${name}” is published yet.\n\nBrowse what exists with \`arlo_search\`, or check ${section} on arloui.com.`,
+    `No ${kind} named “${name}” is published yet.\n\nCall \`arlo_list_docs\` for the full list of pages that exist, search with \`arlo_search\`, or check ${section} on arloui.com.`,
   );
 
 const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
@@ -28,9 +28,38 @@ const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION });
 server.tool(
   'arlo_search',
   'Search Arlo UI across components and foundations by natural-language query. Returns a ranked list with id, kind, summary, page url and markdown (md) url. Use the returned id with arlo_get_component.',
-  { query: z.string().describe('natural-language query, e.g. "bottom sheet" or "form input"'), kind: z.string().optional().describe('optional filter: primitive | foundation | pattern | icon') },
+  {
+    query: z.string().describe('natural-language query, e.g. "bottom sheet" or "form input"'),
+    // These are the only kinds the registry index actually carries. It previously
+    // advertised "pattern", which matches nothing and made the library look empty.
+    kind: z
+      .enum(['primitive', 'foundation', 'icon'])
+      .optional()
+      .describe('optional filter by entry kind'),
+  },
   async ({ query, kind }) =>
     guard(async () => text(searchMarkdown((await getIndex()).items, query, kind))),
+);
+
+server.tool(
+  'arlo_list_docs',
+  'List every Arlo UI docs page that has markdown — components, primitives, foundations and archetypes — as paths you can pass to the other tools. Call this first when you need to know what exists rather than guessing a slug.',
+  {},
+  async () =>
+    guard(async () => {
+      const index = await getMarkdownIndex();
+      const groups = new Map<string, string[]>();
+      for (const { path } of index.pages) {
+        const [, , group = 'other', slug = ''] = path.split('/');
+        if (!groups.has(group)) groups.set(group, []);
+        groups.get(group)!.push(slug);
+      }
+      const out = [`# Arlo UI docs (${index.count} pages)`, ''];
+      for (const [group, slugs] of [...groups].sort()) {
+        out.push(`## ${group} (${slugs.length})`, '', slugs.sort().join(', '), '');
+      }
+      return text(out.join('\n'));
+    }),
 );
 
 server.tool(
@@ -81,16 +110,10 @@ server.tool(
     }),
 );
 
-server.tool(
-  'arlo_get_recipe',
-  'Spec for a block/recipe (a full-screen example): composition tree, primitives used, archetype, and React Native code.',
-  { name: z.string().describe('recipe slug') },
-  async ({ name }) =>
-    guard(async () => {
-      const md = await getMarkdown(`docs/recipes/${name}`);
-      return md ? text(md) : notYet('recipe', name, '/docs/recipes');
-    }),
-);
+// NOTE: there is deliberately no `arlo_get_recipe` tool. `/docs/recipes` has
+// never been published, so the tool could only ever answer "not published yet" —
+// which reads to an agent as "this library is empty" and costs it a turn to find
+// out. Add the tool back alongside the content, not before it.
 
 async function main() {
   const transport = new StdioServerTransport();

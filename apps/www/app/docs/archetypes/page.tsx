@@ -1,19 +1,7 @@
 import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
 import { RightRail } from "@/components/nav/RightRail";
-import { archetypeItems } from "@/lib/routes";
-
-const descriptions: Record<string, string> = {
-  question: "A title, a body, one or two actions. Confirmation, permission, single-input.",
-  decision: "Multiple options, comparison, selection. Picking a plan, choosing a card.",
-  status: "Real-time state of a process. Order tracking, upload progress, sync.",
-  feed: "Chronological or ranked stream. Timeline, notifications, activity log.",
-  detail: "Deep view of a single entity. Profile, transaction receipt, flight info.",
-  creation: "Multi-step form or wizard. Onboarding flow, checkout, compose.",
-  settings: "Grouped toggles, pickers, navigation rows. App preferences, account.",
-  onboarding: "First-run experience. Permissions, value props, account setup.",
-  empty: "Zero-data state. First launch, no results, error recovery.",
-};
+import { archetypeDescriptions as descriptions, archetypeItems } from "@/lib/routes";
 
 export default function ArchetypesIndexPage() {
   return (

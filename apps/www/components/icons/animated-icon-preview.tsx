@@ -9,19 +9,11 @@ type LineAnimatedIconName =
   | 'arrow-right-down'
   | 'chevron-right-down'
   | 'download-check'
-  | 'eye-open-closed'
-  | 'lock-unlock'
-  | 'volume-mute'
-  | 'mic-mute'
-  | 'sun-moon'
   | 'grid-list'
   | 'sort-ascending-descending'
   | 'expand-collapse'
-  | 'search-close'
-  | 'send-loading'
   | 'copy-check'
-  | 'upload-check'
-  | 'envelope-open';
+  | 'upload-check';
 
 type SpecialAnimatedIconName =
   | 'heart-fill'
@@ -30,10 +22,8 @@ type SpecialAnimatedIconName =
   | 'bell-fill'
   | 'thumb-up-fill'
   | 'pin-fill'
-  | 'spinner-check'
   | 'spinner-x'
   | 'circle-progress-check'
-  | 'refresh-sync'
   | 'bell-shake'
   | 'dot-pulse';
 
@@ -104,32 +94,6 @@ const lineDefinitions: Record<LineAnimatedIconName, Definition> = {
     ],
     to: [[5, 12, 10, 17], [10, 17, 19, 7], point, point],
   },
-  'eye-open-closed': {
-    labels: ['Eye open', 'Eye closed'],
-    from: [[3, 12, 7, 8], [7, 8, 12, 6.5], [12, 6.5, 17, 8], [17, 8, 21, 12], [10, 12, 14, 12]],
-    to: [[3.5, 10, 8, 13.5], [8, 13.5, 12, 14.5], [12, 14.5, 16, 13.5], [16, 13.5, 20.5, 10], [4, 4, 20, 20]],
-  },
-  'lock-unlock': {
-    labels: ['Locked', 'Unlocked'],
-    from: [[5, 10, 19, 10], [5, 10, 5, 20], [19, 10, 19, 20], [5, 20, 19, 20], [8, 10, 8, 7], [8, 7, 10, 4.5], [10, 4.5, 14, 4.5], [14, 4.5, 16, 7], [16, 7, 16, 10]],
-    to: [[5, 10, 19, 10], [5, 10, 5, 20], [19, 10, 19, 20], [5, 20, 19, 20], [8, 10, 8, 7], [8, 7, 10, 4.5], [10, 4.5, 14, 4.5], [14, 4.5, 17, 7], [17, 7, 20, 6]],
-  },
-  'volume-mute': {
-    labels: ['Volume on', 'Muted'],
-    from: [[3, 9, 7, 9], [7, 9, 13, 5], [13, 5, 13, 19], [13, 19, 7, 15], [7, 15, 3, 15], [16, 8.5, 19.5, 12], [19.5, 12, 16, 15.5]],
-    to: [[3, 9, 7, 9], [7, 9, 13, 5], [13, 5, 13, 19], [13, 19, 7, 15], [7, 15, 3, 15], [16, 8, 21, 16], [21, 8, 16, 16]],
-  },
-  'mic-mute': {
-    labels: ['Microphone on', 'Microphone muted'],
-    from: [[9, 5, 9, 12], [9, 5, 12, 3.5], [12, 3.5, 15, 5], [15, 5, 15, 12], [6, 11, 6, 13], [6, 13, 9, 16], [9, 16, 15, 16], [15, 16, 18, 13], [18, 13, 18, 11], [12, 16, 12, 21], [8, 21, 16, 21]],
-    to: [[9, 5, 9, 12], [9, 5, 12, 3.5], [12, 3.5, 15, 5], [15, 5, 15, 12], [6, 11, 6, 13], [6, 13, 9, 16], [9, 16, 15, 16], [15, 16, 18, 13], [5, 5, 19, 19], [12, 16, 12, 21], [8, 21, 16, 21]],
-  },
-  'sun-moon': {
-    labels: ['Light mode', 'Dark mode'],
-    from: [[12, 5, 12, 2.5], [12, 21.5, 12, 19], [5, 12, 2.5, 12], [21.5, 12, 19, 12], [7.25, 7.25, 5.5, 5.5], [18.5, 18.5, 16.75, 16.75], [16.75, 7.25, 18.5, 5.5], [5.5, 18.5, 7.25, 16.75], [8, 12, 16, 12]],
-    to: [[9, 4, 9, 4, 0], [9, 20, 9, 20, 0], [4, 12, 4, 12, 0], [20, 12, 20, 12, 0], [6, 6, 6, 6, 0], [18, 18, 18, 18, 0], [18, 6, 18, 6, 0], [6, 18, 6, 18, 0], [7, 5, 18, 18]],
-    rotation: [0, 18],
-  },
   'grid-list': {
     labels: ['Grid', 'List'],
     from: [[5, 5, 9, 5], [15, 5, 19, 5], [5, 12, 9, 12], [15, 12, 19, 12], [5, 19, 9, 19], [15, 19, 19, 19]],
@@ -145,17 +109,6 @@ const lineDefinitions: Record<LineAnimatedIconName, Definition> = {
     from: [[4, 9, 4, 4], [4, 4, 9, 4], [15, 4, 20, 4], [20, 4, 20, 9], [20, 15, 20, 20], [20, 20, 15, 20], [9, 20, 4, 20], [4, 20, 4, 15]],
     to: [[5, 10, 10, 10], [10, 10, 10, 5], [14, 5, 14, 10], [14, 10, 19, 10], [19, 14, 14, 14], [14, 14, 14, 19], [10, 19, 10, 14], [10, 14, 5, 14]],
   },
-  'search-close': {
-    labels: ['Search', 'Close'],
-    from: [[4.5, 10.5, 7.5, 6.5], [7.5, 6.5, 12.5, 5.5], [12.5, 5.5, 16.5, 8.5], [16.5, 8.5, 15.5, 13.5], [15.5, 13.5, 11.5, 16.5], [11.5, 16.5, 6.5, 15.5], [15.5, 15.5, 20, 20]],
-    to: [[6, 6, 18, 18], point, point, [18, 6, 6, 18], point, point, point],
-  },
-  'send-loading': {
-    labels: ['Send', 'Loading'],
-    from: [[3.5, 5, 21, 12], [21, 12, 3.5, 19], [3.5, 19, 8.5, 12], [8.5, 12, 3.5, 5]],
-    to: [[12, 4, 18, 7], [18, 7, 20, 12], [20, 12, 17, 17], [17, 17, 12, 20]],
-    rotation: [0, 180],
-  },
   'copy-check': {
     labels: ['Copy', 'Copied'],
     from: [[8, 8, 18, 8], [18, 8, 18, 18], [18, 18, 8, 18], [8, 18, 8, 8], [5, 15, 5, 5], [5, 5, 15, 5], [15, 5, 15, 8]],
@@ -166,11 +119,6 @@ const lineDefinitions: Record<LineAnimatedIconName, Definition> = {
     from: [[12, 21, 12, 8], [7, 13, 12, 8], [12, 8, 17, 13], [5, 21, 19, 21]],
     to: [[5, 12, 10, 17], [10, 17, 19, 7], point, point],
   },
-  'envelope-open': {
-    labels: ['Sealed mail', 'Open mail'],
-    from: [[3.5, 7, 12, 13.5], [12, 13.5, 20.5, 7], [3.5, 7, 20.5, 7], [3.5, 7, 3.5, 18], [3.5, 18, 20.5, 18], [20.5, 18, 20.5, 7]],
-    to: [[3.5, 12, 12, 5], [12, 5, 20.5, 12], [3.5, 12, 12, 17.5], [3.5, 12, 3.5, 19], [3.5, 19, 20.5, 19], [20.5, 19, 20.5, 12]],
-  },
 };
 
 const specialLabels: Record<SpecialAnimatedIconName, readonly [string, string]> = {
@@ -180,10 +128,8 @@ const specialLabels: Record<SpecialAnimatedIconName, readonly [string, string]> 
   'bell-fill': ['Bell outline', 'Bell filled'],
   'thumb-up-fill': ['Thumb up outline', 'Thumb up filled'],
   'pin-fill': ['Pin outline', 'Pin filled'],
-  'spinner-check': ['Loading', 'Success'],
   'spinner-x': ['Loading', 'Error'],
   'circle-progress-check': ['In progress', 'Complete'],
-  'refresh-sync': ['Refresh', 'Syncing'],
   'bell-shake': ['Notification', 'New notification'],
   'dot-pulse': ['Unread', 'Unread alert'],
 };
@@ -234,7 +180,6 @@ function SpecialGlyph({
       return <path d="M7.5 10.5v9.5H4a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1h3.5Zm0 0 4.5-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 1.9 2.5l-1.5 5.8A3 3 0 0 1 16.5 20h-9v-9.5Z" fill={active ? 'currentColor' : 'none'} {...common} />;
     case 'pin-fill':
       return <path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z" fill={active ? 'currentColor' : 'none'} {...common} />;
-    case 'spinner-check':
     case 'spinner-x':
     case 'circle-progress-check':
       return active ? (
@@ -257,13 +202,6 @@ function SpecialGlyph({
           transform="rotate(-90 12 12)"
           {...common}
         />
-      );
-    case 'refresh-sync':
-      return (
-        <>
-          <path d="M20 7v5h-5M4 17v-5h5" fill="none" {...common} />
-          <path d="M6.2 8.7A7 7 0 0 1 18.8 7M17.8 15.3A7 7 0 0 1 5.2 17" fill="none" {...common} />
-        </>
       );
     case 'dot-pulse':
       return <circle cx="12" cy="12" r={active ? 6 : 4} fill="currentColor" />;
@@ -292,19 +230,26 @@ export function AnimatedIconPreview({
   name,
   active,
   size = 32,
+  runId = 0,
 }: {
   name: AnimatedIconName;
   active: boolean;
   size?: number;
+  /** Bumping this replays a one-shot that is already active. */
+  runId?: number;
 }) {
   const definition = isSpecialName(name) ? null : lineDefinitions[name];
   const target = active ? 1 : 0;
   const currentRef = useRef(target);
+  const lastRunRef = useRef(runId);
   const [progress, setProgress] = useState(target);
   const [motion, setMotion] = useState(0);
   const [resolved, setResolved] = useState(active);
 
   useEffect(() => {
+    const replaying = runId !== lastRunRef.current;
+    lastRunRef.current = runId;
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) {
       currentRef.current = target;
@@ -314,10 +259,15 @@ export function AnimatedIconPreview({
       return;
     }
 
+    // A replay restarts from the rest state in one commit. Easing back to it
+    // instead would rewind the morph on screen — `easeOut` gives up ~28% in its
+    // first frame — which reads as the "from" glyph flashing in before the
+    // animation plays.
+    if (replaying) currentRef.current = 0;
     const start = currentRef.current;
     const startedAt = performance.now();
     let frame = 0;
-    const staged = name === 'spinner-check' || name === 'spinner-x' || name === 'circle-progress-check';
+    const staged = name === 'spinner-x' || name === 'circle-progress-check';
     if (!active) setResolved(false);
     else if (staged) setResolved(false);
     else setResolved(true);
@@ -330,11 +280,7 @@ export function AnimatedIconPreview({
       currentRef.current = next;
       setProgress(next);
 
-      if ((name === 'spinner-check' || name === 'spinner-x') && !active) {
-        setMotion((runtime % 760) / 760);
-      } else if (name === 'refresh-sync' && active) {
-        setMotion((runtime % 700) / 700);
-      } else if (name === 'send-loading' && active) {
+      if (name === 'spinner-x' && !active) {
         setMotion((runtime % 760) / 760);
       } else if (name === 'bell-shake' && active) {
         setMotion(Math.min(runtime / 400, 1));
@@ -350,10 +296,7 @@ export function AnimatedIconPreview({
         setResolved(true);
       }
 
-      const loops =
-        ((name === 'spinner-check' || name === 'spinner-x') && !active) ||
-        (name === 'refresh-sync' && active) ||
-        (name === 'send-loading' && active);
+      const loops = name === 'spinner-x' && !active;
       const oneShotDuration =
         name === 'bell-shake' ? 400 :
         name === 'dot-pulse' ? 960 :
@@ -366,7 +309,7 @@ export function AnimatedIconPreview({
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [active, name, target]);
+  }, [active, name, target, runId]);
 
   const rotation = definition?.rotation
     ? mix(definition.rotation[0], definition.rotation[1], progress)
@@ -375,7 +318,7 @@ export function AnimatedIconPreview({
   if (isSpecialName(name)) {
     const isFill = name.endsWith('-fill');
     const specialRotation =
-      name === 'refresh-sync' || ((name === 'spinner-check' || name === 'spinner-x') && !active)
+      name === 'spinner-x' && !active
         ? motion * 360
         : name === 'bell-shake'
           ? Math.sin(motion * Math.PI * 5) * (1 - motion) * 12
@@ -425,7 +368,7 @@ export function AnimatedIconPreview({
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <g
-        transform={`rotate(${rotation + (name === 'send-loading' && active ? motion * 360 : 0)} 12 12)`}
+        transform={`rotate(${rotation} 12 12)`}
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"

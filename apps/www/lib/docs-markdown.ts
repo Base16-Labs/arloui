@@ -12,6 +12,7 @@
  */
 
 import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
+import { archetypeDescriptions, archetypeItems } from './routes';
 
 const SITE = 'https://arloui.com';
 
@@ -315,6 +316,40 @@ export const skeletonData = {
       href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/skeleton',
     },
     { label: 'Open playground ↗', href: 'http://localhost:8081/skeleton' },
+  ],
+};
+
+export const spinnerData = {
+  slug: 'spinner',
+  category: 'Feedback',
+  title: 'Spinner',
+  lede: 'An activity indicator for work with no measurable progress, in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/spinner',
+  states: ['spokes', 'arc', 'dots', 'bars', 'pulse', 'reduced motion'],
+  tokens: [
+    'colors.textSecondary',
+    'colors.accent',
+    'colors.surfaceStrong',
+    'accessibility.reduceMotion',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/spinner',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/spinner' },
   ],
 };
 
@@ -877,6 +912,46 @@ export const galleryData = {
   ],
 } as const;
 
+export const toastData = {
+  slug: 'toast',
+  category: 'Feedback',
+  title: 'Toast',
+  lede: 'A transient notification surface that appears from the top or bottom edge. Two color styles — contrast and same — with optional icon, dismiss button, swipe-to-dismiss, and auto-dismiss. Mount the Toaster to stack several into a deck.',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toast',
+  states: ['contrast', 'same', 'with-icon', 'with-dismiss', 'top', 'bottom'],
+  tokens: [
+    'colors.textPrimary',
+    'colors.surfaceBackground',
+    'colors.surfaceElevated',
+    'shadows.lg',
+    'radii.xl',
+    'spacing.3',
+    'spacing.4',
+    'typography.body',
+    'motion.spring.snappy',
+    'motion.duration.fast',
+    'motion.easing.easeOut',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toast',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/toast' },
+  ],
+} as const;
+
 /* ------------------------------------------------------------------ *
  * Path → markdown registry. One lookup powers every "Copy markdown"
  * surface — the per-page buttons and the global pill.
@@ -910,12 +985,50 @@ function primitiveMarkdown(doc: PrimitiveDoc): string {
   return out.join('\n');
 }
 
+/**
+ * Archetype pages render as sections of a single index route, but agents ask for
+ * them one at a time (`arlo_get_archetype`), so each gets its own markdown doc.
+ */
+function archetypeMarkdown(slug: string, label: string, index: number): string {
+  return [
+    `# ${label}`,
+    '',
+    `> ${archetypeDescriptions[slug]}`,
+    '',
+    '**Type:** Archetype',
+    `**Position:** ${String(index + 1).padStart(2, '0')} of ${archetypeItems.length}`,
+    '',
+    '## Overview',
+    '',
+    'Archetypes are compositional patterns, not components — each describes how',
+    'primitives, tokens, and motion wire together to make one shape of screen.',
+    '',
+    '## Related',
+    '',
+    archetypeItems
+      .filter((a) => a.slug !== slug)
+      .map((a) => a.label)
+      .join(' · '),
+    '',
+    '---',
+    `Source: ${SITE}/docs/archetypes#${slug}`,
+    '',
+  ].join('\n');
+}
+
 const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/foundations/fluidity': ESSAYS.fluidity,
+  ...Object.fromEntries(
+    archetypeItems.map((item, i) => [
+      `/docs/archetypes/${item.slug}`,
+      archetypeMarkdown(item.slug, item.label, i),
+    ]),
+  ),
   '/docs/components/sheet': docDataToMarkdown(sheetData),
   '/docs/components/date-picker': docDataToMarkdown(datePickerData),
   '/docs/components/tab-bar': docDataToMarkdown(tabBarData),
   '/docs/components/skeleton': docDataToMarkdown(skeletonData),
+  '/docs/components/spinner': docDataToMarkdown(spinnerData),
   '/docs/components/tabs': docDataToMarkdown(tabsData),
   '/docs/components/button': docDataToMarkdown(buttonData),
   '/docs/components/input': docDataToMarkdown(inputData),
@@ -927,6 +1040,7 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/gallery': docDataToMarkdown(galleryData),
   '/docs/components/badge': docDataToMarkdown(badgeData),
   '/docs/components/chip': docDataToMarkdown(chipData),
+  '/docs/components/toast': docDataToMarkdown(toastData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [
@@ -940,4 +1054,17 @@ const PAGE_MARKDOWN: Record<string, string> = {
 export function markdownForPath(pathname: string): string | null {
   const key = pathname.replace(/\/+$/, '');
   return PAGE_MARKDOWN[key] ?? null;
+}
+
+/**
+ * Every path that has markdown, for the build step that emits `public/md`.
+ *
+ * The site runs on Cloudflare Workers, where there is no request-time
+ * filesystem, so markdown cannot be read from disk on demand — it is written to
+ * static assets at build time and served from there.
+ */
+export function allMarkdownPages(): { path: string; markdown: string }[] {
+  return Object.entries(PAGE_MARKDOWN)
+    .map(([path, markdown]) => ({ path, markdown }))
+    .sort((a, b) => a.path.localeCompare(b.path));
 }

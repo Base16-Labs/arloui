@@ -122,7 +122,7 @@ export function FormControlDocPlayground({ control, states }: PlaygroundProps) {
                 />
                 <span
                   className="text-[14px] font-medium leading-5"
-                  style={{ color: dark ? "#E5E7EB" : "#364153" }}
+                  style={{ color: dark ? "#E4E4E7" : "#364153" }}
                 >
                   {SAMPLE_LABEL[control]}
                 </span>
@@ -185,8 +185,8 @@ export function ControlGlyph({
   appearance?: Appearance;
   dark?: boolean;
 }) {
-  const emptyBorder = dark ? "#374151" : "#D1D5DC";
-  const emptyBg = dark ? "#1f2937" : "#E5E7EB";
+  const emptyBorder = dark ? "#3F3F46" : "#D1D5DC";
+  const emptyBg = dark ? "#27272A" : "#E5E7EB";
 
   if (control === "toggle") {
     const dims =

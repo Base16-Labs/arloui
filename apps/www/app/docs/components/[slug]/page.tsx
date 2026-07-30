@@ -14,6 +14,7 @@ import { SheetDocPlayground } from '@/components/docs/sheet-doc-playground';
 import { TabBarDocPlayground } from '@/components/docs/tab-bar-preview';
 import { TabsDocPlayground } from '@/components/docs/tabs-preview';
 import { SkeletonDocPlayground } from '@/components/docs/skeleton-preview';
+import { SpinnerDocPlayground } from '@/components/docs/spinner-preview';
 import { DatePickerDocPlayground } from '@/components/docs/date-picker-preview';
 import {
   FormControlDocPlayground,
@@ -36,6 +37,7 @@ import {
   radioData,
   sheetData,
   skeletonData,
+  spinnerData,
   tabBarData,
   tabsData,
   textAreaData,
@@ -44,6 +46,7 @@ import {
   galleryData,
   badgeData,
   chipData,
+  toastData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -100,6 +103,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
     return <SkeletonDocPage />;
   }
 
+  if (slug === 'spinner') {
+    return <SpinnerDocPage />;
+  }
+
   if (slug === 'carousel') {
     return <CarouselDocPage />;
   }
@@ -114,6 +121,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'chip') {
     return <ChipDocPage />;
+  }
+
+  if (slug === 'toast') {
+    return <ToastDocPage />;
   }
 
   return (
@@ -422,6 +433,159 @@ import { Skeleton } from "@/components/ui/skeleton";
         </Section>
       </main>
       <RightRail headings={[...skeletonData.headings]} actions={[...skeletonData.actions]} />
+    </>
+  );
+}
+
+function SpinnerDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(spinnerData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{spinnerData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {spinnerData.title}
+        </h1>
+        <Lede>{spinnerData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={spinnerData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="spinner" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="One indicator, sized and toned to the surface it sits on."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Appearance', 'spokes, arc, dots, bars, or pulse'],
+                ['Size', 'sm 16 · md 24 · lg 32, or an exact diameter'],
+                ['Tone', 'neutral, accent, or an explicit colour'],
+                ['Motion', 'held still under reduce-motion'],
+                ['Announcement', 'a busy progressbar with an accessible name'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For waiting that has no measurable progress."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use for indeterminate work — submitting a form, reaching the network, resolving an
+              action whose duration you cannot predict.
+            </li>
+            <li>
+              Prefer a skeleton when the incoming content has a known shape, so the layout does not
+              jump when it arrives.
+            </li>
+            <li>
+              Reach for a determinate progress bar the moment you can actually measure completion.
+            </li>
+          </ul>
+        </Section>
+
+        <SpinnerDocPlayground />
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add spinner
+
+import { View } from "react-native";
+import { Spinner } from "@/components/ui/spinner";
+
+// Centred in a loading region
+<View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+  <Spinner appearance="spokes" size="lg" accessibilityLabel="Loading your feed" />
+</View>
+
+// Inline in a busy button, tinted to the label beside it
+<Spinner size="sm" color="#FFFFFF" />`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Foreground tones and the reduced-motion foundation."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {spinnerData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Say what is loading, once."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Reports as a busy <code className="font-mono text-[12.5px]">progressbar</code>, so
+              assistive tech announces the wait without a live region.
+            </li>
+            <li>
+              Defaults to an accessible name of &ldquo;Loading&rdquo;; pass{' '}
+              <code className="font-mono text-[12.5px]">accessibilityLabel</code> to name the
+              specific work in flight.
+            </li>
+            <li>
+              Under reduce-motion every transform is dropped and the shape holds still, so the
+              indicator still reads as one.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep waiting states calm and singular.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Show one spinner for one unit of work, and say what it is waiting on.',
+                dont: 'Scatter several spinners across a screen that is loading as a whole.',
+              },
+              {
+                do: 'Pick one appearance and keep it consistent across the product.',
+                dont: 'Mix spokes, arcs, and dots in the same flow.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Other ways to represent work in flight."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Skeleton', 'Progress', 'Button', 'Empty'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...spinnerData.headings]} actions={[...spinnerData.actions]} />
     </>
   );
 }
@@ -786,7 +950,7 @@ function SheetDocPage() {
             <div className="mx-auto max-w-[360px]">
               <div className="relative h-[300px] overflow-hidden rounded-[28px] border border-line-strong bg-canvas">
                 <div className="px-5 pt-6">
-                  <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-3 w-20 rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                   <div className="mt-4 grid grid-cols-2 gap-2.5">
                     {['#155DFC', '#00C950', '#F54900', '#FB2C36'].map((color) => (
                       <div
@@ -798,8 +962,8 @@ function SheetDocPage() {
                   </div>
                 </div>
 
-                <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#111827]/85">
-                  <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                <div className="absolute inset-x-0 bottom-0 rounded-t-[22px] border-x border-t border-white/70 bg-white/85 px-5 pb-5 pt-2 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#27272A]/85">
+                  <div className="mx-auto mb-3 h-[5px] w-10 rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">
                       header
@@ -1936,14 +2100,14 @@ function CarouselDocPage() {
                   <span>peek</span>
                 </div>
                 <div className="flex gap-2">
-                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
-                  <div className="h-24 flex-1 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#364153]/40" />
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#3F3F46]/40" />
+                  <div className="h-24 flex-1 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-24 w-4 shrink-0 rounded-lg bg-[#D1D5DC]/40 dark:bg-[#3F3F46]/40" />
                 </div>
                 <div className="mt-3 flex justify-center gap-1.5">
                   <div className="h-[6px] w-5 rounded-full bg-[#155DFC]" />
-                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-[6px] w-[6px] rounded-full bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                 </div>
                 <div className="mt-1 text-center font-mono text-[10px] uppercase tracking-wide text-ink-3">dots</div>
               </div>
@@ -2119,10 +2283,10 @@ function GalleryDocPage() {
                   <span>col 2</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
-                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#364153]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-16 rounded-xl bg-[#D1D5DC] dark:bg-[#3F3F46]" />
                 </div>
                 <div className="mt-2 flex items-center justify-between px-1">
                   <span className="font-mono text-[10px] uppercase tracking-wide text-ink-3">radius</span>
@@ -2575,6 +2739,193 @@ import { Chip } from "@/components/ui/chip";`}</CodeBlock>
       </main>
 
       <RightRail headings={[...chipData.headings]} actions={[...chipData.actions]} />
+    </>
+  );
+}
+
+function ToastDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(toastData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{toastData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {toastData.title}
+        </h1>
+        <Lede>{toastData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={toastData.source}>
+            <GithubMark size={14} /> Source{' '}
+            <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="toast" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A floating bar with icon, message, and dismiss — positioned at the screen edge."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Container', 'floating surface with shadow'],
+                ['Icon', 'optional filled leading icon'],
+                ['Message', 'up to two lines of body text'],
+                ['Dismiss', 'optional close button'],
+                ['Position', 'top or bottom edge'],
+                ['Color style', 'contrast or same'],
+                ['Elevation', 'shadows.lg (not configurable)'],
+                ['Radius', 'radii.xl / 16px (opinionated)'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For transient, non-blocking confirmations and alerts."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use for confirmations the user doesn&apos;t need to act on — saved, copied, sent.
+            </li>
+            <li>
+              Use persistent toasts (duration 0) for errors that need acknowledgement.
+            </li>
+            <li>
+              Mount a <code className="font-mono text-[13px]">Toaster</code> when several messages
+              can arrive at once — newest sits in front, older ones peek out behind it, three at a
+              time.
+            </li>
+            <li>
+              If the message needs more than two lines or an action beyond dismiss, use a sheet instead.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste.">
+          <CodeBlock language="tsx">{`npx arloui add toast
+
+{/* Mount one Toaster near the root, inside ThemeProvider */}
+import { Toaster } from "@/components/ui/toast";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const insets = useSafeAreaInsets();
+
+<Toaster position="bottom" topInset={insets.top} bottomInset={insets.bottom} />
+
+{/* Then queue toasts from anywhere — they stack into a deck */}
+import { useToast } from "@/components/ui/toast";
+
+const { toast, dismiss, dismissAll } = useToast();
+
+toast("Changes saved successfully");
+toast("Connection lost", { colorStyle: "same", duration: 0, showDismiss: true });
+
+{/* Reuse an id to replace a live toast in place */}
+const id = toast("Uploading…", { duration: 0 });
+toast("Uploaded", { id });
+
+{/* Or drive a single toast yourself, without the Toaster */}
+import { useState } from "react";
+import { Toast } from "@/components/ui/toast";
+
+const [visible, setVisible] = useState(false);
+
+<Toast
+  visible={visible}
+  message="Changes saved successfully"
+  position="bottom"
+  colorStyle="contrast"
+  showDismiss
+  topInset={insets.top}
+  bottomInset={insets.bottom}
+  onDismiss={() => setVisible(false)}
+/>
+
+{/* Persistent error toast */}
+<Toast
+  visible={hasError}
+  message="Connection lost"
+  position="top"
+  colorStyle="same"
+  duration={0}
+  showDismiss
+  icon={<ErrorIcon />}
+  topInset={insets.top}
+  onDismiss={() => setHasError(false)}
+/>`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Color, elevation, radius, motion, and type foundations."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {toastData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Announce once, don't overwhelm."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Uses accessibilityRole &quot;alert&quot; with accessibilityLiveRegion &quot;assertive&quot;.</li>
+            <li>Screen readers announce the message immediately without requiring focus.</li>
+            <li>Reduced motion disables the slide animation while preserving the state change.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Keep toasts brief and non-blocking.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Auto-dismiss confirmations after 3–4 seconds.',
+                dont: 'Auto-dismiss error toasts — persist them until the user dismisses.',
+              },
+              {
+                do: 'Keep copy under two lines. If more context is needed, use a sheet.',
+                dont: 'Toast an action the user just performed and can clearly see — it creates noise.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Feedback pieces for different contexts."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Sheet', 'Badge', 'Skeleton', 'Alert'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...toastData.headings]} actions={[...toastData.actions]} />
     </>
   );
 }

@@ -106,6 +106,11 @@ function mapLegacyAppearance(appearance: SocialAuthAppearance): SocialAuthType {
   return appearance === 'neutralOutline' ? 'secondary' : 'fill';
 }
 
+/**
+ * Fallback brand letterforms, drawn in the system face on purpose — a brand mark
+ * should not take on the app's typeface, and Apple's `` glyph exists only in the
+ * system font. This is the one place `fontFamily` is intentionally not a token.
+ */
 function DefaultGlyph({ platform, color, iconPx }: { platform: SocialPlatform; color: string; iconPx: number }) {
   const fs = Math.round(iconPx * 0.62);
   switch (platform) {

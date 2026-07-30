@@ -220,7 +220,7 @@ export const Chip = forwardRef<View, ChipProps>(function Chip(
             <Text
               numberOfLines={1}
               style={{
-                fontFamily: 'Manrope',
+                fontFamily: t.fontFamilies.sans,
                 fontSize: dims.type.fontSize,
                 lineHeight: dims.type.lineHeight,
                 fontWeight: '400',

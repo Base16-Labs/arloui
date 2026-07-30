@@ -1,14 +1,4 @@
-import {
-  Children,
-  cloneElement,
-  isValidElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useRef, useState, Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -50,6 +40,8 @@ export type TabBarProps = {
   showLabels?: boolean;
   hidden?: boolean;
   bottomInset?: number;
+  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a transparent surface for legibility. */
+  blurComponent?: ReactNode;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -107,6 +99,7 @@ function TabBarRoot({
   showLabels = false,
   hidden = false,
   bottomInset = 0,
+  blurComponent,
   style,
 }: TabBarProps) {
   const t = useTokens();
@@ -119,8 +112,8 @@ function TabBarRoot({
     0,
     items.findIndex((item) => item.props.value === value),
   );
-  const selection = useRef(new Animated.Value(activeIndex)).current;
-  const visibility = useRef(new Animated.Value(hidden ? 1 : 0)).current;
+  const [selection] = useState(() => new Animated.Value(activeIndex));
+  const [visibility] = useState(() => new Animated.Value(hidden ? 1 : 0));
   const floating = width === 'floating';
   const innerPadding = floating ? 4 : 0;
   const itemWidth = items.length > 0 ? Math.max(0, barWidth - innerPadding * 2) / items.length : 0;
@@ -180,9 +173,11 @@ function TabBarRoot({
           }),
         },
       ];
+  // A filled surface stays fully opaque while hiding so it keeps reading as
+  // "filled" even mid-scroll; only transparent/floating bars fade for de-emphasis.
   const hideOpacity = visibility.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, floating ? 0.55 : 0.2],
+    outputRange: [1, surface === 'filled' ? 1 : floating ? 0.55 : 0.2],
   });
 
   return (
@@ -211,21 +206,26 @@ function TabBarRoot({
         style,
       ]}
     >
-      {barWidth > 0 && items.length > 0 ? (
+      {surface === 'transparent' && blurComponent ? (
+        <View
+          pointerEvents="none"
+          style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+        >
+          {blurComponent}
+        </View>
+      ) : null}
+
+      {floating && barWidth > 0 && items.length > 0 ? (
         <Animated.View
           pointerEvents="none"
           style={{
             position: 'absolute',
-            top: floating ? 4 : 0,
+            top: 4,
             left: innerPadding,
             width: indicatorWidth,
-            height: floating ? barHeight - 8 : 2,
-            borderRadius: floating ? t.radii.full : 1,
-            backgroundColor: floating
-              ? surface === 'filled'
-                ? t.colors.surfaceStrong
-                : t.colors.surfaceElevated
-              : t.colors.navIndicator,
+            height: barHeight - 8,
+            borderRadius: t.radii.full,
+            backgroundColor: surface === 'filled' ? t.colors.surfaceStrong : t.colors.surfaceElevated,
             transform: [{ translateX: indicatorTranslate }],
           }}
         />
@@ -308,7 +308,8 @@ function TabBarItemView({
             <Text
               style={{
                 color: '#FFFFFF',
-                fontFamily: 'Manrope SemiBold',
+                fontFamily: t.fontFamilies.sans,
+                fontWeight: t.fontWeights.semibold,
                 fontSize: 9,
                 lineHeight: 12,
               }}
@@ -324,7 +325,8 @@ function TabBarItemView({
           style={{
             maxWidth: '100%',
             color,
-            fontFamily: active ? 'Manrope SemiBold' : 'Manrope Medium',
+            fontFamily: t.fontFamilies.sans,
+            fontWeight: active ? t.fontWeights.semibold : t.fontWeights.medium,
             fontSize: 10,
             lineHeight: 13,
           }}

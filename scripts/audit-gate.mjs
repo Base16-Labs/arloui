@@ -10,9 +10,11 @@
  * breaking major change or that have no fix at all. Such a vuln re-blocks the
  * build automatically the moment a non-breaking fix is published.
  *
- * Today this lets `sharp`/`next` through (libvips CVEs; npm's only "fix" is a
- * major next downgrade, and sharp isn't in the Cloudflare Worker runtime),
- * while still failing on anything actually fixable.
+ * Today this lets `sharp` through: it reaches us only via `next`, npm offers no
+ * remedy that does not move next backwards by a major, and it is not part of the
+ * Cloudflare Worker runtime. Anything actually fixable still fails the build —
+ * `next` itself sat here until 16.2.12 shipped a non-major fix and the gate
+ * correctly started blocking on it.
  */
 import { execSync } from 'node:child_process';
 
@@ -48,17 +50,22 @@ for (const [name, info] of Object.entries(vulns)) {
   (hasSafeFix(info.fixAvailable) ? blocking : ignored).push(label);
 }
 
+// Everything goes to one stream. Splitting the report across stdout/stderr let
+// CI interleave the two lists, so the blocking entries appeared shuffled into
+// the allowed ones and the log was unreadable. The exit code carries the verdict.
+const out = (line = '') => process.stdout.write(`${line}\n`);
+
 if (ignored.length) {
-  console.log('Allowed high/critical (no safe fix — breaking-only or none):');
-  for (const item of ignored.sort()) console.log(`  - ${item}`);
-  console.log('');
+  out('Allowed high/critical (no safe fix — breaking-only or none):');
+  for (const item of ignored.sort()) out(`  - ${item}`);
+  out();
 }
 
 if (blocking.length) {
-  console.error('BLOCKING high/critical with a safe fix available — resolve these:');
-  for (const item of blocking.sort()) console.error(`  - ${item}`);
-  console.error('\nRun `npm audit fix` (or `npm update <pkg>`) and commit the lockfile.');
+  out('BLOCKING high/critical with a safe fix available — resolve these:');
+  for (const item of blocking.sort()) out(`  - ${item}`);
+  out('\nRun `npm audit fix` (or `npm update <pkg>`) and commit the lockfile.');
   process.exit(1);
 }
 
-console.log('audit-gate: no fixable high/critical vulnerabilities in production dependencies. ✔');
+out('audit-gate: no fixable high/critical vulnerabilities in production dependencies. ✔');

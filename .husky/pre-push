@@ -3,6 +3,11 @@
 # + skill drift guards. Turbo-cached, so unchanged parts are instant.
 set -e
 
+# Cheap and first: a lockfile missing linux binaries installs fine here and
+# only fails on the deploy runner.
+echo "▶ lockfile platform completeness"
+node scripts/lockfile-platform-guard.mjs
+
 echo "▶ build (packages + apps, excluding www)"
 npm run build -- --filter='!@arloui/www'
 
@@ -18,6 +23,16 @@ echo "▶ registry drift"
 npm run registry:build
 if ! git diff --quiet -- apps/www/public/r; then
   echo "✖ apps/www/public/r drifted — run 'npm run registry:build' and commit it."
+  exit 1
+fi
+
+# public/md is committed and served as static assets, like public/r — the
+# Cloudflare build does not regenerate it (tsx is a devDependency and the deploy
+# runner has no reason to have it). This guard is what keeps it current.
+echo "▶ docs markdown drift"
+npm run docs:md -w @arloui/www
+if ! git diff --quiet -- apps/www/public/md; then
+  echo "✖ apps/www/public/md drifted — run 'npm run docs:md -w @arloui/www' and commit it."
   exit 1
 fi
 

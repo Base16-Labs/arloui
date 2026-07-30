@@ -1,10 +1,9 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { Chip, useTokens, type ChipAccent, type ChipRadius, type ChipSelectionIndicator, type ChipSize, type ChipStyle, type ChipType } from '@arloui/registry';
-import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -83,7 +82,7 @@ export default function ChipCanvas() {
   const [iconMode, setIconMode] = useState<IconMode>('none');
   const [selectedFilters, setSelectedFilters] = useState<Set<string>>(new Set(['Active']));
   const [tokens, setTokens] = useState(INPUT_TOKENS);
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   const iconSize = size === 'sm' ? 14 : 16;
 
@@ -132,7 +131,6 @@ export default function ChipCanvas() {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <BackButton />
               <LiveBadge />
             </View>
             <ThemeToggle />

@@ -43,19 +43,11 @@ type LineAnimatedIconName =
   | 'arrow-right-down'
   | 'chevron-right-down'
   | 'download-check'
-  | 'eye-open-closed'
-  | 'lock-unlock'
-  | 'volume-mute'
-  | 'mic-mute'
-  | 'sun-moon'
   | 'grid-list'
   | 'sort-ascending-descending'
   | 'expand-collapse'
-  | 'search-close'
-  | 'send-loading'
   | 'copy-check'
-  | 'upload-check'
-  | 'envelope-open';
+  | 'upload-check';
 
 type SpecialAnimatedIconName =
   | 'heart-fill'
@@ -64,10 +56,8 @@ type SpecialAnimatedIconName =
   | 'bell-fill'
   | 'thumb-up-fill'
   | 'pin-fill'
-  | 'spinner-check'
   | 'spinner-x'
   | 'circle-progress-check'
-  | 'refresh-sync'
   | 'bell-shake'
   | 'dot-pulse';
 
@@ -81,7 +71,9 @@ export type AnimatedIconProps = {
   strokeWidth?: number;
   duration?: number;
   accessibilityLabel?: string;
-  /** Visual reset delay for momentary actions. Defaults to 1500ms for `copy-check`. */
+  /** Reverts to the inactive glyph this many ms after activating. Opt-in: set it
+   *  for momentary actions (a copy button confirming, say). Omitted, the icon
+   *  stays where you put it and `active` is yours to drive. */
   autoResetAfter?: number;
   onAutoReset?: () => void;
   /** Error color used by `spinner-x` after it resolves. */
@@ -176,89 +168,6 @@ const definitions: Record<LineAnimatedIconName, TransitionDefinition> = {
       lines: [[5, 12, 10, 17], [10, 17, 19, 7], point, point],
     },
   },
-  'eye-open-closed': {
-    fromLabel: 'Eye open',
-    toLabel: 'Eye closed',
-    from: {
-      lines: [
-        [3, 12, 7, 8],
-        [7, 8, 12, 6.5],
-        [12, 6.5, 17, 8],
-        [17, 8, 21, 12],
-        [10, 12, 14, 12],
-      ],
-    },
-    to: {
-      lines: [
-        [3.5, 10, 8, 13.5],
-        [8, 13.5, 12, 14.5],
-        [12, 14.5, 16, 13.5],
-        [16, 13.5, 20.5, 10],
-        [4, 4, 20, 20],
-      ],
-    },
-  },
-  'lock-unlock': {
-    fromLabel: 'Locked',
-    toLabel: 'Unlocked',
-    from: {
-      lines: [
-        [5, 10, 19, 10],
-        [5, 10, 5, 20],
-        [19, 10, 19, 20],
-        [5, 20, 19, 20],
-        [8, 10, 8, 7],
-        [8, 7, 10, 4.5],
-        [10, 4.5, 14, 4.5],
-        [14, 4.5, 16, 7],
-        [16, 7, 16, 10],
-      ],
-    },
-    to: {
-      lines: [
-        [5, 10, 19, 10],
-        [5, 10, 5, 20],
-        [19, 10, 19, 20],
-        [5, 20, 19, 20],
-        [8, 10, 8, 7],
-        [8, 7, 10, 4.5],
-        [10, 4.5, 14, 4.5],
-        [14, 4.5, 17, 7],
-        [17, 7, 20, 6],
-      ],
-    },
-  },
-  'volume-mute': {
-    fromLabel: 'Volume on',
-    toLabel: 'Muted',
-    from: {
-      lines: [[3, 9, 7, 9], [7, 9, 13, 5], [13, 5, 13, 19], [13, 19, 7, 15], [7, 15, 3, 15], [16, 8.5, 19.5, 12], [19.5, 12, 16, 15.5]],
-    },
-    to: {
-      lines: [[3, 9, 7, 9], [7, 9, 13, 5], [13, 5, 13, 19], [13, 19, 7, 15], [7, 15, 3, 15], [16, 8, 21, 16], [21, 8, 16, 16]],
-    },
-  },
-  'mic-mute': {
-    fromLabel: 'Microphone on',
-    toLabel: 'Microphone muted',
-    from: {
-      lines: [[9, 5, 9, 12], [9, 5, 12, 3.5], [12, 3.5, 15, 5], [15, 5, 15, 12], [6, 11, 6, 13], [6, 13, 9, 16], [9, 16, 15, 16], [15, 16, 18, 13], [18, 13, 18, 11], [12, 16, 12, 21], [8, 21, 16, 21]],
-    },
-    to: {
-      lines: [[9, 5, 9, 12], [9, 5, 12, 3.5], [12, 3.5, 15, 5], [15, 5, 15, 12], [6, 11, 6, 13], [6, 13, 9, 16], [9, 16, 15, 16], [15, 16, 18, 13], [5, 5, 19, 19], [12, 16, 12, 21], [8, 21, 16, 21]],
-    },
-  },
-  'sun-moon': {
-    fromLabel: 'Light mode',
-    toLabel: 'Dark mode',
-    from: {
-      lines: [[12, 5, 12, 2.5], [12, 21.5, 12, 19], [5, 12, 2.5, 12], [21.5, 12, 19, 12], [7.25, 7.25, 5.5, 5.5], [18.5, 18.5, 16.75, 16.75], [16.75, 7.25, 18.5, 5.5], [5.5, 18.5, 7.25, 16.75], [8, 12, 16, 12]],
-    },
-    to: {
-      lines: [[9, 4, 9, 4, 0], [9, 20, 9, 20, 0], [4, 12, 4, 12, 0], [20, 12, 20, 12, 0], [6, 6, 6, 6, 0], [18, 18, 18, 18, 0], [18, 6, 18, 6, 0], [6, 18, 6, 18, 0], [7, 5, 18, 18]],
-      rotation: 18,
-    },
-  },
   'grid-list': {
     fromLabel: 'Grid',
     toLabel: 'List',
@@ -281,18 +190,6 @@ const definitions: Record<LineAnimatedIconName, TransitionDefinition> = {
     from: { lines: [[4, 9, 4, 4], [4, 4, 9, 4], [15, 4, 20, 4], [20, 4, 20, 9], [20, 15, 20, 20], [20, 20, 15, 20], [9, 20, 4, 20], [4, 20, 4, 15]] },
     to: { lines: [[5, 10, 10, 10], [10, 10, 10, 5], [14, 5, 14, 10], [14, 10, 19, 10], [19, 14, 14, 14], [14, 14, 14, 19], [10, 19, 10, 14], [10, 14, 5, 14]] },
   },
-  'search-close': {
-    fromLabel: 'Search',
-    toLabel: 'Close',
-    from: { lines: [[4.5, 10.5, 7.5, 6.5], [7.5, 6.5, 12.5, 5.5], [12.5, 5.5, 16.5, 8.5], [16.5, 8.5, 15.5, 13.5], [15.5, 13.5, 11.5, 16.5], [11.5, 16.5, 6.5, 15.5], [15.5, 15.5, 20, 20]] },
-    to: { lines: [[6, 6, 18, 18], point, point, [18, 6, 6, 18], point, point, point] },
-  },
-  'send-loading': {
-    fromLabel: 'Send',
-    toLabel: 'Loading',
-    from: { lines: [[3.5, 5, 21, 12], [21, 12, 3.5, 19], [3.5, 19, 8.5, 12], [8.5, 12, 3.5, 5]] },
-    to: { lines: [[12, 4, 18, 7], [18, 7, 20, 12], [20, 12, 17, 17], [17, 17, 12, 20]], rotation: 180 },
-  },
   'copy-check': {
     fromLabel: 'Copy',
     toLabel: 'Copied',
@@ -305,12 +202,6 @@ const definitions: Record<LineAnimatedIconName, TransitionDefinition> = {
     from: { lines: [[12, 21, 12, 8], [7, 13, 12, 8], [12, 8, 17, 13], [5, 21, 19, 21]] },
     to: { lines: [[5, 12, 10, 17], [10, 17, 19, 7], point, point] },
   },
-  'envelope-open': {
-    fromLabel: 'Sealed mail',
-    toLabel: 'Open mail',
-    from: { lines: [[3.5, 7, 12, 13.5], [12, 13.5, 20.5, 7], [3.5, 7, 20.5, 7], [3.5, 7, 3.5, 18], [3.5, 18, 20.5, 18], [20.5, 18, 20.5, 7]] },
-    to: { lines: [[3.5, 12, 12, 5], [12, 5, 20.5, 12], [3.5, 12, 12, 17.5], [3.5, 12, 3.5, 19], [3.5, 19, 20.5, 19], [20.5, 19, 20.5, 12]] },
-  },
 };
 
 const specialLabels: Record<SpecialAnimatedIconName, readonly [string, string]> = {
@@ -320,10 +211,8 @@ const specialLabels: Record<SpecialAnimatedIconName, readonly [string, string]> 
   'bell-fill': ['Bell outline', 'Bell filled'],
   'thumb-up-fill': ['Thumb up outline', 'Thumb up filled'],
   'pin-fill': ['Pin outline', 'Pin filled'],
-  'spinner-check': ['Loading', 'Success'],
   'spinner-x': ['Loading', 'Error'],
   'circle-progress-check': ['In progress', 'Complete'],
-  'refresh-sync': ['Refresh', 'Syncing'],
   'bell-shake': ['Notification', 'New notification'],
   'dot-pulse': ['Unread', 'Unread alert'],
 };
@@ -367,7 +256,6 @@ function SpecialGlyph({
       return <Path d="M7.5 10.5v9.5H4a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1h3.5Zm0 0 4.5-7a2 2 0 0 1 2 2v4h5a2 2 0 0 1 1.9 2.5l-1.5 5.8A3 3 0 0 1 16.5 20h-9v-9.5Z" fill={active ? 'currentColor' : 'none'} {...common} />;
     case 'pin-fill':
       return <Path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z" fill={active ? 'currentColor' : 'none'} {...common} />;
-    case 'spinner-check':
     case 'spinner-x':
     case 'circle-progress-check':
       return active ? (
@@ -381,13 +269,6 @@ function SpecialGlyph({
         </>
       ) : (
         <Circle cx="12" cy="12" r="9" fill="none" strokeDasharray="42 15" {...common} />
-      );
-    case 'refresh-sync':
-      return (
-        <>
-          <Path d="M20 7v5h-5M4 17v-5h5" fill="none" {...common} />
-          <Path d="M6.2 8.7A7 7 0 0 1 18.8 7M17.8 15.3A7 7 0 0 1 5.2 17" fill="none" {...common} />
-        </>
       );
     case 'dot-pulse':
       return <Circle cx="12" cy="12" r="4" fill="currentColor" />;
@@ -447,7 +328,7 @@ function SpecialAnimatedIcon({
 
   useEffect(() => {
     let resolveTimer: ReturnType<typeof setTimeout> | undefined;
-    const staged = name === 'spinner-check' || name === 'spinner-x' || name === 'circle-progress-check';
+    const staged = name === 'spinner-x' || name === 'circle-progress-check';
     if (!active) {
       setResolved(false);
     } else if (staged && !reduceMotion) {
@@ -475,11 +356,8 @@ function SpecialAnimatedIcon({
       easing: Easing.bezier(...motion.easing.easeOut),
     });
 
-    if (!reduceMotion && ((name === 'spinner-check' || name === 'spinner-x') && !active)) {
+    if (!reduceMotion && name === 'spinner-x' && !active) {
       loop.value = withRepeat(withTiming(1, { duration: 760, easing: Easing.linear }), -1, false);
-    }
-    if (!reduceMotion && name === 'refresh-sync' && active) {
-      loop.value = withRepeat(withTiming(1, { duration: 700, easing: Easing.linear }), -1, false);
     }
     if (!reduceMotion && name === 'bell-shake' && active) {
       swing.value = withSequence(
@@ -526,7 +404,7 @@ function SpecialAnimatedIcon({
   const animatedStyle = useAnimatedStyle(() => {
     const value = progress.value;
     const rotation =
-      name === 'refresh-sync' || name === 'spinner-check' || name === 'spinner-x'
+      name === 'spinner-x'
         ? loop.value * 360
         : name === 'bell-shake' || name === 'bell-fill' ? swing.value : 0;
     const scale =
@@ -607,28 +485,21 @@ function MorphingAnimatedIcon({
 }: AnimatedIconProps & { name: LineAnimatedIconName }) {
   const definition = definitions[name];
   const progress = useSharedValue(active ? 1 : 0);
-  const loop = useSharedValue(0);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    cancelAnimation(loop);
-    loop.value = 0;
     progress.value = withTiming(active ? 1 : 0, {
       duration: reduceMotion ? 0 : duration,
       easing: Easing.bezier(...motion.easing.easeOut),
     });
-    if (!reduceMotion && name === 'send-loading' && active) {
-      loop.value = withRepeat(withTiming(1, { duration: 760, easing: Easing.linear }), -1, false);
-    }
-    return () => cancelAnimation(loop);
-  }, [active, duration, loop, name, progress, reduceMotion]);
+  }, [active, duration, progress, reduceMotion]);
 
   const rotation = useAnimatedProps(() => ({
     rotation: interpolate(
       progress.value,
       [0, 1],
       [definition.from.rotation ?? 0, definition.to.rotation ?? 0],
-    ) + (name === 'send-loading' && active ? loop.value * 360 : 0),
+    ),
     originX: 12,
     originY: 12,
   }));
@@ -676,14 +547,13 @@ export function AnimatedIcon(props: AnimatedIconProps) {
 
   useEffect(() => {
     setVisualActive(active);
-    const resetDelay = autoResetAfter ?? (name === 'copy-check' ? 1500 : undefined);
-    if (!active || resetDelay == null) return;
+    if (!active || autoResetAfter == null) return;
     const timer = setTimeout(() => {
       setVisualActive(false);
       onAutoReset?.();
-    }, resetDelay);
+    }, autoResetAfter);
     return () => clearTimeout(timer);
-  }, [active, autoResetAfter, name, onAutoReset]);
+  }, [active, autoResetAfter, onAutoReset]);
 
   if (isSpecialName(name)) {
     return (

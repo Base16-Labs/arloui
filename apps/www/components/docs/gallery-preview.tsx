@@ -108,7 +108,7 @@ function GalleryScreen({
         {ITEM_HEIGHTS.map((h, i) => (
           <div
             key={i}
-            className="absolute bg-[#D1D5DC] dark:bg-[#364153]"
+            className="absolute bg-[#D1D5DC] dark:bg-[#3F3F46]"
             style={{
               top: positions[i]!.top,
               left: positions[i]!.col * (colW + gap),
@@ -134,7 +134,7 @@ function GalleryScreen({
       {ITEM_HEIGHTS.map((_, i) => (
         <div
           key={i}
-          className="bg-[#D1D5DC] dark:bg-[#364153]"
+          className="bg-[#D1D5DC] dark:bg-[#3F3F46]"
           style={{
             width: colW,
             height: 80,

@@ -1,13 +1,4 @@
-import {
-  Children,
-  cloneElement,
-  isValidElement,
-  useEffect,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useEffect, useState, Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -20,7 +11,7 @@ import {
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
 
-export type TabsAppearance = 'plain' | 'underline' | 'filled';
+export type TabsAppearance = 'plain' | 'underline' | 'filled' | 'segmented';
 export type TabsTone = 'neutral' | 'accent';
 export type TabsLayout = 'content' | 'equal';
 
@@ -65,8 +56,16 @@ function TabsRoot({
 }: TabsProps) {
   const t = useTokens();
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [trackWidth, setTrackWidth] = useState(0);
   const items = Children.toArray(children).filter(isValidElement) as ReactElement<TabsItemProps>[];
-  const equal = layout === 'equal' && !scrollable;
+  const segmented = appearance === 'segmented';
+  // A segmented control is a fixed, equal-width track — it ignores scrollable/content layout.
+  const equal = segmented || (layout === 'equal' && !scrollable);
+  const activeIndex = Math.max(
+    0,
+    items.findIndex((item) => item.props.value === value),
+  );
+  const [selection] = useState(() => new Animated.Value(activeIndex));
 
   useEffect(() => {
     let active = true;
@@ -77,6 +76,70 @@ function TabsRoot({
       subscription.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (!segmented) return;
+    if (reduceMotion) {
+      selection.setValue(activeIndex);
+      return;
+    }
+    Animated.spring(selection, {
+      toValue: activeIndex,
+      ...t.motion.spring.snappy,
+      useNativeDriver: true,
+    }).start();
+  }, [activeIndex, reduceMotion, segmented, selection, t.motion.spring.snappy]);
+
+  if (segmented) {
+    const segPadding = 4;
+    const thumbWidth = items.length > 0 ? Math.max(0, (trackWidth - segPadding * 2) / items.length) : 0;
+    return (
+      <View
+        accessibilityLabel={accessibilityLabel}
+        onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
+        style={[
+          {
+            flexDirection: 'row',
+            alignItems: 'stretch',
+            padding: segPadding,
+            borderRadius: t.radii.full,
+            backgroundColor: t.colors.surfaceStrong,
+          },
+          style,
+        ]}
+      >
+        {trackWidth > 0 && thumbWidth > 0 ? (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              {
+                position: 'absolute',
+                top: segPadding,
+                bottom: segPadding,
+                left: segPadding,
+                width: thumbWidth,
+                borderRadius: t.radii.full,
+                backgroundColor: t.name === 'dark' ? t.colors.borderStrong : t.colors.surface,
+                transform: [{ translateX: Animated.multiply(selection, thumbWidth) }],
+              },
+              t.shadows.sm as ViewStyle,
+            ]}
+          />
+        ) : null}
+        {items.map((item) =>
+          cloneElement(item as ReactElement<InternalTabsItemProps>, {
+            key: item.props.value,
+            active: item.props.value === value,
+            appearance,
+            tone,
+            equal: true,
+            reduceMotion,
+            onPress: () => onValueChange(item.props.value),
+          }),
+        )}
+      </View>
+    );
+  }
 
   const content = (
     <View
@@ -137,7 +200,7 @@ function TabsItemView({
   onPress,
 }: InternalTabsItemProps) {
   const t = useTokens();
-  const selection = useRef(new Animated.Value(active ? 1 : 0)).current;
+  const [selection] = useState(() => new Animated.Value(active ? 1 : 0));
   const selectedColor = tone === 'accent' ? t.colors.accent : t.colors.textPrimary;
 
   useEffect(() => {
@@ -201,8 +264,12 @@ function TabsItemView({
               ? t.colors.textInverse
               : active
                 ? selectedColor
-                : t.colors.textSecondary,
-          fontFamily: active ? 'Manrope SemiBold' : 'Manrope Medium',
+                : // Plain has no underline/pill, so mute inactive tabs harder to keep the selected one legible.
+                  appearance === 'plain'
+                  ? t.colors.textTertiary
+                  : t.colors.textSecondary,
+          fontFamily: t.fontFamilies.sans,
+          fontWeight: active ? t.fontWeights.semibold : t.fontWeights.medium,
           fontSize: 14,
           lineHeight: 20,
         }}

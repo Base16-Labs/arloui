@@ -1,9 +1,8 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Radio, useTokens, type RadioAppearance, type RadioSize } from '@arloui/registry';
-import { BackButton } from '@/components/playground/back-button';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -26,7 +25,7 @@ export default function RadioCanvas() {
   const [size, setSize] = useState<RadioSize>('md');
   const [state, setState] = useState<PreviewState>('default');
   const [selected, setSelected] = useState(0);
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -56,7 +55,6 @@ export default function RadioCanvas() {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <BackButton />
               <LiveBadge />
             </View>
             <ThemeToggle />

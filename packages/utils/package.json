@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "description": "Tiny shared helpers used by Arlo UI registry components: pressable feedback hook, platform guards, haptics wrapper, style merging.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Base16-Labs/arloui.git",
+    "directory": "packages/utils"
+  },
+  "homepage": "https://arloui.com",
+  "bugs": "https://github.com/Base16-Labs/arloui/issues",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

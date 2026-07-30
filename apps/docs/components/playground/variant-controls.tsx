@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Animated, Pressable, ScrollView, Text, View } from 'react-native';
 import { useTokens } from '@arloui/registry';
 
@@ -38,7 +38,7 @@ export function VariantChip({
   active: boolean;
   onPress: () => void;
 }) {
-  const scale = useRef(new Animated.Value(1)).current;
+  const [scale] = useState(() => new Animated.Value(1));
   const t = useTokens();
   const dark = t.name === 'dark';
   const activeBg = dark ? '#FAFAFA' : '#18181B';

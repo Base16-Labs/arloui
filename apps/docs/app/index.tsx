@@ -17,6 +17,7 @@ type IndexItem = {
     | '/textarea'
     | '/sheet'
     | '/skeleton'
+    | '/spinner'
     | '/tabs'
     | '/date-picker'
     | '/tab-bar'
@@ -25,7 +26,8 @@ type IndexItem = {
     | '/checkbox'
     | '/radio'
     | '/carousel'
-    | '/gallery';
+    | '/gallery'
+    | '/toast';
 };
 
 const COMPONENTS: IndexItem[] = [
@@ -51,9 +53,11 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Row', category: 'Lists' },
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
   { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
+  { title: 'Spinner', category: 'Feedback', href: '/spinner' },
   { title: 'Tab Bar', category: 'Nav', href: '/tab-bar' },
   { title: 'Tabs', category: 'Nav', href: '/tabs' },
   { title: 'TextArea', category: 'Controls', href: '/textarea' },
+  { title: 'Toast', category: 'Feedback', href: '/toast' },
   { title: 'Toggle', category: 'Controls', href: '/toggle' },
 ];
 

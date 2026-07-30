@@ -120,6 +120,21 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'spinner',
+    kind: 'primitive',
+    title: 'Spinner',
+    description:
+      'A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/spinner/spinner.tsx', target: 'spinner/spinner.tsx' },
+      { source: 'components/spinner/index.ts', target: 'spinner/index.ts' },
+    ],
+    meta: {
+      tags: ['feedback', 'loading', 'progress', 'motion', 'primitive'],
+    },
+  },
+  {
     name: 'tabs',
     kind: 'primitive',
     title: 'Tabs',
@@ -313,7 +328,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Chip',
     description:
       'An interactive compact element for filters, input tokens, and actions with press feedback and remove affordance.',
-    dependencies: ['react-native-svg', '@arloui/utils', 'expo-haptics'],
+    dependencies: ['react-native-svg', 'expo-haptics'],
     registryDependencies: ['tokens', 'theme-provider', 'button'],
     files: [
       { source: 'components/chip/chip.tsx', target: 'chip.tsx' },
@@ -322,6 +337,23 @@ export const COMPONENTS: RegistryEntry[] = [
     meta: {
       figma: 'Components/Chip/Default',
       tags: ['filter', 'tag', 'interactive', 'primitive'],
+    },
+  },
+  {
+    name: 'toast',
+    kind: 'primitive',
+    title: 'Toast',
+    description:
+      'A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/toast/toast.tsx', target: 'toast/toast.tsx' },
+      { source: 'components/toast/toaster.tsx', target: 'toast/toaster.tsx' },
+      { source: 'components/toast/index.ts', target: 'toast/index.ts' },
+    ],
+    meta: {
+      tags: ['feedback', 'notification', 'overlay', 'primitive'],
     },
   },
   {

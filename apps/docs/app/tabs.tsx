@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -18,7 +18,7 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type TabValue = 'for-you' | 'following' | 'saved';
 
-const APPEARANCES: TabsAppearance[] = ['plain', 'underline', 'filled'];
+const APPEARANCES: TabsAppearance[] = ['plain', 'underline', 'filled', 'segmented'];
 const TONES: TabsTone[] = ['neutral', 'accent'];
 const LAYOUTS: TabsLayout[] = ['content', 'equal'];
 
@@ -31,7 +31,7 @@ export default function TabsCanvas() {
   const [appearance, setAppearance] = useState<TabsAppearance>('underline');
   const [tone, setTone] = useState<TabsTone>('accent');
   const [layout, setLayout] = useState<TabsLayout>('equal');
-  const previewOffset = useRef(new Animated.Value(0)).current;
+  const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -195,7 +195,7 @@ export default function TabsCanvas() {
 
 function TabContent({ value }: { value: TabValue }) {
   const t = useTokens();
-  const opacity = useRef(new Animated.Value(1)).current;
+  const [opacity] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     opacity.setValue(0.72);

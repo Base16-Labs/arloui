@@ -3,6 +3,7 @@
 const js = require('@eslint/js');
 const { FlatCompat } = require('@eslint/eslintrc');
 const tsParser = require('@typescript-eslint/parser');
+const reactHooks = require('eslint-plugin-react-hooks');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -17,9 +18,35 @@ module.exports = [
   ...compat.extends(
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
     'prettier',
   ),
+  // React Compiler rules. Registry components are copied into consumer Expo apps
+  // where the compiler runs by default, so this config is the only place that
+  // catches compiler-hostile patterns before they ship. `recommended-latest`
+  // replaces the legacy `plugin:react-hooks/recommended` bridged above.
+  reactHooks.configs.flat['recommended-latest'],
+  {
+    // The compiler ruleset above lands on an existing codebase, so the classes we
+    // have actually cleaned stay at `error` and the rest are warnings until a
+    // dedicated pass — same ratchet apps/www uses.
+    //
+    // `refs` is the one that bit a real consumer: `useRef(new Animated.Value(0)).current`
+    // reads a ref during render, which Expo's React Compiler rejects. Every
+    // occurrence is now `useState(() => …)`, so this must not regress. The three
+    // remaining reports are `PanResponder.create` inside `useMemo`, where the refs
+    // are read in gesture handlers rather than during render; untangling those
+    // means reworking Sheet/Carousel/Toast drag behaviour, so they carry local
+    // disables pointing here.
+    rules: {
+      'react-hooks/refs': 'error',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
+      'react-hooks/use-memo': 'warn',
+      'react-hooks/static-components': 'warn',
+      'react-hooks/purity': 'warn',
+    },
+  },
   {
     languageOptions: {
       parser: tsParser,

@@ -1,14 +1,4 @@
-import {
-  Children,
-  forwardRef,
-  isValidElement,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, Children, isValidElement, type ReactNode } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -83,7 +73,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
   const [reduceMotion, setReduceMotion] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
-  const translateX = useRef(new Animated.Value(0)).current;
+  const [translateX] = useState(() => new Animated.Value(0));
   const gestureActive = useRef(false);
   const indexRef = useRef(initialIndex);
   const autoPlayTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -159,6 +149,9 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
 
   const panResponder = useMemo(
     () =>
+      // Refs here are read inside gesture handlers, which run on touch rather than
+      // during render. See eslint-config/index.js.
+      // eslint-disable-next-line react-hooks/refs
       PanResponder.create({
         onMoveShouldSetPanResponder: (_, g) =>
           Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy) * 1.5,

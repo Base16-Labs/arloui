@@ -1,0 +1,141 @@
+{
+  "count": 34,
+  "pages": [
+    {
+      "path": "/docs/archetypes/creation",
+      "md": "/md/docs/archetypes/creation.md"
+    },
+    {
+      "path": "/docs/archetypes/decision",
+      "md": "/md/docs/archetypes/decision.md"
+    },
+    {
+      "path": "/docs/archetypes/detail",
+      "md": "/md/docs/archetypes/detail.md"
+    },
+    {
+      "path": "/docs/archetypes/empty",
+      "md": "/md/docs/archetypes/empty.md"
+    },
+    {
+      "path": "/docs/archetypes/feed",
+      "md": "/md/docs/archetypes/feed.md"
+    },
+    {
+      "path": "/docs/archetypes/onboarding",
+      "md": "/md/docs/archetypes/onboarding.md"
+    },
+    {
+      "path": "/docs/archetypes/question",
+      "md": "/md/docs/archetypes/question.md"
+    },
+    {
+      "path": "/docs/archetypes/settings",
+      "md": "/md/docs/archetypes/settings.md"
+    },
+    {
+      "path": "/docs/archetypes/status",
+      "md": "/md/docs/archetypes/status.md"
+    },
+    {
+      "path": "/docs/components/badge",
+      "md": "/md/docs/components/badge.md"
+    },
+    {
+      "path": "/docs/components/button",
+      "md": "/md/docs/components/button.md"
+    },
+    {
+      "path": "/docs/components/carousel",
+      "md": "/md/docs/components/carousel.md"
+    },
+    {
+      "path": "/docs/components/checkbox",
+      "md": "/md/docs/components/checkbox.md"
+    },
+    {
+      "path": "/docs/components/chip",
+      "md": "/md/docs/components/chip.md"
+    },
+    {
+      "path": "/docs/components/date-picker",
+      "md": "/md/docs/components/date-picker.md"
+    },
+    {
+      "path": "/docs/components/gallery",
+      "md": "/md/docs/components/gallery.md"
+    },
+    {
+      "path": "/docs/components/input",
+      "md": "/md/docs/components/input.md"
+    },
+    {
+      "path": "/docs/components/radio",
+      "md": "/md/docs/components/radio.md"
+    },
+    {
+      "path": "/docs/components/sheet",
+      "md": "/md/docs/components/sheet.md"
+    },
+    {
+      "path": "/docs/components/skeleton",
+      "md": "/md/docs/components/skeleton.md"
+    },
+    {
+      "path": "/docs/components/spinner",
+      "md": "/md/docs/components/spinner.md"
+    },
+    {
+      "path": "/docs/components/tab-bar",
+      "md": "/md/docs/components/tab-bar.md"
+    },
+    {
+      "path": "/docs/components/tabs",
+      "md": "/md/docs/components/tabs.md"
+    },
+    {
+      "path": "/docs/components/text-area",
+      "md": "/md/docs/components/text-area.md"
+    },
+    {
+      "path": "/docs/components/toast",
+      "md": "/md/docs/components/toast.md"
+    },
+    {
+      "path": "/docs/components/toggle",
+      "md": "/md/docs/components/toggle.md"
+    },
+    {
+      "path": "/docs/foundations/fluidity",
+      "md": "/md/docs/foundations/fluidity.md"
+    },
+    {
+      "path": "/docs/primitives/color",
+      "md": "/md/docs/primitives/color.md"
+    },
+    {
+      "path": "/docs/primitives/effects",
+      "md": "/md/docs/primitives/effects.md"
+    },
+    {
+      "path": "/docs/primitives/icons",
+      "md": "/md/docs/primitives/icons.md"
+    },
+    {
+      "path": "/docs/primitives/motion",
+      "md": "/md/docs/primitives/motion.md"
+    },
+    {
+      "path": "/docs/primitives/spacing",
+      "md": "/md/docs/primitives/spacing.md"
+    },
+    {
+      "path": "/docs/primitives/tokens",
+      "md": "/md/docs/primitives/tokens.md"
+    },
+    {
+      "path": "/docs/primitives/type",
+      "md": "/md/docs/primitives/type.md"
+    }
+  ]
+}

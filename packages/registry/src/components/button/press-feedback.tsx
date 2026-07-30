@@ -6,7 +6,7 @@
  * motion" is on) plus an optional haptic tap. Keeping it here means the timing,
  * easing, and accessibility behaviour live in exactly one place.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -52,7 +52,7 @@ type PressFeedbackOptions = {
  */
 export function usePressFeedback({ haptic = 'light', onPressIn, onPressOut }: PressFeedbackOptions) {
   const { motion } = useTokens();
-  const press = useRef(new Animated.Value(0)).current;
+  const [press] = useState(() => new Animated.Value(0));
   const [pressed, setPressed] = useState(false);
   const reduceMotion = useReducedMotion();
 
@@ -75,7 +75,11 @@ export function usePressFeedback({ haptic = 'light', onPressIn, onPressOut }: Pr
       }).start();
       onPressIn?.(e);
     },
-    [haptic, onPressIn, press, duration, easing],
+    // `setPressed` is a stable setter and needs no listing — except that esbuild
+    // renames the `useState` import when bundling for Snack, which defeats the
+    // exhaustive-deps stability check and warns in their editor. Listing it is a
+    // runtime no-op.
+    [haptic, onPressIn, press, duration, easing, setPressed],
   );
 
   const handlePressOut = useCallback(
@@ -89,7 +93,7 @@ export function usePressFeedback({ haptic = 'light', onPressIn, onPressOut }: Pr
       }).start();
       onPressOut?.(e);
     },
-    [onPressOut, press, duration, easing],
+    [onPressOut, press, duration, easing, setPressed],
   );
 
   const animatedStyle = reduceMotion

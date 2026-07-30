@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AccessibilityInfo,
   Animated,
@@ -37,7 +37,7 @@ export function Skeleton({
   testID,
 }: SkeletonProps) {
   const t = useTokens();
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
   const [layoutWidth, setLayoutWidth] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
   const circle = shape === 'circle';

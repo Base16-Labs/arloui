@@ -150,7 +150,7 @@ function SheetRoot({
   const sheetHeight = fixedHeight ?? measuredHeight;
   const closedY =
     sheetHeight > 0 ? sheetHeight + resolvedBottomOffset + bottomInset + 48 : windowHeight;
-  const translateY = useRef(new Animated.Value(windowHeight)).current;
+  const [translateY] = useState(() => new Animated.Value(windowHeight));
   const closing = useRef(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -239,6 +239,9 @@ function SheetRoot({
 
   const panResponder = useMemo(
     () =>
+      // Refs here are read inside gesture handlers, which run on touch rather than
+      // during render. See eslint-config/index.js.
+      // eslint-disable-next-line react-hooks/refs
       PanResponder.create({
         onMoveShouldSetPanResponder: (_, g) =>
           dragToDismiss && Math.abs(g.dy) > 4 && Math.abs(g.dy) > Math.abs(g.dx),

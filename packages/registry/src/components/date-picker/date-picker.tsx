@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -127,7 +127,7 @@ export function DatePicker({
   const t = useTokens();
   const today = useMemo(() => startOfDay(new Date()), []);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const chevron = useRef(new Animated.Value(0)).current;
+  const [chevron] = useState(() => new Animated.Value(0));
   const [internalValue, setInternalValue] = useState<Date | null>(defaultValue);
   const selected = value === undefined ? internalValue : value;
   const initialMonth = defaultDisplayedMonth ?? selected ?? today;
@@ -213,7 +213,8 @@ export function DatePicker({
             <Text
               style={{
                 color: t.colors.textPrimary,
-                fontFamily: 'Manrope SemiBold',
+                fontFamily: t.fontFamilies.sans,
+                fontWeight: t.fontWeights.semibold,
                 fontSize: 17,
                 lineHeight: 22,
               }}
@@ -245,7 +246,8 @@ export function DatePicker({
             accessibilityRole="header"
             style={{
               color: t.colors.textPrimary,
-              fontFamily: 'Manrope SemiBold',
+              fontFamily: t.fontFamilies.sans,
+              fontWeight: t.fontWeights.semibold,
               fontSize: 17,
               lineHeight: 22,
             }}
@@ -290,7 +292,8 @@ export function DatePicker({
             <Text
               style={{
                 color: t.colors.textTertiary,
-                fontFamily: 'Manrope SemiBold',
+                fontFamily: t.fontFamilies.sans,
+                fontWeight: t.fontWeights.semibold,
                 fontSize: 11,
                 lineHeight: 16,
               }}
@@ -352,7 +355,8 @@ export function DatePicker({
                           : outside
                             ? t.colors.textTertiary
                             : t.colors.textPrimary,
-                      fontFamily: chosen ? 'Manrope SemiBold' : 'Manrope Medium',
+                      fontFamily: t.fontFamilies.sans,
+                      fontWeight: chosen ? t.fontWeights.semibold : t.fontWeights.medium,
                       fontSize: 14,
                       lineHeight: 19,
                       opacity: unavailable ? 0.46 : 1,
@@ -407,7 +411,7 @@ function MonthButton({
         style={{
           marginTop: -3,
           color: t.colors.textSecondary,
-          fontFamily: 'Manrope',
+          fontFamily: t.fontFamilies.sans,
           fontSize: 30,
           lineHeight: 34,
         }}

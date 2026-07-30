@@ -1,0 +1,5 @@
+import * as React from "react";
+import Svg, { Path } from "react-native-svg";
+import type { SvgProps } from "react-native-svg";
+const SolidPresentation = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.25 4.126h-7.5v-1.5a.751.751 0 0 0-1.5 0v1.5h-7.5c-.398 0-.779.16-1.061.44s-.439.66-.439 1.06v11.25c0 .4.158.78.439 1.06s.663.44 1.061.44h3.69l-2.026 2.53a.74.74 0 0 0-.16.55c.022.2.122.38.277.5.156.13.354.19.552.16a.75.75 0 0 0 .503-.27l2.774-3.47h5.28l2.774 3.47a1 1 0 0 0 .224.19.9.9 0 0 0 .279.08.7.7 0 0 0 .292-.02.7.7 0 0 0 .26-.14.7.7 0 0 0 .188-.22.76.76 0 0 0 .064-.57.8.8 0 0 0-.135-.26l-2.026-2.53h3.69c.398 0 .779-.16 1.061-.44s.439-.66.439-1.06V5.626c0-.4-.158-.78-.439-1.06a1.5 1.5 0 0 0-1.061-.44" /></Svg>;
+export { SolidPresentation as ReactComponent };

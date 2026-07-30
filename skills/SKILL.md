@@ -6,14 +6,13 @@ version: 0.1.0
 
 # Arlo UI
 
-Arlo UI is an AI-first, mobile-first component library by Base16 Labs. Components are copy-paste primitives — like shadcn for mobile — designed to be readable by agents and shippable by humans. Output should feel like an Arlo UI app, not a re-skinned reference.
+Arlo UI is an AI-first, mobile-first component library by Base16 Labs. Components are copy-paste primitives — you own the source, not an installed dependency — designed to be readable by agents and shippable by humans. Output should feel like an Arlo UI app, not a re-skinned reference.
 
 When invoked, work in this order:
 1. Read this file to load the design language.
 2. Pull tokens from `references/tokens.md`.
 3. Pull primitives and screen recipes from `references/components.md`.
 4. Translate to platform with `references/platform-mapping.md`.
-5. If a block-level example is requested, consult `references/blocks.md`.
 
 ## The Five Facets
 
@@ -65,11 +64,11 @@ If you find yourself adding a divider line, the surrounding spacing is probably 
 
 ### 1.4 Color as hierarchy, not decoration
 
-- Default to a calm neutral surface (deep ink in dark mode, warm off-white in light). Both modes are first-class — design them in parallel, not sequentially.
+- Default to a calm neutral surface (deep ink in dark mode, a cool near-white grey — not a warm cream — in light). Both modes are first-class — design them in parallel, not sequentially.
 - Three text levels per screen: primary (~95% contrast), secondary (~65%), tertiary (~45%). Resist a fourth.
 - One accent per screen. The accent is an event — a primary action, a live status, a selection. If everything is accented, nothing is.
 - Encoded data colors (success, warning, danger) are exempt from the one-accent rule, but apply them to the value, not the row.
-- Gradients and shadows are rare. When used, they have purpose: a fill on a CTA, a soft elevation on a sheet. Never decorative gradients on cards.
+- Gradients are intentional, not incidental. A gradient earns its place when it does one of three jobs: **contrast** — a fill that lifts a primary action off the surface; **elevation** — a soft directional wash that reads as depth on a sheet or header; or **atmospheric delight** — a quiet ambient glow that sets a mood. Shadows follow the same discipline. The guardrail: no loud, multi-stop gradients on cards or list rows, where they fight the content hierarchy instead of serving it.
 
 ### 1.5 Surface strategy
 
@@ -103,15 +102,15 @@ Most mobile screens are one of nine recognizable patterns. Name the pattern befo
 
 | Archetype | Hero | Composition | Examples |
 | --- | --- | --- | --- |
-| **Question** | The question itself, set as a display title at top-left | Title → optional helper → single input/selector → CTA pinned bottom | Cash App onboarding, Bump signup steps |
-| **Result / Success** | A confirmation glyph + one-line affirmation, vertically centered | Center stack, no chrome | "Welcome to Cash App!", payment-sent toasts |
-| **Stat / Hero number** | An oversized number with a one-line label | Top-aligned or centered hero, supporting list below, optional CTA | Cash App "$0.00" Pools, Flighty "13 MIN" delay, Bump "0530" |
-| **List** | The first row | Inset-grouped (iOS) or edge-to-edge (Android), 44pt min row, optional sticky search/header | Family token list, Cash App offers, Bump friends |
-| **Detail** | The named subject (avatar + name, hero card, or hero number) | Hero block → action row → metadata → secondary content | Family wallet detail, Luma event detail |
-| **Sheet over content** | The sheet's title | Translucent or opaque sheet at a natural detent over a dimmed parent | Flighty "Add Flight", Luma event sheet over gradient |
-| **Composer** | The empty input | Input expands to fill, tools dock to bottom edge, send is the one accent | Perplexity ask box, Family chat, Luma blast |
-| **Paywall** | One value claim + one price | Hero claim → 3–4 supporting bullets → primary CTA → tertiary "maybe later" | Flighty Pro upsell |
-| **Dashboard** | Asymmetric — the most actionable card sits top-left | Top: status. Middle: 2–4 modules. Bottom: tab bar. **Never centered.** | Cash App Money, Family wallets |
+| **Question** | The question itself, set as a display title at top-left | Title → optional helper → single input/selector → CTA pinned bottom | An onboarding step, a single-field signup |
+| **Result / Success** | A confirmation glyph + one-line affirmation, vertically centered | Center stack, no chrome | A "You're all set" screen, a payment-sent toast |
+| **Stat / Hero number** | An oversized number with a one-line label | Top-aligned or centered hero, supporting list below, optional CTA | A "$0.00" balance, a "13 MIN" delay, a "0530" wake time |
+| **List** | The first row | Inset-grouped (iOS) or edge-to-edge (Android), 44pt min row, optional sticky search/header | A holdings list, an offers list, a friends list |
+| **Detail** | The named subject (avatar + name, hero card, or hero number) | Hero block → action row → metadata → secondary content | A wallet detail, an event detail |
+| **Sheet over content** | The sheet's title | Translucent or opaque sheet at a natural detent over a dimmed parent | An "Add flight" sheet, an event sheet over a dimmed backdrop |
+| **Composer** | The empty input | Input expands to fill, tools dock to bottom edge, send is the one accent | An ask box, a chat composer, a broadcast composer |
+| **Paywall** | One value claim + one price | Hero claim → 3–4 supporting bullets → primary CTA → tertiary "maybe later" | A Pro upsell |
+| **Dashboard** | Asymmetric — the most actionable card sits top-left | Top: status. Middle: 2–4 modules. Bottom: tab bar. **Never centered.** | A money dashboard, a wallets home |
 
 For each archetype, the hero/supporting/metadata layers from §1.1 are pre-decided. Use them.
 
@@ -187,7 +186,7 @@ These are non-negotiable. They are how Arlo apps feel like Arlo apps.
 4. **Shared elements stay shared.** A card that exists on both screens of a transition must be the same view animating between positions, not a duplicate fading in. Use SwiftUI `matchedGeometryEffect` or React Native shared element transitions (Reanimated).
 5. **Text morphs when it changes meaning.** "Continue" → "Confirm", "1 wallet" → "2 wallets", "Sending…" → "Sent". Crossfade shared characters when possible; otherwise crossfade the whole word with `2px` blur to mask the swap.
 6. **Direction is information.** Tabs slide in the direction of travel. Back navigation reverses forward navigation. Breaking this is a bug.
-7. **No animation on habitual actions.** Keyboard shortcuts, segmented control switches, tab toggles used dozens of times per session — instant. The Raycast principle.
+7. **No animation on habitual actions.** Keyboard shortcuts, segmented control switches, tab toggles used dozens of times per session — instant. On a repeated action, motion reads as latency.
 8. **Gestures own velocity.** Swipe-to-dismiss commits on velocity (≥0.11 px/ms), not just distance. Boundaries dampen, never hard-stop. A drawer dragged past its top should resist with diminishing returns.
 9. **Use transitions, not keyframes, for anything rapid.** Toasts, pressable states, list item enter/exit — transitions retarget mid-flight, keyframes restart from zero.
 10. **`prefers-reduced-motion` reduces, not removes.** Replace position and scale changes with opacity. Keep state-clarifying motion (loaders, progress).
@@ -242,11 +241,11 @@ Arlo prefers calm, content-forward density. A screen reads top-to-bottom in thre
 
 ### 3.3 Brand affordances
 
-Arlo is mode-agnostic but tonally consistent: confident, quiet, technical. **Neither mode is the default — the brand picks.** Most consumer-grade Arlo apps will land on a warm off-white canvas; data-dense and "premium" verticals (flight, finance pro, AI) often land in dark. Whichever mode is chosen, the *other* mode must be engineered, not derived: design both in parallel, and run the hierarchy and contrast test against each. A dark mode that is "the light mode with inverted colors" is a bug.
+Arlo is mode-agnostic but tonally consistent: confident, quiet, technical. **Neither mode is the default — the brand picks.** Most consumer-grade Arlo apps will land on a light near-white grey canvas; data-dense and "premium" verticals (flight, finance pro, AI) often land in dark. Whichever mode is chosen, the *other* mode must be engineered, not derived: design both in parallel, and run the hierarchy and contrast test against each. A dark mode that is "the light mode with inverted colors" is a bug.
 
-### 3.4 The Sonner principles (applied)
+### 3.4 The principles of an inevitable component
 
-Components Arlo ships should feel as inevitable as Sonner felt for toasts:
+Every component Arlo ships should feel inevitable — as though it could not have been built any other way:
 
 - **Trivial to adopt.** One import, one provider at most. No context gymnastics.
 - **Defaults are beautiful.** Most users never customize. Make sure they don't need to.
@@ -255,16 +254,26 @@ Components Arlo ships should feel as inevitable as Sonner felt for toasts:
 
 ### 3.5 Primitive vocabulary
 
-Arlo primitives have stable names. An agent reading this list should recognize what already exists before inventing a new component. (Full specs live in `references/components.md`.)
+Arlo primitives have stable names. Reach for what already ships before inventing a component, and never emit a primitive that is only *planned*. (Full specs for shipped primitives live in `references/components.md`.)
 
-- **Layout & surface:** `Stack`, `Group`, `Card`, `Sheet`, `Tray`, `Scrim`, `SafeArea`.
+**Shipped today:**
+
+- **Layout & surface:** `Card`, `Sheet`.
+- **Controls:** `Button` (with `GhostButton`, `FabButton`, `SocialAuthButton`), `Chip`, `Toggle`, `Checkbox`, `Radio`, `Field` (label/hint/error slots), `Input`, `TextArea`, `DatePicker` (+ `DateWheelPicker`).
+- **Media:** `Carousel`, `Gallery`.
+- **Navigation:** `TabBar`, `Tabs` (segmented control).
+- **Feedback & state:** `Skeleton`, `Badge` (status pill).
+- **Icon:** `AnimatedIcon`.
+
+**Planned — not yet built.** These are intended design, not available components. Do not emit them: compose from the shipped primitives above, or name the gap so it can be built to spec.
+
+- **Layout & surface:** `Stack`, `Group`, `Row` (44pt min, lead/value/accessory slots), `List` (inset-grouped or edge-to-edge), `Divider` (dense lists only), `Tray`, `Scrim`, `SafeArea`.
 - **Type & content:** `Title`, `Body`, `Caption`, `Stat` (hero number + label), `Note` (inline helper or callout), `Eyebrow`.
-- **Controls:** `Button`, `Pill` (chip-shaped action), `Chip` (filter/segment), `Tab`, `Toggle`, `Stepper`, `Slider`, `Field` (input with label/hint/error slots), `Select`, `Picker`.
-- **Lists & rows:** `List` (inset-grouped or edge-to-edge), `Row` (44pt min, lead/value/accessory slots), `Divider` (only inside dense lists).
-- **Feedback:** `Toast`, `Banner`, `Spinner`, `Progress`, `Empty` (illustration + line + action), `Loader` (skeleton variant).
-- **Navigation:** `Nav` (bottom tab bar), `Header` (large title or compact), `Breadcrumb`.
+- **Controls:** `Pill` (chip-shaped action), `Stepper`, `Slider`, `Select`.
+- **Feedback:** `Toast`, `Banner`, `Spinner`, `Progress`, `Empty` (illustration + line + action).
+- **Navigation:** `Header` (large title or compact), `Breadcrumb`.
 
-A component with more than five props is probably two components (§5.1). A new primitive needs justification — propose first, then build.
+A component with more than five props is probably two components (§5.1). A new primitive needs justification — propose first, then build. The skill defines the target; the registry catches up to it, never the other way around.
 
 ---
 
@@ -396,5 +405,4 @@ When polishing existing UI, return a markdown table with `Area | Status | Before
 - `references/tokens.md` — type, color, spacing, radius, motion curves, haptic mapping.
 - `references/components.md` — primitives, variants, states, screen recipes.
 - `references/platform-mapping.md` — Figma, SwiftUI, React Native conventions.
-- `references/blocks.md` — full-screen and full-flow examples (onboarding, paywall, dashboards, composers).
 - `references/troubleshooting.md` — common pitfalls and fixes (added as the system grows).

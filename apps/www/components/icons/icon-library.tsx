@@ -15,9 +15,14 @@ const animatedNames = Object.keys(animatedIconDefinitions) as AnimatedIconName[]
 // Keep the initial DOM and SVG request burst small; the full catalogue remains
 // available through search and incremental loading.
 const PAGE_SIZE = 96;
+// Icons that play once and return to rest on their own. Each stays visibly in
+// motion for most of its window — spinner-x spins, circle-progress-check fills,
+// dot-pulse pulses — so the reset doubles as the card's hold.
+//
+// copy-check is deliberately absent: it is the same outline-into-checkmark morph
+// as download-check and upload-check, finishes in ~130ms, and reverting on a
+// timer just left the card waiting to become clickable again. It toggles instead.
 const ONE_SHOT_DURATIONS: Partial<Record<AnimatedIconName, number>> = {
-  'copy-check': 1500,
-  'spinner-check': 1400,
   'spinner-x': 1400,
   'circle-progress-check': 1600,
   'bell-shake': 800,
@@ -227,7 +232,7 @@ function AnimatedGrid({
 }
 
 function AnimatedCard({ name, onSelect }: { name: AnimatedIconName; onSelect: () => void }) {
-  const { active, isOneShot, preview } = useAnimatedIconPreview(name);
+  const { active, isOneShot, preview, runId } = useAnimatedIconPreview(name);
   const definition = animatedIconDefinitions[name];
   const currentLabel = active ? definition.labels[1] : definition.labels[0];
 
@@ -239,7 +244,7 @@ function AnimatedCard({ name, onSelect }: { name: AnimatedIconName; onSelect: ()
         className="flex size-[88px] items-center justify-center rounded-md border border-line bg-canvas text-ink transition-colors hover:border-line-strong hover:bg-canvas/70"
         aria-label={`Preview ${definition.labels[0]} to ${definition.labels[1]} animation`}
       >
-        <AnimatedIconPreview name={name} active={active} size={40} />
+        <AnimatedIconPreview name={name} active={active} size={40} runId={runId} />
       </button>
       <div className="min-w-0">
         <span className="block text-[15px] font-medium text-ink">
@@ -316,7 +321,7 @@ function AnimatedIconDialog({
   source: string;
   onClose: () => void;
 }) {
-  const { active, isOneShot, preview } = useAnimatedIconPreview(name);
+  const { active, isOneShot, preview, runId } = useAnimatedIconPreview(name);
   const [copied, setCopied] = useState<'source' | 'usage' | null>(null);
   const definition = animatedIconDefinitions[name];
   const resetAfter = ONE_SHOT_DURATIONS[name];
@@ -348,7 +353,7 @@ const [active, setActive] = useState(false);
   return (
     <DialogShell title={`${definition.labels[0]} → ${definition.labels[1]}`} onClose={onClose}>
       <div className="flex h-48 w-full items-center justify-center rounded-md border border-line bg-surface text-ink">
-        <AnimatedIconPreview name={name} active={active} size={72} />
+        <AnimatedIconPreview name={name} active={active} size={72} runId={runId} />
       </div>
       <div className="flex items-center justify-between gap-3 text-[12px] text-ink-3">
         <span aria-live="polite">
@@ -394,6 +399,7 @@ const [active, setActive] = useState(false);
 
 function useAnimatedIconPreview(name: AnimatedIconName) {
   const [active, setActive] = useState(false);
+  const [runId, setRunId] = useState(0);
   const resetAfter = ONE_SHOT_DURATIONS[name];
   const isOneShot = resetAfter !== undefined;
 
@@ -401,7 +407,7 @@ function useAnimatedIconPreview(name: AnimatedIconName) {
     if (!active || resetAfter === undefined) return;
     const timer = window.setTimeout(() => setActive(false), resetAfter);
     return () => window.clearTimeout(timer);
-  }, [active, resetAfter]);
+  }, [active, resetAfter, runId]);
 
   function preview() {
     if (!isOneShot) {
@@ -409,11 +415,14 @@ function useAnimatedIconPreview(name: AnimatedIconName) {
       return;
     }
 
-    setActive(false);
-    window.requestAnimationFrame(() => setActive(true));
+    // Go straight to active and let `runId` restart the run. Dropping back to
+    // inactive first would play the reverse morph for a frame, so the rest
+    // glyph swings back in before the animation gets going.
+    setActive(true);
+    setRunId((value) => value + 1);
   }
 
-  return { active, isOneShot, preview };
+  return { active, isOneShot, preview, runId };
 }
 
 function DialogShell({

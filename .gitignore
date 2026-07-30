@@ -21,6 +21,8 @@ apps/www/public/arloui-icons
 
 # generated registry artifacts
 # apps/www/public/r is committed (served as static files on deploy); regenerate with `npm run registry:build`
+# apps/www/public/md is committed for the same reason — the MCP server reads it
+# over HTTP; regenerate with `npm run docs:md --workspace @arloui/www`
 packages/registry/dist
 tooling/build-registry/dist
 

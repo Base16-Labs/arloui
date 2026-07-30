@@ -9,19 +9,11 @@ const MORPHING: AnimatedIconName[] = [
   'arrow-right-down',
   'chevron-right-down',
   'download-check',
-  'eye-open-closed',
-  'lock-unlock',
-  'volume-mute',
-  'mic-mute',
-  'sun-moon',
   'grid-list',
   'sort-ascending-descending',
   'expand-collapse',
-  'search-close',
-  'send-loading',
   'copy-check',
   'upload-check',
-  'envelope-open',
 ];
 
 const SPECIAL: AnimatedIconName[] = [
@@ -31,10 +23,8 @@ const SPECIAL: AnimatedIconName[] = [
   'bell-fill',
   'thumb-up-fill',
   'pin-fill',
-  'spinner-check',
   'spinner-x',
   'circle-progress-check',
-  'refresh-sync',
   'bell-shake',
   'dot-pulse',
 ];
@@ -42,10 +32,10 @@ const SPECIAL: AnimatedIconName[] = [
 const ALL = [...MORPHING, ...SPECIAL];
 
 describe('AnimatedIcon', () => {
-  it('exposes 31 icons (19 morphing + 12 special)', () => {
-    expect(MORPHING).toHaveLength(19);
-    expect(SPECIAL).toHaveLength(12);
-    expect(new Set(ALL).size).toBe(31);
+  it('exposes 21 icons (11 morphing + 10 special)', () => {
+    expect(MORPHING).toHaveLength(11);
+    expect(SPECIAL).toHaveLength(10);
+    expect(new Set(ALL).size).toBe(21);
   });
 
   it.each(ALL)('renders "%s" as an accessible image in the inactive state', (name) => {
@@ -95,17 +85,17 @@ describe('AnimatedIcon', () => {
       jest.useRealTimers();
     });
 
-    it('auto-resets copy-check after the default 1500ms and calls onAutoReset', () => {
+    it('leaves copy-check latched until autoResetAfter is asked for', () => {
       const onAutoReset = jest.fn();
       renderWithTheme(<AnimatedIcon name="copy-check" active onAutoReset={onAutoReset} />);
-      expect(onAutoReset).not.toHaveBeenCalled();
       act(() => {
-        jest.advanceTimersByTime(1500);
+        jest.advanceTimersByTime(5000);
       });
-      expect(onAutoReset).toHaveBeenCalledTimes(1);
+      expect(onAutoReset).not.toHaveBeenCalled();
+      expect(screen.getByLabelText('Copied icon')).toBeTruthy();
     });
 
-    it('honors a custom autoResetAfter', () => {
+    it('honors autoResetAfter', () => {
       const onAutoReset = jest.fn();
       renderWithTheme(
         <AnimatedIcon name="download-check" active autoResetAfter={300} onAutoReset={onAutoReset} />,

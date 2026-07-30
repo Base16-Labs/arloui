@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useState } from 'react';
 import { Animated, type GestureResponderEvent } from 'react-native';
 
 type Options = {
@@ -22,7 +22,10 @@ export function usePressableScale({
   opacity = 0.92,
   duration = 140,
 }: Options = {}) {
-  const value = useRef(new Animated.Value(0)).current;
+  // Lazy `useState` rather than `useRef(new Animated.Value(0)).current`: reading
+  // `.current` during render is rejected by React Compiler, which runs by default
+  // in the Expo apps this hook is copied into.
+  const [value] = useState(() => new Animated.Value(0));
 
   const onPressIn = useCallback(
     (_e?: GestureResponderEvent) => {

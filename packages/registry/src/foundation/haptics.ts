@@ -38,6 +38,9 @@ export async function haptic(strength: Strength = 'light'): Promise<void> {
         return await mod.notificationAsync(mod.NotificationFeedbackType.Error);
     }
   } catch {
-    // swallowed — haptics are non-critical
+    // Swallowed — haptics are non-critical. The explicit `return` is what keeps
+    // the block non-empty: esbuild strips comments when bundling this file into
+    // the Expo Snacks, and a bare `catch {}` trips `no-empty` in their editor.
+    return;
   }
 }

@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -63,7 +63,7 @@ export const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
   const t = useTokens();
   const dims = useMemo(() => checkboxDims(t)[size], [t, size]);
 
-  const fillAnim = useRef(new Animated.Value(checked ? 1 : 0)).current;
+  const [fillAnim] = useState(() => new Animated.Value(checked ? 1 : 0));
 
   const [x1, y1, x2, y2] = t.motion.easing.easeOut;
   const easing = useMemo(() => Easing.bezier(x1, y1, x2, y2), [x1, y1, x2, y2]);

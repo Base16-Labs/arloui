@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "description": "Arlo UI theme provider — wraps the React tree with a token-aware context, exposes `useTheme`, and handles light/dark switching synced to the system color scheme.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Base16-Labs/arloui.git",
+    "directory": "packages/theme"
+  },
+  "homepage": "https://arloui.com",
+  "bugs": "https://github.com/Base16-Labs/arloui/issues",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
