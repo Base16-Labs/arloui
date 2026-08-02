@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineCellSignalNone = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M12.75 11.625v.75a.751.751 0 0 1-1.5 0v-.75a.751.751 0 0 1 1.5 0" /></Svg>;
 export { OutlineCellSignalNone as ReactComponent };
+export { OutlineCellSignalNone };
+export default OutlineCellSignalNone;

@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineIceCream = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M19.5 8.745v-.12c0-1.99-.79-3.9-2.2-5.31a7.5 7.5 0 0 0-5.3-2.19 7.5 7.5 0 0 0-5.3 2.19 7.5 7.5 0 0 0-2.2 5.31v.12c-.5.18-.92.53-1.19.99-.27.45-.37.99-.28 1.52.09.52.36.99.77 1.34.41.34.92.53 1.45.53h.31l5.14 8.99c.13.23.32.42.55.55.23.14.49.21.75.21.27 0 .53-.07.75-.21.23-.13.42-.32.55-.55l5.14-8.99h.31a2.251 2.251 0 0 0 1.94-3.39c-.27-.46-.69-.81-1.19-.99m-12.21 4.38H9.1l3.81 6.66-.91 1.59zm5.35 0 2.04 3.56-.91 1.59-2.94-5.15zm2.9 2.05-1.18-2.05h2.36zm3.21-3.55H5.25a.75.75 0 0 1-.53-1.28.7.7 0 0 1 .53-.22.75.75 0 0 0 .75-.75v-.75a5.993 5.993 0 0 1 6-6 5.993 5.993 0 0 1 6 6v.75a.75.75 0 0 0 .75.75c.2 0 .39.07.53.22a.75.75 0 0 1-.53 1.28" /></Svg>;
 export { OutlineIceCream as ReactComponent };
+export { OutlineIceCream };
+export default OutlineIceCream;

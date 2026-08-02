@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineDotsThreeVertical = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M13.125 12c0 .22-.06.44-.19.62-.12.19-.3.33-.5.42-.21.08-.43.11-.65.06a1.1 1.1 0 0 1-.58-.31c-.16-.15-.26-.35-.31-.57-.04-.22-.02-.45.07-.65.08-.21.23-.38.41-.51.19-.12.41-.19.63-.19.3 0 .58.12.79.33s.33.5.33.8m-1.12-5.25a1.13 1.13 0 0 0 1.04-.7c.08-.2.1-.43.06-.65a1.1 1.1 0 0 0-.31-.57c-.15-.16-.35-.27-.57-.31s-.45-.02-.65.06q-.315.135-.51.42c-.12.18-.19.4-.19.62 0 .3.12.59.33.8s.5.33.8.33m0 10.5c-.22 0-.44.07-.63.19-.18.12-.33.3-.41.5-.09.21-.11.44-.07.65.05.22.15.42.31.58s.36.26.58.31c.22.04.44.02.65-.07.2-.08.38-.23.5-.41.13-.19.19-.4.19-.63a1.13 1.13 0 0 0-1.12-1.12" /></Svg>;
 export { OutlineDotsThreeVertical as ReactComponent };
+export { OutlineDotsThreeVertical };
+export default OutlineDotsThreeVertical;

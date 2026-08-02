@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineCurrencyKrw = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M22.5 11.261h-2.07l2.01-4.97c.05-.09.07-.19.07-.29s-.02-.2-.05-.29c-.04-.1-.1-.18-.17-.25a.6.6 0 0 0-.25-.17.6.6 0 0 0-.29-.05c-.1 0-.2.02-.29.06-.1.04-.18.1-.25.17-.07.08-.12.17-.15.26l-2.25 5.53h-3.87l-2.25-5.53a.7.7 0 0 0-.27-.34.8.8 0 0 0-.42-.13.77.77 0 0 0-.7.47l-2.25 5.53H5.19l-2.25-5.53a.73.73 0 0 0-.4-.39.77.77 0 0 0-.56 0 .82.82 0 0 0-.41.39c-.08.18-.08.38-.02.56l2.02 4.97H1.5a.75.75 0 0 0 0 1.5h2.68l2.25 5.53c.06.14.15.26.28.34.12.09.27.13.42.13s.29-.04.42-.13a.7.7 0 0 0 .27-.34l2.25-5.53h3.87l2.25 5.53a.7.7 0 0 0 .27.34c.13.09.27.13.42.13s.3-.04.42-.13c.12-.08.22-.2.28-.34l2.25-5.53h2.67a.75.75 0 0 0 0-1.5m-15.38 4.76-1.32-3.26h2.65zm3.56-4.76L12 8.011l1.32 3.25zm6.2 4.76-1.33-3.26h2.65z" /></Svg>;
 export { OutlineCurrencyKrw as ReactComponent };
+export { OutlineCurrencyKrw };
+export default OutlineCurrencyKrw;

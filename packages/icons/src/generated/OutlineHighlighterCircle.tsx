@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineHighlighterCircle = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M18.89 5.1A9.7 9.7 0 0 0 12 2.25c-2.59 0-5.07 1.02-6.89 2.85A9.76 9.76 0 0 0 2.25 12a9.75 9.75 0 0 0 2.86 6.89A9.72 9.72 0 0 0 12 21.75c2.59 0 5.07-1.03 6.89-2.86A9.75 9.75 0 0 0 21.75 12c0-2.59-1.03-5.07-2.86-6.9M9 19.68v-5.43h6v5.43c-1.93.75-4.07.75-6 0m4.5-6.93h-3V9.46l3-1.5zm4.33 5.08c-.4.41-.85.77-1.33 1.08v-4.66c0-.4-.16-.78-.44-1.06-.28-.29-.66-.44-1.06-.44v-6c0-.13-.03-.26-.09-.37a.8.8 0 0 0-.27-.27.64.64 0 0 0-.36-.11.8.8 0 0 0-.37.07l-4.5 2.25c-.12.07-.22.16-.3.28-.07.12-.11.26-.11.4v3.75c-.4 0-.78.15-1.06.44-.28.28-.44.66-.44 1.06v4.66a8.26 8.26 0 0 1-3.17-3.86 8.25 8.25 0 0 1-.35-4.98c.4-1.66 1.3-3.16 2.58-4.28a8.3 8.3 0 0 1 4.58-2 8.265 8.265 0 0 1 8.31 4.66c.73 1.53.97 3.26.68 4.94a8.26 8.26 0 0 1-2.3 4.44" /></Svg>;
 export { OutlineHighlighterCircle as ReactComponent };
+export { OutlineHighlighterCircle };
+export default OutlineHighlighterCircle;

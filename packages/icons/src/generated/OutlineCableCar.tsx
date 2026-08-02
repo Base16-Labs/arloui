@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineCableCar = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M23.237 3.247a.8.8 0 0 0-.31-.49.74.74 0 0 0-.56-.12l-21 3.75c-.19.03-.35.13-.46.28a.7.7 0 0 0-.15.52c.01.19.1.36.24.49.13.13.31.2.5.2.04 0 .09-.01.13-.01l9.62-1.72v3.23h-5.25c-.8 0-1.56.31-2.12.88-.56.56-.88 1.32-.88 2.12v6c0 .79.32 1.56.88 2.12s1.32.88 2.12.88h12c.8 0 1.56-.32 2.12-.88s.88-1.33.88-2.12v-6c0-.8-.32-1.56-.88-2.12-.56-.57-1.32-.88-2.12-.88h-5.25v-3.5l9.88-1.76c.1-.02.19-.06.27-.11.09-.05.16-.12.22-.2.05-.08.09-.18.11-.27.02-.1.03-.2.01-.29m-13.49 12.13v-4.5h4.5v4.5zm-3.75-4.5h2.25v4.5h-3.75v-3a1.5 1.5 0 0 1 1.5-1.5m12 9h-12a1.5 1.5 0 0 1-1.5-1.5v-1.5h15v1.5a1.5 1.5 0 0 1-1.5 1.5m1.5-7.5v3h-3.75v-4.5h2.25a1.5 1.5 0 0 1 1.5 1.5" /></Svg>;
 export { OutlineCableCar as ReactComponent };
+export { OutlineCableCar };
+export default OutlineCableCar;

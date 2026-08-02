@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineTreeEvergreen = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M21.595 17.54 17.282 12h2.22c.14 0 .277-.04.396-.11a.7.7 0 0 0 .276-.31.73.73 0 0 0-.078-.78l-7.5-9.75a.761.761 0 0 0-.595-.3.76.76 0 0 0-.594.3l-7.5 9.75a.73.73 0 0 0-.079.78c.063.13.159.24.278.31s.256.11.396.11h2.216l-4.312 5.54a.77.77 0 0 0-.155.39c-.014.14.012.28.074.4.063.13.158.24.278.31s.257.11.398.11h8.25v3.75a.753.753 0 0 0 1.281.53c.14-.14.22-.33.22-.53v-3.75h8.25c.14 0 .277-.04.396-.11a.77.77 0 0 0 .35-.71.8.8 0 0 0-.154-.39m-17.06-.29 4.313-5.54c.086-.11.14-.24.153-.38a.76.76 0 0 0-.35-.72.8.8 0 0 0-.4-.11H6.027l5.976-7.77 5.977 7.77h-2.227a.7.7 0 0 0-.398.12.75.75 0 0 0-.275.3.76.76 0 0 0-.072.41c.014.14.068.27.154.38l4.307 5.54z" /></Svg>;
 export { OutlineTreeEvergreen as ReactComponent };
+export { OutlineTreeEvergreen };
+export default OutlineTreeEvergreen;

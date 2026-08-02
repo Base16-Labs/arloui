@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidSelectionBackground = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M6.75 10.5h6.75v6.75H6.75zM21 4.5v15c0 .4-.158.78-.439 1.06s-.663.44-1.061.44h-15c-.398 0-.78-.16-1.06-.44-.282-.28-.44-.66-.44-1.06v-15A1.506 1.506 0 0 1 4.5 3h15c.398 0 .779.16 1.061.44S21 4.1 21 4.5M9 6.75a.751.751 0 0 0 1.5 0H12a.751.751 0 0 0 0-1.5h-1.5c-.398 0-.779.16-1.061.44S9 6.35 9 6.75m6 3.75c0-.4-.158-.78-.439-1.06A1.5 1.5 0 0 0 13.5 9H6.75c-.398 0-.78.16-1.06.44-.282.28-.44.66-.44 1.06v6.75a1.506 1.506 0 0 0 1.5 1.5h6.75c.398 0 .779-.16 1.061-.44s.439-.66.439-1.06zm3.75 1.5a.751.751 0 0 0-1.5 0v1.5a.751.751 0 0 0 0 1.5c.398 0 .779-.16 1.061-.44s.439-.66.439-1.06zm0-5.25c0-.4-.158-.78-.439-1.06a1.5 1.5 0 0 0-1.061-.44h-1.5a.751.751 0 0 0 0 1.5h1.5v1.5a.751.751 0 0 0 1.5 0z" /></Svg>;
 export { SolidSelectionBackground as ReactComponent };
+export { SolidSelectionBackground };
+export default SolidSelectionBackground;

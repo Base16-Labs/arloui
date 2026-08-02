@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineDesktopTower2 = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.25 6.75a.751.751 0 0 1-.75.75h-3a.751.751 0 0 1 0-1.5h3a.75.75 0 0 1 .75.75M19.5 9h-3a.751.751 0 0 0 0 1.5h3a.751.751 0 0 0 0-1.5m3.75-4.5v15c0 .4-.158.78-.439 1.06s-.663.44-1.061.44h-7.5c-.398 0-.779-.16-1.061-.44a1.5 1.5 0 0 1-.439-1.06V18H9v1.5h1.5a.751.751 0 0 1 0 1.5H6a.751.751 0 0 1 0-1.5h1.5V18H3c-.597 0-1.169-.24-1.591-.66a2.24 2.24 0 0 1-.659-1.59V9A2.256 2.256 0 0 1 3 6.75h9.75V4.5c0-.4.158-.78.439-1.06S13.852 3 14.25 3h7.5c.398 0 .779.16 1.061.44s.439.66.439 1.06m-10.5 12V8.25H3a.75.75 0 0 0-.75.75v6.75a.751.751 0 0 0 .75.75zm9 3v-15h-7.5v15zM18 15.75c-.222 0-.44.07-.625.19-.185.13-.329.3-.414.51a1.115 1.115 0 0 0 .244 1.22c.157.16.357.27.576.31s.444.02.65-.06a1.14 1.14 0 0 0 .694-1.04c0-.3-.118-.59-.329-.8a1.13 1.13 0 0 0-.796-.33" /></Svg>;
 export { OutlineDesktopTower2 as ReactComponent };
+export { OutlineDesktopTower2 };
+export default OutlineDesktopTower2;

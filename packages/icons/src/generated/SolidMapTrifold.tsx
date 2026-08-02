@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidMapTrifold = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M21.47 4.64a.9.9 0 0 0-.31-.14.8.8 0 0 0-.34.01l-5.73 1.43-5.75-2.87a.77.77 0 0 0-.52-.06l-6 1.5c-.16.04-.3.13-.41.26-.1.14-.16.3-.16.47v13.5c0 .11.03.22.08.33a.727.727 0 0 0 .52.4c.11.02.23.02.34-.01l5.73-1.43 5.75 2.88c.1.05.22.08.33.08.07 0 .13-.01.19-.03l6-1.5c.16-.04.3-.13.41-.26.1-.13.15-.3.15-.46V5.24c0-.12-.02-.23-.07-.33a.7.7 0 0 0-.21-.27M9 16.49c-.06 0-.12 0-.18.02l-5.07 1.27V5.82l5.17-1.29.08.04zm11.25 1.66-5.16 1.29-.09-.04V7.49c.07 0 .13-.01.19-.03l5.06-1.26z" /></Svg>;
 export { SolidMapTrifold as ReactComponent };
+export { SolidMapTrifold };
+export default SolidMapTrifold;

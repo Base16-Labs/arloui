@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidFunnelSimpleX = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.25 3.75H3.75c-.398 0-.78.16-1.06.44-.282.28-.44.66-.44 1.06v13.5a1.506 1.506 0 0 0 1.5 1.5h16.5c.398 0 .779-.16 1.061-.44s.439-.66.439-1.06V5.25c0-.4-.158-.78-.439-1.06a1.5 1.5 0 0 0-1.061-.44M6.75 12a.753.753 0 0 1 .75-.75h9a.751.751 0 0 1 0 1.5h-9a.753.753 0 0 1-.75-.75M12 16.5h-1.5a.751.751 0 0 1 0-1.5H12a.751.751 0 0 1 0 1.5m6.531.97c.069.07.125.15.162.25a.75.75 0 0 1-.162.81.8.8 0 0 1-.244.17 1 1 0 0 1-.287.05 1 1 0 0 1-.287-.05.8.8 0 0 1-.244-.17l-.969-.97-.969.97a.755.755 0 0 1-1.062 0 .75.75 0 0 1 0-1.06l.971-.97-.971-.97a.75.75 0 0 1 0-1.06.755.755 0 0 1 1.062 0l.969.97.969-.97a.755.755 0 0 1 1.062 0 .75.75 0 0 1 0 1.06l-.971.97zM19.5 9h-15a.753.753 0 0 1-.75-.75.753.753 0 0 1 .75-.75h15a.751.751 0 0 1 0 1.5" /></Svg>;
 export { SolidFunnelSimpleX as ReactComponent };
+export { SolidFunnelSimpleX };
+export default SolidFunnelSimpleX;

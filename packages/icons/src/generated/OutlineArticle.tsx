@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineArticle = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.25 3.75H3.75a1.503 1.503 0 0 0-1.5 1.5v13.5a1.503 1.503 0 0 0 1.5 1.5h16.5c.4 0 .78-.158 1.06-.439s.44-.663.44-1.061V5.25c0-.398-.16-.779-.44-1.061a1.5 1.5 0 0 0-1.06-.439m0 15H3.75V5.25h16.5zm-3-9.75c0 .199-.079.39-.22.53a.75.75 0 0 1-.53.22h-9a.75.75 0 0 1-.53-.22.747.747 0 0 1 0-1.06.75.75 0 0 1 .53-.22h9c.199 0 .39.079.53.22.141.14.22.331.22.53m0 3c0 .199-.079.39-.22.53a.75.75 0 0 1-.53.22h-9a.75.75 0 0 1-.53-.22.747.747 0 0 1 0-1.06.75.75 0 0 1 .53-.22h9c.199 0 .39.079.53.22.141.14.22.331.22.53m0 3c0 .199-.079.39-.22.53a.75.75 0 0 1-.53.22h-9a.75.75 0 0 1-.53-.22.747.747 0 0 1 0-1.06.75.75 0 0 1 .53-.22h9c.199 0 .39.079.53.22.141.14.22.331.22.53" /></Svg>;
 export { OutlineArticle as ReactComponent };
+export { OutlineArticle };
+export default OutlineArticle;

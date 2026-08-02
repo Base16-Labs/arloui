@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineBatteryCharging = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M18.375 5.25H2.625A2.25 2.25 0 0 0 .375 7.5v9a2.25 2.25 0 0 0 2.25 2.25h15.75a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25m.75 11.25c0 .199-.079.39-.22.53a.75.75 0 0 1-.53.22H2.625a.75.75 0 0 1-.53-.22.75.75 0 0 1-.22-.53v-9c0-.199.079-.39.22-.53a.75.75 0 0 1 .53-.22h15.75c.199 0 .39.079.53.22.141.14.22.331.22.53zm4.5-7.5v6c0 .199-.079.39-.22.53a.747.747 0 0 1-1.06 0 .75.75 0 0 1-.22-.53V9c0-.199.079-.39.22-.53a.747.747 0 0 1 1.06 0c.141.14.22.331.22.53m-10.987 2.605a.75.75 0 0 1 .033.731l-1.5 3a.76.76 0 0 1-.434.376.75.75 0 0 1-.908-1.048l.958-1.914H9a.75.75 0 0 1-.671-1.086l1.5-3a.76.76 0 0 1 .434-.376.75.75 0 0 1 .908 1.048l-.958 1.914H12c.128 0 .254.032.365.095a.74.74 0 0 1 .273.26" /></Svg>;
 export { OutlineBatteryCharging as ReactComponent };
+export { OutlineBatteryCharging };
+export default OutlineBatteryCharging;

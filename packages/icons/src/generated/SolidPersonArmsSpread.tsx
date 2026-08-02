@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidPersonArmsSpread = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M9.377 3.745c0-.52.15-1.03.44-1.46s.7-.77 1.18-.96a2.623 2.623 0 0 1 2.86.57c.36.36.61.83.71 1.34.11.51.05 1.04-.14 1.52-.2.48-.54.89-.97 1.17-.43.29-.94.45-1.46.45-.7 0-1.36-.28-1.86-.77-.49-.49-.76-1.16-.76-1.86m11.96 5.3c-.07-.33-.25-.63-.52-.85-.27-.21-.6-.33-.94-.32H4.127a1.49 1.49 0 0 0-1.47 1.17c-.07.34-.03.69.12.99.15.31.41.56.72.7l5.05 2.22-2.05 7.81a1.495 1.495 0 0 0 .74 1.96c.2.1.42.15.64.15a1.52 1.52 0 0 0 1.35-.85l2.77-4.78 2.77 4.78c.18.35.48.62.85.75.37.14.77.12 1.13-.05.35-.16.63-.45.77-.82.14-.36.13-.77-.02-1.13l-2.06-7.81 5.07-2.23a1.464 1.464 0 0 0 .83-1.69" /></Svg>;
 export { SolidPersonArmsSpread as ReactComponent };
+export { SolidPersonArmsSpread };
+export default SolidPersonArmsSpread;

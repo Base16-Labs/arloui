@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidBowlFood = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M21 10.125h-.79a8.2 8.2 0 0 0-2.65-5.34 8.233 8.233 0 0 0-11.12 0 8.25 8.25 0 0 0-2.66 5.34H3a.75.75 0 0 0-.75.75c0 1.78.49 3.53 1.42 5.05a9.75 9.75 0 0 0 3.83 3.6v.35a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5v-.35a9.8 9.8 0 0 0 3.83-3.6 9.7 9.7 0 0 0 1.42-5.05.75.75 0 0 0-.75-.75m-4.74-4.48c.17.14.34.29.5.44-2 .71-3.65 2.15-4.61 4.04H9.38a6.8 6.8 0 0 1 2.47-3.26c1.14-.81 2.5-1.24 3.9-1.24.17 0 .34.01.51.02m-2.37 4.48a6.66 6.66 0 0 1 3.86-2.77c.52.84.85 1.78.96 2.77zm-1.89-6c.6 0 1.2.08 1.78.24a8.3 8.3 0 0 0-3.76 2.08 8.34 8.34 0 0 0-2.21 3.68H5.29c.19-1.65.97-3.17 2.21-4.28a6.74 6.74 0 0 1 4.5-1.72" /></Svg>;
 export { SolidBowlFood as ReactComponent };
+export { SolidBowlFood };
+export default SolidBowlFood;

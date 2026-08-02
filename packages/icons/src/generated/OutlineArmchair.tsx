@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineArmchair = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.25 8.7V7.125a3.75 3.75 0 0 0-3.75-3.75h-9a3.75 3.75 0 0 0-3.75 3.75V8.7a3.752 3.752 0 0 0 0 7.35v3.075a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5V16.05a3.76 3.76 0 0 0 2.157-1.301 3.755 3.755 0 0 0 0-4.747A3.76 3.76 0 0 0 20.25 8.7M7.5 4.875h9a2.251 2.251 0 0 1 2.25 2.25V8.7a3.76 3.76 0 0 0-3 3.675h-7.5a3.755 3.755 0 0 0-3-3.675V7.125a2.25 2.25 0 0 1 2.25-2.25m12.037 9.75H19.5a.75.75 0 0 0-.75.75v3.75H5.25v-3.75a.75.75 0 0 0-.75-.75h-.037a2.248 2.248 0 0 1-2.166-2.71A2.253 2.253 0 0 1 5.37 10.3a2.26 2.26 0 0 1 1.38 2.075v3.75c0 .199.08.39.22.531a.754.754 0 0 0 1.06 0 .75.75 0 0 0 .22-.531v-2.25h7.5v2.25c0 .199.08.39.22.531a.754.754 0 0 0 1.06 0 .75.75 0 0 0 .22-.531v-3.75a2.25 2.25 0 0 1 1.38-2.075 2.25 2.25 0 1 1 .906 4.325" /></Svg>;
 export { OutlineArmchair as ReactComponent };
+export { OutlineArmchair };
+export default OutlineArmchair;

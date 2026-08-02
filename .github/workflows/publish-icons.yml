@@ -1,0 +1,113 @@
+name: Publish icons
+
+# Publishes @arloui/icons to npm when its version in package.json changes.
+# Bump packages/icons/package.json "version" and merge to main to release.
+# Requires repo secret NPM_TOKEN (same npm account that owns the arloui CLI).
+#
+# Unlike tokens/theme, this package is installed rather than copied: no registry
+# component imports it, so it never reaches users through `arloui add`. The docs
+# tell people to `import { OutlineHouse } from '@arloui/icons'`, and npm is the
+# only thing that makes that true.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/icons/**'
+      - 'tooling/build-icons/**'
+      - '.github/workflows/publish-icons.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-icons
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Validate and publish @arloui/icons
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # npm trusted publishing requires npm 11.5.1 or newer.
+      - name: Install release npm version
+        run: npm install --global npm@11.5.1
+
+      - run: npm ci
+
+      - name: Validate
+        run: |
+          npm run typecheck --workspace @arloui/icons
+          npm run build --workspace @arloui/icons
+
+      # The committed components are generated from assets/svg. If the two have
+      # drifted, the tarball would ship icons that do not match the source set.
+      - name: Detect generated-icon drift
+        run: |
+          npm run generate --workspace @arloui/icons
+          if ! git diff --quiet --exit-code -- packages/icons/src/generated; then
+            echo "::error::packages/icons/src/generated is out of sync with assets/svg. Run \`npm run generate --workspace @arloui/icons\` and commit the result."
+            git --no-pager diff --stat -- packages/icons/src/generated
+            exit 1
+          fi
+
+      # Guards the two things most likely to break silently: shipping raw source
+      # instead of compiled output, and re-including the 12MB of source SVG that
+      # the docs site serves from its own copy.
+      - name: Verify tarball contents
+        run: |
+          npm pack --workspace @arloui/icons --dry-run --json > /tmp/pack.json
+          node -e '
+            const [pkg] = require("/tmp/pack.json");
+            const names = pkg.files.map((f) => f.path);
+            const fail = (msg) => { console.error("::error::" + msg); process.exitCode = 1; };
+
+            if (names.some((n) => n.startsWith("assets/"))) fail("tarball contains assets/ — source SVG should not ship");
+            if (names.some((n) => n.startsWith("src/"))) fail("tarball contains src/ — only compiled dist should ship");
+            if (names.some((n) => n.endsWith(".tsbuildinfo"))) fail("tarball contains .tsbuildinfo build artefacts");
+            for (const required of [
+              "dist/esm/index.js",
+              "dist/cjs/index.js",
+              "dist/esm/index.d.ts",
+              "dist/esm/package.json",
+              "dist/cjs/package.json",
+            ]) {
+              if (!names.includes(required)) fail(`tarball is missing ${required}`);
+            }
+            console.log(`tarball: ${names.length} files, ${(pkg.size / 1e6).toFixed(1)}MB packed`);
+          '
+
+      - name: Check whether this version is already published
+        id: version
+        run: |
+          version=$(node -p "require('./packages/icons/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if npm view "@arloui/icons@$version" version >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish
+        if: steps.version.outputs.exists == 'false'
+        run: npm publish --workspace @arloui/icons --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.version.outputs.exists }}" = "true" ]; then
+            echo "@arloui/icons@${{ steps.version.outputs.version }} already published; nothing to do." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Published @arloui/icons@${{ steps.version.outputs.version }} to npm." >> "$GITHUB_STEP_SUMMARY"
+          fi
