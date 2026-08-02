@@ -37,6 +37,7 @@
   "scripts": {
     "generate": "tsx ../../tooling/build-icons/src/index.ts",
     "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.cjs.json && node scripts/finalize-dist.mjs",
+    "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ignore-pattern 'src/generated/**'",
     "clean": "rm -rf .turbo dist"

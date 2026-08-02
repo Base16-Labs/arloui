@@ -14,4 +14,6 @@ const dist = new URL('../dist/', import.meta.url).pathname;
 await writeFile(join(dist, 'esm', 'package.json'), `${JSON.stringify({ type: 'module' }, null, 2)}\n`);
 await writeFile(join(dist, 'cjs', 'package.json'), `${JSON.stringify({ type: 'commonjs' }, null, 2)}\n`);
 
-console.log('finalize-dist: wrote module-type markers for dist/esm and dist/cjs');
+// stderr, not stdout: `prepare` runs inside `npm pack --json`, and anything this
+// prints on stdout lands in the middle of that JSON and breaks parsing.
+console.error('finalize-dist: wrote module-type markers for dist/esm and dist/cjs');

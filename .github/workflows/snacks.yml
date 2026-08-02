@@ -40,11 +40,8 @@ jobs:
       - run: npm install --global npm@11.5.1
       - run: npm ci
 
-      # The bundler inlines @arloui/icons' generated components from source. They
-      # are committed, so this only guards against a stale checkout — and it calls
-      # `generate` explicitly now that the package's `build` compiles to dist
-      # instead of running the generator.
-      - run: npm run generate --workspace @arloui/icons
+      # No icons step: @arloui/icons resolves through its exports map to dist,
+      # and its `prepare` script builds that during `npm ci` above.
 
       - run: npm run snacks:build
 
