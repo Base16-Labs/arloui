@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidFlagBannerFold = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="m12.169 5.77-4.09 9c-.03.07-.08.12-.14.16a.36.36 0 0 1-.2.06h-5.28c-.12 0-.24-.02-.34-.07a.9.9 0 0 1-.28-.22.77.77 0 0 1-.15-.49c.01-.17.07-.34.19-.47l3.29-3.62-3.29-3.62a.76.76 0 0 1-.19-.48.8.8 0 0 1 .15-.49c.08-.09.17-.16.28-.21.1-.05.22-.08.34-.08h9.37c.06 0 .12.02.18.05a.37.37 0 0 1 .19.3c.01.06-.01.12-.03.18m9.91-2.57a.76.76 0 0 0-.54-.21h-5.98c-.14 0-.28.04-.4.12s-.22.19-.28.32l-3.99 8.78q-.045.09-.03.18 0 .105.06.18c.03.05.08.1.13.13.06.03.12.04.18.04h5.42l-3.27 7.19c-.04.09-.07.19-.07.29-.01.1.01.2.04.29.03.1.09.18.15.26a.77.77 0 0 0 .83.19c.09-.04.18-.09.25-.16s.13-.16.17-.25l7.5-16.5c.06-.14.08-.3.05-.45a.73.73 0 0 0-.22-.4" /></Svg>;
 export { SolidFlagBannerFold as ReactComponent };
+export { SolidFlagBannerFold };
+export default SolidFlagBannerFold;

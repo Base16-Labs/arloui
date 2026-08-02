@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidCashRegister = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="m22.48 15.945-2.11-8.44c-.08-.32-.27-.61-.53-.82-.27-.2-.59-.31-.93-.31h-6.16v-1.5a1.5 1.5 0 0 0-1.5-1.5H7.5a1.5 1.5 0 0 0-1.5 1.5v1.5h-.91c-.34 0-.66.11-.93.31-.26.21-.45.5-.53.82l-2.11 8.44c-.01.06-.02.12-.02.18v3a1.5 1.5 0 0 0 1.5 1.5h18a1.5 1.5 0 0 0 1.5-1.5v-3c0-.06-.01-.12-.02-.18m-6.73-6.57h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1 0-1.5m0 3h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1 0-1.5m-3-3a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1 0-1.5zm.75 3.75a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75m-6-8.25h3.75v1.5H7.5zm-.75 4.5h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1 0-1.5m0 3h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1 0-1.5M21 19.125H3v-2.25h18z" /></Svg>;
 export { SolidCashRegister as ReactComponent };
+export { SolidCashRegister };
+export default SolidCashRegister;

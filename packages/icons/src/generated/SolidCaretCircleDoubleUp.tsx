@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidCaretCircleDoubleUp = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M18.895 5.103a9.83 9.83 0 0 0-4.99-2.67 9.8 9.8 0 0 0-5.64.56 9.77 9.77 0 0 0-4.37 3.59 9.76 9.76 0 0 0 0 10.83 9.64 9.64 0 0 0 4.37 3.59c1.78.74 3.74.94 5.64.56 1.89-.37 3.62-1.3 4.99-2.67a9.78 9.78 0 0 0 2.85-6.89c0-2.59-1.03-5.07-2.85-6.9m-3.37 11.18c-.07.07-.15.13-.24.16a.72.72 0 0 1-.58 0 .6.6 0 0 1-.24-.16l-2.47-2.47-2.47 2.47a.75.75 0 1 1-1.06-1.06l3-3c.07-.07.15-.13.24-.16a.72.72 0 0 1 .58 0c.09.03.17.09.24.16l3 3c.07.07.13.15.16.24a.72.72 0 0 1 0 .58c-.03.09-.09.17-.16.24m0-5.25c-.07.07-.15.13-.24.16a.72.72 0 0 1-.58 0 .6.6 0 0 1-.24-.16l-2.47-2.47-2.47 2.47a.75.75 0 1 1-1.06-1.06l3-3c.07-.07.15-.13.24-.17a1 1 0 0 1 .29-.05c.1 0 .2.02.29.05.09.04.17.1.24.17l3 3c.07.07.13.15.16.24a.72.72 0 0 1 0 .57c-.03.09-.09.18-.16.25" /></Svg>;
 export { SolidCaretCircleDoubleUp as ReactComponent };
+export { SolidCaretCircleDoubleUp };
+export default SolidCaretCircleDoubleUp;

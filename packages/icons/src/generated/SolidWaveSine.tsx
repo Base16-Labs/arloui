@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidWaveSine = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.25 3.75H3.75a1.5 1.5 0 0 0-1.5 1.5v13.5a1.5 1.5 0 0 0 1.5 1.5h16.5a1.5 1.5 0 0 0 1.5-1.5V5.25a1.5 1.5 0 0 0-1.5-1.5m-.45 8.57c-1.56 3.28-2.91 4.74-4.37 4.74-1.85 0-2.95-2.3-4.11-4.74-.82-1.73-1.85-3.88-2.75-3.88-.35 0-1.35.37-3.02 3.88-.09.18-.24.31-.43.37-.18.07-.38.06-.56-.03a.69.69 0 0 1-.38-.42.73.73 0 0 1 .02-.56C5.76 8.4 7.11 6.94 8.57 6.94c1.84 0 2.94 2.3 4.1 4.74.83 1.73 1.86 3.88 2.76 3.88.35 0 1.34-.37 3.02-3.88.04-.09.1-.18.17-.24.07-.07.16-.12.25-.16.1-.03.2-.05.3-.05.1.01.19.03.28.08q.135.06.24.18c.07.07.12.16.15.25.03.1.05.2.04.3s-.03.19-.08.28" /></Svg>;
 export { SolidWaveSine as ReactComponent };
+export { SolidWaveSine };
+export default SolidWaveSine;

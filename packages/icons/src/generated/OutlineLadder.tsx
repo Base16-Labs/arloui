@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineLadder = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M20.58 19.99 15.798 6.84l.852-2.34h.975a.751.751 0 0 0 0-1.5h-9c-.199 0-.39.07-.53.22a.745.745 0 0 0 0 1.06c.14.14.331.22.53.22h.43L3.42 19.99a.74.74 0 0 0 .025.57q.064.135.173.24.11.105.251.15c.082.03.17.05.256.05a.74.74 0 0 0 .43-.14.74.74 0 0 0 .275-.36l.911-2.5h4.406l-.725 1.99a.74.74 0 0 0 .025.57q.063.135.173.24t.251.15c.081.03.167.05.254.05a.74.74 0 0 0 .43-.14.74.74 0 0 0 .275-.36l1.732-4.75h4.875l1.73 4.75c.053.15.15.27.276.36s.277.14.432.14c.087 0 .174-.02.256-.05a.64.64 0 0 0 .25-.15.8.8 0 0 0 .174-.24.73.73 0 0 0 .025-.57M12.33 12H7.924l1.09-3h4.406zm2.727-7.5-1.094 3h-4.4l1.087-3zm-8.77 12 1.091-3h4.406l-1.097 3zm6.817-2.25L15 9.03l1.895 5.22z" /></Svg>;
 export { OutlineLadder as ReactComponent };
+export { OutlineLadder };
+export default OutlineLadder;

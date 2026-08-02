@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidHurricane = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="m14.84 4.253.89-3.31a.734.734 0 0 0-.19-.71.76.76 0 0 0-.32-.2.8.8 0 0 0-.38-.02c-1.95.48-3.8 1.28-5.5 2.35-3.66 2.36-5.59 5.69-5.59 9.64 0 1.69.52 3.33 1.49 4.72a8.2 8.2 0 0 0 3.92 3.02l-.88 3.31c-.04.13-.04.26-.01.38.04.13.1.24.19.33.09.1.2.16.32.2s.25.05.38.02c1.95-.48 3.8-1.27 5.5-2.35 3.66-2.36 5.59-5.69 5.59-9.63a8.26 8.26 0 0 0-5.41-7.75m-2.84 10c-.44 0-.88-.14-1.25-.38-.37-.25-.66-.6-.83-1.01s-.21-.87-.13-1.3c.09-.44.31-.84.62-1.16.31-.31.72-.52 1.15-.61.44-.09.89-.04 1.3.13s.76.46 1.01.83.38.8.38 1.25c0 .59-.24 1.16-.66 1.59-.42.42-.99.66-1.59.66" /></Svg>;
 export { SolidHurricane as ReactComponent };
+export { SolidHurricane };
+export default SolidHurricane;

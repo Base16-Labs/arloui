@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidUserCheck = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="m23.029 13.28-3 3a.8.8 0 0 1-.244.17 1 1 0 0 1-.287.05 1 1 0 0 1-.287-.05.8.8 0 0 1-.244-.17l-1.5-1.5a.75.75 0 0 1 0-1.06.755.755 0 0 1 1.062 0l.969.97 2.469-2.47a.755.755 0 0 1 1.062 0 .75.75 0 0 1 0 1.06m-10.281 2.25a6.33 6.33 0 0 0 2.579-3.12 6.36 6.36 0 0 0 .18-4.04 6.4 6.4 0 0 0-2.291-3.34 6.395 6.395 0 0 0-7.677 0 6.4 6.4 0 0 0-2.291 3.34 6.36 6.36 0 0 0 .18 4.04 6.33 6.33 0 0 0 2.579 3.12c-1.936.64-3.678 1.82-5.078 3.49a.748.748 0 0 0 .569 1.23h15.75c.143 0 .283-.04.403-.12a.7.7 0 0 0 .278-.31.77.77 0 0 0 .063-.42.74.74 0 0 0-.17-.38c-1.401-1.67-3.143-2.85-5.074-3.49" /></Svg>;
 export { SolidUserCheck as ReactComponent };
+export { SolidUserCheck };
+export default SolidUserCheck;

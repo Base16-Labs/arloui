@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineCodeBlock = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="m6.22 10.28-3-3A.75.75 0 0 1 3 6.75a.749.749 0 0 1 .22-.53l3-3a.754.754 0 0 1 1.06 0 .746.746 0 0 1 0 1.06L4.81 6.75l2.47 2.47a.746.746 0 0 1 0 1.06.754.754 0 0 1-1.06 0m3.75 0c.07.07.152.13.243.17.091.03.189.05.287.05.099 0 .197-.02.287-.05.092-.04.174-.1.244-.17l3-3a.75.75 0 0 0 .22-.53.749.749 0 0 0-.22-.53l-3-3a.754.754 0 0 0-1.061 0 .746.746 0 0 0 0 1.06l2.47 2.47-2.47 2.47a.75.75 0 0 0-.163.82q.057.135.163.24M19.5 4.5h-2.25a.753.753 0 0 0-.75.75.753.753 0 0 0 .75.75h2.25v13.5H6v-6a.753.753 0 0 0-1.28-.53c-.14.14-.22.33-.22.53v6A1.506 1.506 0 0 0 6 21h13.5c.398 0 .78-.16 1.061-.44s.44-.66.44-1.06V6a1.506 1.506 0 0 0-1.5-1.5" /></Svg>;
 export { OutlineCodeBlock as ReactComponent };
+export { OutlineCodeBlock };
+export default OutlineCodeBlock;

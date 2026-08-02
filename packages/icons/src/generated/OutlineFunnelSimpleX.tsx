@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineFunnelSimpleX = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M18 10.875H6a.753.753 0 0 1-.75-.75.753.753 0 0 1 .75-.75h12a.753.753 0 0 1 .75.75.753.753 0 0 1-.75.75m3.75-6H2.25a.753.753 0 0 0-.75.75.753.753 0 0 0 .75.75h19.5a.753.753 0 0 0 .75-.75.753.753 0 0 0-.75-.75m-9.75 9H9.75a.753.753 0 0 0-.75.75.753.753 0 0 0 .75.75H12a.753.753 0 0 0 .75-.75.753.753 0 0 0-.75-.75m8.78-.53a.77.77 0 0 0-.53-.22.774.774 0 0 0-.53.22L18 15.065l-1.72-1.72a.754.754 0 0 0-1.06 0 .746.746 0 0 0 0 1.06l1.72 1.72-1.72 1.72a.746.746 0 0 0 0 1.06.754.754 0 0 0 1.06 0l1.72-1.72 1.72 1.72c.07.07.152.13.243.17.09.03.188.05.287.05s.196-.02.287-.05a.8.8 0 0 0 .406-.41.76.76 0 0 0-.162-.82l-1.72-1.72 1.72-1.72a.75.75 0 0 0 .22-.53c0-.1-.02-.19-.058-.28a.7.7 0 0 0-.162-.25" /></Svg>;
 export { OutlineFunnelSimpleX as ReactComponent };
+export { OutlineFunnelSimpleX };
+export default OutlineFunnelSimpleX;

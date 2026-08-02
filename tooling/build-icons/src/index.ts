@@ -84,9 +84,19 @@ export {};
     // react-native-svg SvgProps omit xmlns; SVGR still emits it for web parity.
     tsx = tsx.replace(/\s+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/g, '');
 
-    await writeFile(join(OUT, `${componentName}.tsx`), tsx + (tsx.endsWith('\n') ? '' : '\n'));
-    // SVGR (native + TS) emits `export { ${componentName} as ReactComponent }` only.
-    exportLines.push(`export { ReactComponent as ${componentName} } from './${componentName}';`);
+    // SVGR (native + TS) emits only `export { ${componentName} as ReactComponent }`.
+    // Add the icon's own name and a default alongside it, so a consumer can deep
+    // import a single icon — `@arloui/icons/OutlineAcorn` — and pull in one module
+    // instead of the 2,981-export barrel. Metro's tree shaking cannot be relied on
+    // to trim that barrel, so the subpath has to be ergonomic or nobody uses it.
+    const body = tsx.endsWith('\n') ? tsx : `${tsx}\n`;
+    await writeFile(
+      join(OUT, `${componentName}.tsx`),
+      `${body}export { ${componentName} };\nexport default ${componentName};\n`,
+    );
+    // Explicit .js extension: emitted ESM must reference real files, not extensionless
+    // specifiers, or Node's strict ESM resolver rejects the import.
+    exportLines.push(`export { ReactComponent as ${componentName} } from './${componentName}.js';`);
     console.log(`  · ${componentName.padEnd(28)} ← ${file}`);
   }
 

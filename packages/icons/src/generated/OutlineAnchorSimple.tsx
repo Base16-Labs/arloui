@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineAnchorSimple = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M21 10.499h-2.25a.751.751 0 0 0 0 1.5h1.47a8.24 8.24 0 0 1-2.39 5.08 8.25 8.25 0 0 1-5.08 2.385V8.905a2.98 2.98 0 0 0 1.73-1.221c.41-.604.59-1.337.5-2.061a3 3 0 0 0-1-1.873 2.995 2.995 0 0 0-4.95 1.873c-.1.724.08 1.457.49 2.061a2.98 2.98 0 0 0 1.73 1.221v10.559a8.25 8.25 0 0 1-5.08-2.385 8.23 8.23 0 0 1-2.38-5.08h1.46a.751.751 0 0 0 0-1.5H3a.751.751 0 0 0-.75.75 9.75 9.75 0 0 0 2.86 6.894 9.75 9.75 0 0 0 13.79 0 9.78 9.78 0 0 0 2.85-6.894.75.75 0 0 0-.75-.75m-10.5-4.5c0-.297.09-.587.25-.833a1.52 1.52 0 0 1 1.54-.638c.29.058.56.201.77.41a1.51 1.51 0 0 1 .33 1.635c-.12.274-.31.508-.56.673a1.493 1.493 0 0 1-1.89-.186 1.5 1.5 0 0 1-.44-1.061" /></Svg>;
 export { OutlineAnchorSimple as ReactComponent };
+export { OutlineAnchorSimple };
+export default OutlineAnchorSimple;

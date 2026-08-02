@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineAirplay = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M12.57 14.137a.74.74 0 0 0-.26-.194.735.735 0 0 0-.62 0 .74.74 0 0 0-.26.194l-4.5 5.25a.8.8 0 0 0-.17.384.747.747 0 0 0 .74.854h9c.14 0 .28-.041.4-.119a.747.747 0 0 0 .34-.735.8.8 0 0 0-.17-.384zm-3.44 4.988L12 15.777l2.87 3.348zm12.62-13.5v10.5a2.26 2.26 0 0 1-.66 1.591c-.42.422-.99.659-1.59.659h-.75a.753.753 0 0 1-.53-1.28c.14-.141.33-.22.53-.22h.75a.753.753 0 0 0 .75-.75v-10.5a.753.753 0 0 0-.75-.75h-15a.753.753 0 0 0-.75.75v10.5a.753.753 0 0 0 .75.75h.75a.753.753 0 0 1 .53 1.28c-.14.141-.33.22-.53.22H4.5c-.6 0-1.17-.237-1.59-.659a2.26 2.26 0 0 1-.66-1.591v-10.5c0-.597.24-1.169.66-1.591s.99-.659 1.59-.659h15c.6 0 1.17.237 1.59.659s.66.994.66 1.591" /></Svg>;
 export { OutlineAirplay as ReactComponent };
+export { OutlineAirplay };
+export default OutlineAirplay;

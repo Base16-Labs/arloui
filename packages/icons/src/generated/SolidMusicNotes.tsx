@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const SolidMusicNotes = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M21.085 2.037a.85.85 0 0 0-.3-.15.8.8 0 0 0-.34.01l-12 3c-.16.04-.31.13-.41.27-.1.13-.16.29-.16.46v10.32c-.63-.42-1.37-.62-2.12-.56-.75.05-1.46.36-2.02.86-.56.51-.93 1.19-1.06 1.93s-.01 1.5.35 2.17c.35.66.92 1.19 1.61 1.49.69.31 1.46.37 2.19.19.73-.19 1.37-.61 1.84-1.2.46-.6.71-1.33.71-2.08v-8.79l10.5-2.62v5.61c-.63-.42-1.37-.62-2.12-.56-.75.05-1.46.36-2.02.86-.56.51-.93 1.19-1.06 1.93s-.01 1.5.35 2.17c.35.66.92 1.19 1.61 1.49.69.31 1.46.37 2.19.19.73-.19 1.37-.61 1.84-1.2.46-.6.71-1.33.71-2.08V2.627a.7.7 0 0 0-.08-.33.76.76 0 0 0-.21-.26" /></Svg>;
 export { SolidMusicNotes as ReactComponent };
+export { SolidMusicNotes };
+export default SolidMusicNotes;

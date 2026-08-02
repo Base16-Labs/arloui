@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineRoadHorizon = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M22.117 18.65a.9.9 0 0 1-.279.1.7.7 0 0 1-.293-.03.7.7 0 0 1-.261-.13.8.8 0 0 1-.19-.22L14.56 6.75H12.75v.75a.753.753 0 0 1-1.28.53.75.75 0 0 1-.22-.53v-.75H9.438L2.906 18.37c-.098.17-.26.3-.452.35a.72.72 0 0 1-.572-.07.747.747 0 0 1-.289-1.02L7.717 6.75H2.25A.753.753 0 0 1 1.5 6a.753.753 0 0 1 .75-.75h19.5a.753.753 0 0 1 .75.75.753.753 0 0 1-.75.75h-5.468l6.124 10.88c.048.09.08.18.091.28.012.1.004.2-.023.29a.65.65 0 0 1-.133.26.6.6 0 0 1-.224.19M12 10.5a.753.753 0 0 0-.75.75v1.5a.753.753 0 0 0 1.28.53c.14-.14.22-.33.22-.53v-1.5a.753.753 0 0 0-.75-.75m0 5.25a.753.753 0 0 0-.75.75V18a.753.753 0 0 0 1.28.53c.14-.14.22-.33.22-.53v-1.5a.753.753 0 0 0-.75-.75" /></Svg>;
 export { OutlineRoadHorizon as ReactComponent };
+export { OutlineRoadHorizon };
+export default OutlineRoadHorizon;

@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineTextStrikethrough = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M21 12a.751.751 0 0 1-.75.75h-3.757c.862.67 1.507 1.61 1.507 3 0 1.25-.656 2.41-1.852 3.26-1.117.8-2.591 1.24-4.148 1.24s-3.031-.44-4.148-1.24C6.656 18.16 6 17 6 15.75a.751.751 0 0 1 1.5 0c0 1.63 2.062 3 4.5 3s4.5-1.37 4.5-3c0-1.39-.988-2.21-3.635-3H3.75a.751.751 0 0 1 0-1.5h16.5A.75.75 0 0 1 21 12M7.156 9.75c.119 0 .235-.03.341-.08a.7.7 0 0 0 .267-.23c.069-.09.115-.2.134-.32a.75.75 0 0 0-.029-.35 1.6 1.6 0 0 1-.077-.52c0-1.71 1.809-3 4.208-3 1.766 0 3.203.7 3.844 1.86.101.17.261.28.447.33s.383.03.551-.07a.73.73 0 0 0 .353-.42.76.76 0 0 0-.039-.56C16.25 4.74 14.322 3.75 12 3.75c-3.254 0-5.708 1.94-5.708 4.5q-.002.51.151.99c.05.15.145.28.273.37s.282.14.44.14" /></Svg>;
 export { OutlineTextStrikethrough as ReactComponent };
+export { OutlineTextStrikethrough };
+export default OutlineTextStrikethrough;

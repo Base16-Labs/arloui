@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineImagesSquare = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M19.5 3h-12c-.398 0-.779.15-1.061.44C6.158 3.72 6 4.1 6 4.5V6H4.5c-.398 0-.779.15-1.061.44C3.158 6.72 3 7.1 3 7.5v12c0 .39.158.78.439 1.06S4.102 21 4.5 21h12c.398 0 .779-.16 1.061-.44S18 19.89 18 19.5V18h1.5c.398 0 .779-.16 1.061-.44S21 16.89 21 16.5v-12c0-.4-.158-.78-.439-1.06A1.47 1.47 0 0 0 19.5 3m-12 1.5h12V11l-1.566-1.57a1.5 1.5 0 0 0-1.06-.43c-.398 0-.779.15-1.06.43L8.753 16.5H7.5zm9 15h-12v-12H6v9c0 .39.158.78.439 1.06S7.102 18 7.5 18h9zm3-3h-8.625l6-6 2.625 2.62zm-8.25-6c.445 0 .88-.14 1.25-.38a2.255 2.255 0 0 0 .957-2.31 2.3 2.3 0 0 0-.616-1.16 2.3 2.3 0 0 0-1.152-.61 2.251 2.251 0 1 0-.439 4.46m0-3c.148 0 .293.04.417.12.123.08.219.2.276.34s.072.29.043.43a.77.77 0 0 1-.206.39.8.8 0 0 1-.384.2.74.74 0 0 1-.77-.32.744.744 0 0 1 .094-.94c.14-.15.331-.22.53-.22" /></Svg>;
 export { OutlineImagesSquare as ReactComponent };
+export { OutlineImagesSquare };
+export default OutlineImagesSquare;

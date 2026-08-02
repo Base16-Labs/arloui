@@ -3,3 +3,5 @@ import Svg, { Path } from "react-native-svg";
 import type { SvgProps } from "react-native-svg";
 const OutlineCurrencyEur = (props: SvgProps) => <Svg width={24} height={24} fill="none" viewBox="0 0 24 24" {...props}><Path fill="currentColor" d="M19.31 18.029c.066.08.117.16.15.25a.77.77 0 0 1-.033.58.65.65 0 0 1-.176.23 7.37 7.37 0 0 1-3.66 1.79 7.5 7.5 0 0 1-4.057-.38 7.45 7.45 0 0 1-3.256-2.46 7.47 7.47 0 0 1-1.492-3.79H5.248a.751.751 0 0 1 0-1.5h1.5v-1.5h-1.5a.751.751 0 0 1 0-1.5h1.538a7.5 7.5 0 0 1 1.492-3.79 7.506 7.506 0 0 1 10.971-1.05.75.75 0 0 1 .058 1.06.74.74 0 0 1-.518.25.77.77 0 0 1-.542-.19 5.97 5.97 0 0 0-2.89-1.42 6.05 6.05 0 0 0-3.21.27 6.04 6.04 0 0 0-2.603 1.9 6 6 0 0 0-1.247 2.97h5.951a.751.751 0 0 1 0 1.5h-6v1.5h4.5a.751.751 0 0 1 0 1.5h-4.45a6 6 0 0 0 1.245 2.97 5.97 5.97 0 0 0 2.604 1.9c1.025.38 2.135.48 3.21.28s2.075-.7 2.89-1.43q.112-.09.253-.15a1 1 0 0 1 .291-.04c.1.01.196.03.285.08.09.04.17.1.234.17" /></Svg>;
 export { OutlineCurrencyEur as ReactComponent };
+export { OutlineCurrencyEur };
+export default OutlineCurrencyEur;
