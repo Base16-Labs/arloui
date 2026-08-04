@@ -76,6 +76,21 @@ module.exports = [
         'warn',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
       ],
+      // `StyleSheet.absoluteFillObject` was removed in React Native 0.86, and its
+      // absence is invisible at runtime: the lookup yields `undefined`, RN drops
+      // falsy entries from a style array by design, and whatever is left usually
+      // defines no geometry — so the view silently collapses to zero size. Only a
+      // typecheck catches it, and registry source is copy-pasted into apps that
+      // rarely run one. `absoluteFill` survived the cleanup and flattens the same.
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "MemberExpression[object.name='StyleSheet'][property.name='absoluteFillObject']",
+          message:
+            'StyleSheet.absoluteFillObject was removed in React Native 0.86 and fails silently (the view collapses to zero size). Use StyleSheet.absoluteFill.',
+        },
+      ],
     },
   },
   {

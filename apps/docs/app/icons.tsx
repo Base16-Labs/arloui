@@ -97,7 +97,7 @@ function IconDetailOverlay(props: DetailOverlayProps) {
               alignItems: 'center',
               padding: pad,
             } as unknown as ViewStyle)
-          : StyleSheet.absoluteFillObject,
+          : StyleSheet.absoluteFill,
         variant === 'embedded'
           ? { zIndex: 2147483646, justifyContent: 'center', alignItems: 'center', padding: pad }
           : null,
@@ -106,14 +106,14 @@ function IconDetailOverlay(props: DetailOverlayProps) {
     >
       <Pressable
         onPress={onClose}
-        style={[StyleSheet.absoluteFillObject, { backgroundColor: 'rgba(0,0,0,0.45)' }]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.45)' }]}
         accessibilityRole="button"
         accessibilityLabel="Dismiss"
       />
       <View
         pointerEvents="box-none"
         style={[
-          StyleSheet.absoluteFillObject,
+          StyleSheet.absoluteFill,
           { justifyContent: 'center', alignItems: 'center', padding: pad },
         ]}
       >
