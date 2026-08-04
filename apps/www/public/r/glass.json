@@ -1,0 +1,27 @@
+{
+  "name": "glass",
+  "kind": "foundation",
+  "title": "Liquid Glass",
+  "description": "Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface=\"glass\"`.",
+  "registryDependencies": [
+    "tokens",
+    "theme-provider"
+  ],
+  "files": [
+    {
+      "source": "foundation/glass.tsx",
+      "target": "glass.tsx",
+      "type": "utility",
+      "content": "/**\n * Arlo UI — Liquid Glass\n *\n * One place that turns a glass material token into the fill, border, and blur\n * strength a component should paint. Every glass-capable component (Button,\n * Card, Sheet, TabBar) resolves through `useGlassSurface` so the material reads\n * identically across the system and only has to be retuned once.\n *\n * React Native has no backdrop-filter, so the translucent overlay is only half\n * the effect — the actual blur comes from a host-supplied layer (usually\n * `expo-blur`'s `BlurView`) passed as `blurComponent` and mounted behind the\n * content by `GlassBackdrop`. Without it the surface still renders correctly,\n * just as a flat translucent fill.\n *\n *   const glass = useGlassSurface('medium');\n *   <View style={{ backgroundColor: glass.backgroundColor, borderColor: glass.borderColor }}>\n *     <GlassBackdrop>{blurComponent}</GlassBackdrop>\n *     …\n *   </View>\n */\nimport { type ReactNode } from 'react';\nimport { View } from 'react-native';\nimport { useTokens } from './theme-provider';\n\n/** Material weight. Heavier materials blur more and let less of the backdrop through. */\nexport type GlassMaterial = 'small' | 'medium' | 'large';\n\nexport type GlassSurface = {\n  /** Translucent overlay fill for the current color scheme. */\n  backgroundColor: string;\n  /** Hairline that gives the material its lit edge. */\n  borderColor: string;\n  borderWidth: number;\n  /** Blur radius the host blur layer should use, in points. */\n  blur: number;\n};\n\nconst MATERIAL_TOKEN = {\n  small: 'glassSmall',\n  medium: 'glassMedium',\n  large: 'glassLarge',\n} as const;\n\n/**\n * Resolve a glass material against the active theme.\n *\n * Components should treat the returned values as the complete surface treatment —\n * don't layer an opaque `backgroundColor` underneath, or the material stops\n * reading as translucent.\n */\nexport function useGlassSurface(material: GlassMaterial = 'medium'): GlassSurface {\n  const t = useTokens();\n  const dark = t.name === 'dark';\n  const tokens = t.materials[MATERIAL_TOKEN[material]];\n  return {\n    backgroundColor: dark ? tokens.darkOverlay : tokens.lightOverlay,\n    borderColor: dark ? tokens.darkBorder : tokens.lightBorder,\n    borderWidth: 1,\n    blur: tokens.blur,\n  };\n}\n\n/**\n * Mounts a host blur layer behind glass content. Renders nothing when no blur\n * layer was supplied, so `surface=\"glass\"` degrades to a flat translucent fill\n * rather than breaking.\n *\n * The parent must set `overflow: 'hidden'` and its own `borderRadius` — the\n * backdrop fills the parent's bounds and is clipped by it.\n */\nexport function GlassBackdrop({ children }: { children?: ReactNode }) {\n  if (!children) return null;\n  return (\n    <View\n      pointerEvents=\"none\"\n      style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}\n    >\n      {children}\n    </View>\n  );\n}\n"
+    }
+  ],
+  "meta": {
+    "tags": [
+      "foundation",
+      "material",
+      "glass",
+      "blur"
+    ]
+  },
+  "hash": "4d60483edb6d9e5e"
+}

@@ -97,4 +97,41 @@ describe('Button', () => {
       }
     }
   });
+
+  it('renders the glass surface with the tone colour and mounts the blur layer', () => {
+    const onPress = jest.fn();
+    renderWithTheme(
+      <Button surface="glass" tone="primary" blurComponent={<Text>blur</Text>} onPress={onPress}>
+        Continue
+      </Button>,
+    );
+
+    expect(screen.getByText('Continue')).toBeTruthy();
+    expect(screen.getByText('blur', { includeHiddenElements: true })).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(onPress).toHaveBeenCalled();
+  });
+
+  it('renders a glass button in every tone without a blur layer', () => {
+    for (const tone of ['primary', 'neutral', 'danger'] as const) {
+      const { unmount } = renderWithTheme(
+        <Button surface="glass" tone={tone}>
+          {tone}
+        </Button>,
+      );
+      expect(screen.getByText(tone)).toBeTruthy();
+      unmount();
+    }
+  });
+
+  it('stays disabled on a glass surface', () => {
+    const onPress = jest.fn();
+    renderWithTheme(
+      <Button surface="glass" disabled onPress={onPress}>
+        Continue
+      </Button>,
+    );
+    fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(onPress).not.toHaveBeenCalled();
+  });
 });

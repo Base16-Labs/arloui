@@ -29,12 +29,14 @@ npx arloui diff button
 
 - **tokens** — Design tokens. Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.
 - **theme-provider** — Theme provider. React context that exposes tokens and follows the system color scheme.
+- **glass** — Liquid Glass. Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface="glass"`.
 - **haptics** — Haptics. Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.
 
 ### primitive
 
-- **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
-- **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
+- **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.
+- **card** — Card. A flexible surface for grouping related content with media, header, body, footer, hierarchy, padding, press, and Liquid Glass options.
+- **stepper** — Stepper. A numeric stepper with hold-to-repeat, min/max clamping, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.
 - **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
 - **spinner** — Spinner. A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.
 - **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.
@@ -45,7 +47,7 @@ npx arloui diff button
 - **radio** — Radio. An animated radio button with a scaling dot indicator, two sizes, and disabled state.
 - **toggle** — Toggle. An animated on/off switch with two sizes, disabled state, and smooth thumb transition.
 - **text-area** — TextArea. A multiline text field for comments, notes, bios, support messages, and long-form form content.
-- **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.
+- **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.
 - **carousel** — Carousel. A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.
 - **gallery** — Gallery. A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.
 - **badge** — Badge. A non-interactive status label with dot, count, and icon variants across five semantic tones.

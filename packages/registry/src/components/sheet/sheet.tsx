@@ -33,6 +33,7 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
+import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
 import { useTokens } from '../../foundation/theme-provider';
 
 export type SheetBackdrop = 'scrim' | 'passthrough';
@@ -237,6 +238,7 @@ function SheetRoot({
 }: SheetProps) {
   const t = useTokens();
   const dark = t.name === 'dark';
+  const glass = useGlassSurface('medium');
   const { height: windowHeight } = useWindowDimensions();
   const { openDuration, closeDuration, easing: easingPoints, spring: settleSpring } =
     resolveMotion(t.motion, motionOverride);
@@ -494,16 +496,8 @@ function SheetRoot({
 
   if (!mounted) return null;
 
-  const surfaceColor = isGlass
-    ? dark
-      ? t.materials.glassMedium.darkOverlay
-      : t.materials.glassMedium.lightOverlay
-    : t.colors.surfaceElevated;
-  const surfaceBorder = isGlass
-    ? dark
-      ? t.materials.glassMedium.darkBorder
-      : t.materials.glassMedium.lightBorder
-    : t.colors.border;
+  const surfaceColor = isGlass ? glass.backgroundColor : t.colors.surfaceElevated;
+  const surfaceBorder = isGlass ? glass.borderColor : t.colors.border;
   const shadow = dark ? t.shadows.none : t.shadows.xl;
 
   return (
@@ -607,14 +601,7 @@ function SheetRoot({
               overflow: 'hidden',
             }}
           >
-            {isGlass && blurComponent ? (
-              <View
-                pointerEvents="none"
-                style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
-              >
-                {blurComponent}
-              </View>
-            ) : null}
+            {isGlass ? <GlassBackdrop>{blurComponent}</GlassBackdrop> : null}
 
             {showHandle ? (
               <View {...panResponder.panHandlers}>

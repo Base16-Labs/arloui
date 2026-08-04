@@ -55,4 +55,33 @@ describe('TabBar', () => {
     fireEvent.scroll(screen.getByTestId('feed'), { nativeEvent: { contentOffset: { y: 0 } } });
     expect(screen.getByText('visible')).toBeTruthy();
   });
+
+  it('mounts the blur layer on a glass surface and keeps tabs selectable', () => {
+    const onValueChange = jest.fn();
+    renderWithTheme(
+      <TabBar
+        value="home"
+        onValueChange={onValueChange}
+        width="floating"
+        surface="glass"
+        blurComponent={<Text>blur</Text>}
+      >
+        <TabBar.Item value="home" label="Home" />
+        <TabBar.Item value="search" label="Search" />
+      </TabBar>,
+    );
+
+    expect(screen.getByText('blur', { includeHiddenElements: true })).toBeTruthy();
+    fireEvent.press(screen.getByRole('tab', { name: 'Search' }));
+    expect(onValueChange).toHaveBeenCalledWith('search');
+  });
+
+  it('renders a glass bar without a blur layer', () => {
+    renderWithTheme(
+      <TabBar value="home" onValueChange={() => {}} surface="glass" showLabels>
+        <TabBar.Item value="home" label="Home" />
+      </TabBar>,
+    );
+    expect(screen.getByText('Home')).toBeTruthy();
+  });
 });

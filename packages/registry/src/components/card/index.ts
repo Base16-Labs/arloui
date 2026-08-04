@@ -1,1 +1,1 @@
-export { Card, type CardProps } from './card';
+export { Card, type CardPadding, type CardProps, type CardSurface } from './card';

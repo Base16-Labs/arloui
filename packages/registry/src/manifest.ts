@@ -37,6 +37,16 @@ export const FOUNDATION: RegistryEntry[] = [
     meta: { tags: ['foundation', 'provider'] },
   },
   {
+    name: 'glass',
+    kind: 'foundation',
+    title: 'Liquid Glass',
+    description:
+      'Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface="glass"`.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
+    meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
+  },
+  {
     name: 'haptics',
     kind: 'foundation',
     title: 'Haptics',
@@ -72,9 +82,9 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Button',
     description:
-      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.',
+      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'glass'],
     files: [
       { source: 'components/button/button.tsx', target: 'button/button.tsx' },
       { source: 'components/button/ghost-button.tsx', target: 'button/ghost-button.tsx' },
@@ -93,15 +103,32 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A flexible surface for grouping related content with header, body, footer, and hierarchy options.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'A flexible surface for grouping related content with media, header, body, footer, hierarchy, padding, press, and Liquid Glass options.',
+    registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
       figma: 'Components/Card/Default',
-      tags: ['surface', 'primitive'],
+      tags: ['surface', 'primitive', 'glass'],
+    },
+  },
+  {
+    name: 'stepper',
+    kind: 'primitive',
+    title: 'Stepper',
+    description:
+      'A numeric stepper with hold-to-repeat, min/max clamping, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.',
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
+    files: [
+      { source: 'components/stepper/stepper.tsx', target: 'stepper/stepper.tsx' },
+      { source: 'components/stepper/animated-counter.tsx', target: 'stepper/animated-counter.tsx' },
+      { source: 'components/stepper/index.ts', target: 'stepper/index.ts' },
+    ],
+    meta: {
+      tags: ['input', 'numeric', 'counter', 'motion', 'primitive'],
     },
   },
   {
@@ -155,7 +182,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Sheet',
     description:
       'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
@@ -266,8 +293,8 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tab Bar',
     description:
-      'An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.',
+    registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },
       { source: 'components/tab-bar/index.ts', target: 'tab-bar/index.ts' },

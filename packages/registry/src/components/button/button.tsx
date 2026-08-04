@@ -1,7 +1,8 @@
 /**
  * Arlo UI — Button
  *
- * Four appearances (solid · soft · ghost · outline) × three tones (primary · neutral · danger).
+ * Four appearances (solid · soft · ghost · outline) × three tones (primary · neutral · danger),
+ * on either the default opaque surface or the translucent Liquid Glass one (`surface="glass"`).
  * All main Button appearances use radii.full to match the Figma and WWW pill shape.
  * Visual sizes stay faithful to the design while sm/md expand to a ≥44pt touch target.
  *
@@ -31,6 +32,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
 import { useTokens } from '../../foundation/theme-provider';
 import { usePressFeedback, type ButtonHaptic } from './press-feedback';
 
@@ -38,6 +40,7 @@ type Tokens = ReturnType<typeof useTokens>;
 
 export type ButtonTone = 'primary' | 'neutral' | 'danger';
 export type ButtonAppearance = 'solid' | 'soft' | 'ghost' | 'outline';
+export type ButtonSurface = 'default' | 'glass';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 export type { ButtonHaptic };
 
@@ -52,6 +55,14 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   variant?: ButtonVariant;
   tone?: ButtonTone;
   appearance?: ButtonAppearance;
+  /**
+   * `'glass'` swaps the fill for the translucent Liquid Glass material. `tone` still
+   * drives the label and icon color; `appearance` no longer controls the fill.
+   * Pair with `blurComponent` for a real backdrop blur.
+   */
+  surface?: ButtonSurface;
+  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a glass surface. */
+  blurComponent?: React.ReactNode;
   size?: ButtonSize;
   loading?: boolean;
   disabled?: boolean;
@@ -186,6 +197,8 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     variant,
     tone: toneProp,
     appearance: appearanceProp,
+    surface = 'default',
+    blurComponent,
     size = 'md',
     loading = false,
     disabled = false,
@@ -208,6 +221,9 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
 ) {
   const t = useTokens();
   const variants = useMemo(() => buttonVariants(t), [t]);
+  // Buttons are small controls, so they take the lightest material — a heavy blur
+  // on a 44pt pill just reads as muddy.
+  const glass = useGlassSurface('small');
   const { pressed, reduceMotion, animatedStyle, onPressIn: pressIn, onPressOut: pressOut } =
     usePressFeedback({ haptic, onPressIn, onPressOut });
   const [focused, setFocused] = useState(false);
@@ -223,8 +239,21 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   const text = children ?? labelProp ?? '';
   const isPressDisabled = disabled || loading;
   const useDisabledVisual = disabled && !loading;
+  const isGlass = surface === 'glass';
 
-  const palette = useDisabledVisual ? variants.disabled[appearance] : variants.tone[tone][appearance];
+  const basePalette = useDisabledVisual
+    ? variants.disabled[appearance]
+    : variants.tone[tone][appearance];
+  // Glass owns the fill and border; the tone still supplies the content color. The
+  // `outline` foregrounds are already tuned for a see-through surface, so reuse them.
+  const palette: Palette = isGlass
+    ? {
+        bg: glass.backgroundColor,
+        fg: useDisabledVisual ? t.colors.textTertiary : variants.tone[tone].outline.fg,
+        border: glass.borderColor,
+        borderWidth: glass.borderWidth,
+      }
+    : basePalette;
   const dims = variants.size[size];
 
   const hitSlop = useMemo(
@@ -240,8 +269,10 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
 
   const cornerRadius = t.radii.full;
 
+  // A translucent surface can't take the heavy feedback wash without turning opaque,
+  // so glass presses use the same restrained tint as outline/ghost.
   const feedbackOverlayColor =
-    appearance === 'outline' || appearance === 'ghost'
+    isGlass || appearance === 'outline' || appearance === 'ghost'
       ? t.colors.interactiveTertiaryPressed
       : t.colors.touchFeedbackMain;
 
@@ -280,12 +311,16 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
             minWidth: iconOnly ? dims.minHeight : 64,
             width: iconOnly ? dims.minHeight : undefined,
             alignSelf: fullWidth ? 'stretch' : 'flex-start',
+            // Clip the blur layer to the pill. Only glass needs it — clipping
+            // unconditionally would cut off focus rings on web.
+            overflow: isGlass ? 'hidden' : undefined,
           },
           focusWebStyle,
           animatedStyle,
           style,
         ]}
       >
+        {isGlass ? <GlassBackdrop>{blurComponent}</GlassBackdrop> : null}
         {showFeedbackOverlay ? (
           <View
             pointerEvents="none"

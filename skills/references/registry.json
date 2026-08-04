@@ -29,6 +29,23 @@
       ]
     },
     {
+      "name": "glass",
+      "kind": "foundation",
+      "title": "Liquid Glass",
+      "description": "Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface=\"glass\"`.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "foundation",
+        "material",
+        "glass",
+        "blur"
+      ]
+    },
+    {
       "name": "haptics",
       "kind": "foundation",
       "title": "Haptics",
@@ -63,11 +80,12 @@
       "name": "button",
       "kind": "primitive",
       "title": "Button",
-      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.",
+      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "haptics"
+        "haptics",
+        "glass"
       ],
       "dependencies": [
         "expo-haptics",
@@ -83,17 +101,41 @@
       "name": "card",
       "kind": "primitive",
       "title": "Card",
-      "description": "A flexible surface for grouping related content with header, body, footer, and hierarchy options.",
+      "description": "A flexible surface for grouping related content with media, header, body, footer, hierarchy, padding, press, and Liquid Glass options.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "glass"
       ],
       "dependencies": [],
       "tags": [
         "surface",
-        "primitive"
+        "primitive",
+        "glass"
       ],
       "figma": "Components/Card/Default"
+    },
+    {
+      "name": "stepper",
+      "kind": "primitive",
+      "title": "Stepper",
+      "description": "A numeric stepper with hold-to-repeat, min/max clamping, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "haptics"
+      ],
+      "dependencies": [
+        "expo-haptics",
+        "react-native-svg"
+      ],
+      "tags": [
+        "input",
+        "numeric",
+        "counter",
+        "motion",
+        "primitive"
+      ]
     },
     {
       "name": "skeleton",
@@ -156,7 +198,8 @@
       "description": "A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "glass"
       ],
       "dependencies": [],
       "tags": [
@@ -272,10 +315,11 @@
       "name": "tab-bar",
       "kind": "primitive",
       "title": "Tab Bar",
-      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.",
+      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "glass"
       ],
       "dependencies": [],
       "tags": [

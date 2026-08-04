@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Button,
@@ -9,6 +10,7 @@ import {
   type ButtonAppearance,
   type ButtonHaptic,
   type ButtonSize,
+  type ButtonSurface,
   type ButtonTone,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -22,6 +24,7 @@ type PreviewState = 'default' | 'pressed' | 'loading' | 'disabled';
 
 const TONES: ButtonTone[] = ['primary', 'neutral', 'danger'];
 const APPEARANCES: ButtonAppearance[] = ['solid', 'soft', 'ghost', 'outline'];
+const SURFACES: ButtonSurface[] = ['default', 'glass'];
 const SIZES: ButtonSize[] = ['sm', 'md', 'lg', 'xl'];
 const ICONS: IconLayout[] = ['none', 'leading', 'trailing', 'both', 'icon-only'];
 const STATES: PreviewState[] = ['default', 'pressed', 'loading', 'disabled'];
@@ -34,6 +37,7 @@ export default function ButtonCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [tone, setTone] = useState<ButtonTone>('primary');
   const [appearance, setAppearance] = useState<ButtonAppearance>('solid');
+  const [surface, setSurface] = useState<ButtonSurface>('default');
   const [size, setSize] = useState<ButtonSize>('md');
   const [icons, setIcons] = useState<IconLayout>('both');
   const [state, setState] = useState<PreviewState>('default');
@@ -52,6 +56,14 @@ export default function ButtonCanvas() {
 
   const iconColor = useMemo(() => {
     if (state === 'disabled') return t.colors.textDisabled;
+    if (surface === 'glass') {
+      // Glass paints the tone's outline foreground, whatever the appearance is.
+      return tone === 'danger'
+        ? t.colors.feedbackError
+        : tone === 'neutral'
+          ? t.colors.textPrimary
+          : t.colors.interactivePrimary;
+    }
     if (tone === 'danger') {
       return appearance === 'solid'
         ? t.colors.textInteractivePrimary
@@ -65,7 +77,7 @@ export default function ButtonCanvas() {
       : appearance === 'soft'
         ? t.colors.interactivePrimary
         : t.colors.textInteractiveTertiary;
-  }, [appearance, state, t, tone]);
+  }, [appearance, state, surface, t, tone]);
 
   const iconSize =
     size === 'sm' ? t.sizing.icon.xs :
@@ -107,6 +119,16 @@ export default function ButtonCanvas() {
             <Button
               tone={tone}
               appearance={appearance}
+              surface={surface}
+              blurComponent={
+                surface === 'glass' ? (
+                  <BlurView
+                    intensity={40}
+                    tint={t.name === 'dark' ? 'dark' : 'light'}
+                    style={StyleSheet.absoluteFill}
+                  />
+                ) : undefined
+              }
               size={size}
               loading={state === 'loading'}
               disabled={state === 'disabled'}
@@ -186,6 +208,16 @@ export default function ButtonCanvas() {
                     label={value}
                     active={appearance === value}
                     onPress={() => setAppearance(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Surface">
+                {SURFACES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={surface === value}
+                    onPress={() => setSurface(value)}
                   />
                 ))}
               </VariantControlRow>
