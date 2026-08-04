@@ -12,6 +12,7 @@ type IndexItem = {
   href?:
     | '/badge'
     | '/button'
+    | '/cards'
     | '/chart'
     | '/chip'
     | '/input'
@@ -35,7 +36,7 @@ type IndexItem = {
 const COMPONENTS: IndexItem[] = [
   { title: 'Badge', category: 'Feedback', href: '/badge' },
   { title: 'Button', category: 'Controls', href: '/button' },
-  { title: 'Card', category: 'Layout' },
+  { title: 'Cards', category: 'Layout', href: '/cards' },
   { title: 'Carousel', category: 'Layout', href: '/carousel' },
   { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
   { title: 'Chart', category: 'Data', href: '/chart' },

@@ -103,10 +103,15 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A flexible surface for grouping related content with media, header, body, footer, hierarchy, padding, press, and Liquid Glass options.',
-    registryDependencies: ['tokens', 'theme-provider', 'glass'],
+      'A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.',
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'glass', 'animated-counter', 'chart', 'button'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
+      { source: 'components/card/stat-card.tsx', target: 'card/stat-card.tsx' },
+      { source: 'components/card/list-card.tsx', target: 'card/list-card.tsx' },
+      { source: 'components/card/media-card.tsx', target: 'card/media-card.tsx' },
+      { source: 'components/card/action-card.tsx', target: 'card/action-card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
@@ -137,11 +142,15 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Chart',
     description:
-      'A single-series line/area chart you scrub with your finger. No axis furniture; the value readout is the label and rolls as you drag. Toned by direction with a validated positive/negative pair, plus an optional time-range selector.',
+      'Five chart forms sharing one validated palette: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Sparkline (chrome-free inline line), BarChart (categorical bars, rounded data-ends, negatives below the baseline), DonutChart (part-to-whole with a mandatory legend, folding past four categories into Other), and Meter (one value against a target, as a bar or a ring).',
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'animated-counter'],
     files: [
       { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
+      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
+      { source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' },
+      { source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' },
+      { source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' },
       { source: 'components/chart/index.ts', target: 'chart/index.ts' },
     ],
     meta: {

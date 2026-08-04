@@ -2,7 +2,15 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type ChartTone } from '@arloui/registry';
+import {
+  BarChart,
+  Chart,
+  DonutChart,
+  Meter,
+  Sparkline,
+  useTokens,
+  type ChartTone,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -11,6 +19,34 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type Shape = 'rising' | 'falling' | 'volatile' | 'flat';
 type FillMode = 'area' | 'line';
+type Form = 'line' | 'bar' | 'donut' | 'meter' | 'sparkline';
+
+const FORMS: Form[] = ['line', 'bar', 'donut', 'meter', 'sparkline'];
+
+const WEEK = [
+  { label: 'M', value: 42 },
+  { label: 'T', value: 28 },
+  { label: 'W', value: 61 },
+  { label: 'T', value: 35 },
+  { label: 'F', value: 74 },
+  { label: 'S', value: 18 },
+  { label: 'S', value: 12 },
+];
+
+const NET = [
+  { label: 'Q1', value: 40 },
+  { label: 'Q2', value: -18 },
+  { label: 'Q3', value: 26 },
+  { label: 'Q4', value: -8 },
+];
+
+const BREAKDOWN = [
+  { label: 'Rent', value: 1200 },
+  { label: 'Food', value: 480 },
+  { label: 'Travel', value: 320 },
+  { label: 'Utilities', value: 180 },
+  { label: 'Other bits', value: 90 },
+];
 
 const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'neutral'];
 const SHAPES: Shape[] = ['rising', 'falling', 'volatile', 'flat'];
@@ -50,6 +86,8 @@ export default function ChartCanvas() {
   const [tone, setTone] = useState<ChartTone>('auto');
   const [shape, setShape] = useState<Shape>('rising');
   const [fillMode, setFillMode] = useState<FillMode>('area');
+  const [form, setForm] = useState<Form>('line');
+  const [selectedBar, setSelectedBar] = useState<number | null>(null);
   const [period, setPeriod] = useState('1D');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
@@ -96,30 +134,75 @@ export default function ChartCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
-            <Chart
-              data={data}
-              tone={tone}
-              periods={PERIODS}
-              period={period}
-              onPeriodChange={setPeriod}
-            >
-              <Chart.Value format={money} />
-              <Chart.Delta format={money} />
-              <Chart.Plot height={200} fill={fillMode === 'area'} />
-              <Chart.Periods />
-            </Chart>
+            {form === 'line' ? (
+              <>
+                <Chart
+                  data={data}
+                  tone={tone}
+                  periods={PERIODS}
+                  period={period}
+                  onPeriodChange={setPeriod}
+                >
+                  <Chart.Value format={money} />
+                  <Chart.Delta format={money} />
+                  <Chart.Plot height={200} fill={fillMode === 'area'} />
+                  <Chart.Periods />
+                </Chart>
+                <Text
+                  style={{
+                    color: t.colors.textTertiary,
+                    fontFamily: 'Manrope',
+                    fontSize: 12,
+                    marginTop: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  Drag across the chart to scrub
+                </Text>
+              </>
+            ) : null}
 
-            <Text
-              style={{
-                color: t.colors.textTertiary,
-                fontFamily: 'Manrope',
-                fontSize: 12,
-                marginTop: 12,
-                textAlign: 'center',
-              }}
-            >
-              Drag across the chart to scrub
-            </Text>
+            {form === 'bar' ? (
+              <View style={{ gap: 28 }}>
+                <BarChart
+                  data={WEEK}
+                  height={180}
+                  showValues
+                  selectedIndex={selectedBar}
+                  onSelect={(index) => setSelectedBar(index === selectedBar ? null : index)}
+                />
+                <BarChart data={NET} height={160} tone="direction" showValues />
+              </View>
+            ) : null}
+
+            {form === 'donut' ? (
+              <DonutChart data={BREAKDOWN} centerLabel="Monthly spend" format={money} />
+            ) : null}
+
+            {form === 'meter' ? (
+              <View style={{ gap: 24, alignItems: 'center' }}>
+                <Meter shape="ring" value={1840} max={2000} label="Steps" tone="positive" />
+                <View style={{ alignSelf: 'stretch', gap: 16 }}>
+                  <Meter value={72} max={100} label="Storage" />
+                  <Meter value={88} max={100} label="Budget used" warnAt={0.75} dangerAt={0.9} />
+                  <Meter value={42} max={100} label="Goal" tone="neutral" />
+                </View>
+              </View>
+            ) : null}
+
+            {form === 'sparkline' ? (
+              <View style={{ gap: 20 }}>
+                <Sparkline data={data} height={44} fill showEndDot accessibilityLabel="Rising trend" />
+                <Sparkline
+                  data={[...data].reverse()}
+                  height={44}
+                  fill
+                  showEndDot
+                  accessibilityLabel="Falling trend"
+                />
+                <Sparkline data={data} height={28} tone="neutral" accessibilityLabel="Neutral trend" />
+              </View>
+            ) : null}
           </Animated.View>
 
           {!sheetOpen ? (
@@ -150,6 +233,16 @@ export default function ChartCanvas() {
             onNext={() => router.replace('/gallery')}
           >
             <View style={{ gap: 14 }}>
+              <VariantControlRow label="Form">
+                {FORMS.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={form === value}
+                    onPress={() => setForm(value)}
+                  />
+                ))}
+              </VariantControlRow>
               <VariantControlRow label="Shape">
                 {SHAPES.map((value) => (
                   <VariantChip

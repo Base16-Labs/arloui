@@ -84,6 +84,24 @@ export const lightSemanticColors = {
    */
   chartPositive: S[700],
   chartNegative: E[600],
+  /**
+   * Categorical series colours for part-to-whole and multi-category charts.
+   *
+   * Four slots, not more: this is the largest set that clears the data-viz checks
+   * on EVERY pair (not just neighbours) in BOTH modes, which is the honest bar for
+   * a donut where all slices are on screen at once. Light is worst-pair ΔE 8.7 and
+   * dark ΔE 9.0 under deuteranopia, all above 3:1 on their own surface. A fifth
+   * hue only clears in light, so there isn't one.
+   *
+   * Assign in this fixed order and never cycle. Anything past the fourth category
+   * folds into `chartOther`, and charts using these always carry a legend or direct
+   * labels so identity is never colour alone.
+   */
+  chartSeries1: P[600],
+  chartSeries2: paletteSecondary.lime[600],
+  chartSeries3: paletteSecondary.pink[700],
+  chartSeries4: paletteSecondary.yellow[700],
+  chartOther: G[500],
 
   navBackground: base.white,
   navBorder: G[200],
@@ -151,6 +169,12 @@ export const darkSemanticColors = {
    */
   chartPositive: S[400],
   chartNegative: E[500],
+  /** Dark keeps slots 1, 2 and 4; only the pink lightens for the darker surface. */
+  chartSeries1: P[600],
+  chartSeries2: paletteSecondary.lime[600],
+  chartSeries3: paletteSecondary.pink[500],
+  chartSeries4: paletteSecondary.yellow[700],
+  chartOther: Z[400],
   feedbackInfoBg: P[950],
 
   navBackground: Z[900],

@@ -16,10 +16,21 @@ export {
   type SocialAuthProvider,
 } from './components/button';
 export {
+  ActionCard,
   Card,
+  ListCard,
+  MediaCard,
+  StatCard,
+  type ActionCardAction,
+  type ActionCardProps,
+  type ActionCardTone,
   type CardPadding,
   type CardProps,
   type CardSurface,
+  type ListCardProps,
+  type MediaCardLayout,
+  type MediaCardProps,
+  type StatCardProps,
 } from './components/card';
 export {
   Carousel,
@@ -85,10 +96,23 @@ export { Chip, type ChipAccent, type ChipProps, type ChipRadius, type ChipSelect
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
 export { AnimatedCounter, type AnimatedCounterProps } from './components/animated-counter';
 export {
+  BarChart,
   Chart,
+  DonutChart,
+  Meter,
+  Sparkline,
+  type BarChartProps,
+  type BarChartTone,
+  type BarDatum,
   type ChartPlotProps,
   type ChartProps,
   type ChartTone,
+  type DonutChartProps,
+  type DonutSlice,
+  type MeterProps,
+  type MeterShape,
+  type MeterTone,
+  type SparklineProps,
 } from './components/chart';
 export {
   Stepper,
