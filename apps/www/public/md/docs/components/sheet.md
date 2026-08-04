@@ -1,6 +1,6 @@
 # Sheet
 
-> A bottom drawer with a slim grabber, drag-to-dismiss, default or stacked width, three useful heights, and token-based outer padding. Backdrop and surface stay composable, from scrim modal to pass-through Liquid Glass.
+> A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, tunable motion and gesture, default or stacked width, and token-based outer padding. Backdrop and surface stay composable, from scrim modal to pass-through Liquid Glass.
 
 **Type:** Component  
 **Category:** Layout & surface  
@@ -13,6 +13,7 @@
 - Variants
 - States
 - Code
+- Customization
 - Tokens
 - Accessibility
 - Do · Don't

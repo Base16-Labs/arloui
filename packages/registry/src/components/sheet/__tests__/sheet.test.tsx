@@ -77,6 +77,34 @@ describe('Sheet', () => {
     expect(screen.getByText('Stacked sheet')).toBeTruthy();
   });
 
+  it('accepts a motion override without changing content', () => {
+    renderWithTheme(
+      <Sheet
+        visible
+        onClose={() => {}}
+        motion={{ openDuration: 120, closeDuration: 90, easing: [0.2, 0.8, 0.2, 1] }}
+      >
+        <Text>Tuned sheet</Text>
+      </Sheet>,
+    );
+    expect(screen.getByText('Tuned sheet')).toBeTruthy();
+  });
+
+  it('accepts motion presets, gesture thresholds, and snap points', () => {
+    renderWithTheme(
+      <Sheet
+        visible
+        onClose={() => {}}
+        motion="snappy"
+        gesture={{ dismissDistance: 0.4, dismissVelocity: 1 }}
+        snapPoints={[0.4, 0.9]}
+      >
+        <Text>Snap sheet</Text>
+      </Sheet>,
+    );
+    expect(screen.getByText('Snap sheet')).toBeTruthy();
+  });
+
   it('keeps the legacy presentation and detent props compatible', () => {
     renderWithTheme(
       <Sheet visible onClose={() => {}} presentation="inset" detent={0.5}>

@@ -47,6 +47,48 @@ export type SheetPresentation = 'edge' | 'inset' | 'stack';
 /** @deprecated Use `SheetHeight` and the `height` prop. */
 export type SheetDetent = 'auto' | 'full' | number;
 
+/** Named spring recipes from motion tokens — shared vocabulary for overlay motion. */
+export type SheetMotionPreset = 'gentle' | 'snappy' | 'heavy';
+
+/**
+ * Override the sheet's open/close/settle motion without forking the component.
+ * Pass a preset name for token recipes, or an object for fine control.
+ * Defaults come from motion tokens (`easeSheet`, `duration.base`, `spring.gentle`).
+ */
+export type SheetMotion =
+  | SheetMotionPreset
+  | {
+      /** Entrance duration in ms. Defaults to `motion.duration.base` (280). */
+      openDuration?: number;
+      /** Exit duration in ms. Defaults to ~80% of open (exits run faster). */
+      closeDuration?: number;
+      /** Cubic-bezier control points. Defaults to `motion.easing.easeSheet`. */
+      easing?: readonly [number, number, number, number];
+      /** Spring used when settling after an incomplete drag. Defaults to `motion.spring.gentle`. */
+      spring?: {
+        damping: number;
+        stiffness: number;
+        mass?: number;
+      };
+      /** Use a token spring recipe instead of raw spring numbers. */
+      springPreset?: SheetMotionPreset;
+    };
+
+/**
+ * Tune drag-to-dismiss and overdrag without rewriting the gesture handler.
+ * Defaults match the Fluidity rules (≈35% distance, velocity commit).
+ */
+export type SheetGesture = {
+  /** Fraction of sheet height that must be dragged to dismiss (0–1). Default `0.35`. */
+  dismissDistance?: number;
+  /** Absolute pixel floor for dismiss distance. Default `80`. */
+  dismissDistanceMin?: number;
+  /** PanResponder `vy` above which release commits dismiss. Default `0.75`. */
+  dismissVelocity?: number;
+  /** Upward overdrag multiplier (0 = hard stop, 1 = free). Default `0.18`. */
+  overdragResistance?: number;
+};
+
 export type SheetProps = {
   visible: boolean;
   onClose: () => void;
@@ -56,8 +98,17 @@ export type SheetProps = {
   surface?: SheetSurface;
   /** `'default'` uses one surface; `'stack'` adds a second surface behind it. */
   width?: SheetWidth;
-  /** Controls how much vertical space the sheet occupies. */
-  height?: SheetHeight;
+  /**
+   * Controls how much vertical space the sheet occupies when `snapPoints` is not set.
+   * A number is treated as a fraction of the window height (e.g. `0.4`).
+   */
+  height?: SheetHeight | number;
+  /**
+   * Multiple resting heights as fractions of available height (e.g. `[0.4, 0.92]`).
+   * Drag snaps between them; dragging past the smallest commits dismiss when enabled.
+   * When set, takes precedence over `height`.
+   */
+  snapPoints?: number[];
   /** Token-based outer gutter. This is independent of `width`. */
   padding?: SheetPadding;
   /** @deprecated Use `width` and `padding`. */
@@ -78,6 +129,17 @@ export type SheetProps = {
   /** Tap the scrim to dismiss (scrim backdrop only). */
   dismissOnBackdropPress?: boolean;
   dragToDismiss?: boolean;
+  /** Tune open/close timing, easing, and settle spring without rewriting Sheet. */
+  motion?: SheetMotion;
+  /** Tune drag-to-dismiss thresholds and overdrag resistance. */
+  gesture?: SheetGesture;
+  /** Fires when a drag ends — whether it dismissed or snapped/settled. */
+  onDragEnd?: (info: {
+    dismissed: boolean;
+    dy: number;
+    vy: number;
+    snapIndex: number;
+  }) => void;
   /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a glass surface. */
   blurComponent?: ReactNode;
   /** Safe-area insets from the host app (e.g. `react-native-safe-area-context`'s `useSafeAreaInsets()`). */
@@ -88,8 +150,61 @@ export type SheetProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const OPEN_DURATION = 340;
-const CLOSE_DURATION = 260;
+type ResolvedMotion = {
+  openDuration: number;
+  closeDuration: number;
+  easing: readonly [number, number, number, number];
+  spring: { damping: number; stiffness: number; mass?: number };
+};
+
+function resolveMotion(
+  tokens: ReturnType<typeof useTokens>['motion'],
+  override?: SheetMotion,
+): ResolvedMotion {
+  const presetName: SheetMotionPreset | undefined =
+    typeof override === 'string' ? override : override?.springPreset;
+
+  const presetSpring = presetName ? tokens.spring[presetName] : tokens.spring.gentle;
+  const objectOverride = typeof override === 'object' ? override : undefined;
+
+  // Presets nudge duration too — snappy feels shorter, heavy a touch longer.
+  const presetOpen =
+    presetName === 'snappy'
+      ? tokens.duration.fast
+      : presetName === 'heavy'
+        ? tokens.duration.slow
+        : tokens.duration.base;
+
+  const openDuration = objectOverride?.openDuration ?? presetOpen;
+  const closeDuration =
+    objectOverride?.closeDuration ?? Math.round(openDuration * 0.8);
+
+  return {
+    openDuration,
+    closeDuration,
+    easing: objectOverride?.easing ?? tokens.easing.easeSheet,
+    spring: objectOverride?.spring ?? presetSpring,
+  };
+}
+
+function resolveSnapHeights(snapPoints: number[] | undefined, maxHeight: number): number[] | null {
+  if (!snapPoints?.length) return null;
+  const heights = snapPoints
+    .map((p) => {
+      if (p <= 0) return 0;
+      // Values ≤ 1 are fractions of available height; > 1 are absolute pixels.
+      return Math.min(maxHeight, p <= 1 ? Math.round(maxHeight * p) : Math.round(p));
+    })
+    .filter((h) => h > 0)
+    .sort((a, b) => a - b);
+  return heights.length ? [...new Set(heights)] : null;
+}
+
+/** Safe indexed read — `noUncheckedIndexedAccess` treats `arr[i]` as possibly undefined. */
+function detentAt(snaps: number[], index: number): number {
+  const clamped = Math.max(0, Math.min(index, snaps.length - 1));
+  return snaps[clamped] ?? 0;
+}
 
 function SheetRoot({
   visible,
@@ -98,6 +213,7 @@ function SheetRoot({
   surface = 'solid',
   width,
   height,
+  snapPoints,
   padding,
   presentation,
   detent,
@@ -110,6 +226,9 @@ function SheetRoot({
   handleHeight,
   dismissOnBackdropPress = true,
   dragToDismiss = true,
+  motion: motionOverride,
+  gesture: gestureOverride,
+  onDragEnd,
   blurComponent,
   topInset = 0,
   bottomInset = 0,
@@ -119,8 +238,15 @@ function SheetRoot({
   const t = useTokens();
   const dark = t.name === 'dark';
   const { height: windowHeight } = useWindowDimensions();
-  const [x1, y1, x2, y2] = t.motion.easing.easeSheet;
+  const { openDuration, closeDuration, easing: easingPoints, spring: settleSpring } =
+    resolveMotion(t.motion, motionOverride);
+  const [x1, y1, x2, y2] = easingPoints;
   const sheetEasing = useMemo(() => Easing.bezier(x1, y1, x2, y2), [x1, y1, x2, y2]);
+
+  const dismissDistance = gestureOverride?.dismissDistance ?? 0.35;
+  const dismissDistanceMin = gestureOverride?.dismissDistanceMin ?? 80;
+  const dismissVelocity = gestureOverride?.dismissVelocity ?? 0.75;
+  const overdragResistance = gestureOverride?.overdragResistance ?? 0.18;
 
   const isGlass = surface === 'glass';
   const isScrim = backdrop === 'scrim';
@@ -134,25 +260,49 @@ function SheetRoot({
   const resolvedRadius = cornerRadius ?? (resolvedWidth === 'stack' ? 20 : t.radii['2xl']);
 
   const maxHeight = windowHeight - Math.max(topInset, 24) - resolvedBottomOffset - 8;
+  const snaps = useMemo(
+    () => resolveSnapHeights(snapPoints, maxHeight),
+    [snapPoints, maxHeight],
+  );
+
   const fixedHeight =
-    resolvedHeight === 'full'
-      ? maxHeight
-      : resolvedHeight === 'half'
-        ? Math.min(maxHeight, Math.round(windowHeight * 0.54))
-        : typeof resolvedHeight === 'number'
-          ? Math.min(maxHeight, Math.round(windowHeight * resolvedHeight))
-          : undefined;
+    snaps != null
+      ? snaps[snaps.length - 1]
+      : resolvedHeight === 'full'
+        ? maxHeight
+        : resolvedHeight === 'half'
+          ? Math.min(maxHeight, Math.round(windowHeight * 0.54))
+          : typeof resolvedHeight === 'number'
+            ? Math.min(maxHeight, Math.round(windowHeight * resolvedHeight))
+            : undefined;
 
   const [mounted, setMounted] = useState(visible);
   const [measuredHeight, setMeasuredHeight] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [snapIndex, setSnapIndex] = useState(0);
+  const snapIndexRef = useRef(0);
+
+  // When the sheet re-opens, start on the smallest detent (React "adjust state
+  // during render when props change" pattern — avoids setState-in-effect).
+  const [wasVisible, setWasVisible] = useState(visible);
+  if (visible !== wasVisible) {
+    setWasVisible(visible);
+    if (visible) setSnapIndex(0);
+  }
 
   const sheetHeight = fixedHeight ?? measuredHeight;
+  const restY =
+    snaps != null && snaps.length > 0 ? sheetHeight - detentAt(snaps, snapIndex) : 0;
   const closedY =
     sheetHeight > 0 ? sheetHeight + resolvedBottomOffset + bottomInset + 48 : windowHeight;
   const [translateY] = useState(() => new Animated.Value(windowHeight));
+  const dragOriginY = useRef(0);
   const closing = useRef(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    snapIndexRef.current = snapIndex;
+  }, [snapIndex]);
 
   useEffect(() => {
     let active = true;
@@ -168,17 +318,20 @@ function SheetRoot({
     closing.current = false;
     translateY.setValue(closedY);
     Animated.timing(translateY, {
-      toValue: 0,
-      duration: reduceMotion ? 0 : OPEN_DURATION,
+      toValue: restY,
+      duration: reduceMotion ? 0 : openDuration,
       easing: sheetEasing,
       useNativeDriver: true,
     }).start();
   };
 
-  const settle = () => {
+  const settle = (index = snapIndexRef.current) => {
+    const target =
+      snaps != null && snaps.length > 0 ? sheetHeight - detentAt(snaps, index) : 0;
+    closing.current = false;
     Animated.spring(translateY, {
-      toValue: 0,
-      ...t.motion.spring.gentle,
+      toValue: target,
+      ...settleSpring,
       useNativeDriver: true,
     }).start();
   };
@@ -188,7 +341,7 @@ function SheetRoot({
     closing.current = true;
     Animated.timing(translateY, {
       toValue: closedY,
-      duration: reduceMotion ? 0 : CLOSE_DURATION,
+      duration: reduceMotion ? 0 : closeDuration,
       easing: sheetEasing,
       useNativeDriver: true,
     }).start();
@@ -198,7 +351,7 @@ function SheetRoot({
         closing.current = false;
         if (notify) onClose();
       },
-      reduceMotion ? 0 : CLOSE_DURATION,
+      reduceMotion ? 0 : closeDuration,
     );
   };
 
@@ -214,6 +367,7 @@ function SheetRoot({
   }, [visible]);
 
   // Run the open animation once the sheet is mounted and its height is known.
+  // Do not depend on restY — snap changes settle via spring, not a re-open.
   useEffect(() => {
     if (mounted && visible && sheetHeight > 0) animateOpen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -246,21 +400,86 @@ function SheetRoot({
         onMoveShouldSetPanResponder: (_, g) =>
           dragToDismiss && Math.abs(g.dy) > 4 && Math.abs(g.dy) > Math.abs(g.dx),
         onPanResponderGrant: () => {
-          translateY.stopAnimation();
+          dragOriginY.current = restY;
+          translateY.stopAnimation((value) => {
+            if (typeof value === 'number') dragOriginY.current = value;
+          });
         },
         onPanResponderMove: (_, g) => {
-          // Rubber-band when dragged above the resting position.
-          translateY.setValue(g.dy < 0 ? g.dy * 0.18 : g.dy);
+          const next = dragOriginY.current + g.dy;
+          // Rubber-band when dragged above the tallest resting position (translateY < 0).
+          translateY.setValue(next < 0 ? next * overdragResistance : next);
         },
         onPanResponderRelease: (_, g) => {
-          const shouldDismiss = g.dy > Math.max(sheetHeight * 0.28, 80) || g.vy > 0.75;
+          const currentY = Math.max(0, dragOriginY.current + g.dy);
+          const dismissThreshold = Math.max(sheetHeight * dismissDistance, dismissDistanceMin);
+
+          if (snaps != null && snaps.length > 0) {
+            const smallestRest = sheetHeight - detentAt(snaps, 0);
+            const shouldDismiss =
+              dragToDismiss &&
+              (currentY - smallestRest > dismissThreshold || g.vy > dismissVelocity);
+
+            if (shouldDismiss) {
+              onDragEnd?.({
+                dismissed: true,
+                dy: g.dy,
+                vy: g.vy,
+                snapIndex: snapIndexRef.current,
+              });
+              animateClose();
+              return;
+            }
+
+            // Project a little with velocity, then snap to the nearest detent.
+            const projected = currentY + g.vy * 80;
+            let best = 0;
+            let bestDist = Infinity;
+            for (let i = 0; i < snaps.length; i++) {
+              const rest = sheetHeight - detentAt(snaps, i);
+              const dist = Math.abs(projected - rest);
+              if (dist < bestDist) {
+                bestDist = dist;
+                best = i;
+              }
+            }
+            setSnapIndex(best);
+            snapIndexRef.current = best;
+            onDragEnd?.({
+              dismissed: false,
+              dy: g.dy,
+              vy: g.vy,
+              snapIndex: best,
+            });
+            settle(best);
+            return;
+          }
+
+          const shouldDismiss =
+            currentY > dismissThreshold || g.vy > dismissVelocity;
+          onDragEnd?.({
+            dismissed: shouldDismiss,
+            dy: g.dy,
+            vy: g.vy,
+            snapIndex: 0,
+          });
           if (shouldDismiss) animateClose();
-          else settle();
+          else settle(0);
         },
-        onPanResponderTerminate: settle,
+        onPanResponderTerminate: () => settle(snapIndexRef.current),
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dragToDismiss, sheetHeight, closedY],
+    [
+      dragToDismiss,
+      sheetHeight,
+      closedY,
+      restY,
+      snaps,
+      dismissDistance,
+      dismissDistanceMin,
+      dismissVelocity,
+      overdragResistance,
+    ],
   );
 
   const scrimOpacity = useMemo(

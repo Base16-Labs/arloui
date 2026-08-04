@@ -1049,9 +1049,11 @@ import { Sheet } from "@/components/ui/sheet";
   backdrop="passthrough"
   surface="glass"
   width="stack"
-  height="auto"
+  snapPoints={[0.4, 0.92]}
   padding="md"
   handleHeight={3}
+  motion="gentle"
+  gesture={{ dismissDistance: 0.35, dismissVelocity: 0.75 }}
   blurComponent={
     <BlurView
       intensity={34}
@@ -1068,6 +1070,41 @@ import { Sheet } from "@/components/ui/sheet";
     {/* Primary action */}
   </Sheet.Footer>
 </Sheet>`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="customization"
+          title="Customization"
+          sub="Strong defaults first — then override the axes that matter."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Layout axes stay token-driven: <code className="font-mono text-[13px]">width</code>,{' '}
+              <code className="font-mono text-[13px]">height</code> (or a fraction like{' '}
+              <code className="font-mono text-[13px]">0.4</code>),{' '}
+              <code className="font-mono text-[13px]">padding</code>,{' '}
+              <code className="font-mono text-[13px]">cornerRadius</code>, and{' '}
+              <code className="font-mono text-[13px]">style</code>.
+            </li>
+            <li>
+              Multi-detent: pass <code className="font-mono text-[13px]">snapPoints={[0.4, 0.92]}</code>{' '}
+              to snap between resting heights; drag past the smallest to dismiss.
+            </li>
+            <li>
+              Material axes compose: <code className="font-mono text-[13px]">backdrop</code> ×{' '}
+              <code className="font-mono text-[13px]">surface</code>, plus optional{' '}
+              <code className="font-mono text-[13px]">blurComponent</code>.
+            </li>
+            <li>
+              Motion recipes: <code className="font-mono text-[13px]">motion=&quot;gentle&quot; | &quot;snappy&quot; | &quot;heavy&quot;</code>{' '}
+              or an object for open/close duration, easing, and spring.
+            </li>
+            <li>
+              Gesture: <code className="font-mono text-[13px]">gesture</code> tunes dismiss
+              distance (default 35%), velocity, and overdrag resistance —{' '}
+              <code className="font-mono text-[13px]">onDragEnd</code> reports the outcome.
+            </li>
+          </ul>
         </Section>
 
         {/* Tokens used */}

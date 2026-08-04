@@ -1,5 +1,5 @@
 {
-  "count": 34,
+  "count": 43,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -136,6 +136,42 @@
     {
       "path": "/docs/primitives/type",
       "md": "/md/docs/primitives/type.md"
+    },
+    {
+      "path": "/skills/README.md",
+      "md": "/md/skills/README.md"
+    },
+    {
+      "path": "/skills/SKILL.md",
+      "md": "/md/skills/SKILL.md"
+    },
+    {
+      "path": "/skills/component-debt.md",
+      "md": "/md/skills/component-debt.md"
+    },
+    {
+      "path": "/skills/references/components.md",
+      "md": "/md/skills/references/components.md"
+    },
+    {
+      "path": "/skills/references/platform-mapping.md",
+      "md": "/md/skills/references/platform-mapping.md"
+    },
+    {
+      "path": "/skills/references/registry.json",
+      "md": "/md/skills/references/registry.json"
+    },
+    {
+      "path": "/skills/references/tokens.json",
+      "md": "/md/skills/references/tokens.json"
+    },
+    {
+      "path": "/skills/references/tokens.md",
+      "md": "/md/skills/references/tokens.md"
+    },
+    {
+      "path": "/skills/references/usage.md",
+      "md": "/md/skills/references/usage.md"
     }
   ]
 }

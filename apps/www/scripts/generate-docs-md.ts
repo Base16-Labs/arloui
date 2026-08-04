@@ -11,14 +11,33 @@
  * `middleware.ts` rewrites the public `?as=md` / `.md` forms onto these files,
  * so the documented endpoint keeps working and the MCP server can also fetch
  * `/md/...` directly.
+ *
+ * Also mirrors the repo-root `skills/` pack to `public/md/skills/` so agents
+ * and humans can fetch `SKILL.md` (and its references) by URL without cloning.
  */
-import { mkdir, rm, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { cp, mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { allMarkdownPages } from '../lib/docs-markdown';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'public', 'md');
+const skillsSrc = resolve(root, '../../skills');
+const skillsOut = join(outDir, 'skills');
+
+async function listFiles(dir: string): Promise<string[]> {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files: string[] = [];
+  for (const entry of entries) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...(await listFiles(full)));
+    } else {
+      files.push(full);
+    }
+  }
+  return files;
+}
 
 async function main() {
   const pages = allMarkdownPages();
@@ -36,18 +55,39 @@ async function main() {
     await writeFile(target, markdown, 'utf8');
   }
 
+  // Publish the skill pack as static markdown/JSON for curl / MCP / agents.
+  try {
+    await stat(skillsSrc);
+  } catch {
+    throw new Error(`Skill pack not found at ${skillsSrc}`);
+  }
+  await mkdir(skillsOut, { recursive: true });
+  await cp(skillsSrc, skillsOut, { recursive: true });
+  const skillFiles = (await listFiles(skillsOut)).map((f) => ({
+    path: `/skills/${relative(skillsOut, f).split('\\').join('/')}`,
+    md: `/md/skills/${relative(skillsOut, f).split('\\').join('/')}`,
+  }));
+
   // A manifest so agents can discover what exists instead of guessing slugs.
   await writeFile(
     join(outDir, 'index.json'),
     JSON.stringify(
-      { count: pages.length, pages: pages.map(({ path }) => ({ path, md: `/md${path}.md` })) },
+      {
+        count: pages.length + skillFiles.length,
+        pages: [
+          ...pages.map(({ path }) => ({ path, md: `/md${path}.md` })),
+          ...skillFiles,
+        ],
+      },
       null,
       2,
     ),
     'utf8',
   );
 
-  console.log(`generate-docs-md: wrote ${pages.length} markdown pages to public/md`);
+  console.log(
+    `generate-docs-md: wrote ${pages.length} docs pages + ${skillFiles.length} skill files to public/md`,
+  );
 }
 
 main().catch((err) => {

@@ -108,3 +108,9 @@ export const componentGroups: ComponentGroup[] = [
     ],
   },
 ];
+
+/** Documented component count — keep copy in sync with `componentGroups`. */
+export const componentCount = componentGroups.reduce(
+  (n, group) => n + group.items.length,
+  0,
+);

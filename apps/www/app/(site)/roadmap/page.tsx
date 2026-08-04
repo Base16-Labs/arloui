@@ -4,7 +4,7 @@ const phases = [
   {
     label: "Now",
     items: [
-      "Core 35 components with full state coverage",
+      "Core components with full state coverage",
       "Skill pack v1 for Claude Code, Cursor, Windsurf",
       "Documentation site scaffold",
     ],

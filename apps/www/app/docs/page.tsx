@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { componentCount } from "@/lib/routes";
 
 export default function DocsLandingPage() {
   return (
@@ -33,7 +34,7 @@ export default function DocsLandingPage() {
           },
           {
             label: "Components",
-            desc: "35 React Native components — copy-paste with strong defaults.",
+            desc: `${componentCount} React Native components — copy-paste with strong defaults.`,
             href: "/docs/components",
           },
           {
