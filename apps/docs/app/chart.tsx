@@ -33,13 +33,6 @@ const WEEK = [
   { label: 'S', value: 12 },
 ];
 
-const NET = [
-  { label: 'Q1', value: 40 },
-  { label: 'Q2', value: -18 },
-  { label: 'Q3', value: 26 },
-  { label: 'Q4', value: -8 },
-];
-
 const BREAKDOWN = [
   { label: 'Rent', value: 1200 },
   { label: 'Food', value: 480 },
@@ -163,16 +156,13 @@ export default function ChartCanvas() {
             ) : null}
 
             {form === 'bar' ? (
-              <View style={{ gap: 28 }}>
-                <BarChart
-                  data={WEEK}
-                  height={180}
-                  showValues
-                  selectedIndex={selectedBar}
-                  onSelect={(index) => setSelectedBar(index === selectedBar ? null : index)}
-                />
-                <BarChart data={NET} height={160} tone="direction" showValues />
-              </View>
+              <BarChart
+                data={WEEK}
+                height={180}
+                showValues
+                selectedIndex={selectedBar}
+                onSelect={(index) => setSelectedBar(index === selectedBar ? null : index)}
+              />
             ) : null}
 
             {form === 'donut' ? (
