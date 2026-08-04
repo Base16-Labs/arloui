@@ -1,28 +1,51 @@
 /**
- * `babel-preset-expo` adds its expo-router plugin only when `hasModule('expo-router')`
- * succeeds — a bare `require.resolve('expo-router')` evaluated from the preset's own
- * location. This repo installs with `install-strategy=nested` (see `.npmrc`), and the
- * root package.json also declares `babel-preset-expo`, so npm keeps a single copy at
- * `<repo>/node_modules` while `expo-router` stays nested in `apps/docs/node_modules`.
- * The preset therefore can't see expo-router, silently skips the plugin, and
- * `process.env.EXPO_ROUTER_APP_ROOT` reaches Metro un-inlined — which fails as
- * "First argument of `require.context` should be a string".
+ * Works around `babel-preset-expo` being hoisted away from this app's dependencies.
  *
- * Registering the plugin here restores it. It reads the app root from Babel's caller
- * (Metro passes `projectRoot` / `routerRoot`), not from where the module resolved, so
- * the path it inlines is correct regardless of hoisting.
+ * The preset pulls several of its plugins in with a bare `require()` evaluated from
+ * its own directory. This repo installs with `install-strategy=nested` (see
+ * `.npmrc`), and five workspaces declare `babel-preset-expo`, so npm keeps a single
+ * deduped copy at `<repo>/node_modules` while this app's dependencies stay in
+ * `apps/docs/node_modules`. From up there the preset cannot see them:
  *
- * The alternative fix is dropping `babel-preset-expo` from the root package.json — no
- * root babel config consumes it, and every workspace declares its own — which lets
- * apps/docs install a copy next to expo-router. That needs a reinstall and a lockfile
- * change, so it is deliberately not done here.
+ *   expo-router        → the router plugin is skipped, so
+ *                        `process.env.EXPO_ROUTER_APP_ROOT` reaches Metro un-inlined
+ *                        and `require.context` is handed an expression, not a string.
+ *   react-refresh      → hard `Cannot find module 'react-refresh/babel'` in dev.
+ *   expo/config        → caught by the preset and degraded to null, so the app
+ *                        manifest is not inlined for `expo-constants`. Nothing here
+ *                        reads it, so it is left alone rather than papered over.
+ *
+ * Both failing plugins are registered here instead, resolved from this directory
+ * where the modules actually live. The router plugin reads its app root from Babel's
+ * caller rather than from where it resolved, so the inlined path stays correct.
+ *
+ * The structural fix would be a copy of `babel-preset-expo` inside
+ * `apps/docs/node_modules`. Dropping the root declaration is not enough — npm still
+ * hoists it for the other four workspaces (verified) — so it would take an exact
+ * version pin that diverges from the packages, which trades this problem for a
+ * dedupe that silently comes back on the next SDK bump.
  */
+const { getIsFastRefreshEnabled } = require('babel-preset-expo/build/common');
 const { expoRouterBabelPlugin } = require('babel-preset-expo/build/expo-router-plugin');
 
 module.exports = function (api) {
-  api.cache(true);
+  // Reading the caller is what configures Babel's cache here — it keys the result on
+  // platform/dev/server, which is exactly what `fastRefresh` varies by. Do not swap
+  // this for `api.cache(true)`: that pins the first caller's answer for every later
+  // one, so a web or production build would inherit the dev server's decision.
+  const fastRefresh = api.caller(getIsFastRefreshEnabled);
+
   return {
-    presets: ['babel-preset-expo'],
-    plugins: [expoRouterBabelPlugin],
+    // The preset's own Fast Refresh branch is the one that cannot resolve the
+    // module, so turn it off and re-add the plugin below.
+    presets: [['babel-preset-expo', { enableReactFastRefresh: false }]],
+    plugins: [
+      expoRouterBabelPlugin,
+      // `react-refresh/babel` throws outright when NODE_ENV is production, so this
+      // has to stay gated rather than rely on the plugin's own env check.
+      ...(fastRefresh
+        ? [[require.resolve('react-refresh/babel'), { skipEnvCheck: true }]]
+        : []),
+    ],
   };
 };
