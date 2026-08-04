@@ -48,6 +48,14 @@ export const lightSemanticColors = {
   feedbackErrorBg: '#FEF2F2',
   feedbackInfo: '#2B7FFF',
   feedbackInfoBg: '#EFF6FF',
+  /**
+   * Direction tones for charts — Success-700 / Error-600, not the feedback pair.
+   * Success-500 vs Error-500 measures ΔE 7.6 under deuteranopia and puts the green
+   * at 2.16:1 on a light surface; these clear ΔE 9.2 and 3:1. Always pair with a
+   * signed value (+/−) so direction is never color-alone.
+   */
+  chartPositive: '#008236',
+  chartNegative: '#E7000B',
   navBackground: '#FFFFFF',
   navBorder: '#E5E7EB',
   navActive: '#2B7FFF',
@@ -97,6 +105,13 @@ export const darkSemanticColors = {
   feedbackErrorBg: '#460809',
   feedbackInfo: '#51A2FF',
   feedbackInfoBg: '#09090B',
+  /**
+   * Dark keeps the brighter Success-400: against Error-500 on a dark surface it
+   * separates by ΔE 14.0 under deuteranopia — the widest of any pair tested — and
+   * both poles clear 3:1.
+   */
+  chartPositive: '#05DF72',
+  chartNegative: '#FB2C36',
   navBackground: '#18181B',
   navBorder: '#27272A',
   navActive: '#51A2FF',

@@ -33,7 +33,7 @@ import {
 import Svg, { Path } from 'react-native-svg';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
-import { AnimatedCounter } from './animated-counter';
+import { AnimatedCounter } from '../animated-counter/animated-counter';
 
 type Tokens = ReturnType<typeof useTokens>;
 

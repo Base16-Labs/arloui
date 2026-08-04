@@ -72,6 +72,19 @@ export const lightSemanticColors = {
   feedbackInfo: P[500],
   feedbackInfoBg: P[50],
 
+  /**
+   * Direction tones for charts. Deliberately NOT `feedbackSuccess`/`feedbackError`:
+   * that pair is Success-500 against Error-500, which measures ΔE 7.6 under
+   * deuteranopia (inside the 6–8 "floor" band) and puts the green at 2.16:1 on a
+   * light surface — too weak for a 2px line. Stepping to Success-700 / Error-600
+   * clears both: ΔE 9.2 deutan, and both poles above 3:1.
+   *
+   * Direction must never be carried by color alone — pair these with a signed
+   * value (+/−) or an arrow.
+   */
+  chartPositive: S[700],
+  chartNegative: E[600],
+
   navBackground: base.white,
   navBorder: G[200],
   navActive: P[500],
@@ -128,6 +141,16 @@ export const darkSemanticColors = {
   feedbackError: E[500],
   feedbackErrorBg: E[950],
   feedbackInfo: P[400],
+
+  /**
+   * Dark keeps the brighter Success-400 — on a dark surface it separates from
+   * Error-500 by ΔE 14.0 under deuteranopia, the best of any pair tested, and both
+   * clear 3:1. It sits just above the categorical lightness band, which is a
+   * weight-parity guideline for multi-series palettes; only one pole is ever drawn
+   * at a time here, so parity does not apply.
+   */
+  chartPositive: S[400],
+  chartNegative: E[500],
   feedbackInfoBg: P[950],
 
   navBackground: Z[900],

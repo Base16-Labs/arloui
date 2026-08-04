@@ -115,16 +115,49 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'animated-counter',
+    kind: 'primitive',
+    title: 'Animated counter',
+    description:
+      'A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.',
+    registryDependencies: [],
+    files: [
+      {
+        source: 'components/animated-counter/animated-counter.tsx',
+        target: 'animated-counter/animated-counter.tsx',
+      },
+      { source: 'components/animated-counter/index.ts', target: 'animated-counter/index.ts' },
+    ],
+    meta: {
+      tags: ['motion', 'numeric', 'counter', 'primitive'],
+    },
+  },
+  {
+    name: 'chart',
+    kind: 'primitive',
+    title: 'Chart',
+    description:
+      'A single-series line/area chart you scrub with your finger. No axis furniture; the value readout is the label and rolls as you drag. Toned by direction with a validated positive/negative pair, plus an optional time-range selector.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'animated-counter'],
+    files: [
+      { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
+      { source: 'components/chart/index.ts', target: 'chart/index.ts' },
+    ],
+    meta: {
+      tags: ['chart', 'data', 'visualization', 'gesture', 'motion', 'primitive'],
+    },
+  },
+  {
     name: 'stepper',
     kind: 'primitive',
     title: 'Stepper',
     description:
       'A numeric stepper with hold-to-repeat, min/max clamping, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'animated-counter'],
     files: [
       { source: 'components/stepper/stepper.tsx', target: 'stepper/stepper.tsx' },
-      { source: 'components/stepper/animated-counter.tsx', target: 'stepper/animated-counter.tsx' },
       { source: 'components/stepper/index.ts', target: 'stepper/index.ts' },
     ],
     meta: {

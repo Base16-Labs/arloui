@@ -123,6 +123,45 @@
       }
     },
     {
+      "name": "animated-counter",
+      "kind": "primitive",
+      "title": "Animated counter",
+      "description": "A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.",
+      "registryDependencies": [],
+      "meta": {
+        "tags": [
+          "motion",
+          "numeric",
+          "counter",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "chart",
+      "kind": "primitive",
+      "title": "Chart",
+      "description": "A single-series line/area chart you scrub with your finger. No axis furniture; the value readout is the label and rolls as you drag. Toned by direction with a validated positive/negative pair, plus an optional time-range selector.",
+      "dependencies": [
+        "react-native-svg"
+      ],
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "animated-counter"
+      ],
+      "meta": {
+        "tags": [
+          "chart",
+          "data",
+          "visualization",
+          "gesture",
+          "motion",
+          "primitive"
+        ]
+      }
+    },
+    {
       "name": "stepper",
       "kind": "primitive",
       "title": "Stepper",
@@ -134,7 +173,8 @@
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "haptics"
+        "haptics",
+        "animated-counter"
       ],
       "meta": {
         "tags": [

@@ -83,10 +83,15 @@ export { Badge, type BadgeAppearance, type BadgeProps, type BadgeSize, type Badg
 export { Checkbox, type CheckboxProps, type CheckboxSize } from './components/checkbox';
 export { Chip, type ChipAccent, type ChipProps, type ChipRadius, type ChipSelectionIndicator, type ChipSize, type ChipStyle, type ChipType } from './components/chip';
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
+export { AnimatedCounter, type AnimatedCounterProps } from './components/animated-counter';
 export {
-  AnimatedCounter,
+  Chart,
+  type ChartPlotProps,
+  type ChartProps,
+  type ChartTone,
+} from './components/chart';
+export {
   Stepper,
-  type AnimatedCounterProps,
   type StepperAppearance,
   type StepperProps,
   type StepperSize,
