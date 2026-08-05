@@ -8,8 +8,11 @@
  */
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const dist = new URL('../dist/', import.meta.url).pathname;
+// fileURLToPath, not `.pathname` — the latter stays percent-encoded, so a
+// checkout path containing a space resolves to a literal "%20" and ENOENTs.
+const dist = fileURLToPath(new URL('../dist/', import.meta.url));
 
 await writeFile(join(dist, 'esm', 'package.json'), `${JSON.stringify({ type: 'module' }, null, 2)}\n`);
 await writeFile(join(dist, 'cjs', 'package.json'), `${JSON.stringify({ type: 'commonjs' }, null, 2)}\n`);
