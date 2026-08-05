@@ -21,7 +21,22 @@
     }
   ],
   "meta": {
-    "figma": "Components/Text Input/Default",
+    "figma": [
+      {
+        "set": "Input Field BG STYLE",
+        "export": "Input",
+        "props": {
+          "appearance": "filled"
+        }
+      },
+      {
+        "set": "Input field NO BG",
+        "export": "Input",
+        "props": {
+          "appearance": "plain"
+        }
+      }
+    ],
     "tags": [
       "form",
       "primitive"

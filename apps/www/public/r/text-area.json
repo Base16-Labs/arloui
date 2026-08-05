@@ -21,7 +21,12 @@
     }
   ],
   "meta": {
-    "figma": "Components/Text Area/Default",
+    "figma": [
+      {
+        "set": "Text area",
+        "export": "TextArea"
+      }
+    ],
     "tags": [
       "form",
       "primitive",

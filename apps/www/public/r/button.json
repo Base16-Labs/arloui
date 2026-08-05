@@ -45,7 +45,24 @@
     }
   ],
   "meta": {
-    "figma": "Components/Button/Primary",
+    "figma": [
+      {
+        "set": "Buttons/Button",
+        "export": "Button"
+      },
+      {
+        "set": "Buttons/Ghost",
+        "export": "GhostButton"
+      },
+      {
+        "set": "Buttons/FAB",
+        "export": "FAB"
+      },
+      {
+        "set": "Buttons/Social",
+        "export": "SocialAuthButton"
+      }
+    ],
     "tags": [
       "action",
       "primitive"

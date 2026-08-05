@@ -129,8 +129,16 @@ async function importTokens(payload, dryRun) {
       }
     }
 
+    // Anything in Figma but not in code is either a declared Figma-only
+    // variable (fine, expected) or real drift. Only the latter is worth
+    // reporting — otherwise the list is too noisy to be read.
+    const declared = new Set(
+      (payload.figmaOnly || [])
+        .filter((d) => d.collection === spec.name)
+        .map((d) => d.name),
+    );
     for (const existing of inCollection) {
-      if (!seen.has(existing.name)) {
+      if (!seen.has(existing.name) && !declared.has(existing.name)) {
         report.orphans.push(spec.name + ' › ' + existing.name);
       }
     }

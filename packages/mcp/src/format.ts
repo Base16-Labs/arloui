@@ -1,4 +1,4 @@
-import { urls, type IndexEntry, type RegistryEntry } from './client.js';
+import { urls, type FigmaBinding, type IndexEntry, type RegistryEntry } from './client.js';
 
 /** Map a registry `kind` to the docs section a page lives under. */
 function docSection(kind: string): string {
@@ -127,4 +127,96 @@ export function tokenMarkdown(source: string, path: string): string {
     '',
     `Access in a component as \`t.colors.${key}\`.`,
   ].join('\n');
+}
+
+/* ------------------------------------------------------- figma ↔ code map */
+
+const describeProps = (props?: Record<string, string | boolean>) =>
+  props
+    ? Object.entries(props)
+        .map(([k, v]) => (typeof v === 'boolean' ? (v ? k : `${k}={false}`) : `${k}="${v}"`))
+        .join(' ')
+    : '';
+
+/** One `Figma set → code` row, including the props that select that set. */
+function bindingLine(entry: IndexEntry, b: FigmaBinding): string {
+  const usage = describeProps(b.props);
+  const code = b.export ?? entry.title.replace(/\s+/g, '');
+  const snippet = usage ? `<${code} ${usage} />` : `<${code} />`;
+  return `| \`${b.set}\` | \`${code}\` | \`${snippet}\` | ${b.note ?? '—'} |`;
+}
+
+/**
+ * Resolve a Figma component-set name to the code behind it.
+ *
+ * Matching is case-insensitive and tolerant of the group prefix, so both
+ * `Buttons/Ghost` and `Ghost` resolve. Substring matches are offered as
+ * suggestions rather than guessed at.
+ */
+export function figmaResolveMarkdown(items: IndexEntry[], query: string): string {
+  const q = query.trim().toLowerCase();
+  const leaf = (s: string) => s.split('/').pop()!.toLowerCase();
+
+  const exact: string[] = [];
+  const near: string[] = [];
+
+  for (const entry of items) {
+    for (const b of entry.meta?.figma ?? []) {
+      const set = b.set.toLowerCase();
+      if (set === q || leaf(b.set) === q) exact.push(bindingLine(entry, b));
+      else if (set.includes(q) || q.includes(leaf(b.set))) near.push(bindingLine(entry, b));
+    }
+  }
+
+  const hits = exact.length ? exact : near;
+  if (!hits.length) {
+    const known = items
+      .flatMap((e) => (e.meta?.figma ?? []).map((b) => b.set))
+      .sort();
+    return [
+      `No Arlo UI component is mapped to the Figma set “${query}”.`,
+      '',
+      known.length
+        ? `Mapped sets:\n${known.map((s) => `- \`${s}\``).join('\n')}`
+        : 'No Figma mappings are recorded yet.',
+      '',
+      'Most Arlo UI components are not drawn in Figma — the code is the source of truth. Use `arlo_search` to find the component by name instead.',
+    ].join('\n');
+  }
+
+  return [
+    `# Figma → code: “${query}”`,
+    exact.length ? '' : '\nNo exact match; showing the closest mapped sets.\n',
+    '',
+    '| Figma set | Code | Usage | Note |',
+    '| --- | --- | --- | --- |',
+    ...hits,
+    '',
+    'Pull the full API with `arlo_get_component`.',
+  ].join('\n');
+}
+
+/** Every recorded Figma ↔ code correspondence, plus what has no Figma at all. */
+export function figmaMapMarkdown(items: IndexEntry[]): string {
+  const mapped = items.filter((e) => (e.meta?.figma ?? []).length);
+  const unmapped = items.filter(
+    (e) => e.kind !== 'foundation' && !(e.meta?.figma ?? []).length,
+  );
+
+  const lines = ['# Arlo UI — Figma ↔ code map', ''];
+  lines.push('| Figma set | Code | Usage | Note |', '| --- | --- | --- | --- |');
+  for (const entry of mapped) {
+    for (const b of entry.meta!.figma!) lines.push(bindingLine(entry, b));
+  }
+  if (unmapped.length) {
+    lines.push(
+      '',
+      '## Not drawn in Figma',
+      '',
+      'These exist only in code. Build from the registry source, not from a canvas.',
+      '',
+      ...unmapped.map((e) => `- \`${e.name}\` — ${e.title}`),
+    );
+  }
+  return lines.join('\n');
 }

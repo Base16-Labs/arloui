@@ -20,6 +20,12 @@
     }
   ],
   "meta": {
+    "figma": [
+      {
+        "set": "Tabs",
+        "export": "Tabs"
+      }
+    ],
     "tags": [
       "navigation",
       "tabs",

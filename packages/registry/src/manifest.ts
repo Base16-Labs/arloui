@@ -84,7 +84,15 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/button/index.ts', target: 'button/index.ts' },
     ],
     meta: {
-      figma: 'Components/Button/Primary',
+      // Figma splits by export, matching this entry's own file split. A single
+      // set carrying tone × appearance × size × loading is unusable to design
+      // against, so each shape is its own component set.
+      figma: [
+        { set: 'Buttons/Button', export: 'Button' },
+        { set: 'Buttons/Ghost', export: 'GhostButton' },
+        { set: 'Buttons/FAB', export: 'FAB' },
+        { set: 'Buttons/Social', export: 'SocialAuthButton' },
+      ],
       tags: ['action', 'primitive'],
     },
   },
@@ -100,7 +108,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
-      figma: 'Components/Card/Default',
+      figma: [{ set: 'Cards', export: 'Card' }],
       tags: ['surface', 'primitive'],
     },
   },
@@ -146,6 +154,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/tabs/index.ts', target: 'tabs/index.ts' },
     ],
     meta: {
+      figma: [{ set: 'Tabs', export: 'Tabs' }],
       tags: ['navigation', 'tabs', 'segmented', 'filter', 'primitive'],
     },
   },
@@ -161,7 +170,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
     ],
     meta: {
-      figma: 'Components/Sheet/Default',
+      // Not drawn in Figma yet.
       tags: ['surface', 'overlay', 'primitive'],
     },
   },
@@ -193,7 +202,12 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/input/index.ts', target: 'input/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Input/Default',
+      // Figma splits by variant, not export: Figma cannot express "same
+      // component, surface removed" as a prop the way `appearance` does.
+      figma: [
+        { set: 'Input Field BG STYLE', export: 'Input', props: { appearance: 'filled' } },
+        { set: 'Input field NO BG', export: 'Input', props: { appearance: 'plain' } },
+      ],
       tags: ['form', 'primitive'],
     },
   },
@@ -209,7 +223,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/checkbox/index.ts', target: 'checkbox/index.ts' },
     ],
     meta: {
-      figma: 'Components/Checkbox/Default',
+      // Not drawn in Figma yet.
       tags: ['form', 'primitive'],
     },
   },
@@ -225,7 +239,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/radio/index.ts', target: 'radio/index.ts' },
     ],
     meta: {
-      figma: 'Components/Radio/Default',
+      figma: [{ set: 'RadioButton', export: 'Radio' }],
       tags: ['form', 'primitive'],
     },
   },
@@ -241,7 +255,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/toggle/index.ts', target: 'toggle/index.ts' },
     ],
     meta: {
-      figma: 'Components/Toggle/Default',
+      // Not drawn in Figma yet.
       tags: ['form', 'primitive'],
     },
   },
@@ -257,7 +271,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/text-area/index.ts', target: 'text-area/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Area/Default',
+      figma: [{ set: 'Text area', export: 'TextArea' }],
       tags: ['form', 'primitive', 'multiline'],
     },
   },
@@ -318,7 +332,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/badge/index.ts', target: 'badge/index.ts' },
     ],
     meta: {
-      figma: 'Components/Badge/Default',
+      // Not drawn in Figma yet.
       tags: ['label', 'status', 'primitive'],
     },
   },
@@ -335,7 +349,7 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/chip/index.ts', target: 'chip/index.ts' },
     ],
     meta: {
-      figma: 'Components/Chip/Default',
+      // Not drawn in Figma yet.
       tags: ['filter', 'tag', 'interactive', 'primitive'],
     },
   },
@@ -372,7 +386,8 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/date-picker/index.ts', target: 'date-picker/index.ts' },
     ],
     meta: {
-      figma: 'Components/Date Picker/Default',
+      // Not drawn in Figma yet. The library's `Calendar` is a Phosphor icon,
+      // not a date-picker component set.
       tags: ['form', 'calendar', 'date', 'primitive'],
     },
   },

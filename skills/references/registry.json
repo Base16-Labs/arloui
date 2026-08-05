@@ -77,7 +77,24 @@
         "action",
         "primitive"
       ],
-      "figma": "Components/Button/Primary"
+      "figma": [
+        {
+          "set": "Buttons/Button",
+          "export": "Button"
+        },
+        {
+          "set": "Buttons/Ghost",
+          "export": "GhostButton"
+        },
+        {
+          "set": "Buttons/FAB",
+          "export": "FAB"
+        },
+        {
+          "set": "Buttons/Social",
+          "export": "SocialAuthButton"
+        }
+      ]
     },
     {
       "name": "card",
@@ -93,7 +110,12 @@
         "surface",
         "primitive"
       ],
-      "figma": "Components/Card/Default"
+      "figma": [
+        {
+          "set": "Cards",
+          "export": "Card"
+        }
+      ]
     },
     {
       "name": "skeleton",
@@ -147,6 +169,12 @@
         "segmented",
         "filter",
         "primitive"
+      ],
+      "figma": [
+        {
+          "set": "Tabs",
+          "export": "Tabs"
+        }
       ]
     },
     {
@@ -163,8 +191,7 @@
         "surface",
         "overlay",
         "primitive"
-      ],
-      "figma": "Components/Sheet/Default"
+      ]
     },
     {
       "name": "field",
@@ -198,7 +225,22 @@
         "form",
         "primitive"
       ],
-      "figma": "Components/Text Input/Default"
+      "figma": [
+        {
+          "set": "Input Field BG STYLE",
+          "export": "Input",
+          "props": {
+            "appearance": "filled"
+          }
+        },
+        {
+          "set": "Input field NO BG",
+          "export": "Input",
+          "props": {
+            "appearance": "plain"
+          }
+        }
+      ]
     },
     {
       "name": "checkbox",
@@ -215,8 +257,7 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": "Components/Checkbox/Default"
+      ]
     },
     {
       "name": "radio",
@@ -232,7 +273,12 @@
         "form",
         "primitive"
       ],
-      "figma": "Components/Radio/Default"
+      "figma": [
+        {
+          "set": "RadioButton",
+          "export": "Radio"
+        }
+      ]
     },
     {
       "name": "toggle",
@@ -247,8 +293,7 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": "Components/Toggle/Default"
+      ]
     },
     {
       "name": "text-area",
@@ -266,7 +311,12 @@
         "primitive",
         "multiline"
       ],
-      "figma": "Components/Text Area/Default"
+      "figma": [
+        {
+          "set": "Text area",
+          "export": "TextArea"
+        }
+      ]
     },
     {
       "name": "tab-bar",
@@ -334,8 +384,7 @@
         "label",
         "status",
         "primitive"
-      ],
-      "figma": "Components/Badge/Default"
+      ]
     },
     {
       "name": "chip",
@@ -356,8 +405,7 @@
         "tag",
         "interactive",
         "primitive"
-      ],
-      "figma": "Components/Chip/Default"
+      ]
     },
     {
       "name": "toast",
@@ -393,8 +441,7 @@
         "calendar",
         "date",
         "primitive"
-      ],
-      "figma": "Components/Date Picker/Default"
+      ]
     }
   ]
 }

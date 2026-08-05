@@ -129,6 +129,21 @@ function semanticGroup(name: string): string {
 
 const semanticLeaf = (name: string) => SEMANTIC_LEAF_OVERRIDES[name] ?? kebab(name);
 
+/**
+ * Variables that exist in Figma on purpose and have no code counterpart.
+ *
+ * Declared so the import plugin can filter them out of its orphan report — an
+ * orphan that is *not* listed here means something actually drifted, which is
+ * only a useful signal if the expected ones are named.
+ */
+const FIGMA_ONLY: Array<{ collection: string; name: string; why: string }> = [
+  {
+    collection: 'COLOR - PRIMITIVES',
+    name: 'Alpha Black/alpha-black-5',
+    why: 'Figma-side step with no equivalent in the alphaRamp scale.',
+  },
+];
+
 /* ----------------------------------------------------------- figma payload */
 
 type FigmaVariable =
@@ -400,7 +415,7 @@ async function main() {
   await writeFile(
     join(OUT, 'tokens.figma.json'),
     JSON.stringify(
-      { _generated: GENERATED, version: raw.version, collections },
+      { _generated: GENERATED, version: raw.version, figmaOnly: FIGMA_ONLY, collections },
       null,
       2,
     ) + '\n',

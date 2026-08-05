@@ -20,7 +20,12 @@
     }
   ],
   "meta": {
-    "figma": "Components/Radio/Default",
+    "figma": [
+      {
+        "set": "RadioButton",
+        "export": "Radio"
+      }
+    ],
     "tags": [
       "form",
       "primitive"

@@ -20,7 +20,12 @@
     }
   ],
   "meta": {
-    "figma": "Components/Card/Default",
+    "figma": [
+      {
+        "set": "Cards",
+        "export": "Card"
+      }
+    ],
     "tags": [
       "surface",
       "primitive"
