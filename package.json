@@ -46,6 +46,7 @@
     "icons:build": "turbo run build --filter=@arloui/icons",
     "snacks:build": "npm run generate --workspace @arloui/build-snacks",
     "skill:sync": "tsx scripts/sync-skill.ts",
+    "design:sync": "tsx scripts/sync-design.ts",
     "skill:install:cursor": "node scripts/install-skill.mjs cursor",
     "skill:install:claude": "node scripts/install-skill.mjs claude",
     "changeset": "changeset",
