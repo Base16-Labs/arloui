@@ -97,26 +97,37 @@ const kebab = (s: string) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCas
 const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /**
- * Which Figma group a semantic colour belongs to. Groups mirror the ones that
- * already exist in the library so an import updates in place rather than
- * creating a parallel set.
+ * Which Figma group a semantic colour belongs to.
+ *
+ * These are transcribed from the live Arlo UI v1.0 library, not invented — an
+ * import only updates in place if the full `Group/leaf` path matches exactly.
+ * Note the shape of the real taxonomy: focus-ring and touch-feedback do *not*
+ * get their own groups, they live under Interactive Elements; and
+ * `pull-indicator` sits alone under Gestures rather than with the nav tokens.
  */
 const SEMANTIC_GROUPS: Array<[RegExp, string]> = [
   [/^surface/, 'Surfaces & Backgrounds'],
   [/^text/, 'Text & Content'],
-  [/^interactive/, 'Interactive'],
-  [/^focusRing/, 'Focus Ring'],
-  [/^touchFeedback/, 'Touch Feedback'],
-  [/^border/, 'Borders'],
-  [/^feedback/, 'Feedback'],
-  [/^(nav|pull)/, 'Navigation'],
+  [/^(interactive|focusRing|touchFeedback)/, 'Interactive Elements'],
+  [/^border/, 'Borders & Dividers'],
+  [/^feedback/, 'Feedback States'],
+  [/^nav/, 'Navigation & UI Chrome'],
+  [/^pull/, 'Gestures'],
 ];
+
+/** Leaf names the library spells differently from plain kebab-case. */
+const SEMANTIC_LEAF_OVERRIDES: Record<string, string> = {
+  focusRingMain: 'Focus-ring-main',
+  focusRingError: 'Focus-ring-error',
+};
 
 function semanticGroup(name: string): string {
   const hit = SEMANTIC_GROUPS.find(([re]) => re.test(name));
   if (!hit) throw new Error(`No Figma group mapped for semantic colour "${name}"`);
   return hit[1];
 }
+
+const semanticLeaf = (name: string) => SEMANTIC_LEAF_OVERRIDES[name] ?? kebab(name);
 
 /* ----------------------------------------------------------- figma payload */
 
@@ -170,16 +181,21 @@ function buildFigma(): FigmaCollection[] {
     }
   }
   // alphaRamp exposes `white`/`black` ramps plus `whiteBase`/`blackBase` scalars.
+  // The library repeats the group in the leaf name (`Alpha White/alpha-white-40`),
+  // unlike the numeric ramps above (`Grey/500`) — match it or every alpha token
+  // imports as a duplicate.
   for (const tone of ['white', 'black'] as const) {
     const ramp = alphaRamp[tone] as Record<string, string>;
     for (const [step, value] of Object.entries(ramp)) {
-      primitives.push(color(`Alpha ${titleCase(tone)}/${step}`, { Value: value }));
+      primitives.push(
+        color(`Alpha ${titleCase(tone)}/alpha-${tone}-${step}`, { Value: value }),
+      );
     }
   }
 
   /* COLOR - SEMANTIC --------------------------------------------------- */
   const semanticVars: FigmaVariable[] = Object.keys(semantic.light).map((name) =>
-    color(`${semanticGroup(name)}/${kebab(name)}`, {
+    color(`${semanticGroup(name)}/${semanticLeaf(name)}`, {
       Light: (semantic.light as Record<string, string>)[name],
       Dark: (semantic.dark as Record<string, string>)[name],
     }),
@@ -194,11 +210,13 @@ function buildFigma(): FigmaCollection[] {
     float(`radius-${name}`, px as number),
   );
 
+  // Transcribed from the live library. `touchTarget` has no counterpart there
+  // yet, so its group name is the one guess in this map — it will import as new.
   const sizingGroups: Record<string, string> = {
-    icon: 'Icon Sizes',
-    avatar: 'Avatar Sizes',
+    icon: 'Icons',
+    avatar: 'Avatars',
     buttonHeight: 'Button Heights',
-    touchTarget: 'Touch Target',
+    touchTarget: 'Touch Targets',
   };
   const sizingLeaf: Record<string, string> = {
     icon: 'icon',
@@ -235,7 +253,7 @@ function buildFigma(): FigmaCollection[] {
     { name: 'COLOR - PRIMITIVES', modes: ['Value'], variables: primitives },
     { name: 'COLOR - SEMANTIC', modes: ['Light', 'Dark'], variables: semanticVars },
     { name: 'SPACING', modes: ['Value'], variables: spacingVars },
-    { name: 'RADIUS', modes: ['Value'], variables: radiusVars },
+    { name: 'BORDER RADIUS', modes: ['Value'], variables: radiusVars },
     { name: 'SIZING - COMPONENT SPECIFIC', modes: ['Value'], variables: sizingVars },
     { name: 'TYPOGRAPHY', modes: ['Value'], variables: typographyVars },
   ];

@@ -47,7 +47,11 @@ async function importTokens(payload, dryRun) {
     let collection = existingCollections.find((c) => c.name === spec.name);
     if (!collection) {
       if (dryRun) {
+        // Nothing to diff against, but still report what the real run would
+        // add — otherwise a brand-new collection misleadingly previews as +0.
         line.willCreateCollection = true;
+        line.created = spec.variables.length;
+        line.modes = spec.modes.slice();
         report.collections.push(line);
         continue;
       }

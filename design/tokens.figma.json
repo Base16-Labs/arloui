@@ -2805,7 +2805,7 @@
           }
         },
         {
-          "name": "Alpha White/0",
+          "name": "Alpha White/alpha-white-0",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2817,7 +2817,7 @@
           }
         },
         {
-          "name": "Alpha White/10",
+          "name": "Alpha White/alpha-white-10",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2829,7 +2829,7 @@
           }
         },
         {
-          "name": "Alpha White/20",
+          "name": "Alpha White/alpha-white-20",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2841,7 +2841,7 @@
           }
         },
         {
-          "name": "Alpha White/30",
+          "name": "Alpha White/alpha-white-30",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2853,7 +2853,7 @@
           }
         },
         {
-          "name": "Alpha White/40",
+          "name": "Alpha White/alpha-white-40",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2865,7 +2865,7 @@
           }
         },
         {
-          "name": "Alpha White/50",
+          "name": "Alpha White/alpha-white-50",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2877,7 +2877,7 @@
           }
         },
         {
-          "name": "Alpha White/60",
+          "name": "Alpha White/alpha-white-60",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2889,7 +2889,7 @@
           }
         },
         {
-          "name": "Alpha White/70",
+          "name": "Alpha White/alpha-white-70",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2901,7 +2901,7 @@
           }
         },
         {
-          "name": "Alpha White/80",
+          "name": "Alpha White/alpha-white-80",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2913,7 +2913,7 @@
           }
         },
         {
-          "name": "Alpha White/90",
+          "name": "Alpha White/alpha-white-90",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2925,7 +2925,7 @@
           }
         },
         {
-          "name": "Alpha Black/0",
+          "name": "Alpha Black/alpha-black-0",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2937,7 +2937,7 @@
           }
         },
         {
-          "name": "Alpha Black/10",
+          "name": "Alpha Black/alpha-black-10",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2949,7 +2949,7 @@
           }
         },
         {
-          "name": "Alpha Black/20",
+          "name": "Alpha Black/alpha-black-20",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2961,7 +2961,7 @@
           }
         },
         {
-          "name": "Alpha Black/30",
+          "name": "Alpha Black/alpha-black-30",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2973,7 +2973,7 @@
           }
         },
         {
-          "name": "Alpha Black/40",
+          "name": "Alpha Black/alpha-black-40",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2985,7 +2985,7 @@
           }
         },
         {
-          "name": "Alpha Black/50",
+          "name": "Alpha Black/alpha-black-50",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -2997,7 +2997,7 @@
           }
         },
         {
-          "name": "Alpha Black/60",
+          "name": "Alpha Black/alpha-black-60",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -3009,7 +3009,7 @@
           }
         },
         {
-          "name": "Alpha Black/70",
+          "name": "Alpha Black/alpha-black-70",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -3021,7 +3021,7 @@
           }
         },
         {
-          "name": "Alpha Black/80",
+          "name": "Alpha Black/alpha-black-80",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -3033,7 +3033,7 @@
           }
         },
         {
-          "name": "Alpha Black/90",
+          "name": "Alpha Black/alpha-black-90",
           "type": "COLOR",
           "valuesByMode": {
             "Value": {
@@ -3342,7 +3342,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-primary",
+          "name": "Interactive Elements/interactive-primary",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3360,7 +3360,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-primary-pressed",
+          "name": "Interactive Elements/interactive-primary-pressed",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3378,7 +3378,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-secondary",
+          "name": "Interactive Elements/interactive-secondary",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3396,7 +3396,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-secondary-pressed",
+          "name": "Interactive Elements/interactive-secondary-pressed",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3414,7 +3414,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-tertiary",
+          "name": "Interactive Elements/interactive-tertiary",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3432,7 +3432,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-tertiary-pressed",
+          "name": "Interactive Elements/interactive-tertiary-pressed",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3450,7 +3450,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-disabled",
+          "name": "Interactive Elements/interactive-disabled",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3468,7 +3468,7 @@
           }
         },
         {
-          "name": "Interactive/interactive-error",
+          "name": "Interactive Elements/interactive-error",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3486,7 +3486,7 @@
           }
         },
         {
-          "name": "Focus Ring/focus-ring-main",
+          "name": "Interactive Elements/Focus-ring-main",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3504,7 +3504,7 @@
           }
         },
         {
-          "name": "Focus Ring/focus-ring-error",
+          "name": "Interactive Elements/Focus-ring-error",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3522,7 +3522,7 @@
           }
         },
         {
-          "name": "Touch Feedback/touch-feedback-main",
+          "name": "Interactive Elements/touch-feedback-main",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3540,7 +3540,7 @@
           }
         },
         {
-          "name": "Touch Feedback/touch-feedback-light",
+          "name": "Interactive Elements/touch-feedback-light",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3558,7 +3558,7 @@
           }
         },
         {
-          "name": "Borders/border-primary",
+          "name": "Borders & Dividers/border-primary",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3576,7 +3576,7 @@
           }
         },
         {
-          "name": "Borders/border-secondary",
+          "name": "Borders & Dividers/border-secondary",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3594,7 +3594,7 @@
           }
         },
         {
-          "name": "Borders/border-focus",
+          "name": "Borders & Dividers/border-focus",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3612,7 +3612,7 @@
           }
         },
         {
-          "name": "Borders/border-error",
+          "name": "Borders & Dividers/border-error",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3630,7 +3630,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-success",
+          "name": "Feedback States/feedback-success",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3648,7 +3648,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-success-bg",
+          "name": "Feedback States/feedback-success-bg",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3666,7 +3666,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-warning",
+          "name": "Feedback States/feedback-warning",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3684,7 +3684,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-warning-bg",
+          "name": "Feedback States/feedback-warning-bg",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3702,7 +3702,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-error",
+          "name": "Feedback States/feedback-error",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3720,7 +3720,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-error-bg",
+          "name": "Feedback States/feedback-error-bg",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3738,7 +3738,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-info",
+          "name": "Feedback States/feedback-info",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3756,7 +3756,7 @@
           }
         },
         {
-          "name": "Feedback/feedback-info-bg",
+          "name": "Feedback States/feedback-info-bg",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3774,7 +3774,7 @@
           }
         },
         {
-          "name": "Navigation/nav-background",
+          "name": "Navigation & UI Chrome/nav-background",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3792,7 +3792,7 @@
           }
         },
         {
-          "name": "Navigation/nav-border",
+          "name": "Navigation & UI Chrome/nav-border",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3810,7 +3810,7 @@
           }
         },
         {
-          "name": "Navigation/nav-active",
+          "name": "Navigation & UI Chrome/nav-active",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3828,7 +3828,7 @@
           }
         },
         {
-          "name": "Navigation/nav-inactive",
+          "name": "Navigation & UI Chrome/nav-inactive",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3846,7 +3846,7 @@
           }
         },
         {
-          "name": "Navigation/nav-indicator",
+          "name": "Navigation & UI Chrome/nav-indicator",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3864,7 +3864,7 @@
           }
         },
         {
-          "name": "Navigation/pull-indicator",
+          "name": "Gestures/pull-indicator",
           "type": "COLOR",
           "valuesByMode": {
             "Light": {
@@ -3990,7 +3990,7 @@
       ]
     },
     {
-      "name": "RADIUS",
+      "name": "BORDER RADIUS",
       "modes": [
         "Value"
       ],
@@ -4053,56 +4053,56 @@
       ],
       "variables": [
         {
-          "name": "Icon Sizes/icon-xs",
+          "name": "Icons/icon-xs",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 16
           }
         },
         {
-          "name": "Icon Sizes/icon-sm",
+          "name": "Icons/icon-sm",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 20
           }
         },
         {
-          "name": "Icon Sizes/icon-md",
+          "name": "Icons/icon-md",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 24
           }
         },
         {
-          "name": "Icon Sizes/icon-lg",
+          "name": "Icons/icon-lg",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 32
           }
         },
         {
-          "name": "Avatar Sizes/avatar-xs",
+          "name": "Avatars/avatar-xs",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 16
           }
         },
         {
-          "name": "Avatar Sizes/avatar-sm",
+          "name": "Avatars/avatar-sm",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 24
           }
         },
         {
-          "name": "Avatar Sizes/avatar-md",
+          "name": "Avatars/avatar-md",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 32
           }
         },
         {
-          "name": "Avatar Sizes/avatar-lg",
+          "name": "Avatars/avatar-lg",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 40
@@ -4137,14 +4137,14 @@
           }
         },
         {
-          "name": "Touch Target/touch-target-minimum",
+          "name": "Touch Targets/touch-target-minimum",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 44
           }
         },
         {
-          "name": "Touch Target/touch-target-comfortable",
+          "name": "Touch Targets/touch-target-comfortable",
           "type": "FLOAT",
           "valuesByMode": {
             "Value": 48
