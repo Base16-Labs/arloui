@@ -300,6 +300,17 @@
   --color-nav-inactive: var(--color-grey-400);
   --color-nav-indicator: var(--color-primary-500);
   --color-pull-indicator: var(--color-grey-300);
+  --color-bg: var(--color-grey-50);
+  --color-surface: var(--color-white);
+  --color-surface-raised: var(--color-grey-100);
+  --color-surface-strong: var(--color-grey-200);
+  --color-border: var(--color-grey-200);
+  --color-border-strong: var(--color-grey-300);
+  --color-accent: var(--color-primary-600);
+  --color-accent-alt: var(--color-primary-500);
+  --color-success: var(--color-success-500);
+  --color-warning: var(--color-warning-600);
+  --color-danger: var(--color-error-500);
   --color-dark-surface-background: var(--color-grey-950);
   --color-dark-surface-input: var(--color-zinc-900);
   --color-dark-surface-input-active: var(--color-zinc-800);
@@ -346,6 +357,17 @@
   --color-dark-nav-inactive: var(--color-zinc-500);
   --color-dark-nav-indicator: var(--color-primary-400);
   --color-dark-pull-indicator: var(--color-zinc-600);
+  --color-dark-bg: var(--color-grey-950);
+  --color-dark-surface: var(--color-zinc-900);
+  --color-dark-surface-raised: var(--color-zinc-800);
+  --color-dark-surface-strong: var(--color-zinc-800);
+  --color-dark-border: var(--color-zinc-800);
+  --color-dark-border-strong: var(--color-zinc-700);
+  --color-dark-accent: var(--color-primary-500);
+  --color-dark-accent-alt: var(--color-primary-400);
+  --color-dark-success: var(--color-success-400);
+  --color-dark-warning: var(--color-warning-400);
+  --color-dark-danger: var(--color-error-500);
 
   --spacing-0: 0px;
   --spacing-1: 4px;

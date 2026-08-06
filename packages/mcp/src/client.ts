@@ -1,13 +1,5 @@
 import { BASE_URL, REGISTRY_URL } from './config.js';
 
-/** Mirrors `FigmaBinding` in @arloui/registry — one published Figma set ↔ code. */
-export type FigmaBinding = {
-  set: string;
-  export?: string;
-  props?: Record<string, string | boolean>;
-  note?: string;
-};
-
 export type IndexEntry = {
   name: string;
   kind: string;
@@ -15,7 +7,11 @@ export type IndexEntry = {
   description: string;
   registryDependencies?: string[];
   dependencies?: string[];
-  meta?: { tags?: string[]; figma?: FigmaBinding[] };
+  meta?: {
+    tags?: string[];
+    /** Published Figma component sets backing this entry; absent when none exist. */
+    figma?: Array<{ set: string; export?: string; props?: Record<string, string | boolean>; note?: string }>;
+  };
 };
 
 export type RegistryFile = { source?: string; target: string; type?: string; content: string };

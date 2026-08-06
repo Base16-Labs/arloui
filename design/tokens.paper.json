@@ -1798,6 +1798,72 @@
     },
     {
       "type": "color",
+      "name": "--color-bg",
+      "value": "var(--color-grey-50)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-surface",
+      "value": "var(--color-white)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-surface-raised",
+      "value": "var(--color-grey-100)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-surface-strong",
+      "value": "var(--color-grey-200)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-border",
+      "value": "var(--color-grey-200)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-border-strong",
+      "value": "var(--color-grey-300)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-accent",
+      "value": "var(--color-primary-600)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-accent-alt",
+      "value": "var(--color-primary-500)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-success",
+      "value": "var(--color-success-500)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-warning",
+      "value": "var(--color-warning-600)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-danger",
+      "value": "var(--color-error-500)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
       "name": "--color-dark-surface-background",
       "value": "var(--color-grey-950)",
       "description": "Semantic · dark"
@@ -2070,6 +2136,72 @@
       "type": "color",
       "name": "--color-dark-pull-indicator",
       "value": "var(--color-zinc-600)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-bg",
+      "value": "var(--color-grey-950)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-surface",
+      "value": "var(--color-zinc-900)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-surface-raised",
+      "value": "var(--color-zinc-800)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-surface-strong",
+      "value": "var(--color-zinc-800)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-border",
+      "value": "var(--color-zinc-800)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-border-strong",
+      "value": "var(--color-zinc-700)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-accent",
+      "value": "var(--color-primary-500)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-accent-alt",
+      "value": "var(--color-primary-400)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-success",
+      "value": "var(--color-success-400)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-warning",
+      "value": "var(--color-warning-400)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-danger",
+      "value": "var(--color-error-500)",
       "description": "Semantic · dark"
     },
     {

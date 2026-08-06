@@ -2,14 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { getEntry, getIndex, getMarkdown, getMarkdownIndex } from './client.js';
-import {
-  componentMarkdown,
-  figmaMapMarkdown,
-  figmaResolveMarkdown,
-  pagePathFor,
-  searchMarkdown,
-  tokenMarkdown,
-} from './format.js';
+import { componentMarkdown, pagePathFor, searchMarkdown, tokenMarkdown } from './format.js';
 import { SERVER_NAME, SERVER_VERSION } from './config.js';
 
 type Result = { content: Array<{ type: 'text'; text: string }>; isError?: boolean };
@@ -121,21 +114,6 @@ server.tool(
 // never been published, so the tool could only ever answer "not published yet" —
 // which reads to an agent as "this library is empty" and costs it a turn to find
 // out. Add the tool back alongside the content, not before it.
-
-server.tool(
-  'arlo_resolve_figma',
-  'Resolve a Figma component-set name (e.g. "Buttons/Ghost", "Input field NO BG") to the Arlo UI component that implements it, including the named export and the prop values that select that variant. Use this when working from a Figma design so the generated code uses the real component instead of being rebuilt from geometry.',
-  { set: z.string().describe('Figma component-set name, e.g. "Buttons/Ghost"') },
-  async ({ set }) =>
-    guard(async () => text(figmaResolveMarkdown((await getIndex()).items, set))),
-);
-
-server.tool(
-  'arlo_figma_map',
-  'The full Figma ↔ code correspondence for Arlo UI: every published Figma component set with the component and props behind it, plus the components that exist only in code. Most of the library is code-only — check here before assuming a Figma component exists.',
-  {},
-  async () => guard(async () => text(figmaMapMarkdown((await getIndex()).items))),
-);
 
 async function main() {
   const transport = new StdioServerTransport();

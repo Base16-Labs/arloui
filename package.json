@@ -47,6 +47,7 @@
     "snacks:build": "npm run generate --workspace @arloui/build-snacks",
     "skill:sync": "tsx scripts/sync-skill.ts",
     "design:sync": "tsx scripts/sync-design.ts",
+    "design:components": "jest --config packages/registry/jest.config.cjs --rootDir packages/registry --testPathPattern design-export --coverage=false",
     "skill:install:cursor": "node scripts/install-skill.mjs cursor",
     "skill:install:claude": "node scripts/install-skill.mjs claude",
     "changeset": "changeset",

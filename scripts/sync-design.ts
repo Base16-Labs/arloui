@@ -106,11 +106,11 @@ const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
  * `pull-indicator` sits alone under Gestures rather than with the nav tokens.
  */
 const SEMANTIC_GROUPS: Array<[RegExp, string]> = [
-  [/^surface/, 'Surfaces & Backgrounds'],
+  [/^(surface|bg)/, 'Surfaces & Backgrounds'],
   [/^text/, 'Text & Content'],
-  [/^(interactive|focusRing|touchFeedback)/, 'Interactive Elements'],
+  [/^(interactive|focusRing|touchFeedback|accent)/, 'Interactive Elements'],
   [/^border/, 'Borders & Dividers'],
-  [/^feedback/, 'Feedback States'],
+  [/^(feedback|success|warning|danger)/, 'Feedback States'],
   [/^nav/, 'Navigation & UI Chrome'],
   [/^pull/, 'Gestures'],
 ];
@@ -209,10 +209,18 @@ function buildFigma(): FigmaCollection[] {
   }
 
   /* COLOR - SEMANTIC --------------------------------------------------- */
-  const semanticVars: FigmaVariable[] = Object.keys(semantic.light).map((name) =>
+  // `semantic.*` is the Figma-derived utility table; `raw.color.light/dark` adds
+  // the flat aliases components actually reach for (`surfaceRaised`, `borderStrong`,
+  // `accent`, …). Both must ship — a token a component uses but the canvas lacks
+  // is a value a designer has to hardcode, which is how systems come apart.
+  const semanticNames = [
+    ...Object.keys(semantic.light),
+    ...Object.keys(raw.color.light).filter((k) => !(k in semantic.light)),
+  ];
+  const semanticVars: FigmaVariable[] = semanticNames.map((name) =>
     color(`${semanticGroup(name)}/${semanticLeaf(name)}`, {
-      Light: (semantic.light as Record<string, string>)[name],
-      Dark: (semantic.dark as Record<string, string>)[name],
+      Light: (raw.color.light as Record<string, string>)[name],
+      Dark: (raw.color.dark as Record<string, string>)[name],
     }),
   );
 
@@ -353,11 +361,17 @@ function buildPaper(): PaperToken[] {
     return hit ? `var(${hit})` : css;
   };
 
-  for (const [name, value] of Object.entries(semantic.light as Record<string, string>)) {
-    push('color', kebab(name), alias(value), 'Semantic · light');
+  // Same superset as the Figma payload: the utility table plus the flat aliases
+  // components reference directly.
+  const semanticNames = [
+    ...Object.keys(semantic.light),
+    ...Object.keys(raw.color.light).filter((k) => !(k in semantic.light)),
+  ];
+  for (const name of semanticNames) {
+    push('color', kebab(name), alias((raw.color.light as Record<string, string>)[name]), 'Semantic · light');
   }
-  for (const [name, value] of Object.entries(semantic.dark as Record<string, string>)) {
-    push('color', `dark-${kebab(name)}`, alias(value), 'Semantic · dark');
+  for (const name of semanticNames) {
+    push('color', `dark-${kebab(name)}`, alias((raw.color.dark as Record<string, string>)[name]), 'Semantic · dark');
   }
 
   for (const [step, px] of Object.entries(raw.spacing)) {
