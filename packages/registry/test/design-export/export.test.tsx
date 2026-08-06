@@ -29,10 +29,9 @@ import { dirname, resolve } from 'node:path';
 import { render } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 import {
-  attributeNumber,
-  buildNumericIndex,
   colorTokenNames,
   makeColorProbe,
+  makeNumericProbe,
   type Attribution,
 } from './attribution';
 
@@ -41,13 +40,31 @@ import {
 // matching the real tree structurally, which is the whole basis of the zip.
 jest.mock('../../src/foundation/tokens', () => {
   const actual = jest.requireActual('../../src/foundation/tokens');
-  const { makeColorProbe: probeOf } = jest.requireActual('./attribution');
+  const { makeColorProbe: colorProbe, makeNumericProbe: numericProbe } =
+    jest.requireActual('./attribution');
+  // Colours and numbers are probed in the *same* render: sentinels for colour,
+  // sub-pixel epsilons for everything numeric. One extra render per scheme
+  // covers spacing, radii, sizing and type as exactly as it covers colour.
+  const numeric = numericProbe({
+    spacing: actual.spacing,
+    radii: actual.radii,
+    sizing: actual.sizing,
+    typography: actual.typography,
+  }).probe;
+  const probed = (theme: Record<string, unknown>) => ({
+    ...theme,
+    colors: colorProbe(theme.colors).probe,
+    spacing: numeric.spacing,
+    radii: numeric.radii,
+    sizing: numeric.sizing,
+    typography: numeric.typography,
+  });
   return {
     ...actual,
     themes: {
       ...actual.themes,
-      probeLight: { ...actual.themes.light, colors: probeOf(actual.themes.light.colors).probe },
-      probeDark: { ...actual.themes.dark, colors: probeOf(actual.themes.dark.colors).probe },
+      probeLight: probed(actual.themes.light),
+      probeDark: probed(actual.themes.dark),
     },
   };
 });
@@ -68,12 +85,12 @@ const SENTINELS = {
   light: makeColorProbe(actualTokens.themes.light.colors).bySentinel,
   dark: makeColorProbe(actualTokens.themes.dark.colors).bySentinel,
 };
-const NUMERIC = buildNumericIndex({
+const NUMERIC = makeNumericProbe({
   spacing: actualTokens.spacing,
   radii: actualTokens.radii,
   sizing: actualTokens.sizing,
   typography: actualTokens.typography,
-});
+}).byProbe;
 
 /** Style keys that describe appearance on a canvas. Everything else is noise. */
 const KEEP = new Set([
@@ -99,6 +116,19 @@ const KEEP = new Set([
 ]);
 
 const isColorKey = (k: string) => /color/i.test(k);
+
+/** Numeric properties a token could legitimately supply. `flex` and `opacity` could not. */
+const TOKENISABLE = new Set([
+  'padding', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight',
+  'paddingHorizontal', 'paddingVertical',
+  'margin', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight',
+  'marginHorizontal', 'marginVertical',
+  'gap', 'rowGap', 'columnGap',
+  'borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius',
+  'borderBottomLeftRadius', 'borderBottomRightRadius',
+  'fontSize', 'lineHeight', 'letterSpacing',
+  'width', 'height', 'minWidth', 'minHeight',
+]);
 
 type Node = {
   type: string;
@@ -165,9 +195,14 @@ function attribute(real: Node, probe: Node | null, scheme: 'light' | 'dark'): vo
         } else if (value !== 'transparent') {
           tokens[key] = { hardcoded: true };
         }
-      } else if (typeof value === 'number') {
-        const hit = attributeNumber(key, value, NUMERIC);
-        if (hit) tokens[key] = hit;
+      } else if (typeof value === 'number' && TOKENISABLE.has(key)) {
+        // The probe tree carries the epsilon-tagged twin of this number. An
+        // unperturbed value never came from the theme at all — it is a literal
+        // in the component. A perturbed one that matches nothing is arithmetic
+        // on a token. Neither is bindable, and both are worth seeing.
+        const probed = probe?.style?.[key];
+        const hit = typeof probed === 'number' ? NUMERIC.get(probed) : undefined;
+        tokens[key] = hit ?? { hardcoded: true };
       }
     }
     if (Object.keys(tokens).length) real.tokens = tokens;

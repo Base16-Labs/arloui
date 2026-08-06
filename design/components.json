@@ -152,6 +152,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -195,11 +201,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -253,12 +259,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -281,12 +285,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -298,21 +300,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -426,6 +423,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -469,11 +472,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -527,12 +530,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -555,12 +556,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -572,22 +571,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -679,6 +672,9 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     },
@@ -743,6 +739,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -786,11 +788,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -844,12 +846,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -870,12 +870,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -885,21 +883,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -977,6 +970,9 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     },
@@ -1041,6 +1037,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -1084,11 +1086,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -1142,12 +1144,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -1168,12 +1168,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -1183,22 +1181,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -1326,6 +1318,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -1369,11 +1367,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -1426,12 +1424,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -1453,12 +1449,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -1470,21 +1464,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -1598,6 +1587,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -1641,11 +1636,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -1698,12 +1693,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -1725,12 +1718,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -1742,22 +1733,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -1848,6 +1833,9 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     },
@@ -1912,6 +1900,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -1955,11 +1949,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -2012,12 +2006,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -2037,12 +2029,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -2052,21 +2042,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -2143,6 +2128,9 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     },
@@ -2207,6 +2195,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -2250,11 +2244,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -2307,12 +2301,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -2332,12 +2324,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -2347,22 +2337,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -2464,6 +2448,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -2507,11 +2497,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -2565,12 +2555,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -2593,12 +2581,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -2610,21 +2596,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -2712,6 +2693,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -2755,11 +2742,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -2813,12 +2800,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -2841,12 +2826,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -2858,22 +2841,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -2939,6 +2916,9 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     },
@@ -3003,6 +2983,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -3046,11 +3032,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -3104,12 +3090,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -3130,12 +3114,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -3145,21 +3127,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -3210,6 +3187,9 @@
                           "figma": "Borders & Dividers/border"
                         },
                         "borderRadius": {
+                          "hardcoded": true
+                        },
+                        "height": {
                           "hardcoded": true
                         }
                       }
@@ -3275,6 +3255,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -3318,11 +3304,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -3376,12 +3362,10 @@
                               "figma": "Surfaces & Backgrounds/surface-elevated"
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "paper": "--color-border",
@@ -3402,12 +3386,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -3417,22 +3399,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -3534,6 +3510,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -3577,11 +3559,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -3634,12 +3616,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -3661,12 +3641,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -3678,21 +3656,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -3780,6 +3753,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -3823,11 +3802,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -3880,12 +3859,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -3907,12 +3884,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "paper": "--radius-2xl",
@@ -3924,22 +3899,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -4003,6 +3972,9 @@
                           "hardcoded": true
                         },
                         "borderRadius": {
+                          "hardcoded": true
+                        },
+                        "height": {
                           "hardcoded": true
                         }
                       }
@@ -4068,6 +4040,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -4111,11 +4089,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -4168,12 +4146,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -4193,12 +4169,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -4208,21 +4182,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -4272,6 +4241,9 @@
                           "hardcoded": true
                         },
                         "borderRadius": {
+                          "hardcoded": true
+                        },
+                        "height": {
                           "hardcoded": true
                         }
                       }
@@ -4337,6 +4309,12 @@
                                         "borderRadius": {
                                           "paper": "--radius-full",
                                           "figma": "radius-full"
+                                        },
+                                        "height": {
+                                          "hardcoded": true
+                                        },
+                                        "width": {
+                                          "hardcoded": true
                                         }
                                       }
                                     }
@@ -4380,11 +4358,11 @@
                                     },
                                     "fontSize": {
                                       "paper": "--text-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Font Size/heading-large"
                                     },
                                     "lineHeight": {
                                       "paper": "--leading-heading-large",
-                                      "ambiguous": true
+                                      "figma": "Line Height/heading-large"
                                     }
                                   }
                                 }
@@ -4437,12 +4415,10 @@
                               "hardcoded": true
                             },
                             "borderBottomLeftRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderBottomRightRadius": {
-                              "paper": "--radius-none",
-                              "figma": "radius-none"
+                              "hardcoded": true
                             },
                             "borderColor": {
                               "hardcoded": true
@@ -4462,12 +4438,10 @@
                       ],
                       "tokens": {
                         "borderBottomLeftRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderBottomRightRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
+                          "hardcoded": true
                         },
                         "borderTopLeftRadius": {
                           "hardcoded": true
@@ -4477,22 +4451,16 @@
                         },
                         "shadowColor": {
                           "hardcoded": true
-                        },
-                        "shadowRadius": {
-                          "paper": "--radius-none",
-                          "figma": "radius-none"
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "marginBottom": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     },
                     "marginHorizontal": {
-                      "paper": "--spacing-0",
-                      "figma": "space-0"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -4584,8 +4552,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4595,12 +4562,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -4633,8 +4604,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4644,12 +4614,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -4682,8 +4656,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4693,12 +4666,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -4746,8 +4723,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4757,12 +4733,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -4795,8 +4775,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4806,12 +4785,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -4844,8 +4827,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4855,12 +4837,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -4923,8 +4909,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4934,12 +4919,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -4973,8 +4962,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -4984,12 +4972,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5023,8 +5015,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5034,12 +5025,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -5088,8 +5083,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5099,12 +5093,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5138,8 +5136,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5149,12 +5146,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5188,8 +5189,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5199,12 +5199,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -5266,8 +5270,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5277,12 +5280,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5315,8 +5322,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5326,12 +5332,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5364,8 +5374,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5375,12 +5384,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -5428,8 +5441,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5439,12 +5451,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5477,8 +5493,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5488,12 +5503,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5526,8 +5545,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5537,12 +5555,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -5605,8 +5627,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5616,12 +5637,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5655,8 +5680,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5666,12 +5690,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5705,8 +5733,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5716,12 +5743,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -5770,8 +5801,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5781,12 +5811,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5820,8 +5854,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5831,12 +5864,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -5870,8 +5907,7 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5881,12 +5917,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -5950,8 +5990,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -5977,18 +6016,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6021,8 +6067,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6048,18 +6093,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6092,8 +6144,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6119,18 +6170,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -6184,8 +6242,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6211,18 +6268,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6255,8 +6319,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6282,18 +6345,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6326,8 +6396,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6353,18 +6422,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -6433,8 +6509,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6460,18 +6535,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6505,8 +6587,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6532,18 +6613,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6577,8 +6665,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6604,18 +6691,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -6670,8 +6764,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6697,18 +6790,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6742,8 +6842,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6769,18 +6868,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6814,8 +6920,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6841,18 +6946,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -6920,8 +7032,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -6947,18 +7058,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -6991,8 +7109,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7018,18 +7135,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7062,8 +7186,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7089,18 +7212,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -7154,8 +7284,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7181,18 +7310,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7225,8 +7361,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7252,18 +7387,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7296,8 +7438,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7323,18 +7464,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -7403,8 +7551,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7430,18 +7577,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7475,8 +7629,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7502,18 +7655,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7547,8 +7707,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7574,18 +7733,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -7640,8 +7806,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7667,18 +7832,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7712,8 +7884,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7739,18 +7910,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7784,8 +7962,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7811,18 +7988,25 @@
                         },
                         "borderRadius": {
                           "hardcoded": true
+                        },
+                        "height": {
+                          "hardcoded": true
                         }
                       }
                     }
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -7911,8 +8095,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7925,9 +8108,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -7983,8 +8171,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -7997,9 +8184,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8055,8 +8247,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8069,17 +8260,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             },
@@ -8143,8 +8338,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8157,9 +8351,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8215,8 +8414,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8229,9 +8427,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8287,8 +8490,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8301,17 +8503,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             }
@@ -8390,8 +8596,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8404,9 +8609,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8463,8 +8673,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8477,9 +8686,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8536,8 +8750,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8550,17 +8763,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             },
@@ -8625,8 +8842,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8639,9 +8855,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8698,8 +8919,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8712,9 +8932,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8771,8 +8996,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8785,17 +9009,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             }
@@ -8873,8 +9101,7 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8887,9 +9114,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -8945,8 +9177,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -8959,9 +9190,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9017,8 +9253,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9031,17 +9266,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             },
@@ -9105,8 +9344,7 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9119,9 +9357,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9177,8 +9420,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9191,9 +9433,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9249,8 +9496,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9263,17 +9509,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             }
@@ -9352,8 +9602,7 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9366,9 +9615,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9425,8 +9679,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9439,9 +9692,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9498,8 +9756,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9512,17 +9769,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             },
@@ -9587,8 +9848,7 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9601,9 +9861,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9660,8 +9925,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9674,9 +9938,14 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9733,8 +10002,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9747,17 +10015,21 @@
                       "paper": "--radius-full",
                       "figma": "radius-full"
                     },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
+                    },
                     "paddingHorizontal": {
-                      "paper": "--spacing-4",
-                      "figma": "space-4"
+                      "hardcoded": true
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "paper": "--spacing-2",
-                  "figma": "space-2"
+                  "hardcoded": true
                 }
               }
             }
@@ -9815,8 +10087,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9826,12 +10097,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9865,8 +10140,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9876,12 +10150,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -9915,8 +10193,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -9926,12 +10203,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -9946,8 +10227,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             },
@@ -9991,8 +10271,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10002,12 +10281,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10041,8 +10324,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10052,12 +10334,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10091,8 +10377,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10102,12 +10387,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -10122,8 +10411,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             }
@@ -10181,8 +10469,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10192,12 +10479,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10231,8 +10522,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10242,12 +10532,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10281,8 +10575,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10292,12 +10585,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -10312,8 +10609,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             },
@@ -10357,8 +10653,7 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10368,12 +10663,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10407,8 +10706,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10418,12 +10716,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10457,8 +10759,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10468,12 +10769,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -10488,8 +10793,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             }
@@ -10547,8 +10851,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10558,12 +10861,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10597,8 +10904,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10608,12 +10914,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10647,8 +10957,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10658,12 +10967,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -10678,8 +10991,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             },
@@ -10723,8 +11035,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10734,12 +11045,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10773,8 +11088,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10784,12 +11098,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10823,8 +11141,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10834,12 +11151,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -10854,8 +11175,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             }
@@ -10913,8 +11233,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10924,12 +11243,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -10963,8 +11286,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -10974,12 +11296,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -11013,8 +11339,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -11024,12 +11349,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -11044,8 +11373,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             },
@@ -11089,8 +11417,7 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -11100,12 +11427,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -11139,8 +11470,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -11150,12 +11480,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 },
@@ -11189,8 +11523,7 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
-                          "paper": "--text-heading-small",
-                          "ambiguous": true
+                          "hardcoded": true
                         },
                         "lineHeight": {
                           "hardcoded": true
@@ -11200,12 +11533,16 @@
                   ],
                   "tokens": {
                     "borderRadius": {
-                      "paper": "--radius-none",
-                      "figma": "radius-none"
+                      "hardcoded": true
+                    },
+                    "minHeight": {
+                      "hardcoded": true
+                    },
+                    "minWidth": {
+                      "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "paper": "--spacing-3",
-                      "figma": "space-3"
+                      "hardcoded": true
                     }
                   }
                 }
@@ -11220,8 +11557,7 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "paper": "--spacing-1",
-                  "figma": "space-1"
+                  "hardcoded": true
                 }
               }
             }

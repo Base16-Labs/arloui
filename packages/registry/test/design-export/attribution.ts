@@ -70,76 +70,86 @@ export function colorTokenNames(key: string): { paper: string; figma: string } |
   };
 }
 
-/** Numeric scales, scoped by the style property they can legitimately serve. */
-export function buildNumericIndex(raw: {
-  spacing: Record<string, number>;
-  radii: Record<string, number>;
-  sizing: Record<string, Record<string, number>>;
-  typography: Record<string, { fontSize: number; lineHeight: number }>;
-}) {
-  const spacing = new Map<number, string>();
-  for (const [k, v] of Object.entries(raw.spacing)) if (!spacing.has(v)) spacing.set(v, k);
-
-  const radii = new Map<number, string>();
-  for (const [k, v] of Object.entries(raw.radii)) if (!radii.has(v)) radii.set(v, k);
-
-  const sizing = new Map<number, string>();
-  for (const [group, scale] of Object.entries(raw.sizing)) {
-    for (const [k, v] of Object.entries(scale)) if (!sizing.has(v)) sizing.set(v, `${group}.${k}`);
-  }
-
-  // Deliberately many-valued: several type ramp entries share a size.
-  const fontSize = new Map<number, string[]>();
-  const lineHeight = new Map<number, string[]>();
-  for (const [k, spec] of Object.entries(raw.typography)) {
-    if (!fontSize.has(spec.fontSize)) fontSize.set(spec.fontSize, []);
-    fontSize.get(spec.fontSize)!.push(k);
-    if (!lineHeight.has(spec.lineHeight)) lineHeight.set(spec.lineHeight, []);
-    lineHeight.get(spec.lineHeight)!.push(k);
-  }
-
-  return { spacing, radii, sizing, fontSize, lineHeight };
-}
-
-export type NumericIndex = ReturnType<typeof buildNumericIndex>;
-
 export type Attribution = {
   paper?: string;
   figma?: string;
-  /** Several tokens share this value; the first is reported. */
-  ambiguous?: boolean;
   /** No token carries this value — it is hardcoded in the component. */
   hardcoded?: boolean;
 };
 
-export function attributeNumber(
-  property: string,
-  value: number,
-  idx: NumericIndex,
-): Attribution | null {
-  if (property.toLowerCase().includes('radius')) {
-    const hit = idx.radii.get(value);
-    return hit ? { paper: `--radius-${hit}`, figma: `radius-${hit}` } : { hardcoded: true };
+/** Figma group + leaf naming for the sizing scales, mirroring sync-design.ts. */
+const SIZING_GROUP: Record<string, [string, string]> = {
+  icon: ['Icons', 'icon'],
+  avatar: ['Avatars', 'avatar'],
+  buttonHeight: ['Button Heights', 'button'],
+  touchTarget: ['Touch Targets', 'touch-target'],
+};
+
+/**
+ * Perturb every numeric token by a unique sub-pixel epsilon.
+ *
+ * Numbers cannot take sentinel *values* the way colours can — a spacing of
+ * 900001 would wreck layout and desynchronise the probe tree from the real one.
+ * But they can take a unique sub-pixel offset: 12 becomes 12.0007, which is
+ * visually and structurally inert yet exactly identifiable on the way back out.
+ * That buys the same exactness for spacing, radii, sizing and type that the
+ * colour sentinels buy, so anything the code tokenises can be bound rather than
+ * inferred — including the sizing scales, which were previously refused because
+ * value-matching bound Tabs' 52px minimum to `buttonHeight.xl` by coincidence.
+ *
+ * A value derived from a token (`spacing[2] / 2`) carries a fractional epsilon
+ * that matches nothing, so it is reported `hardcoded`. That is the honest
+ * answer: it is not the token, it is arithmetic on it.
+ */
+export function makeNumericProbe(raw: {
+  spacing: Record<string, number>;
+  radii: Record<string, number>;
+  sizing: Record<string, Record<string, number>>;
+  typography: Record<string, { fontSize: number; lineHeight: number; letterSpacing?: number }>;
+}) {
+  const EPS = 1e-4;
+  let i = 1;
+  const byProbe = new Map<number, Attribution>();
+
+  const spacing: Record<string, number> = {};
+  for (const [k, v] of Object.entries(raw.spacing)) {
+    const p = v + i * EPS;
+    spacing[k] = p;
+    byProbe.set(p, { paper: `--spacing-${k}`, figma: `space-${k}` });
+    i++;
   }
-  if (/^(padding|margin|gap|rowGap|columnGap)/.test(property)) {
-    const hit = idx.spacing.get(value);
-    return hit ? { paper: `--spacing-${hit}`, figma: `space-${hit}` } : { hardcoded: true };
+
+  const radii: Record<string, number> = {};
+  for (const [k, v] of Object.entries(raw.radii)) {
+    const p = v + i * EPS;
+    radii[k] = p;
+    byProbe.set(p, { paper: `--radius-${k}`, figma: `radius-${k}` });
+    i++;
   }
-  if (property === 'fontSize') {
-    const hits = idx.fontSize.get(value);
-    if (!hits) return { hardcoded: true };
-    return { paper: `--text-${kebab(hits[0])}`, ambiguous: hits.length > 1 };
+
+  const sizing: Record<string, Record<string, number>> = {};
+  for (const [group, scale] of Object.entries(raw.sizing)) {
+    sizing[group] = {};
+    const [figmaGroup, leaf] = SIZING_GROUP[group] ?? [group, group];
+    for (const [k, v] of Object.entries(scale)) {
+      const p = v + i * EPS;
+      sizing[group][k] = p;
+      byProbe.set(p, { figma: `${figmaGroup}/${leaf}-${kebab(k)}` });
+      i++;
+    }
   }
-  if (property === 'lineHeight') {
-    const hits = idx.lineHeight.get(value);
-    if (!hits) return { hardcoded: true };
-    return { paper: `--leading-${kebab(hits[0])}`, ambiguous: hits.length > 1 };
+
+  const typography: Record<string, unknown> = {};
+  for (const [name, spec] of Object.entries(raw.typography)) {
+    const leaf = kebab(name);
+    const fontSize = spec.fontSize + i * EPS;
+    byProbe.set(fontSize, { paper: `--text-${leaf}`, figma: `Font Size/${leaf}` });
+    i++;
+    const lineHeight = spec.lineHeight + i * EPS;
+    byProbe.set(lineHeight, { paper: `--leading-${leaf}`, figma: `Line Height/${leaf}` });
+    i++;
+    typography[name] = { ...spec, fontSize, lineHeight };
   }
-  // Sizing is deliberately NOT attributed. The scales overlap arbitrary layout
-  // numbers — Tabs' 52px minimum width matched `buttonHeight.xl` purely by
-  // coincidence, which would have bound a tab's width to the button ramp. Same
-  // failure mode as inferring colours by value, so the same answer: refuse.
-  // Recovering these needs numeric probing, which would perturb layout and
-  // desynchronise the trees.
-  return null;
+
+  return { probe: { spacing, radii, sizing, typography }, byProbe };
 }
