@@ -289,7 +289,11 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
         {showFeedbackOverlay ? (
           <View
             pointerEvents="none"
-            style={[StyleSheet.absoluteFillObject, { borderRadius: cornerRadius, backgroundColor: feedbackOverlayColor }]}
+            // `absoluteFill`, not `absoluteFillObject`: RN 0.86 dropped the latter.
+            // It fails silently — the lookup is `undefined`, RN skips falsy entries in
+            // a style array, and what's left defines no geometry, so the overlay
+            // renders at zero size and press feedback just stops appearing.
+            style={[StyleSheet.absoluteFill, { borderRadius: cornerRadius, backgroundColor: feedbackOverlayColor }]}
           />
         ) : null}
         <View

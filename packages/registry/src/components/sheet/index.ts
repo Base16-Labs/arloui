@@ -1,6 +1,9 @@
 export {
   Sheet,
   type SheetProps,
+  type SheetMotion,
+  type SheetMotionPreset,
+  type SheetGesture,
   type SheetBackdrop,
   type SheetSurface,
   type SheetWidth,

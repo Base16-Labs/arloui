@@ -1,5 +1,6 @@
 import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
+import { componentCount } from "@/lib/routes";
 
 export default function ChangelogPage() {
   return (
@@ -19,8 +20,8 @@ export default function ChangelogPage() {
           </div>
           <h2 className="mb-2 text-xl font-medium">v0.1.0 — Initial release</h2>
           <p className="text-[15px] leading-relaxed text-ink-2">
-            First public release of ArloUI. 35 components, 6 primitives, 9
-            archetypes, and the skill pack.
+            First public release of ArloUI. {componentCount} components, 6
+            primitives, 9 archetypes, and the skill pack.
           </p>
         </div>
       </div>

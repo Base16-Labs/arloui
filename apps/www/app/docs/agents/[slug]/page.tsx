@@ -204,6 +204,7 @@ function McpDoc() {
 }
 
 const skillHeadings = [
+  { id: "raw", label: "Raw files" },
   { id: "inside", label: "What's inside" },
   { id: "install", label: "Install" },
   { id: "usage", label: "How agents use it" },
@@ -211,25 +212,33 @@ const skillHeadings = [
   { id: "compatibility", label: "Compatibility" },
 ];
 
-const SKILL_FILES: Array<{ name: string; desc: string }> = [
+/** Public URLs for the skill pack — mirrored to `/md/skills/` at docs build time. */
+const SKILL_RAW_BASE = "/md/skills";
+
+const SKILL_FILES: Array<{ name: string; desc: string; href?: string }> = [
   {
     name: "SKILL.md",
+    href: `${SKILL_RAW_BASE}/SKILL.md`,
     desc: "The entry point. The five facets, the fixed working order agents follow, and the output conventions — the design contract itself.",
   },
   {
     name: "references/tokens.md",
+    href: `${SKILL_RAW_BASE}/references/tokens.md`,
     desc: "Type scale, color roles, spacing, radii, and motion — hand-authored with the reasoning behind each value.",
   },
   {
     name: "references/components.md",
+    href: `${SKILL_RAW_BASE}/references/components.md`,
     desc: "The primitives, their variants, and full-screen recipes composed from them.",
   },
   {
     name: "references/platform-mapping.md",
+    href: `${SKILL_RAW_BASE}/references/platform-mapping.md`,
     desc: "How each pattern translates across Figma, React Native, and SwiftUI.",
   },
   {
     name: "references/*.json · usage.md",
+    href: `${SKILL_RAW_BASE}/references/usage.md`,
     desc: "Generated machine-readable tokens, registry, and usage — kept in sync with the packages by npm run skill:sync.",
   },
 ];
@@ -286,6 +295,45 @@ function SkillPackDoc() {
           up automatically whenever you ask for Arlo UI or mobile UI work.
         </p>
 
+        <section id="raw" className="mt-12">
+          <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
+            Raw files
+          </h2>
+          <p className="mb-6 text-[17px] leading-relaxed text-ink-2">
+            Every skill file is also published as a static URL — same copy-paste
+            spirit as the components. Fetch them directly, or open{" "}
+            <a
+              href={`${SKILL_RAW_BASE}/SKILL.md`}
+              className="text-ink underline underline-offset-4 hover:opacity-70"
+            >
+              /md/skills/SKILL.md
+            </a>{" "}
+            in a browser.
+          </p>
+          <div className="space-y-2.5">
+            {[
+              `${SKILL_RAW_BASE}/SKILL.md`,
+              `${SKILL_RAW_BASE}/references/tokens.md`,
+              `${SKILL_RAW_BASE}/references/components.md`,
+              `${SKILL_RAW_BASE}/references/platform-mapping.md`,
+              `${SKILL_RAW_BASE}/references/usage.md`,
+            ].map((href) => (
+              <a
+                key={href}
+                href={href}
+                className="block rounded-xl border border-line px-5 py-3.5 font-mono text-[14px] text-ink hover:border-line-strong"
+                style={{ transitionDuration: "var(--dur-fast)" }}
+              >
+                {href}
+              </a>
+            ))}
+          </div>
+          <div className="mt-6">
+            <CodeBlock language="bash">{`# Pull the entry point without cloning the repo
+curl -fsSL https://arloui.com/md/skills/SKILL.md -o SKILL.md`}</CodeBlock>
+          </div>
+        </section>
+
         <section id="inside" className="mt-12">
           <h2 className="mb-4 text-[28px] font-medium leading-tight tracking-tight">
             What&apos;s inside
@@ -297,7 +345,16 @@ function SkillPackDoc() {
                 className="border-b border-line py-4 sm:flex sm:gap-6"
               >
                 <code className="shrink-0 font-mono text-[14px] text-ink sm:w-56">
-                  {f.name}
+                  {f.href ? (
+                    <a
+                      href={f.href}
+                      className="underline underline-offset-4 hover:opacity-70"
+                    >
+                      {f.name}
+                    </a>
+                  ) : (
+                    f.name
+                  )}
                 </code>
                 <p className="mt-1.5 text-[17px] leading-relaxed text-ink-2 sm:mt-0">
                   {f.desc}

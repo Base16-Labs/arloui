@@ -5,7 +5,7 @@ jest.mock('../../../foundation/haptics', () => ({
   haptic: jest.fn(),
 }));
 
-import { Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { haptic } from '../../../foundation/haptics';
 import { Button } from '../button';
 import { renderWithTheme, screen, fireEvent } from '../../../../test/render';
@@ -96,5 +96,56 @@ describe('Button', () => {
         unmount();
       }
     }
+  });
+
+  describe('press feedback overlay', () => {
+    /** The only non-null-styled `pointerEvents="none"` layer inside the button. */
+    function findOverlay() {
+      return screen.UNSAFE_root
+        .findAll((node) => node.props?.pointerEvents === 'none' && node.props?.style != null)
+        .at(0);
+    }
+
+    it('covers the button while pressed', () => {
+      renderWithTheme(<Button>Continue</Button>);
+      const button = screen.getByRole('button', { name: 'Continue' });
+
+      // Nothing to see until the press starts.
+      expect(findOverlay()).toBeUndefined();
+
+      fireEvent(button, 'pressIn');
+      const overlay = findOverlay();
+      expect(overlay).toBeDefined();
+
+      // The regression this guards: `StyleSheet.absoluteFillObject` was removed in
+      // RN 0.86, and a missing style constant is `undefined`, which RN silently
+      // drops from a style array. The overlay stayed mounted with a background
+      // colour but no geometry, so it painted nothing and press feedback appeared
+      // broken with no crash or warning. Assert it actually fills its parent.
+      const style = StyleSheet.flatten(overlay?.props.style) as Record<string, unknown>;
+      expect(style.position).toBe('absolute');
+      expect(style.top).toBe(0);
+      expect(style.right).toBe(0);
+      expect(style.bottom).toBe(0);
+      expect(style.left).toBe(0);
+      expect(style.backgroundColor).toBeTruthy();
+    });
+
+    it('removes the overlay when the press ends', () => {
+      renderWithTheme(<Button>Continue</Button>);
+      const button = screen.getByRole('button', { name: 'Continue' });
+
+      fireEvent(button, 'pressIn');
+      expect(findOverlay()).toBeDefined();
+
+      fireEvent(button, 'pressOut');
+      expect(findOverlay()).toBeUndefined();
+    });
+
+    it('does not paint feedback on a disabled button', () => {
+      renderWithTheme(<Button disabled>Continue</Button>);
+      fireEvent(screen.getByRole('button', { name: 'Continue' }), 'pressIn');
+      expect(findOverlay()).toBeUndefined();
+    });
   });
 });
