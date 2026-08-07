@@ -27,7 +27,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { render } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 import {
   colorTokenNames,
   makeColorProbe,
@@ -211,6 +211,37 @@ function attribute(real: Node, probe: Node | null, scheme: 'light' | 'dark'): vo
   const pk = probe?.children ?? [];
   rk.forEach((child, i) => attribute(child, pk[i] ?? null, scheme));
 }
+
+/**
+ * Drive every animation straight to its end value.
+ *
+ * Animated values serialise at whatever they hold *now*, and on mount that is
+ * the *start* of the entry transition — Sheet's scrim reads `opacity: 0`
+ * because it fades in, so the export was capturing components mid-flight. Fake
+ * timers do not help: RN's Animated runs its own frame loop, not `setTimeout`.
+ *
+ * Replacing the drivers with an immediate `setValue(toValue)` settles the tree
+ * deterministically, which is what a canvas wants — the resting state, not a
+ * frame of the transition.
+ */
+const settleAnimations = () => {
+  const immediate =
+    (value: Animated.Value, config: { toValue: unknown }) =>
+    () => ({
+      start: (cb?: (r: { finished: boolean }) => void) => {
+        if (typeof config?.toValue === 'number') value.setValue(config.toValue);
+        cb?.({ finished: true });
+      },
+      stop: () => {},
+      reset: () => {},
+    });
+  for (const driver of ['timing', 'spring', 'decay'] as const) {
+    const patched = (value: Animated.Value, config: { toValue: unknown }) =>
+      immediate(value, config)();
+    (Animated as unknown as Record<string, unknown>)[driver] = patched;
+  }
+};
+settleAnimations();
 
 const renderIn = (theme: string, ui: React.ReactElement) =>
   render(ui, {

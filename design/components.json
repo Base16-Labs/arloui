@@ -30,7 +30,7 @@
           ]
         }
       ],
-      "notes": "Rendered with visible=true; the scrim and drag layers are part of the tree.",
+      "notes": "Rendered open at a fixed height; the scrim and drag layers are part of the tree.",
       "variants": [
         {
           "variant": {
@@ -61,7 +61,7 @@
                     "backgroundColor": "rgba(16,24,40,0.4)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -85,6 +85,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -99,6 +100,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -121,6 +123,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -305,6 +308,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -332,7 +338,7 @@
                     "backgroundColor": "rgba(16,24,40,0.7)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -356,6 +362,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -370,6 +377,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -392,6 +400,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -576,6 +585,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -617,7 +629,7 @@
                     "backgroundColor": "rgba(16,24,40,0.4)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -641,6 +653,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -686,6 +699,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -708,6 +722,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -888,6 +903,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -915,7 +933,7 @@
                     "backgroundColor": "rgba(16,24,40,0.7)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -939,6 +957,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -984,6 +1003,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -1006,6 +1026,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -1186,6 +1207,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -1227,7 +1251,7 @@
                     "backgroundColor": "rgba(16,24,40,0.4)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -1251,6 +1275,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -1265,6 +1290,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -1287,6 +1313,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -1469,6 +1496,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -1496,7 +1526,7 @@
                     "backgroundColor": "rgba(16,24,40,0.7)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -1520,6 +1550,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -1534,6 +1565,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -1556,6 +1588,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -1738,6 +1771,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -1779,7 +1815,7 @@
                     "backgroundColor": "rgba(16,24,40,0.4)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -1803,6 +1839,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -1847,6 +1884,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -1869,6 +1907,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -2047,6 +2086,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -2074,7 +2116,7 @@
                     "backgroundColor": "rgba(16,24,40,0.7)",
                     "bottom": 0,
                     "left": 0,
-                    "opacity": 0,
+                    "opacity": 1,
                     "position": "absolute",
                     "right": 0,
                     "top": 0
@@ -2098,6 +2140,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -2142,6 +2185,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -2164,6 +2208,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -2342,6 +2387,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -2381,6 +2429,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -2395,6 +2444,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -2417,6 +2467,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -2601,6 +2652,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -2626,6 +2680,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -2640,6 +2695,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -2662,6 +2718,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -2846,6 +2903,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -2885,6 +2945,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -2930,6 +2991,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -2952,6 +3014,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -3132,6 +3195,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -3157,6 +3223,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -3202,6 +3269,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -3224,6 +3292,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -3404,6 +3473,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -3443,6 +3515,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -3457,6 +3530,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -3479,6 +3553,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -3661,6 +3736,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -3686,6 +3764,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -3700,6 +3779,7 @@
                         "borderTopLeftRadius": 24,
                         "borderTopRightRadius": 24,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -3722,6 +3802,7 @@
                             "borderTopLeftRadius": 24,
                             "borderTopRightRadius": 24,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -3904,6 +3985,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -3943,6 +4027,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -3987,6 +4072,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 12,
+                        "flex": 1,
                         "shadowColor": "#101828",
                         "shadowOffset": {
                           "width": 0,
@@ -4009,6 +4095,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -4187,6 +4274,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },
@@ -4212,6 +4302,7 @@
                   "type": "View",
                   "style": {
                     "alignSelf": "stretch",
+                    "height": 1302,
                     "marginBottom": 0,
                     "marginHorizontal": 0,
                     "maxHeight": 1302,
@@ -4256,6 +4347,7 @@
                         "borderTopLeftRadius": 20,
                         "borderTopRightRadius": 20,
                         "elevation": 0,
+                        "flex": 1,
                         "shadowColor": "#51A2FF",
                         "shadowOffset": {
                           "width": 0,
@@ -4278,6 +4370,7 @@
                             "borderTopLeftRadius": 20,
                             "borderTopRightRadius": 20,
                             "borderTopWidth": 1,
+                            "flex": 1,
                             "overflow": "hidden",
                             "paddingBottom": 16
                           },
@@ -4456,6 +4549,9 @@
                     }
                   ],
                   "tokens": {
+                    "height": {
+                      "hardcoded": true
+                    },
                     "marginBottom": {
                       "hardcoded": true
                     },

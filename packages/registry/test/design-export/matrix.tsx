@@ -60,15 +60,19 @@ export const MATRIX: ComponentSpec[] = [
         values: { Default: 'default', Stack: 'stack' },
       },
     ],
+    // An explicit height matters: the sheet otherwise measures itself via
+    // `onLayout`, which never fires without a layout engine, so `translateY`
+    // never settles and the scrim — whose opacity interpolates from it — would
+    // export at 0, mid-transition.
     sample: (props) => (
-      <Sheet visible onClose={noop} {...props}>
+      <Sheet visible onClose={noop} height={280} {...props}>
         <Sheet.Header title="Delivery options" />
         <Sheet.Body>
           <Text>Choose how you'd like this order to arrive.</Text>
         </Sheet.Body>
       </Sheet>
     ),
-    note: 'Rendered with visible=true; the scrim and drag layers are part of the tree.',
+    note: 'Rendered open at a fixed height; the scrim and drag layers are part of the tree.',
   },
   {
     component: 'tabs',
