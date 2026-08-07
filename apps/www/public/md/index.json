@@ -1,5 +1,5 @@
 {
-  "count": 43,
+  "count": 47,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -46,8 +46,16 @@
       "md": "/md/docs/components/button.md"
     },
     {
+      "path": "/docs/components/card",
+      "md": "/md/docs/components/card.md"
+    },
+    {
       "path": "/docs/components/carousel",
       "md": "/md/docs/components/carousel.md"
+    },
+    {
+      "path": "/docs/components/chart",
+      "md": "/md/docs/components/chart.md"
     },
     {
       "path": "/docs/components/checkbox",
@@ -60,6 +68,10 @@
     {
       "path": "/docs/components/date-picker",
       "md": "/md/docs/components/date-picker.md"
+    },
+    {
+      "path": "/docs/components/field",
+      "md": "/md/docs/components/field.md"
     },
     {
       "path": "/docs/components/gallery",
@@ -84,6 +96,10 @@
     {
       "path": "/docs/components/spinner",
       "md": "/md/docs/components/spinner.md"
+    },
+    {
+      "path": "/docs/components/stepper",
+      "md": "/md/docs/components/stepper.md"
     },
     {
       "path": "/docs/components/tab-bar",

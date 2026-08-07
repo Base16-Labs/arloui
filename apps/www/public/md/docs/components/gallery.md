@@ -27,7 +27,8 @@
 - `radii.none`
 - `radii.sm`
 - `radii.md`
-- `radii.lg`
+- `radii.none … radii.full`
+- `spacing.2 … spacing.8`
 - `radii.xl`
 - `radii.2xl`
 - `radii.full`
