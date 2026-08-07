@@ -9,6 +9,12 @@
  *   - `surface`: what it's made of — 'default' opaque fill, or 'glass' for the
  *                translucent Liquid Glass material (pair with `blurComponent`).
  *
+ * Geometry is three more, all reading off the token scales so a card never invents
+ * a value: `padding` and `margin` share one spacing scale ('none' … 'xl'), and
+ * `radius` maps straight onto the radius scale ('none' … 'full'). The presets and
+ * `ListCard.Group` forward `margin` and `radius` too, so a row of cards can be
+ * reshaped without dropping to `style`.
+ *
  * Surfaces use `surface` by default and step up to `surfaceRaised` for the `raised`
  * tone. Borders carry hierarchy on neutral surfaces — shadows are reserved for
  * `floating` (modal/menu separation only). Per the design skill, depth comes from
@@ -32,7 +38,17 @@ import { useTokens } from '../../foundation/theme-provider';
 
 type Tone = 'default' | 'raised' | 'floating';
 export type CardSurface = 'default' | 'glass';
-export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
+
+/**
+ * One scale for both `padding` and `margin`, so "sm" means the same distance
+ * whichever side of the border it lands on.
+ */
+export type CardSpacing = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+/** @deprecated Prefer `CardSpacing` — the same scale now covers margin too. */
+export type CardPadding = CardSpacing;
+
+/** Corner rounding, straight off the radius scale. */
+export type CardRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 
 type CardProps = {
   children: ReactNode;
@@ -42,7 +58,15 @@ type CardProps = {
   /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a glass surface. */
   blurComponent?: ReactNode;
   /** Inner padding. Use `'none'` when the card is edge-to-edge media. */
-  padding?: CardPadding;
+  padding?: CardSpacing;
+  /**
+   * Outer spacing. Layout is usually the parent's job — reach for a `gap` on the
+   * list before reaching for this — but a card dropped into a screen you don't
+   * control needs a way to hold itself off the edges.
+   */
+  margin?: CardSpacing;
+  /** Corner rounding. Defaults to `'xl'`, the standard card radius. */
+  radius?: CardRadius;
   /** Makes the whole card a tap target with press feedback and `accessibilityRole="button"`. */
   onPress?: PressableProps['onPress'];
   onLongPress?: PressableProps['onLongPress'];
@@ -57,6 +81,8 @@ function CardRoot({
   surface = 'default',
   blurComponent,
   padding = 'md',
+  margin = 'none',
+  radius = 'xl',
   onPress,
   onLongPress,
   disabled = false,
@@ -70,8 +96,17 @@ function CardRoot({
   const isGlass = surface === 'glass';
   const interactive = onPress != null || onLongPress != null;
 
-  const paddingValue =
-    padding === 'none' ? 0 : padding === 'sm' ? t.spacing[3] : padding === 'lg' ? t.spacing[6] : t.spacing[5];
+  // `sm`/`md`/`lg` keep the values they already had, so existing cards don't shift.
+  const spacingScale: Record<CardSpacing, number> = {
+    none: 0,
+    xs: t.spacing[2],
+    sm: t.spacing[3],
+    md: t.spacing[5],
+    lg: t.spacing[6],
+    xl: t.spacing[8],
+  };
+  const paddingValue = spacingScale[padding];
+  const marginValue = spacingScale[margin];
 
   const bg = isGlass
     ? glass.backgroundColor
@@ -85,8 +120,9 @@ function CardRoot({
     backgroundColor: bg,
     borderColor: isGlass ? glass.borderColor : t.colors.border,
     borderWidth: 1,
-    borderRadius: t.radii.xl,
+    borderRadius: t.radii[radius],
     padding: paddingValue,
+    margin: marginValue,
     gap: padding === 'none' ? 0 : t.spacing[3],
     // Clip media and the blur layer to the card's corners.
     overflow: 'hidden',

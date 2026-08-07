@@ -27,6 +27,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import type { CardRadius, CardSpacing } from './card';
 
 export type ListCardProps = {
   title: string;
@@ -210,12 +211,26 @@ function ListCardRow({
  */
 function ListCardGroup({
   children,
+  margin = 'none',
+  radius = 'xl',
   style,
 }: {
   children: ReactNode;
+  /** Outer spacing, matching `Card`'s scale. */
+  margin?: CardSpacing;
+  /** Corner rounding, matching `Card`'s scale. */
+  radius?: CardRadius;
   style?: StyleProp<ViewStyle>;
 }) {
   const t = useTokens();
+  const marginValue = {
+    none: 0,
+    xs: t.spacing[2],
+    sm: t.spacing[3],
+    md: t.spacing[5],
+    lg: t.spacing[6],
+    xl: t.spacing[8],
+  }[margin];
   const rows = Children.toArray(children).filter(isValidElement) as ReactElement<ListCardProps>[];
 
   return (
@@ -223,9 +238,10 @@ function ListCardGroup({
       style={[
         {
           backgroundColor: t.colors.surface,
-          borderRadius: t.radii.xl,
+          borderRadius: t.radii[radius],
           borderWidth: 1,
           borderColor: t.colors.border,
+          margin: marginValue,
           overflow: 'hidden',
         },
         style,

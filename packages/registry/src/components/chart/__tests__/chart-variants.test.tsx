@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
 import { BarChart } from '../bar-chart';
+import { Chart } from '../chart';
 import { DonutChart } from '../donut-chart';
 import { Meter } from '../meter';
 import { Sparkline } from '../sparkline';
@@ -189,6 +190,32 @@ describe('Meter', () => {
 
   it('accepts a custom readout', () => {
     renderWithTheme(<Meter value={3} max={5} label="Steps" valueLabel="3 of 5" />);
+    expect(screen.getByText('3 of 5')).toBeTruthy();
+  });
+});
+
+/**
+ * The specs above render each form from its own file. This is the other half of
+ * the contract: the namespace is how consumers actually reach them, so a form
+ * added to a file but never hung off `Chart` would otherwise ship unreachable.
+ */
+describe('Chart namespace', () => {
+  it('exposes every chart form', () => {
+    expect(Chart.Sparkline).toBe(Sparkline);
+    expect(Chart.Bar).toBe(BarChart);
+    expect(Chart.Donut).toBe(DonutChart);
+    expect(Chart.Meter).toBe(Meter);
+  });
+
+  it('still exposes the parts that compose the scrubbable chart', () => {
+    expect(Chart.Value).toBeDefined();
+    expect(Chart.Delta).toBeDefined();
+    expect(Chart.Plot).toBeDefined();
+    expect(Chart.Periods).toBeDefined();
+  });
+
+  it('renders a form reached through the namespace', () => {
+    renderWithTheme(<Chart.Meter value={3} max={5} label="Steps" valueLabel="3 of 5" />);
     expect(screen.getByText('3 of 5')).toBeTruthy();
   });
 });

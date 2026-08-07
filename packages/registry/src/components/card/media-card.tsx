@@ -35,6 +35,11 @@ export type MediaCardProps = {
   /** Rendered under the text. Actions, metadata, a button row. */
   footer?: ReactNode;
   tone?: CardProps['tone'];
+  /** Outer spacing, forwarded to `Card`. */
+  margin?: CardProps['margin'];
+  /** Corner rounding, forwarded to `Card`. */
+  radius?: CardProps['radius'];
+
   onPress?: PressableProps['onPress'];
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
@@ -49,6 +54,8 @@ export function MediaCard({
   badge,
   footer,
   tone,
+  margin,
+  radius,
   onPress,
   accessibilityLabel,
   style,
@@ -60,6 +67,8 @@ export function MediaCard({
     <Card
       tone={tone}
       padding="none"
+      margin={margin}
+      radius={radius}
       onPress={onPress}
       accessibilityLabel={accessibilityLabel ?? title}
       style={style}

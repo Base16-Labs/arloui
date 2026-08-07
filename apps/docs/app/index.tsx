@@ -6,14 +6,24 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTokens } from '@arloui/registry';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 
+/**
+ * `href` is required: the index once carried placeholder rows for components that
+ * had no code behind them, which rendered as dead entries you could search for
+ * and tap without anything happening. A component earns a row here once it has a
+ * playground route.
+ */
 type IndexItem = {
   title: string;
   category: string;
-  href?:
+  href:
     | '/badge'
     | '/button'
     | '/cards'
     | '/chart'
+    | '/chart/bar'
+    | '/chart/donut'
+    | '/chart/meter'
+    | '/chart/sparkline'
     | '/chip'
     | '/input'
     | '/textarea'
@@ -40,21 +50,17 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Carousel', category: 'Layout', href: '/carousel' },
   { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
   { title: 'Chart', category: 'Data', href: '/chart' },
+  { title: 'Chart · Bar', category: 'Data', href: '/chart/bar' },
+  { title: 'Chart · Donut', category: 'Data', href: '/chart/donut' },
+  { title: 'Chart · Meter', category: 'Data', href: '/chart/meter' },
+  { title: 'Chart · Sparkline', category: 'Data', href: '/chart/sparkline' },
   { title: 'Chip', category: 'Controls', href: '/chip' },
   { title: 'Date Picker', category: 'Controls', href: '/date-picker' },
-  { title: 'Empty', category: 'Feedback' },
   { title: 'Field', category: 'Controls', href: '/input' },
   { title: 'Gallery', category: 'Layout', href: '/gallery' },
-  { title: 'Group', category: 'Layout' },
-  { title: 'Header', category: 'Nav' },
   { title: 'Icons', category: 'Foundations', href: '/icons' },
   { title: 'Input', category: 'Controls', href: '/input' },
-  { title: 'List', category: 'Lists' },
-  { title: 'Nav', category: 'Nav' },
-  { title: 'Note', category: 'Type' },
-  { title: 'Pill', category: 'Controls' },
   { title: 'Radio', category: 'Controls', href: '/radio' },
-  { title: 'Row', category: 'Lists' },
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
   { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
   { title: 'Spinner', category: 'Feedback', href: '/spinner' },
@@ -182,10 +188,7 @@ function IndexRow({ item }: { item: IndexItem }) {
 
   return (
     <Pressable
-      disabled={!item.href}
-      onPress={() => {
-        if (item.href) router.push(item.href);
-      }}
+      onPress={() => router.push(item.href)}
       style={({ pressed }) => ({
         minHeight: 64,
         width: '100%',

@@ -26,6 +26,8 @@ export {
   type ActionCardTone,
   type CardPadding,
   type CardProps,
+  type CardRadius,
+  type CardSpacing,
   type CardSurface,
   type ListCardProps,
   type MediaCardLayout,
@@ -96,11 +98,7 @@ export { Chip, type ChipAccent, type ChipProps, type ChipRadius, type ChipSelect
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
 export { AnimatedCounter, type AnimatedCounterProps } from './components/animated-counter';
 export {
-  BarChart,
   Chart,
-  DonutChart,
-  Meter,
-  Sparkline,
   type BarChartProps,
   type BarChartTone,
   type BarDatum,
@@ -117,6 +115,7 @@ export {
 export {
   Stepper,
   type StepperAppearance,
+  type StepperControls,
   type StepperProps,
   type StepperSize,
 } from './components/stepper';

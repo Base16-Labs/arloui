@@ -889,7 +889,8 @@ export const galleryData = {
     'radii.none',
     'radii.sm',
     'radii.md',
-    'radii.lg',
+    'radii.none … radii.full',
+    'spacing.2 … spacing.8',
     'radii.xl',
     'radii.2xl',
     'radii.full',
@@ -1017,6 +1018,162 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
   ].join('\n');
 }
 
+export const cardData = {
+  slug: 'card',
+  category: 'Layout & surface',
+  title: 'Card',
+  lede: 'A surface that groups related content, with two independent axes — tone for how far it lifts off the page, surface for what it is made of — plus four presets for the shapes that recur: stat, list, media, and action.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+  states: ['default', 'raised', 'floating', 'glass', 'pressable', 'padding', 'margin', 'radius'],
+  tokens: [
+    'colors.surface',
+    'colors.surfaceRaised',
+    'colors.border',
+    'colors.borderSecondary',
+    'radii.none … radii.full',
+    'spacing.2 … spacing.8',
+    'shadows.md',
+    'materials.glassLarge',
+    'motion.pressed.scale',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'presets', label: 'Presets' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/card' },
+  ],
+};
+
+export const chartData = {
+  slug: 'chart',
+  category: 'Data',
+  title: 'Chart',
+  lede: 'Five chart forms sharing one validated palette, all reached through the Chart namespace: a scrubbable single-series line, an inline sparkline, categorical bars, a part-to-whole donut, and a meter against a target.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
+  states: ['scrub', 'rising', 'falling', 'neutral', 'empty', 'reduced motion'],
+  tokens: [
+    'colors.chartPositive',
+    'colors.chartNegative',
+    'colors.chartSeries',
+    'colors.chartOther',
+    'colors.textPrimary',
+    'colors.textTertiary',
+    'colors.surface',
+    'colors.feedbackWarning',
+    'colors.feedbackError',
+    'motion.duration.base',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'forms', label: 'Forms' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/chart' },
+  ],
+};
+
+export const stepperData = {
+  slug: 'stepper',
+  category: 'Controls',
+  title: 'Stepper',
+  lede: 'A numeric control with decrement and increment affordances whose value rolls between numbers instead of snapping, in both input appearances, with the buttons either straddling the value or grouped at one edge beside a value you can tap to type.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/stepper',
+  states: ['filled', 'plain', 'split', 'grouped', 'editable', 'disabled', 'error', 'at min', 'at max', 'hold to repeat'],
+  tokens: [
+    'colors.surfaceInput',
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.textDisabled',
+    'colors.borderError',
+    'colors.textInteractiveError',
+    'radii.md',
+    'radii.full',
+    'motion.spring.snappy',
+    'motion.pressed.scale',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/stepper',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/stepper' },
+  ],
+};
+
+export const fieldData = {
+  slug: 'field',
+  category: 'Controls',
+  title: 'Field',
+  lede: 'The composable text-field primitive the Input and TextArea presets are built from. The pieces share size, appearance, error, disabled, and focus through context, so you assemble the exact layout you need without a wall of props.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/field',
+  states: ['default', 'focus', 'error', 'disabled', 'with icon', 'with action'],
+  tokens: [
+    'colors.surfaceInput',
+    'colors.surfaceInputActive',
+    'colors.borderError',
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.textTertiary',
+    'colors.textDisabled',
+    'radii.md',
+    'radii.xl',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/field',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/field' },
+  ],
+};
+
 const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/foundations/fluidity': ESSAYS.fluidity,
   ...Object.fromEntries(
@@ -1042,6 +1199,10 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/badge': docDataToMarkdown(badgeData),
   '/docs/components/chip': docDataToMarkdown(chipData),
   '/docs/components/toast': docDataToMarkdown(toastData),
+  '/docs/components/card': docDataToMarkdown(cardData),
+  '/docs/components/chart': docDataToMarkdown(chartData),
+  '/docs/components/stepper': docDataToMarkdown(stepperData),
+  '/docs/components/field': docDataToMarkdown(fieldData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [
@@ -1050,6 +1211,8 @@ const PAGE_MARKDOWN: Record<string, string> = {
     ]),
   ),
 };
+
+
 
 /** Resolve the markdown for a docs pathname, or null if the page has none yet. */
 export function markdownForPath(pathname: string): string | null {

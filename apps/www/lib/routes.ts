@@ -73,6 +73,7 @@ export const componentGroups: ComponentGroup[] = [
   {
     label: 'Layout & surface',
     items: [
+      { label: 'Card', slug: 'card' },
       { label: 'Sheet', slug: 'sheet' },
       { label: 'Carousel', slug: 'carousel' },
       { label: 'Gallery', slug: 'gallery' },
@@ -88,6 +89,8 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Radio', slug: 'radio' },
       { label: 'Input', slug: 'input' },
       { label: 'TextArea', slug: 'text-area' },
+      { label: 'Field', slug: 'field' },
+      { label: 'Stepper', slug: 'stepper' },
       { label: 'Date Picker', slug: 'date-picker' },
     ],
   },
@@ -106,6 +109,10 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Tab Bar', slug: 'tab-bar' },
       { label: 'Tabs', slug: 'tabs' },
     ],
+  },
+  {
+    label: 'Data',
+    items: [{ label: 'Chart', slug: 'chart' }],
   },
 ];
 

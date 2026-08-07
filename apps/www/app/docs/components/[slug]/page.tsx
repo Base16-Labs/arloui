@@ -24,6 +24,7 @@ import { CarouselDocPlayground } from '@/components/docs/carousel-preview';
 import { GalleryDocPlayground } from '@/components/docs/gallery-preview';
 import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
 import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
+import { ChartFormsPreview } from '@/components/docs/chart-preview';
 import { DevicePreview } from '@/components/ui/DevicePreview';
 import { GithubMark } from '@/components/ui/GithubMark';
 import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
@@ -47,6 +48,10 @@ import {
   badgeData,
   chipData,
   toastData,
+  cardData,
+  chartData,
+  stepperData,
+  fieldData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -125,6 +130,22 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'toast') {
     return <ToastDocPage />;
+  }
+
+  if (slug === 'card') {
+    return <CardDocPage />;
+  }
+
+  if (slug === 'chart') {
+    return <ChartDocPage />;
+  }
+
+  if (slug === 'stepper') {
+    return <StepperDocPage />;
+  }
+
+  if (slug === 'field') {
+    return <FieldDocPage />;
   }
 
   return (
@@ -2984,5 +3005,668 @@ function Section({
       {sub && <p className="mt-1.5 mb-5 text-[13px] text-ink-3">{sub}</p>}
       {children}
     </section>
+  );
+}
+
+function CardDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(cardData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{cardData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {cardData.title}
+        </h1>
+        <Lede>{cardData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={cardData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="cards" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="Two independent axes — how far it lifts, and what it is made of."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Tone', 'default · raised · floating'],
+                ['Surface', 'default opaque fill, or glass'],
+                ['Padding', 'none · xs · sm · md · lg · xl'],
+                ['Margin', 'the same spacing scale, outside the border'],
+                ['Radius', 'none · sm · md · lg · xl · 2xl · full'],
+                ['Slots', 'Media, Header, Title, Subtitle, Body, Footer'],
+                ['Press', 'onPress makes the whole card one target'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="presets"
+          title="Presets"
+          sub="Four shapes that recur often enough to ship assembled."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[460px]">
+              {[
+                ['StatCard', 'a number, its label, and an optional sparkline'],
+                ['ListCard', 'grouped rows with dividers, via ListCard.Group'],
+                ['MediaCard', 'image with text beside or beneath it'],
+                ['ActionCard', 'a toned prompt with one or two actions'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <code className="font-mono text-[11.5px] text-ink">{name}</code>
+                  <span className="text-right text-ink-3">{detail}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="To group content that belongs together, not to decorate."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Reach for a preset before composing by hand — StatCard, ListCard, MediaCard, and
+              ActionCard cover most of what a feed needs.
+            </li>
+            <li>
+              Keep depth in the layering, not the shadow: borders carry hierarchy on neutral
+              surfaces, and shadows are reserved for the <code>floating</code> tone.
+            </li>
+            <li>
+              <code>padding</code>, <code>margin</code>, and <code>radius</code> all read off the
+              token scales, so a card can be reshaped without dropping to <code>style</code> and
+              inventing a one-off value. The presets and <code>ListCard.Group</code> forward{' '}
+              <code>margin</code> and <code>radius</code> too.
+            </li>
+            <li>
+              Prefer a <code>gap</code> on the list over <code>margin</code> on each card — spacing
+              between siblings is the container&apos;s job. Reach for <code>margin</code> when the
+              card is dropped into a screen whose layout you don&apos;t control.
+            </li>
+            <li>
+              Use <code>surface=&quot;glass&quot;</code> only over content worth seeing through, and
+              pass a <code>blurComponent</code> — without one it degrades to a flat translucent fill.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add card
+
+import { Card, StatCard } from "@/components/ui/card";
+
+<Card tone="raised" radius="2xl" padding="lg" margin="sm" onPress={open}>
+  <Card.Media source={{ uri }} height={160} />
+  <Card.Header>
+    <Card.Title>Weekly summary</Card.Title>
+    <Card.Subtitle>Updated 2 minutes ago</Card.Subtitle>
+  </Card.Header>
+  <Card.Body>Spending is down 12% against last week.</Card.Body>
+</Card>
+
+<StatCard label="Balance" value="$12,480.22" delta={+2.4} />`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Surface, border, radius, and the glass material."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {cardData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="One target, or none — never a card full of competing ones."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              A card with <code>onPress</code> reports itself as a button and takes the system press
+              feedback.
+            </li>
+            <li>
+              Don&apos;t nest tappable rows inside a pressable card — screen readers announce one
+              target, and sighted users can&apos;t tell which they hit.
+            </li>
+            <li>Give Card.Media an accessible label, or mark it decorative if the text repeats it.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Depth comes from layering, not shadow.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Let borders carry hierarchy and reserve shadow for floating.',
+                dont: 'Stack raised cards on raised surfaces until everything glows.',
+              },
+              {
+                do: 'Use a preset when your card is one of the four common shapes.',
+                dont: 'Rebuild StatCard by hand each time you need a number and a trend.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="Surfaces and content pieces that pair with it."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Sheet', 'Chart', 'Skeleton', 'Badge'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...cardData.headings]} actions={[...cardData.actions]} />
+    </>
+  );
+}
+
+function ChartDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(chartData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{chartData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {chartData.title}
+        </h1>
+        <Lede>{chartData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={chartData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="chart" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="The scrubbable line chart, composed from its parts."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Chart', 'holds the series and the scrub state'],
+                ['Chart.Value', 'headline number, rolls as you scrub'],
+                ['Chart.Delta', 'change from the baseline, always signed'],
+                ['Chart.Plot', 'the line or area, and the scrub target'],
+                ['Chart.Periods', 'the range selector'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <code className="font-mono text-[11.5px] text-ink">{name}</code>
+                  <span className="text-right text-ink-3">{detail}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="forms"
+          title="Forms"
+          sub="Five charts on one palette, all under the Chart namespace."
+        >
+          <ChartFormsPreview />
+          <p className="mt-4 text-[13px] text-ink-3">
+            Static previews. Scrubbing, selection, and the threshold colours are live in the
+            playground.
+          </p>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="Pick the form by the question the reader is asking."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              <strong>Chart</strong> for &quot;how is this number doing&quot; — one series over time,
+              with a readout you scrub. It carries no axis furniture on purpose: it answers shape and
+              direction, not what exactly happened on Tuesday.
+            </li>
+            <li>
+              <strong>Chart.Sparkline</strong> inline beside a number that is already labelled.{' '}
+              <strong>Chart.Bar</strong> to compare categories. <strong>Chart.Donut</strong> for
+              part-to-whole, never more than four slices before the rest fold into Other.
+            </li>
+            <li>
+              <strong>Chart.Meter</strong> for one value against a target — a budget, a quota, a goal.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add chart
+
+import { Chart } from "@/components/ui/chart";
+
+<Chart data={points} periods={["1D", "1W", "1M", "1Y"]} period={p} onPeriodChange={setP}>
+  <Chart.Value format={money} />
+  <Chart.Delta format={money} />
+  <Chart.Plot height={200} fill />
+  <Chart.Periods />
+</Chart>
+
+<Chart.Sparkline data={points} height={44} showEndDot />
+<Chart.Bar data={week} showValues onSelect={setSelected} />
+<Chart.Donut data={breakdown} centerLabel="Monthly spend" />
+<Chart.Meter value={88} max={100} label="Budget used" warnAt={0.75} dangerAt={0.9} />`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="One validated palette across every form."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {chartData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Direction is never carried by colour alone."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              <code>Chart.Delta</code> always renders an explicit sign. The positive and negative
+              tones sit near the deuteranopia separation floor, so the sign is what keeps direction
+              readable — don&apos;t replace it with a bare coloured number.
+            </li>
+            <li>
+              Donuts always carry a legend, and categories past the palette&apos;s capacity fold into
+              one neutral Other slice rather than repeating a hue.
+            </li>
+            <li>
+              Each chart exposes a summary label to assistive tech. Sparklines are hidden by default,
+              since the number beside them is already announced — pass{' '}
+              <code>accessibilityLabel</code> when one stands alone.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Show the data, not the chart junk.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Let the value readout be the label, and update it as you scrub.',
+                dont: 'Add gridlines, ticks, and axis labels to a chart this size.',
+              },
+              {
+                do: 'Keep segments straight between points.',
+                dont: 'Smooth the path — a spline invents peaks that were never in the data.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="What charts usually sit inside or beside."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Card', 'Badge', 'Skeleton', 'Spinner'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...chartData.headings]} actions={[...chartData.actions]} />
+    </>
+  );
+}
+
+function StepperDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(stepperData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{stepperData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {stepperData.title}
+        </h1>
+        <Lede>{stepperData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={stepperData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="stepper" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A numeric input wearing the same clothes as the rest of the form vocabulary."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Appearance', 'filled bordered row, or plain amount display'],
+                ['Controls', 'split either side, or grouped at start / end'],
+                ['Value', 'read-only, or editable to type one directly'],
+                ['Size', 'sm · md, matching Input heights'],
+                ['Bounds', 'min, max, and step'],
+                ['Value', 'rolls between numbers, never snaps'],
+                ['Repeat', 'hold a button to step and accelerate'],
+                ['State', 'disabled, or the error palette'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For small, bounded quantities the user adjusts rather than types."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use <code>appearance=&quot;filled&quot;</code> in a form, where it stacks flush with a
+              filled Input.
+            </li>
+            <li>
+              Use <code>appearance=&quot;plain&quot;</code> on a &quot;how many&quot; or &quot;how
+              much&quot; screen, where the number is the whole interface.
+            </li>
+            <li>
+              Group the buttons with <code>controls=&quot;end&quot;</code> for the quantity-row shape
+              — value at the start reading as the field&apos;s content, both buttons as its trailing
+              affordance.
+            </li>
+            <li>
+              Pair grouped controls with <code>editable</code> when the range is wider than a few
+              taps. Tapping the value opens a numeric keyboard; the draft commits on blur or submit,
+              clamped and quantized, and reverts if it can&apos;t be parsed.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add stepper
+
+import { Stepper } from "@/components/ui/stepper";
+
+<Stepper value={qty} onValueChange={setQty} min={1} max={10} label="Quantity" />
+
+<Stepper
+  appearance="plain"
+  value={amount}
+  onValueChange={setAmount}
+  step={5}
+  format={(v) => \`$\${v.toLocaleString()}\`}
+/>
+
+{/* Both buttons at the trailing edge, value at the start, tap to type. */}
+<Stepper controls="end" editable value={qty} onValueChange={setQty} max={99} />`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Shared with Input, so the two sit flush."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {stepperData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="An adjustable, with real bounds announced."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Reports as an adjustable control carrying its current value, min, and max.</li>
+            <li>
+              An editable stepper stays one adjustable rather than splitting into three stops — the
+              typing affordance is reachable through its <code>activate</code> action, so assistive
+              tech can enter a value without hunting for a separate target.
+            </li>
+            <li>
+              Buttons disable at the bounds rather than silently doing nothing, so the limit is
+              perceivable and not just felt.
+            </li>
+            <li>The digit roll is skipped under reduce-motion; the value still updates.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Bounded, tappable, honest about its limits.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Set min and max so the control disables at its bounds.',
+                dont: 'Leave it unbounded and let the user tap toward infinity.',
+              },
+              {
+                do: 'Use plain for the one number a screen is about.',
+                dont: 'Put a plain stepper inline in a dense form — it fights the fields.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="The rest of the form vocabulary."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Input', 'Field', 'Button', 'Toggle'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...stepperData.headings]} actions={[...stepperData.actions]} />
+    </>
+  );
+}
+
+function FieldDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(fieldData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{fieldData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {fieldData.title}
+        </h1>
+        <Lede>{fieldData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={fieldData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="input" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="Parts that share state through context, so you assemble the layout."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[440px]">
+              {[
+                ['Field', 'owns size, appearance, error, disabled, focus'],
+                ['Field.Label', 'the label above the control'],
+                ['Field.Control', 'the row that holds the input and its affordances'],
+                ['Field.Icon', 'a leading glyph'],
+                ['Field.Input', 'the text input itself'],
+                ['Field.Action', 'a trailing button — clear, reveal, submit'],
+                ['Field.Helper', 'helper or error text below'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <code className="font-mono text-[11.5px] text-ink">{name}</code>
+                  <span className="text-right text-ink-3">{detail}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="When the Input preset doesn't have the shape you need."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Start with <strong>Input</strong>. It is a preset built from these parts and covers the
+              ordinary labelled text field.
+            </li>
+            <li>
+              Drop to Field when you need a layout the preset doesn&apos;t expose — two actions, a
+              custom control between the icon and the input, a label that isn&apos;t text.
+            </li>
+            <li>
+              State flows through context, so set <code>error</code> or <code>disabled</code> once on
+              the root and every part follows.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add field
+
+import { Field } from "@/components/ui/field";
+
+<Field error={!!errors.email}>
+  <Field.Label>Email</Field.Label>
+  <Field.Control>
+    <Field.Icon><MailIcon /></Field.Icon>
+    <Field.Input value={value} onChangeText={setValue} keyboardType="email-address" />
+    <Field.Action accessibilityLabel="Clear" onPress={clear}><XIcon /></Field.Action>
+  </Field.Control>
+  <Field.Helper>{errors.email ?? "We never share it."}</Field.Helper>
+</Field>`}</CodeBlock>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="The same surfaces Input and TextArea read.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {fieldData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Label, control, and helper wired to each other."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Field.Label names the input, so it is announced on focus.</li>
+            <li>
+              Helper text is associated with the control, and the error state is conveyed by text —
+              not by the border colour alone.
+            </li>
+            <li>
+              Every Field.Action needs an <code>accessibilityLabel</code>; an icon-only button has no
+              name without one.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="A primitive, used when the preset won't do.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Reach for Input first, and drop to Field for the exceptions.',
+                dont: 'Reassemble the standard labelled text field by hand every time.',
+              },
+              {
+                do: 'Say what is wrong in Field.Helper.',
+                dont: 'Signal the error with a red border and nothing else.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="The presets built on it.">
+          <div className="flex flex-wrap gap-2">
+            {['Input', 'TextArea', 'Stepper', 'Button'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...fieldData.headings]} actions={[...fieldData.actions]} />
+    </>
   );
 }

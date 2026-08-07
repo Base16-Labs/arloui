@@ -173,3 +173,179 @@ describe('Stepper', () => {
     }
   });
 });
+
+/**
+ * The grouped layouts and tap-to-type value are one variant in practice: grouping
+ * is what gives the value an edge to itself, and that is what makes it read as a
+ * field you can type in.
+ */
+describe('Stepper — grouped controls and editing', () => {
+  it('keeps both buttons and the value reachable in every controls layout', () => {
+    for (const controls of ['split', 'start', 'end'] as const) {
+      const { unmount } = renderWithTheme(
+        <Stepper controls={controls} value={3} onValueChange={() => {}} />,
+      );
+      expect(screen.getByRole('button', { name: 'Increase' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Decrease' })).toBeTruthy();
+      expect(screen.getByRole('adjustable').props.accessibilityValue.now).toBe(3);
+      unmount();
+    }
+  });
+
+  it('still steps when the buttons are grouped', () => {
+    const onValueChange = jest.fn();
+    renderWithTheme(
+      <Stepper controls="end" value={4} step={2} onValueChange={onValueChange} />,
+    );
+
+    fireEvent.press(screen.getByRole('button', { name: 'Increase' }));
+    expect(onValueChange).toHaveBeenCalledWith(6);
+  });
+
+  /**
+   * The field is mounted the whole time rather than swapped in on press — that is
+   * what makes tapping it behave like tapping any other input.
+   */
+  it('renders no text field unless editable is set', () => {
+    renderWithTheme(<Stepper controls="end" value={3} onValueChange={() => {}} />);
+    expect(screen.queryByTestId('stepper-value')).toBeNull();
+  });
+
+  it('renders a focusable numeric field when editable', () => {
+    renderWithTheme(<Stepper controls="end" editable value={3} onValueChange={() => {}} />);
+
+    const input = screen.getByTestId('stepper-value');
+    expect(input.props.value).toBe('3');
+    expect(input.props.keyboardType).toBe('number-pad');
+    expect(input.props.editable).toBe(true);
+  });
+
+  it('offers a decimal keypad when the step is fractional', () => {
+    renderWithTheme(
+      <Stepper controls="end" editable step={0.5} value={1} onValueChange={() => {}} />,
+    );
+    expect(screen.getByTestId('stepper-value').props.keyboardType).toBe('decimal-pad');
+  });
+
+  it('shows the formatted value at rest and the raw number once focused', () => {
+    renderWithTheme(
+      <Stepper
+        controls="end"
+        editable
+        value={1200}
+        max={100000}
+        onValueChange={() => {}}
+        format={(v) => `$${v.toLocaleString('en-US')}`}
+      />,
+    );
+
+    const input = screen.getByTestId('stepper-value');
+    expect(input.props.value).toBe('$1,200');
+
+    fireEvent(input, 'focus');
+    expect(screen.getByTestId('stepper-value').props.value).toBe('1200');
+  });
+
+  it('commits a typed value, clamped to max', () => {
+    const onValueChange = jest.fn();
+    renderWithTheme(
+      <Stepper controls="end" editable value={3} max={20} onValueChange={onValueChange} />,
+    );
+
+    const input = screen.getByTestId('stepper-value');
+    fireEvent(input, 'focus');
+    fireEvent.changeText(input, '45');
+    fireEvent(input, 'blur');
+
+    expect(onValueChange).toHaveBeenCalledWith(20);
+  });
+
+  it('quantizes a typed value to the step precision', () => {
+    const onValueChange = jest.fn();
+    renderWithTheme(
+      <Stepper controls="end" editable value={1} step={0.1} max={10} onValueChange={onValueChange} />,
+    );
+
+    const input = screen.getByTestId('stepper-value');
+    fireEvent(input, 'focus');
+    fireEvent.changeText(input, '2.25');
+    fireEvent(input, 'blur');
+
+    expect(onValueChange).toHaveBeenCalledWith(2.3);
+  });
+
+  /** Typing letters should simply not land, rather than being rejected at commit. */
+  it('keeps the draft numeric as you type', () => {
+    renderWithTheme(<Stepper controls="end" editable value={1} max={999} onValueChange={() => {}} />);
+
+    const input = screen.getByTestId('stepper-value');
+    fireEvent(input, 'focus');
+    fireEvent.changeText(input, '1a2b3');
+    expect(screen.getByTestId('stepper-value').props.value).toBe('123');
+  });
+
+  it('allows one decimal point only, and only for fractional steps', () => {
+    const { unmount } = renderWithTheme(
+      <Stepper controls="end" editable step={0.1} value={1} max={99} onValueChange={() => {}} />,
+    );
+    const decimal = screen.getByTestId('stepper-value');
+    fireEvent(decimal, 'focus');
+    fireEvent.changeText(decimal, '1.2.3');
+    expect(screen.getByTestId('stepper-value').props.value).toBe('1.23');
+    unmount();
+
+    renderWithTheme(
+      <Stepper controls="end" editable value={1} max={99} onValueChange={() => {}} />,
+    );
+    const integer = screen.getByTestId('stepper-value');
+    fireEvent(integer, 'focus');
+    fireEvent.changeText(integer, '1.5');
+    expect(screen.getByTestId('stepper-value').props.value).toBe('15');
+  });
+
+  /**
+   * Clearing the field and tapping away should mean "never mind", not "minimum" —
+   * an empty draft that clamped to `min` would silently rewrite the value.
+   */
+  it('reverts an empty draft instead of clamping to min', () => {
+    const onValueChange = jest.fn();
+    renderWithTheme(
+      <Stepper controls="end" editable value={7} min={1} onValueChange={onValueChange} />,
+    );
+
+    const input = screen.getByTestId('stepper-value');
+    fireEvent(input, 'focus');
+    fireEvent.changeText(input, '');
+    fireEvent(input, 'blur');
+
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(screen.getByTestId('stepper-value').props.value).toBe('7');
+  });
+
+  it('does not accept input while disabled', () => {
+    renderWithTheme(
+      <Stepper controls="end" editable disabled value={3} onValueChange={() => {}} />,
+    );
+    expect(screen.getByTestId('stepper-value').props.editable).toBe(false);
+  });
+
+  /**
+   * The regression this guards: `accessible` on the row collapses the subtree into
+   * one element, and a TextInput inside a collapsed subtree never becomes first
+   * responder — so tapping it raises no keyboard on a device. An editable stepper
+   * has to expose its three children instead of merging them.
+   */
+  it('does not collapse into one accessibility element when editable', () => {
+    renderWithTheme(<Stepper controls="end" editable value={5} label="Guests" onValueChange={() => {}} />);
+
+    expect(screen.queryByRole('adjustable')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Increase' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Decrease' })).toBeTruthy();
+    expect(screen.getByTestId('stepper-value').props.accessibilityLabel).toBe('Guests');
+  });
+
+  it('still collapses into one adjustable when not editable', () => {
+    renderWithTheme(<Stepper controls="end" value={5} label="Guests" onValueChange={() => {}} />);
+    expect(screen.getByRole('adjustable', { name: 'Guests' })).toBeTruthy();
+  });
+});

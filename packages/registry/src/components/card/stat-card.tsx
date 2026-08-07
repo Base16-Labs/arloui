@@ -37,6 +37,11 @@ export type StatCardProps = {
   caption?: string;
   tone?: CardProps['tone'];
   surface?: CardProps['surface'];
+  /** Outer spacing, forwarded to `Card`. */
+  margin?: CardProps['margin'];
+  /** Corner rounding, forwarded to `Card`. */
+  radius?: CardProps['radius'];
+
   blurComponent?: CardProps['blurComponent'];
   onPress?: PressableProps['onPress'];
   style?: StyleProp<ViewStyle>;
@@ -53,6 +58,8 @@ export function StatCard({
   caption,
   tone,
   surface,
+  margin,
+  radius,
   blurComponent,
   onPress,
   style,
@@ -73,6 +80,8 @@ export function StatCard({
     <Card
       tone={tone}
       surface={surface}
+      margin={margin}
+      radius={radius}
       blurComponent={blurComponent}
       padding="md"
       onPress={onPress}

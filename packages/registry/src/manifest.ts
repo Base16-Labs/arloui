@@ -142,7 +142,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Chart',
     description:
-      'Five chart forms sharing one validated palette: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Sparkline (chrome-free inline line), BarChart (categorical bars, rounded data-ends, negatives below the baseline), DonutChart (part-to-whole with a mandatory legend, folding past four categories into Other), and Meter (one value against a target, as a bar or a ring).',
+      'Five chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars, rounded data-ends, negatives below the baseline), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), and Chart.Meter (one value against a target, as a bar or a ring).',
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'animated-counter'],
     files: [

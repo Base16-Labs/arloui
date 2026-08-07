@@ -3,7 +3,15 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ActionCard, ListCard, MediaCard, StatCard, useTokens } from '@arloui/registry';
+import {
+  ActionCard,
+  ListCard,
+  MediaCard,
+  StatCard,
+  useTokens,
+  type CardRadius,
+  type CardSpacing,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -13,6 +21,8 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 type Variant = 'stat' | 'list' | 'media' | 'action';
 
 const VARIANTS: Variant[] = ['stat', 'list', 'media', 'action'];
+const RADII: CardRadius[] = ['none', 'sm', 'md', 'lg', 'xl', '2xl'];
+const MARGINS: CardSpacing[] = ['none', 'xs', 'sm', 'md', 'lg'];
 
 const money = (v: number) =>
   `$${v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -24,6 +34,8 @@ export default function CardsCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [variant, setVariant] = useState<Variant>('stat');
   const [dismissed, setDismissed] = useState(false);
+  const [radius, setRadius] = useState<CardRadius>('xl');
+  const [margin, setMargin] = useState<CardSpacing>('none');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -71,6 +83,8 @@ export default function CardsCanvas() {
               {variant === 'stat' ? (
                 <>
                   <StatCard
+                    radius={radius}
+                    margin={margin}
                     label="Balance"
                     value={12480.32}
                     delta={412.19}
@@ -79,6 +93,8 @@ export default function CardsCanvas() {
                     trend={[900, 940, 910, 1020, 1080, 1040, 1180]}
                   />
                   <StatCard
+                    radius={radius}
+                    margin={margin}
                     label="Spend"
                     value={2310.4}
                     delta={-186.2}
@@ -87,6 +103,8 @@ export default function CardsCanvas() {
                     trend={[1400, 1320, 1280, 1180, 1120, 1040, 980]}
                   />
                   <StatCard
+                    radius={radius}
+                    margin={margin}
                     label="Subscribers"
                     value={18402}
                     icon={<Ionicons name="people-outline" size={18} color={t.colors.textTertiary} />}
@@ -96,7 +114,7 @@ export default function CardsCanvas() {
 
               {variant === 'list' ? (
                 <>
-                  <ListCard.Group>
+                  <ListCard.Group radius={radius} margin={margin}>
                     <ListCard
                       title="Spotify"
                       subtitle="Yesterday"
@@ -138,6 +156,8 @@ export default function CardsCanvas() {
               {variant === 'media' ? (
                 <>
                   <MediaCard
+                    radius={radius}
+                    margin={margin}
                     title="Kyoto in autumn"
                     subtitle="12 photos · shared album"
                     onPress={() => {}}
@@ -146,6 +166,8 @@ export default function CardsCanvas() {
                     }
                   />
                   <MediaCard
+                    radius={radius}
+                    margin={margin}
                     layout="overlay"
                     title="Weekend in Lagos"
                     subtitle="Updated 2h ago"
@@ -161,6 +183,8 @@ export default function CardsCanvas() {
                 <>
                   {!dismissed ? (
                     <ActionCard
+                    radius={radius}
+                    margin={margin}
                       title="Turn on two-factor auth"
                       body="Add a second step when signing in from a new device."
                       icon={<Ionicons name="shield-checkmark" size={20} color={t.colors.interactivePrimary} />}
@@ -182,6 +206,8 @@ export default function CardsCanvas() {
                     </Text>
                   )}
                   <ActionCard
+                    radius={radius}
+                    margin={margin}
                     tone="error"
                     title="Payment failed"
                     body="We couldn't charge your card ending in 4242."
@@ -189,6 +215,8 @@ export default function CardsCanvas() {
                     primaryAction={{ label: 'Update card', onPress: () => {} }}
                   />
                   <ActionCard
+                    radius={radius}
+                    margin={margin}
                     tone="success"
                     title="You're all set"
                     body="Your account is verified and ready to go."
@@ -239,6 +267,26 @@ export default function CardsCanvas() {
                       setVariant(value);
                       setDismissed(false);
                     }}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Radius">
+                {RADII.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={radius === value}
+                    onPress={() => setRadius(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Margin">
+                {MARGINS.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={margin === value}
+                    onPress={() => setMargin(value)}
                   />
                 ))}
               </VariantControlRow>

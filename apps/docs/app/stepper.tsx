@@ -2,7 +2,13 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Stepper, useTokens, type StepperAppearance, type StepperSize } from '@arloui/registry';
+import {
+  Stepper,
+  useTokens,
+  type StepperAppearance,
+  type StepperControls,
+  type StepperSize,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -14,6 +20,7 @@ type ValueKind = 'count' | 'currency';
 
 const APPEARANCES: StepperAppearance[] = ['filled', 'plain'];
 const SIZES: StepperSize[] = ['sm', 'md'];
+const CONTROLS: StepperControls[] = ['split', 'start', 'end'];
 const STATES: PreviewState[] = ['default', 'disabled', 'error'];
 const VALUE_KINDS: ValueKind[] = ['count', 'currency'];
 
@@ -24,6 +31,8 @@ export default function StepperCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [appearance, setAppearance] = useState<StepperAppearance>('filled');
   const [size, setSize] = useState<StepperSize>('md');
+  const [controls, setControls] = useState<StepperControls>('split');
+  const [editable, setEditable] = useState(false);
   const [state, setState] = useState<PreviewState>('default');
   const [kind, setKind] = useState<ValueKind>('count');
   const [count, setCount] = useState(2);
@@ -81,6 +90,8 @@ export default function StepperCanvas() {
                 onValueChange={setAmount}
                 appearance={appearance}
                 size={size}
+                controls={controls}
+                editable={editable}
                 min={0}
                 max={100000}
                 step={50}
@@ -97,6 +108,8 @@ export default function StepperCanvas() {
                 onValueChange={setCount}
                 appearance={appearance}
                 size={size}
+                controls={controls}
+                editable={editable}
                 min={0}
                 max={99}
                 disabled={state === 'disabled'}
@@ -164,6 +177,26 @@ export default function StepperCanvas() {
                     label={value}
                     active={kind === value}
                     onPress={() => setKind(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Controls">
+                {CONTROLS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={controls === option}
+                    onPress={() => setControls(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Editable">
+                {(['off', 'on'] as const).map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={editable === (option === 'on')}
+                    onPress={() => setEditable(option === 'on')}
                   />
                 ))}
               </VariantControlRow>

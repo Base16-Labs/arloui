@@ -168,11 +168,9 @@ function TabBarRoot({
 
   const indicatorTranslate = Animated.add(Animated.multiply(selection, itemWidth), indicatorOffset);
   const barHeight = showLabels ? 64 : 56;
-  const backgroundColor = isGlass
-    ? glass.backgroundColor
-    : surface === 'filled'
-      ? t.colors.navBackground
-      : 'transparent';
+  // A glass bar paints nothing here — its fill rides above the blur layer inside
+  // GlassBackdrop, so the blur only samples the content passing underneath.
+  const backgroundColor = surface === 'filled' ? t.colors.navBackground : 'transparent';
   const borderColor = isGlass ? glass.borderColor : t.colors.navBorder;
   // Glass and filled both read as a real surface, so both keep an edge; only a
   // fully transparent bar goes borderless.
@@ -226,7 +224,9 @@ function TabBarRoot({
         style,
       ]}
     >
-      {surface !== 'filled' ? <GlassBackdrop>{blurComponent}</GlassBackdrop> : null}
+      {surface !== 'filled' ? (
+        <GlassBackdrop material={isGlass ? 'medium' : undefined}>{blurComponent}</GlassBackdrop>
+      ) : null}
 
       {floating && barWidth > 0 && items.length > 0 ? (
         <Animated.View

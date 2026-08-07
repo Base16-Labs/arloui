@@ -106,3 +106,82 @@ describe('Card', () => {
     expect(screen.getByText('Caption')).toBeTruthy();
   });
 });
+
+/**
+ * Geometry reads off the token scales rather than raw numbers, so these assert the
+ * mapping — a card that invents its own 14px radius is the thing to catch.
+ */
+describe('Card — geometry variants', () => {
+  /** The card container is the render root; its style is an array of layers. */
+  const rootStyle = (json: unknown) => {
+    const node = json as { props?: { style?: unknown } };
+    return Object.assign({}, ...[node.props?.style].flat(Infinity).filter(Boolean)) as Record<
+      string,
+      number
+    >;
+  };
+
+  it('maps the padding scale onto spacing tokens, with no two steps alike', () => {
+    const values: number[] = [];
+    for (const padding of ['none', 'xs', 'sm', 'md', 'lg', 'xl'] as const) {
+      const view = renderWithTheme(
+        <Card padding={padding}>
+          <Text>body</Text>
+        </Card>,
+      );
+      values.push(rootStyle(view.toJSON()).padding);
+      view.unmount();
+    }
+    expect(values[0]).toBe(0);
+    expect(values).toEqual([...values].sort((a, b) => a - b));
+    expect(new Set(values).size).toBe(values.length);
+  });
+
+  it('maps the radius scale onto radii tokens', () => {
+    const none = renderWithTheme(
+      <Card radius="none">
+        <Text>body</Text>
+      </Card>,
+    );
+    expect(rootStyle(none.toJSON()).borderRadius).toBe(0);
+    none.unmount();
+
+    const full = renderWithTheme(
+      <Card radius="full">
+        <Text>body</Text>
+      </Card>,
+    );
+    expect(rootStyle(full.toJSON()).borderRadius).toBe(9999);
+  });
+
+  it('defaults to no margin and the standard card radius', () => {
+    const view = renderWithTheme(
+      <Card>
+        <Text>body</Text>
+      </Card>,
+    );
+    const style = rootStyle(view.toJSON());
+    expect(style.margin).toBe(0);
+    expect(style.borderRadius).toBe(16);
+  });
+
+  it('applies margin from the shared spacing scale', () => {
+    const view = renderWithTheme(
+      <Card margin="lg">
+        <Text>body</Text>
+      </Card>,
+    );
+    expect(rootStyle(view.toJSON()).margin).toBe(24);
+  });
+
+  it('keeps geometry working on a pressable card', () => {
+    const view = renderWithTheme(
+      <Card onPress={() => {}} radius="sm" margin="xs" accessibilityLabel="card">
+        <Text>body</Text>
+      </Card>,
+    );
+    const style = rootStyle(view.toJSON());
+    expect(style.borderRadius).toBe(4);
+    expect(style.margin).toBe(8);
+  });
+});

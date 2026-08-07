@@ -11,6 +11,14 @@
  *     <Chart.Periods />
  *   </Chart>
  *
+ * The other four forms hang off the same namespace, each a complete chart rather
+ * than a part of the one above:
+ *
+ *   <Chart.Sparkline data={points} />        inline line, no chrome
+ *   <Chart.Bar data={bars} />                categorical bars
+ *   <Chart.Donut data={slices} />            part-to-whole, legend required
+ *   <Chart.Meter value={n} max={m} />        one value against a target
+ *
  * Deliberate choices:
  *
  * - **No axis furniture.** No ticks, no gridlines, no axis labels. The value readout
@@ -28,7 +36,15 @@
  * The value and delta read from context, so they show the scrubbed point while a
  * drag is active and fall back to the latest point when it isn't.
  */
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useId,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import {
   PanResponder,
   Platform,
@@ -43,6 +59,10 @@ import {
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { AnimatedCounter } from '../animated-counter/animated-counter';
 import { useTokens } from '../../foundation/theme-provider';
+import { BarChart } from './bar-chart';
+import { DonutChart } from './donut-chart';
+import { Meter } from './meter';
+import { Sparkline } from './sparkline';
 
 export type ChartTone = 'auto' | 'positive' | 'negative' | 'neutral';
 
@@ -335,6 +355,9 @@ function ChartPlot({
 
   const active = activeIndex != null ? pointAt(activeIndex) : null;
 
+  // Document-global, so a constant id would collide between two charts on one screen.
+  const gradientId = `arloChartFill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+
   const summary =
     accessibilityLabel ??
     `Line chart, ${data.length} points, from ${first} to ${last}, low ${min}, high ${max}`;
@@ -352,7 +375,7 @@ function ChartPlot({
         <Svg width={width} height={plotHeight}>
           {fill ? (
             <Defs>
-              <LinearGradient id="arloChartFill" x1="0" y1="0" x2="0" y2="1">
+              <LinearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                 <Stop offset="0" stopColor={color} stopOpacity={0.22} />
                 <Stop offset="1" stopColor={color} stopOpacity={0} />
               </LinearGradient>
@@ -368,7 +391,7 @@ function ChartPlot({
             />
           ) : null}
 
-          {areaPath ? <Path d={areaPath} fill="url(#arloChartFill)" /> : null}
+          {areaPath ? <Path d={areaPath} fill={`url(#${gradientId})`} /> : null}
 
           <Path
             d={linePath}
@@ -447,9 +470,20 @@ function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
   );
 }
 
+/**
+ * `Value`/`Delta`/`Plot`/`Periods` compose the scrubbable chart above; `Sparkline`,
+ * `Bar`, `Donut`, and `Meter` are whole charts in their own right, namespaced here
+ * so picking a form is one decision at one import rather than four names to
+ * remember. They stay in their own files — import those directly if you only
+ * copied one form into your project.
+ */
 export const Chart = Object.assign(ChartRoot, {
   Value: ChartValue,
   Delta: ChartDelta,
   Plot: ChartPlot,
   Periods: ChartPeriods,
+  Sparkline,
+  Bar: BarChart,
+  Donut: DonutChart,
+  Meter,
 });

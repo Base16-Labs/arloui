@@ -13,6 +13,8 @@ import {
   darkColors as canonicalDarkFlat,
   shadowBaseColor as canonicalShadowColor,
   darkShadowBaseColor as canonicalDarkShadowColor,
+  blurs as canonicalBlurs,
+  materials as canonicalMaterials,
 } from '@arloui/tokens';
 import {
   spacing as registrySpacing,
@@ -23,6 +25,8 @@ import {
   darkColors as registryDarkFlat,
   shadows as registryShadows,
   darkShadows as registryDarkShadows,
+  blurs as registryBlurs,
+  materials as registryMaterials,
 } from '../tokens';
 
 describe('registry foundation tokens ↔ @arloui/tokens parity', () => {
@@ -72,5 +76,19 @@ describe('registry foundation tokens ↔ @arloui/tokens parity', () => {
     for (const level of Object.values(registryDarkShadows)) {
       expect(level.shadowColor).toBe(canonicalDarkShadowColor);
     }
+  });
+
+  /**
+   * The materials went uncovered long enough for their dark overlays to miss
+   * the Zinc swap and sit on blue-tinted Grey-900 while every other dark
+   * surface had moved. A glass surface is the one place a stale tint shows,
+   * since it composites over whatever scrolls beneath it.
+   */
+  it('blur scales match exactly', () => {
+    expect(registryBlurs).toEqual(canonicalBlurs);
+  });
+
+  it('glass materials match exactly', () => {
+    expect(registryMaterials).toEqual(canonicalMaterials);
   });
 });

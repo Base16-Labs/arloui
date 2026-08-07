@@ -13,8 +13,8 @@
  * just as a flat translucent fill.
  *
  *   const glass = useGlassSurface('medium');
- *   <View style={{ backgroundColor: glass.backgroundColor, borderColor: glass.borderColor }}>
- *     <GlassBackdrop>{blurComponent}</GlassBackdrop>
+ *   <View style={{ borderColor: glass.borderColor }}>
+ *     <GlassBackdrop material="medium">{blurComponent}</GlassBackdrop>
  *     …
  *   </View>
  */
@@ -61,21 +61,51 @@ export function useGlassSurface(material: GlassMaterial = 'medium'): GlassSurfac
 }
 
 /**
- * Mounts a host blur layer behind glass content. Renders nothing when no blur
- * layer was supplied, so `surface="glass"` degrades to a flat translucent fill
- * rather than breaking.
+ * Mounts a host blur layer behind glass content, with the material's own
+ * translucent fill stacked on top of it.
+ *
+ * Pass `material` rather than putting `backgroundColor` on the parent. A fill on
+ * the parent paints *under* every child, so the blur layer ends up sampling the
+ * fill along with the content behind the surface — and because host blurs are
+ * vibrancy effects (`expo-blur` uses `saturate(180%)` on web, UIBlurEffect
+ * boosts chroma on iOS), the surface comes back carrying an amplified cast of
+ * whatever passes beneath it. Over white that reads as nothing; over anything
+ * colored it reads as a coloured reflection sliding across the glass. Fill above
+ * blur keeps the material muting the backdrop instead of the other way round.
+ *
+ * With no `material` and no blur layer this renders nothing, so a glass surface
+ * degrades to whatever the parent paints rather than breaking.
  *
  * The parent must set `overflow: 'hidden'` and its own `borderRadius` — the
  * backdrop fills the parent's bounds and is clipped by it.
  */
-export function GlassBackdrop({ children }: { children?: ReactNode }) {
-  if (!children) return null;
+export function GlassBackdrop({
+  material,
+  children,
+}: {
+  material?: GlassMaterial;
+  children?: ReactNode;
+}) {
+  const surface = useGlassSurface(material ?? 'medium');
+  if (!children && !material) return null;
   return (
     <View
       pointerEvents="none"
       style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
     >
       {children}
+      {material ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            backgroundColor: surface.backgroundColor,
+          }}
+        />
+      ) : null}
     </View>
   );
 }

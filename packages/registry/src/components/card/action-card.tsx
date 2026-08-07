@@ -45,6 +45,11 @@ export type ActionCardProps = {
   onDismiss?: () => void;
   dismissAccessibilityLabel?: string;
   surface?: CardProps['surface'];
+  /** Outer spacing, forwarded to `Card`. */
+  margin?: CardProps['margin'];
+  /** Corner rounding, forwarded to `Card`. */
+  radius?: CardProps['radius'];
+
   blurComponent?: CardProps['blurComponent'];
   /** Stack the buttons full-width instead of sitting them in a row. */
   stackActions?: boolean;
@@ -74,6 +79,8 @@ export function ActionCard({
   onDismiss,
   dismissAccessibilityLabel = 'Dismiss',
   surface,
+  margin,
+  radius,
   blurComponent,
   stackActions = false,
   style,
@@ -96,7 +103,14 @@ export function ActionCard({
   const primaryTone = tone === 'error' ? 'danger' : 'primary';
 
   return (
-    <Card surface={surface} blurComponent={blurComponent} padding="md" style={style}>
+    <Card
+      surface={surface}
+      blurComponent={blurComponent}
+      padding="md"
+      margin={margin}
+      radius={radius}
+      style={style}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: t.spacing[3] }}>
         {icon ? (
           <View

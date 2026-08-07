@@ -8,7 +8,7 @@
  *
  * If you want a value readout, a baseline, or scrubbing, you want `Chart`.
  */
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
@@ -96,7 +96,10 @@ export function Sparkline({
       ? `${linePath} L${end.x.toFixed(2)},${height - INSET} L${start.x.toFixed(2)},${height - INSET} Z`
       : '';
 
-  const gradientId = `arloSparkFill-${tone}`;
+  // Per instance, not per tone: two `tone="auto"` sparklines on one screen resolve
+  // to different colours but would share one document-global gradient id, so the
+  // first definition would win and paint both fills the same.
+  const gradientId = `arloSparkFill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
   return (
     <View
