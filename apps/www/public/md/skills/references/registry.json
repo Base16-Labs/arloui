@@ -143,10 +143,14 @@
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "animated-counter"
+        "animated-counter",
+        "haptics"
       ],
       "dependencies": [
-        "react-native-svg"
+        "react-native-svg",
+        "react-native-gifted-charts",
+        "expo-linear-gradient",
+        "expo-haptics"
       ],
       "tags": [
         "chart",
