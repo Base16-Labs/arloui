@@ -138,20 +138,21 @@ function ButtonSpinner({
   size: number;
   reduceMotion?: boolean;
 }) {
+  const t = useTokens();
   const [rotation] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const animation = Animated.loop(
       Animated.timing(rotation, {
         toValue: 1,
-        duration: reduceMotion ? 1600 : 800,
+        duration: reduceMotion ? t.motion.duration.slow * 4 : t.motion.duration.slow * 2,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
     );
     animation.start();
     return () => animation.stop();
-  }, [rotation, reduceMotion]);
+  }, [rotation, reduceMotion, t.motion.duration.slow]);
 
   return (
     <Animated.View
@@ -323,7 +324,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
                   fontFamily: mono ? t.fontFamilies.mono : t.fontFamilies.sans,
                   fontSize: dims.type.fontSize,
                   lineHeight: dims.type.lineHeight,
-                  fontWeight: '600',
+                  fontWeight: t.fontWeights.semibold,
                 },
                 labelStyle,
               ]}

@@ -694,7 +694,7 @@ function SheetHeader({
               fontFamily: t.fontFamilies.sans,
               fontSize: t.typography.headingLarge.fontSize,
               lineHeight: t.typography.headingLarge.lineHeight,
-              fontWeight: '600',
+              fontWeight: t.fontWeights.semibold,
             },
             titleStyle,
           ]}

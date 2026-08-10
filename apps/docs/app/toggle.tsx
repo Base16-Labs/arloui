@@ -51,7 +51,7 @@ export default function ToggleCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -62,7 +62,7 @@ export default function ToggleCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 12,
+              gap: t.spacing[3],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -76,9 +76,9 @@ export default function ToggleCanvas() {
             <Text
               style={{
                 color: t.colors.textSecondary,
-                fontFamily: 'Manrope',
-                fontSize: 13,
-                marginTop: 8,
+                fontFamily: t.fontFamilies.sans,
+                ...t.typography.bodySmall,
+                marginTop: t.spacing[2],
               }}
             >
               {checked ? 'On' : 'Off'}
@@ -112,7 +112,7 @@ export default function ToggleCanvas() {
             onPrevious={() => router.replace('/input')}
             onNext={() => router.replace('/button')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Size">
                 {SIZES.map((value) => (
                   <VariantChip
