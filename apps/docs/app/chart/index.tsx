@@ -2,7 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type ChartTone } from '@arloui/registry';
+import { Chart, useTokens, type ChartCurve, type ChartTone } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -15,6 +15,7 @@ type FillMode = 'area' | 'line';
 const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'neutral'];
 const SHAPES: Shape[] = ['rising', 'falling', 'volatile', 'flat'];
 const FILLS: FillMode[] = ['area', 'line'];
+const CURVES: ChartCurve[] = ['steep', 'smooth'];
 const PERIODS = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
 /** Deterministic sample series so the canvas looks the same on every render. */
@@ -50,6 +51,7 @@ export default function ChartCanvas() {
   const [tone, setTone] = useState<ChartTone>('auto');
   const [shape, setShape] = useState<Shape>('rising');
   const [fillMode, setFillMode] = useState<FillMode>('area');
+  const [curve, setCurve] = useState<ChartCurve>('steep');
   const [period, setPeriod] = useState('1D');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
@@ -105,7 +107,7 @@ export default function ChartCanvas() {
             >
               <Chart.Value format={money} />
               <Chart.Delta format={money} />
-              <Chart.Plot height={200} fill={fillMode === 'area'} />
+              <Chart.Plot height={200} fill={fillMode === 'area'} curve={curve} />
               <Chart.Periods />
             </Chart>
             <Text
@@ -176,6 +178,16 @@ export default function ChartCanvas() {
                     label={value}
                     active={fillMode === value}
                     onPress={() => setFillMode(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Curve">
+                {CURVES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={curve === value}
+                    onPress={() => setCurve(value)}
                   />
                 ))}
               </VariantControlRow>

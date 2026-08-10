@@ -19,23 +19,33 @@
  *
  * `controls` moves the two buttons. The default straddles the value; `'end'` and
  * `'start'` group them at one edge and push the value to the other, giving the
- * quantity-row shape — and `editable` makes the value a real numeric text field,
- * for ranges a user shouldn't have to reach by tapping:
+ * quantity-row shape; `'none'` drops them entirely, leaving the number as a
+ * readout or a typed field. `allowTyping` makes the value a real numeric text
+ * field, for ranges a user shouldn't have to reach by tapping:
  *
- *   <Stepper controls="end" editable value={qty} onValueChange={setQty} max={99} />
+ *   <Stepper controls="end" allowTyping value={qty} onValueChange={setQty} max={99} />
+ *   <Stepper controls="none" value={qty} onValueChange={setQty} />
  *
  * Holding a button repeats the step and accelerates, which is what keeps the
  * control usable for ranges wider than a few taps.
+ *
+ * The number always rolls between values through `AnimatedCounter` — stepped,
+ * typed, blurred, or focused. With `allowTyping` the text field is mounted the
+ * whole time for focus and caret handling, but it never paints its own glyphs:
+ * the counter draws every state, following the draft as you type so digits roll
+ * under the caret.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Platform,
   Pressable,
+  StyleSheet,
   Text,
   TextInput,
   View,
   type StyleProp,
+  type TextStyle,
   type ViewStyle,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
@@ -54,10 +64,14 @@ export type StepperAppearance = 'filled' | 'plain';
  * `'split'` straddles the value (the UIStepper arrangement). `'start'` and
  * `'end'` group them together at one edge and push the value to the other, which
  * is the quantity-row shape — value reading as the field's content, controls as
- * its trailing affordance. Grouping is what makes `editable` legible: the value
- * gets a whole edge to itself, so it looks like something you can type in.
+ * its trailing affordance. Grouping is what makes `allowTyping` legible: the
+ * value gets a whole edge to itself, so it looks like something you can type in.
+ *
+ * `'none'` removes both buttons and centres the number on its own. Pair it with
+ * `allowTyping` for a keyboard-only amount field, or leave typing off for a
+ * read-only readout that still rolls as the value changes underneath it.
  */
-export type StepperControls = 'split' | 'start' | 'end';
+export type StepperControls = 'split' | 'start' | 'end' | 'none';
 
 export type StepperProps = {
   value: number;
@@ -70,14 +84,17 @@ export type StepperProps = {
   /** Where the buttons sit. Defaults to `'split'`, one either side of the value. */
   controls?: StepperControls;
   /**
-   * Renders the value as a numeric `TextInput` you can type into, instead of a
-   * read-only counter. It is a real field the whole time, so tapping it focuses it
-   * like any other input. The draft commits on blur or submit, clamped to
-   * `min`/`max` and quantized to `step`; an empty or unparseable one reverts.
-   * While focused it shows the raw number — `format` output isn't something you
-   * can type back in.
+   * Lets the value be typed as well as stepped. It is a real `TextInput` the whole
+   * time, so tapping it focuses it like any other field. The draft commits on blur
+   * or submit, clamped to `min`/`max` and quantized to `step`; an empty or
+   * unparseable one reverts. While focused it shows the raw number — `format`
+   * output isn't something you can type back in.
+   *
+   * Named for what it grants rather than `editable`, which on a React Native
+   * `TextInput` means "not disabled" — the opposite kind of meaning, and the two
+   * would sit side by side in this file.
    */
-  editable?: boolean;
+  allowTyping?: boolean;
   disabled?: boolean;
   /** Switches the stepper into its error palette, like `Field`'s `error`. */
   error?: boolean;
@@ -196,7 +213,7 @@ export function Stepper({
   size = 'md',
   appearance = 'filled',
   controls = 'split',
-  editable = false,
+  allowTyping = false,
   disabled = false,
   error = false,
   label,
@@ -313,6 +330,18 @@ export function Stepper({
   const inputRef = useRef<TextInput>(null);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
+  /**
+   * Set for one frame on focus to drop the caret at the end of the value, then
+   * released so the field owns its own selection again — holding it would fight
+   * every tap the user makes to reposition the caret.
+   */
+  const [selection, setSelection] = useState<{ start: number; end: number } | undefined>();
+
+  useEffect(() => {
+    if (!selection) return;
+    const id = setTimeout(() => setSelection(undefined), 0);
+    return () => clearTimeout(id);
+  }, [selection]);
 
   const allowsDecimals = !Number.isInteger(step);
   const allowsNegative = min < 0;
@@ -334,11 +363,13 @@ export function Stepper({
 
   /** Runs from the field's own `onFocus`, so it must not call `focus()` again. */
   const beginEdit = useCallback(() => {
-    if (!editable || disabled) return;
+    if (!allowTyping || disabled) return;
     stopRepeat();
-    setDraft(String(value));
+    const raw = String(value);
+    setDraft(raw);
     setEditing(true);
-  }, [editable, disabled, stopRepeat, value]);
+    setSelection({ start: raw.length, end: raw.length });
+  }, [allowTyping, disabled, stopRepeat, value]);
 
   /**
    * Commit on blur or submit. An unparseable draft reverts rather than clamping to
@@ -362,7 +393,12 @@ export function Stepper({
 
   const counterSpring = useMemo(() => ({ ...t.motion.spring.snappy }), [t.motion.spring.snappy]);
 
-  const grouped = controls !== 'split';
+  /** Caret and selection tint. The accent, so the highlight matches every other field. */
+  const caretColor = error ? t.colors.textInteractiveError : t.colors.interactivePrimary;
+
+  const hasControls = controls !== 'none';
+  /** Buttons pushed to one edge, so the value takes the other. */
+  const grouped = controls === 'start' || controls === 'end';
 
   const decrementButton = (
     <StepperButton
@@ -416,34 +452,102 @@ export function Stepper({
         justifyContent: 'center',
       }}
     >
-      {editable ? (
-        <TextInput
-          ref={inputRef}
-          testID="stepper-value"
-          // Focused: the raw number, which is what you can actually type over.
-          // Blurred: the formatted value, so `format` still reads as intended.
-          value={editing ? draft : display}
-          onChangeText={(raw) => setDraft(sanitize(raw))}
-          onFocus={beginEdit}
-          onBlur={commitEdit}
-          onSubmitEditing={() => inputRef.current?.blur()}
-          editable={!disabled}
-          selectTextOnFocus
-          keyboardType={allowsDecimals ? 'decimal-pad' : 'number-pad'}
-          inputMode={allowsDecimals ? 'decimal' : 'numeric'}
-          returnKeyType="done"
-          accessibilityLabel={accessibilityLabel ?? label ?? 'Value'}
+      {allowTyping ? (
+        /*
+         * The counter sits in the layout and the field is stretched over it, rather
+         * than the other way round. The counter is the only thing that paints, so
+         * it is what should decide how much room the value takes — a field forced
+         * to `width: '100%'` here pushes a plain stepper's buttons out to the
+         * screen edges, since a plain stepper hugs its content instead of
+         * stretching. The field stays mounted underneath so tapping the number
+         * focuses a real input rather than a press handler forwarding focus.
+         */
+        <View
           style={{
-            width: '100%',
-            paddingVertical: 0,
-            color: valueColor,
-            fontFamily: t.fontFamilies.sans,
-            fontSize: dims.font.fontSize,
-            lineHeight: dims.font.lineHeight,
-            fontWeight: '600',
-            textAlign,
+            width: stretches ? '100%' : undefined,
+            justifyContent: 'center',
+            // Shrink the counter to its glyphs and put them where the field's own
+            // (invisible) text sits. Left to stretch, the counter right-aligns
+            // inside the full width and the caret and selection band land
+            // somewhere the number isn't.
+            alignItems:
+              textAlign === 'center'
+                ? 'center'
+                : textAlign === 'left'
+                  ? 'flex-start'
+                  : 'flex-end',
           }}
-        />
+        >
+          <AnimatedCounter
+            // Follows the draft while typing, so digits roll under the caret as
+            // they are entered instead of the counter handing over to plain text.
+            text={editing ? draft : display}
+            fontSize={dims.font.fontSize}
+            lineHeight={dims.font.lineHeight}
+            color={valueColor}
+            fontFamily={t.fontFamilies.sans}
+            fontWeight="600"
+            reduceMotion={reduceMotion}
+            spring={counterSpring}
+            duration={t.motion.duration.fast}
+          />
+          <TextInput
+            ref={inputRef}
+            testID="stepper-value"
+            // Focused: the raw number, which is what you can actually type over.
+            // Blurred: the formatted value, so `format` still reads as intended.
+            value={editing ? draft : display}
+            onChangeText={(raw) => {
+              setDraft(sanitize(raw));
+              setSelection(undefined);
+            }}
+            onFocus={beginEdit}
+            onBlur={() => {
+              setSelection(undefined);
+              commitEdit();
+            }}
+            onSubmitEditing={() => inputRef.current?.blur()}
+            editable={!disabled}
+            // Placed at the end of the value on focus rather than selecting it all:
+            // a selection would highlight glyphs the field isn't painting, and the
+            // caret would sit at the left of a number you are about to append to.
+            selection={selection}
+            keyboardType={allowsDecimals ? 'decimal-pad' : 'number-pad'}
+            inputMode={allowsDecimals ? 'decimal' : 'numeric'}
+            returnKeyType="done"
+            accessibilityLabel={accessibilityLabel ?? label ?? 'Value'}
+            /*
+             * The field's own glyphs never paint — the counter draws every state,
+             * typed or stepped. That leaves the caret, which each platform takes
+             * from somewhere different, and all three default to the (transparent)
+             * text colour if left alone: iOS reads `selectionColor`, Android
+             * `cursorColor`, and the web the `caretColor` style.
+             *
+             * These stay on the accent rather than the ink: `selectionColor` tints
+             * the selection highlight as well as the caret, and ink there gives the
+             * stepper a dark selection nothing else in the library has.
+             */
+            selectionColor={caretColor}
+            cursorColor={caretColor}
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              paddingVertical: 0,
+              color: 'transparent',
+              fontFamily: t.fontFamilies.sans,
+              fontSize: dims.font.fontSize,
+              lineHeight: dims.font.lineHeight,
+              fontWeight: '600',
+              textAlign,
+              // Matches AnimatedCounter's own figures. Proportional digits here
+              // would advance at a different rate to the counter's columns, and
+              // the caret and selection band would drift across the number.
+              fontVariant: ['tabular-nums'],
+              ...(Platform.OS === 'web'
+                ? ({ caretColor } as unknown as TextStyle)
+                : null),
+            }}
+          />
+        </View>
       ) : (
         <AnimatedCounter
           text={display}
@@ -466,13 +570,24 @@ export function Stepper({
       // adjustable control it can swipe up/down, instead of two unlabelled buttons
       // either side of a number it has to correlate. While typing, the row steps
       // aside so the text input itself is reachable.
-      {...(editable
-        ? // An editable stepper is a field flanked by two buttons, and it has to be
+      {...(allowTyping
+        ? // A typed stepper is a field flanked by two buttons, and it has to be
           // exposed that way: `accessible` on the container collapses the subtree
           // into one element, and a TextInput inside a collapsed subtree never
           // becomes first responder — so tapping it raises no keyboard. The three
           // children are each labelled, so nothing is lost by not merging them.
           { accessible: false }
+        : !hasControls
+          ? // Nothing to adjust by touch, so it is announced as the readout it is.
+            // Exposing increment/decrement actions here would hand assistive tech
+            // an affordance no sighted user has.
+            {
+              accessible: true,
+              accessibilityRole: 'text' as const,
+              accessibilityLabel: accessibilityLabel ?? label,
+              accessibilityValue: { text: display },
+              accessibilityState: { disabled },
+            }
         : // A read-only stepper stays one adjustable, like UIStepper: assistive tech
           // gets a single control it can swipe up/down instead of two unlabelled
           // buttons either side of a number it has to correlate.

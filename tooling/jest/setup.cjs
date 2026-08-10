@@ -22,3 +22,29 @@ try {
 } catch {
   // react-native not resolvable in this package — fine.
 }
+
+// Some third-party chart components (react-native-gifted-charts' LineChart, for
+// one) schedule mount animations with setTimeout and never clear them on
+// unmount. Those callbacks then fire after the test environment has been torn
+// down, which crashes the worker rather than failing a test. Track the handles
+// and drop any that are still pending when a test ends.
+const realSetTimeout = global.setTimeout;
+const realClearTimeout = global.clearTimeout;
+const pendingTimers = new Set();
+
+global.setTimeout = (...args) => {
+  const handle = realSetTimeout(...args);
+  pendingTimers.add(handle);
+  return handle;
+};
+global.setTimeout.__isMockFunction = false;
+
+global.clearTimeout = (handle) => {
+  pendingTimers.delete(handle);
+  return realClearTimeout(handle);
+};
+
+afterEach(() => {
+  for (const handle of pendingTimers) realClearTimeout(handle);
+  pendingTimers.clear();
+});

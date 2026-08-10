@@ -43,7 +43,8 @@ export default function BarChartCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [dataset, setDataset] = useState<Dataset>('week');
   const [tone, setTone] = useState<BarChartTone>('brand');
-  const [showValues, setShowValues] = useState(true);
+  // Off by default: tapping a bar is how you read one exact figure.
+  const [showValues, setShowValues] = useState(false);
   const [showLabels, setShowLabels] = useState(true);
   const [selected, setSelected] = useState<number | null>(null);
   const [previewOffset] = useState(() => new Animated.Value(0));

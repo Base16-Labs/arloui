@@ -84,4 +84,48 @@ describe('TabBar', () => {
     );
     expect(screen.getByText('Home')).toBeTruthy();
   });
+
+  /**
+   * A floating bar draws a 1px border on every side, so the outer view measures
+   * 2px wider than the row the tabs are laid out in. Sizing the pill off the
+   * outer width made every cell fractionally too wide, and the error compounded —
+   * the pill sat flush on the first tab and visibly right of the last one.
+   */
+  it('sizes the selection pill from the row, not the bordered outer bar', () => {
+    const ROW = 400;
+    const PADDING = 4; // floating bars inset the row by this much
+    const ITEMS = 4;
+
+    renderWithTheme(
+      <TabBar value="a" onValueChange={() => {}} width="floating" surface="filled">
+        <TabBar.Item value="a" label="A" />
+        <TabBar.Item value="b" label="B" />
+        <TabBar.Item value="c" label="C" />
+        <TabBar.Item value="d" label="D" />
+      </TabBar>,
+    );
+
+    // The row is the only node that measures itself; the pill derives from it.
+    const row = screen.UNSAFE_root
+      .findAllByType('View' as never)
+      .find((v) => typeof (v.props as { onLayout?: unknown }).onLayout === 'function');
+    fireEvent(row as never, 'layout', {
+      nativeEvent: { layout: { width: ROW, height: 56, x: 0, y: 0 } },
+    });
+
+    // The pill is the absolutely-positioned capsule behind the tabs.
+    const pill = screen.UNSAFE_root
+      .findAllByType('View' as never)
+      .map(
+        (v) =>
+          (v.props as { style?: { position?: string; width?: number; borderRadius?: number } })
+            .style,
+      )
+      .find((s) => s && s.position === 'absolute' && typeof s.width === 'number' && s.borderRadius);
+
+    expect(pill).toBeDefined();
+    // One cell of the row's own track — not of the 2px-wider bordered outer bar,
+    // which would give 100.5 here and creep right across the four tabs.
+    expect(pill?.width).toBeCloseTo((ROW - PADDING * 2) / ITEMS, 5);
+  });
 });

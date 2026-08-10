@@ -20,7 +20,7 @@ type ValueKind = 'count' | 'currency';
 
 const APPEARANCES: StepperAppearance[] = ['filled', 'plain'];
 const SIZES: StepperSize[] = ['sm', 'md'];
-const CONTROLS: StepperControls[] = ['split', 'start', 'end'];
+const CONTROLS: StepperControls[] = ['split', 'start', 'end', 'none'];
 const STATES: PreviewState[] = ['default', 'disabled', 'error'];
 const VALUE_KINDS: ValueKind[] = ['count', 'currency'];
 
@@ -32,7 +32,7 @@ export default function StepperCanvas() {
   const [appearance, setAppearance] = useState<StepperAppearance>('filled');
   const [size, setSize] = useState<StepperSize>('md');
   const [controls, setControls] = useState<StepperControls>('split');
-  const [editable, setEditable] = useState(false);
+  const [allowTyping, setAllowTyping] = useState(false);
   const [state, setState] = useState<PreviewState>('default');
   const [kind, setKind] = useState<ValueKind>('count');
   const [count, setCount] = useState(2);
@@ -49,6 +49,8 @@ export default function StepperCanvas() {
     }).start();
   }, [previewOffset, sheetOpen]);
 
+  // Nothing to hold when the buttons are gone.
+  const stepHint = controls === 'none' ? (allowTyping ? 'Type a value' : 'Read only') : 'Hold to move faster';
   const isCurrency = kind === 'currency';
 
   return (
@@ -91,14 +93,14 @@ export default function StepperCanvas() {
                 appearance={appearance}
                 size={size}
                 controls={controls}
-                editable={editable}
+                allowTyping={allowTyping}
                 min={0}
                 max={100000}
                 step={50}
                 disabled={state === 'disabled'}
                 error={state === 'error'}
                 label="Amount"
-                helper={state === 'error' ? 'Above your daily limit' : 'Hold to move faster'}
+                helper={state === 'error' ? 'Above your daily limit' : stepHint}
                 format={(value) => `$${value.toLocaleString('en-US')}`}
                 accessibilityLabel="Amount"
               />
@@ -109,13 +111,13 @@ export default function StepperCanvas() {
                 appearance={appearance}
                 size={size}
                 controls={controls}
-                editable={editable}
+                allowTyping={allowTyping}
                 min={0}
                 max={99}
                 disabled={state === 'disabled'}
                 error={state === 'error'}
                 label="Guests"
-                helper={state === 'error' ? 'Max 99 per booking' : 'Hold to move faster'}
+                helper={state === 'error' ? 'Max 99 per booking' : stepHint}
                 accessibilityLabel="Guests"
               />
             )}
@@ -190,13 +192,13 @@ export default function StepperCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Editable">
+              <VariantControlRow label="Allow typing">
                 {(['off', 'on'] as const).map((option) => (
                   <VariantChip
                     key={option}
                     label={option}
-                    active={editable === (option === 'on')}
-                    onPress={() => setEditable(option === 'on')}
+                    active={allowTyping === (option === 'on')}
+                    onPress={() => setAllowTyping(option === 'on')}
                   />
                 ))}
               </VariantControlRow>

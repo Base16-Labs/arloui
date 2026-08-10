@@ -17,6 +17,7 @@ const LEVELS = [
   { value: 72, label: 'Storage' },
   { value: 88, label: 'Budget used' },
 ] as const;
+const RING_LEVEL = LEVELS[1];
 
 export default function MeterCanvas() {
   const t = useTokens();
@@ -69,16 +70,10 @@ export default function MeterCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
-            <View
-              style={
-                shape === 'ring'
-                  ? { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }
-                  : { gap: 20 }
-              }
-            >
-              {LEVELS.map(({ value, label }) => (
+            <View style={shape === 'ring' ? { alignItems: 'center' } : { gap: 20 }}>
+              {(shape === 'ring' ? [RING_LEVEL] : LEVELS).map(({ value, label }) => (
                 <Chart.Meter
-                  key={label}
+                  key={`${shape}-${label}`}
                   shape={shape}
                   tone={tone}
                   value={value}

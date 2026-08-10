@@ -20,10 +20,21 @@
  *   even when two colours are close.
  * - **Center label, not slice labels.** Text inside thin arcs is unreadable; the
  *   middle holds the total.
+ * - **The hole is painted, not cut.** `react-native-gifted-charts` draws a full
+ *   pie and covers the middle with an opaque disc, so the ring only reads as a
+ *   ring when that disc matches what is behind the chart. It defaults to the
+ *   screen background; pass `centerColor` when the donut sits on anything else,
+ *   a card for instance.
+ *
+ * The ring is drawn by `react-native-gifted-charts`. It exposes no accessibility
+ * semantics, so the summary and the legend below are this component's own — the
+ * legend is also what carries selection, since arcs are poor tap targets.
  */
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { G, Path } from 'react-native-svg';
+import { PieChart } from 'react-native-gifted-charts';
+import { rgbaFromHex } from '@arloui/tokens';
+import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 
 export type DonutSlice = {
@@ -45,49 +56,23 @@ export type DonutChartProps = {
   onSelect?: (index: number, slice: DonutSlice) => void;
   format?: (value: number) => string;
   showLegend?: boolean;
+  /**
+   * Fill for the middle of the ring. Must match whatever the chart sits on —
+   * gifted-charts paints the hole rather than cutting it. Defaults to the screen
+   * background.
+   */
+  centerColor?: string;
   /** Categories past the palette's capacity are folded into one neutral slice. */
   maxSlices?: number;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
 };
 
-/** Gap between slices, in degrees, painted as a stroke in the surface colour. */
-const GAP_DEGREES = 1.5;
+/** Gap between slices, painted as a stroke in the surface colour. */
+const GAP_WIDTH = 2;
 
-function polar(cx: number, cy: number, r: number, degrees: number) {
-  const rad = ((degrees - 90) * Math.PI) / 180;
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-}
-
-/** SVG path for one ring segment between two angles. */
-function arcPath(
-  cx: number,
-  cy: number,
-  outer: number,
-  inner: number,
-  startAngle: number,
-  endAngle: number,
-): string {
-  const sweep = endAngle - startAngle;
-  // A full ring can't be drawn as one arc — the start and end points coincide, so
-  // it collapses. Split it into two halves.
-  if (sweep >= 360) {
-    const half = startAngle + 180;
-    return `${arcPath(cx, cy, outer, inner, startAngle, half)} ${arcPath(cx, cy, outer, inner, half, startAngle + 360)}`;
-  }
-  const largeArc = sweep > 180 ? 1 : 0;
-  const o1 = polar(cx, cy, outer, startAngle);
-  const o2 = polar(cx, cy, outer, endAngle);
-  const i2 = polar(cx, cy, inner, endAngle);
-  const i1 = polar(cx, cy, inner, startAngle);
-  return [
-    `M${o1.x.toFixed(2)},${o1.y.toFixed(2)}`,
-    `A${outer},${outer} 0 ${largeArc} 1 ${o2.x.toFixed(2)},${o2.y.toFixed(2)}`,
-    `L${i2.x.toFixed(2)},${i2.y.toFixed(2)}`,
-    `A${inner},${inner} 0 ${largeArc} 0 ${i1.x.toFixed(2)},${i1.y.toFixed(2)}`,
-    'Z',
-  ].join(' ');
-}
+/** Unselected slices fade to this, so the selected one reads as the subject. */
+const DIMMED_ALPHA = 0.35;
 
 export function DonutChart({
   data,
@@ -99,6 +84,7 @@ export function DonutChart({
   onSelect,
   format,
   showLegend = true,
+  centerColor,
   maxSlices = 4,
   accessibilityLabel,
   style,
@@ -125,31 +111,37 @@ export function DonutChart({
 
   const total = slices.reduce((sum, s) => sum + s.value, 0);
 
-  const cx = size / 2;
-  const cy = size / 2;
   const outer = size / 2;
   const inner = Math.max(0, outer - thickness);
 
   const segments = useMemo(() => {
     if (total <= 0) return [];
-    let cursor = 0;
-    return slices.map((slice, index) => {
-      const sweep = (slice.value / total) * 360;
-      const start = cursor;
-      cursor += sweep;
-      // Only inset for a gap when the slice is wide enough to survive it.
-      const gap = slices.length > 1 && sweep > GAP_DEGREES * 2 ? GAP_DEGREES / 2 : 0;
-      return {
-        slice,
-        index,
-        d: arcPath(cx, cy, outer, inner, start + gap, cursor - gap),
+    return slices.map((slice, index) => ({
+      slice,
+      index,
+      color:
+        slice.color ?? (index < palette.length ? (palette[index] as string) : t.colors.chartOther),
+      percent: (slice.value / total) * 100,
+    }));
+  }, [slices, total, palette, t.colors.chartOther]);
+
+  const pieData = useMemo(
+    () =>
+      segments.map((segment) => ({
+        value: segment.slice.value,
+        // Dimming is expressed in the colour because pie slices take no opacity.
         color:
-          slice.color ??
-          (index < palette.length ? (palette[index] as string) : t.colors.chartOther),
-        percent: (slice.value / total) * 100,
-      };
-    });
-  }, [slices, total, cx, cy, outer, inner, palette, t.colors.chartOther]);
+          selection == null || selection === segment.index
+            ? segment.color
+            : segment.color.startsWith('#')
+              ? rgbaFromHex(segment.color, DIMMED_ALPHA)
+              : segment.color,
+        // Surface-coloured ring keeps adjacent arcs separable.
+        strokeColor: t.colors.surface,
+        strokeWidth: segments.length > 1 ? GAP_WIDTH : 0,
+      })),
+    [segments, selection, t.colors.surface],
+  );
 
   const summary =
     accessibilityLabel ??
@@ -168,21 +160,17 @@ export function DonutChart({
         style={{ width: size, height: size, alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}
       >
         {segments.length > 0 ? (
-          <Svg width={size} height={size} style={{ position: 'absolute' }}>
-            <G>
-              {segments.map((segment) => (
-                <Path
-                  key={`${segment.slice.label}-${segment.index}`}
-                  d={segment.d}
-                  fill={segment.color}
-                  opacity={selection == null || selection === segment.index ? 1 : 0.35}
-                  // Surface-coloured ring keeps adjacent arcs separable.
-                  stroke={t.colors.surface}
-                  strokeWidth={1}
-                />
-              ))}
-            </G>
-          </Svg>
+          <View style={{ position: 'absolute' }} pointerEvents="none">
+            <PieChart
+              data={pieData}
+              donut
+              radius={outer}
+              innerRadius={inner}
+              // Painted, not cut — see the note at the top of the file.
+              innerCircleColor={centerColor ?? t.colors.bg}
+              isAnimated={false}
+            />
+          </View>
         ) : (
           <View
             style={{
@@ -239,6 +227,7 @@ export function DonutChart({
                 accessibilityState={{ selected }}
                 disabled={!onSelect && selectedIndex !== undefined}
                 onPress={() => {
+                  void haptic('selection');
                   if (onSelect) onSelect(segment.index, segment.slice);
                   else setInternalSelection(selected ? null : segment.index);
                 }}

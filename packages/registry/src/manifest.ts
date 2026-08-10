@@ -143,8 +143,16 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Chart',
     description:
       'Five chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars, rounded data-ends, negatives below the baseline), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), and Chart.Meter (one value against a target, as a bar or a ring).',
-    dependencies: ['react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'animated-counter'],
+    // gifted-charts draws the line, bar, and pie marks. It resolves a gradient
+    // package at import time, so expo-linear-gradient ships alongside it — a bare
+    // React Native app can substitute react-native-linear-gradient instead.
+    dependencies: [
+      'react-native-svg',
+      'react-native-gifted-charts',
+      'expo-linear-gradient',
+      'expo-haptics',
+    ],
+    registryDependencies: ['tokens', 'theme-provider', 'animated-counter', 'haptics'],
     files: [
       { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
       { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },

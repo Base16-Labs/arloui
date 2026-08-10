@@ -102,6 +102,7 @@ export {
   type BarChartProps,
   type BarChartTone,
   type BarDatum,
+  type ChartCurve,
   type ChartPlotProps,
   type ChartProps,
   type ChartTone,

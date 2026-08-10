@@ -85,6 +85,41 @@ describe('BarChart', () => {
     renderWithTheme(<BarChart data={[]} />);
     expect(screen.getByRole('image')).toBeTruthy();
   });
+
+  /**
+   * The bars are only drawn once the chart has measured itself, so value labels
+   * don't exist until a layout lands. Tests that assert on them have to say so.
+   */
+  function layoutBars(width = 240, height = 160) {
+    const node = screen.UNSAFE_root
+      .findAllByType('View' as never)
+      .find((v) => typeof (v.props as { onLayout?: unknown }).onLayout === 'function');
+    fireEvent(node as never, 'layout', {
+      nativeEvent: { layout: { width, height, x: 0, y: 0 } },
+    });
+  }
+
+  it('shows no values until a bar is selected, then only that one', () => {
+    // A number over every bar is noise; selection is how you read one figure.
+    const { rerender } = renderWithTheme(
+      <BarChart data={week} format={money} onSelect={() => {}} />,
+    );
+    layoutBars();
+    expect(screen.queryByText('$30.00')).toBeNull();
+    expect(screen.queryByText('$44.00')).toBeNull();
+
+    rerender(<BarChart data={week} format={money} selectedIndex={2} onSelect={() => {}} />);
+    layoutBars();
+    expect(screen.getByText('$44.00')).toBeTruthy();
+    expect(screen.queryByText('$30.00')).toBeNull();
+  });
+
+  it('still shows every value when asked explicitly', () => {
+    renderWithTheme(<BarChart data={week} format={money} showValues onSelect={() => {}} />);
+    layoutBars();
+    expect(screen.getByText('$30.00')).toBeTruthy();
+    expect(screen.getByText('$44.00')).toBeTruthy();
+  });
 });
 
 describe('DonutChart', () => {
@@ -167,24 +202,46 @@ describe('Meter', () => {
     expect(meter.props.accessibilityValue).toMatchObject({ min: 0, max: 100, now: 72, text: '72%' });
   });
 
+  /**
+   * The painted number counts up with the fill, so it is mid-sweep on the render
+   * these specs inspect. `accessibilityValue.text` carries the settled value —
+   * which is the progressbar's actual contract — so that is what they assert.
+   */
   it('exposes progress semantics for the ring shape', () => {
     renderWithTheme(<Meter shape="ring" value={1840} max={2000} label="Steps" />);
     const meter = screen.getByRole('progressbar', { name: 'Steps' });
-    expect(meter.props.accessibilityValue).toMatchObject({ now: 1840, max: 2000 });
-    expect(screen.getByText('92%')).toBeTruthy();
+    expect(meter.props.accessibilityValue).toMatchObject({ now: 1840, max: 2000, text: '92%' });
+  });
+
+  it('counts the readout up from empty rather than starting at the value', () => {
+    renderWithTheme(<Meter shape="ring" value={1840} max={2000} label="Steps" />);
+    // First frame is the empty state; the sweep is what carries it to 92%.
+    expect(screen.getByText('0%')).toBeTruthy();
+    expect(screen.queryByText('92%')).toBeNull();
+  });
+
+  it('settles on the target value once the sweep finishes', async () => {
+    renderWithTheme(<Meter shape="ring" value={1840} max={2000} label="Steps" />);
+    expect(await screen.findByText('92%')).toBeTruthy();
   });
 
   it('clamps out-of-range values instead of overflowing the track', () => {
     const { rerender } = renderWithTheme(<Meter value={150} max={100} label="Over" />);
-    expect(screen.getByText('100%')).toBeTruthy();
+    expect(
+      screen.getByRole('progressbar', { name: 'Over' }).props.accessibilityValue,
+    ).toMatchObject({ text: '100%' });
 
     rerender(<Meter value={-20} max={100} label="Under" />);
-    expect(screen.getByText('0%')).toBeTruthy();
+    expect(
+      screen.getByRole('progressbar', { name: 'Under' }).props.accessibilityValue,
+    ).toMatchObject({ text: '0%' });
   });
 
   it('does not divide by a zero range', () => {
     renderWithTheme(<Meter value={5} min={10} max={10} label="Flat" />);
-    expect(screen.getByText('0%')).toBeTruthy();
+    expect(
+      screen.getByRole('progressbar', { name: 'Flat' }).props.accessibilityValue,
+    ).toMatchObject({ text: '0%' });
     expect(screen.queryByText('NaN%')).toBeNull();
   });
 

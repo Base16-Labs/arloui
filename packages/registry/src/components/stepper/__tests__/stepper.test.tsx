@@ -206,13 +206,13 @@ describe('Stepper — grouped controls and editing', () => {
    * The field is mounted the whole time rather than swapped in on press — that is
    * what makes tapping it behave like tapping any other input.
    */
-  it('renders no text field unless editable is set', () => {
+  it('renders no text field unless allowTyping is set', () => {
     renderWithTheme(<Stepper controls="end" value={3} onValueChange={() => {}} />);
     expect(screen.queryByTestId('stepper-value')).toBeNull();
   });
 
-  it('renders a focusable numeric field when editable', () => {
-    renderWithTheme(<Stepper controls="end" editable value={3} onValueChange={() => {}} />);
+  it('renders a focusable numeric field when allowTyping is on', () => {
+    renderWithTheme(<Stepper controls="end" allowTyping value={3} onValueChange={() => {}} />);
 
     const input = screen.getByTestId('stepper-value');
     expect(input.props.value).toBe('3');
@@ -222,7 +222,7 @@ describe('Stepper — grouped controls and editing', () => {
 
   it('offers a decimal keypad when the step is fractional', () => {
     renderWithTheme(
-      <Stepper controls="end" editable step={0.5} value={1} onValueChange={() => {}} />,
+      <Stepper controls="end" allowTyping step={0.5} value={1} onValueChange={() => {}} />,
     );
     expect(screen.getByTestId('stepper-value').props.keyboardType).toBe('decimal-pad');
   });
@@ -231,7 +231,7 @@ describe('Stepper — grouped controls and editing', () => {
     renderWithTheme(
       <Stepper
         controls="end"
-        editable
+        allowTyping
         value={1200}
         max={100000}
         onValueChange={() => {}}
@@ -249,7 +249,7 @@ describe('Stepper — grouped controls and editing', () => {
   it('commits a typed value, clamped to max', () => {
     const onValueChange = jest.fn();
     renderWithTheme(
-      <Stepper controls="end" editable value={3} max={20} onValueChange={onValueChange} />,
+      <Stepper controls="end" allowTyping value={3} max={20} onValueChange={onValueChange} />,
     );
 
     const input = screen.getByTestId('stepper-value');
@@ -263,7 +263,7 @@ describe('Stepper — grouped controls and editing', () => {
   it('quantizes a typed value to the step precision', () => {
     const onValueChange = jest.fn();
     renderWithTheme(
-      <Stepper controls="end" editable value={1} step={0.1} max={10} onValueChange={onValueChange} />,
+      <Stepper controls="end" allowTyping value={1} step={0.1} max={10} onValueChange={onValueChange} />,
     );
 
     const input = screen.getByTestId('stepper-value');
@@ -276,7 +276,7 @@ describe('Stepper — grouped controls and editing', () => {
 
   /** Typing letters should simply not land, rather than being rejected at commit. */
   it('keeps the draft numeric as you type', () => {
-    renderWithTheme(<Stepper controls="end" editable value={1} max={999} onValueChange={() => {}} />);
+    renderWithTheme(<Stepper controls="end" allowTyping value={1} max={999} onValueChange={() => {}} />);
 
     const input = screen.getByTestId('stepper-value');
     fireEvent(input, 'focus');
@@ -286,7 +286,7 @@ describe('Stepper — grouped controls and editing', () => {
 
   it('allows one decimal point only, and only for fractional steps', () => {
     const { unmount } = renderWithTheme(
-      <Stepper controls="end" editable step={0.1} value={1} max={99} onValueChange={() => {}} />,
+      <Stepper controls="end" allowTyping step={0.1} value={1} max={99} onValueChange={() => {}} />,
     );
     const decimal = screen.getByTestId('stepper-value');
     fireEvent(decimal, 'focus');
@@ -295,7 +295,7 @@ describe('Stepper — grouped controls and editing', () => {
     unmount();
 
     renderWithTheme(
-      <Stepper controls="end" editable value={1} max={99} onValueChange={() => {}} />,
+      <Stepper controls="end" allowTyping value={1} max={99} onValueChange={() => {}} />,
     );
     const integer = screen.getByTestId('stepper-value');
     fireEvent(integer, 'focus');
@@ -310,7 +310,7 @@ describe('Stepper — grouped controls and editing', () => {
   it('reverts an empty draft instead of clamping to min', () => {
     const onValueChange = jest.fn();
     renderWithTheme(
-      <Stepper controls="end" editable value={7} min={1} onValueChange={onValueChange} />,
+      <Stepper controls="end" allowTyping value={7} min={1} onValueChange={onValueChange} />,
     );
 
     const input = screen.getByTestId('stepper-value');
@@ -324,7 +324,7 @@ describe('Stepper — grouped controls and editing', () => {
 
   it('does not accept input while disabled', () => {
     renderWithTheme(
-      <Stepper controls="end" editable disabled value={3} onValueChange={() => {}} />,
+      <Stepper controls="end" allowTyping disabled value={3} onValueChange={() => {}} />,
     );
     expect(screen.getByTestId('stepper-value').props.editable).toBe(false);
   });
@@ -332,11 +332,11 @@ describe('Stepper — grouped controls and editing', () => {
   /**
    * The regression this guards: `accessible` on the row collapses the subtree into
    * one element, and a TextInput inside a collapsed subtree never becomes first
-   * responder — so tapping it raises no keyboard on a device. An editable stepper
+   * responder — so tapping it raises no keyboard on a device. A typed stepper
    * has to expose its three children instead of merging them.
    */
-  it('does not collapse into one accessibility element when editable', () => {
-    renderWithTheme(<Stepper controls="end" editable value={5} label="Guests" onValueChange={() => {}} />);
+  it('does not collapse into one accessibility element when typing is allowed', () => {
+    renderWithTheme(<Stepper controls="end" allowTyping value={5} label="Guests" onValueChange={() => {}} />);
 
     expect(screen.queryByRole('adjustable')).toBeNull();
     expect(screen.getByRole('button', { name: 'Increase' })).toBeTruthy();
@@ -344,8 +344,140 @@ describe('Stepper — grouped controls and editing', () => {
     expect(screen.getByTestId('stepper-value').props.accessibilityLabel).toBe('Guests');
   });
 
-  it('still collapses into one adjustable when not editable', () => {
+  it('still collapses into one adjustable when typing is off', () => {
     renderWithTheme(<Stepper controls="end" value={5} label="Guests" onValueChange={() => {}} />);
     expect(screen.getByRole('adjustable', { name: 'Guests' })).toBeTruthy();
+  });
+
+  describe('controls="none"', () => {
+    it('renders the value with no stepper buttons', () => {
+      renderWithTheme(<Stepper controls="none" value={4} onValueChange={() => {}} />);
+      expect(screen.queryByRole('button')).toBeNull();
+      // The counter renders per character and hides itself from assistive tech.
+      expect(screen.getByText('4', { includeHiddenElements: true })).toBeTruthy();
+    });
+
+    it('keeps both buttons for every other arrangement', () => {
+      for (const controls of ['split', 'start', 'end'] as const) {
+        const { unmount } = renderWithTheme(
+          <Stepper controls={controls} value={4} onValueChange={() => {}} />,
+        );
+        expect(screen.getAllByRole('button')).toHaveLength(2);
+        unmount();
+      }
+    });
+
+    /**
+     * Without buttons there is nothing to adjust by touch, so announcing it as an
+     * adjustable would hand assistive tech an affordance no sighted user has.
+     */
+    it('announces itself as a readout rather than an adjustable', () => {
+      renderWithTheme(
+        <Stepper controls="none" value={4} label="Guests" onValueChange={() => {}} />,
+      );
+      expect(screen.queryByRole('adjustable')).toBeNull();
+      expect(screen.getByLabelText('Guests').props.accessibilityValue).toMatchObject({ text: '4' });
+    });
+
+    it('still takes a typed value when typing is allowed', () => {
+      const onValueChange = jest.fn();
+      renderWithTheme(
+        <Stepper controls="none" allowTyping value={4} max={99} onValueChange={onValueChange} />,
+      );
+      const input = screen.getByTestId('stepper-value');
+      fireEvent(input, 'focus');
+      fireEvent.changeText(input, '17');
+      fireEvent(input, 'blur');
+      expect(onValueChange).toHaveBeenCalledWith(17);
+    });
+  });
+
+  describe('the rolling counter', () => {
+    /**
+     * The counter used to be swapped out for the text field whenever typing was
+     * allowed, so those steppers snapped between values instead of rolling. It now
+     * sits over a permanently mounted field and only yields once that field has
+     * focus.
+     */
+    it('shows the counter over the field while it is blurred', () => {
+      renderWithTheme(
+        <Stepper controls="end" allowTyping value={12} onValueChange={() => {}} />,
+      );
+      // Both are present: the counter paints, the field underneath stays tappable.
+      expect(screen.getByTestId('stepper-value')).toBeTruthy();
+      // The counter stacks each digit's neighbours to roll between them, so a
+      // glyph can legitimately appear more than once.
+      expect(screen.getAllByText('1', { includeHiddenElements: true }).length).toBeGreaterThan(0);
+      expect(screen.getAllByText('2', { includeHiddenElements: true }).length).toBeGreaterThan(0);
+    });
+
+    /**
+     * The field never paints its own glyphs — blurred or focused, the counter is
+     * what you see. Handing over to plain text on focus is what made a typed value
+     * snap instead of roll.
+     */
+    it('keeps the field transparent so the counter draws every state', () => {
+      renderWithTheme(<Stepper controls="end" allowTyping value={12} onValueChange={() => {}} />);
+      const input = screen.getByTestId('stepper-value');
+      expect(input.props.style.color).toBe('transparent');
+
+      fireEvent(input, 'focus');
+      expect(screen.getByTestId('stepper-value').props.style.color).toBe('transparent');
+    });
+
+    /**
+     * With the text invisible the caret is the only thing the field still draws,
+     * and each platform sources it differently. `selectionColor` also tints the
+     * selection highlight, so it has to be the accent — ink there gave the stepper
+     * a dark selection band nothing else in the library has.
+     */
+    it('tints the caret and selection with the accent rather than the ink', () => {
+      renderWithTheme(<Stepper controls="end" allowTyping value={12} onValueChange={() => {}} />);
+      const input = screen.getByTestId('stepper-value');
+      expect(input.props.selectionColor).toBeTruthy();
+      expect(input.props.selectionColor).not.toBe('transparent');
+      // iOS reads selectionColor, Android cursorColor — they must agree.
+      expect(input.props.cursorColor).toBe(input.props.selectionColor);
+    });
+
+    /**
+     * Selecting the whole value instead would highlight glyphs the field isn't
+     * painting, and leave the caret at the left of a number about to be appended
+     * to. The placement is released straight after so taps can move it freely.
+     */
+    it('drops the caret at the end of the value on focus', () => {
+      renderWithTheme(<Stepper controls="end" allowTyping value={247} onValueChange={() => {}} />);
+      const input = screen.getByTestId('stepper-value');
+      expect(input.props.selectTextOnFocus).toBeFalsy();
+
+      fireEvent(input, 'focus');
+      expect(screen.getByTestId('stepper-value').props.selection).toEqual({ start: 3, end: 3 });
+    });
+
+    /**
+     * A plain stepper hugs its content. Forcing the field to the full slot width
+     * pushed the buttons out to the screen edges the moment typing was allowed.
+     */
+    it('does not stretch a plain stepper to fill its row', () => {
+      renderWithTheme(
+        <Stepper appearance="plain" allowTyping value={2} onValueChange={() => {}} />,
+      );
+      const input = screen.getByTestId('stepper-value');
+      // The field is laid over the counter, which is what sizes the value.
+      expect(input.props.style.width).toBeUndefined();
+      expect(input.props.style.position).toBe('absolute');
+    });
+
+    it('rolls the counter through the draft as digits are typed', () => {
+      renderWithTheme(<Stepper controls="end" allowTyping value={1} max={99} onValueChange={() => {}} />);
+      const input = screen.getByTestId('stepper-value');
+      fireEvent(input, 'focus');
+      fireEvent.changeText(input, '47');
+
+      // The counter is showing the draft, not the committed value.
+      const opts = { includeHiddenElements: true };
+      expect(screen.getAllByText('4', opts).length).toBeGreaterThan(0);
+      expect(screen.getAllByText('7', opts).length).toBeGreaterThan(0);
+    });
   });
 });

@@ -30,8 +30,9 @@
  * - **Direction is never colour-alone.** `Chart.Delta` always renders a sign, because
  *   the two tones sit near the deuteranopia separation floor. Don't render a bare
  *   coloured number instead.
- * - **Straight segments.** The path is not smoothed: a spline through sparse points
- *   invents peaks and troughs that were never in the data.
+ * - **Straight segments by default.** A spline through sparse points invents peaks
+ *   and troughs that were never in the data, so `Chart.Plot` joins points with
+ *   straight lines unless you ask for `curve="smooth"`.
  *
  * The value and delta read from context, so they show the scrubbed point while a
  * drag is active and fall back to the latest point when it isn't.
@@ -40,7 +41,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  useId,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -56,8 +57,10 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
+import { CurveType, LineChart } from 'react-native-gifted-charts';
 import { AnimatedCounter } from '../animated-counter/animated-counter';
+import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import { BarChart } from './bar-chart';
 import { DonutChart } from './donut-chart';
@@ -65,6 +68,15 @@ import { Meter } from './meter';
 import { Sparkline } from './sparkline';
 
 export type ChartTone = 'auto' | 'positive' | 'negative' | 'neutral';
+
+/**
+ * How the path joins its points. `'steep'` is the default and the honest one —
+ * straight segments say only what the data says. `'smooth'` fits a spline, which
+ * reads calmer but invents peaks and troughs between points that were never
+ * measured; reach for it on dense series where the interpolation is small, not
+ * on a handful of points.
+ */
+export type ChartCurve = 'steep' | 'smooth';
 
 type ChartContextValue = {
   data: number[];
@@ -253,6 +265,8 @@ export type ChartPlotProps = {
   showBaseline?: boolean;
   /** Turn off scrubbing for a static, decorative plot. */
   scrubbable?: boolean;
+  /** Straight segments (default) or a fitted spline. See `ChartCurve`. */
+  curve?: ChartCurve;
   /** Announced by screen readers in place of the visual plot. */
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
@@ -261,12 +275,22 @@ export type ChartPlotProps = {
 const STROKE = 2;
 /** Room for the stroke and the scrub dot so neither clips at the edges. */
 const INSET = 6;
+/**
+ * gifted-charts always draws into a box 10px taller than the `height` it is
+ * given, anchored at the bottom — `getExtendedContainerHeightWithPadding` adds
+ * the constant unconditionally, and its `overflowTop` prop can't cancel it
+ * (that prop is read as a boolean flag, not as a value). The plot is shifted up
+ * by the same amount so the drawn line lands where the scrub overlay's own
+ * geometry expects it; without this the dot floats 10px above the line.
+ */
+const GIFTED_TOP_PADDING = 10;
 
 function ChartPlot({
   height = 180,
   fill = true,
   showBaseline = true,
   scrubbable = true,
+  curve = 'steep',
   accessibilityLabel,
   style,
 }: ChartPlotProps) {
@@ -293,6 +317,15 @@ function ChartPlot({
     },
     [count, width],
   );
+
+  // One tick per point the scrub actually lands on. Keying off the committed
+  // index rather than the touch stream is what collapses a drag's many move
+  // events down to the handful of points it crossed — React drops the re-render
+  // when the index doesn't change, so this effect doesn't run either.
+  useEffect(() => {
+    if (activeIndex == null) return;
+    void haptic('selection');
+  }, [activeIndex]);
 
   const panResponder = useMemo(
     () =>
@@ -327,23 +360,14 @@ function ChartPlot({
     [data, min, span, usableWidth, usableHeight],
   );
 
-  const linePath = useMemo(() => {
-    if (data.length === 0 || width === 0) return '';
-    return data
-      .map((_, index) => {
-        const { x, y } = pointAt(index);
-        return `${index === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
-      })
-      .join(' ');
-  }, [data, pointAt, width]);
+  // gifted-charts scales from zero, so the series is shifted down by `min` and the
+  // top of the scale set to the span. That reproduces the min..max normalisation
+  // the overlay geometry in `pointAt` already assumes, keeping the two aligned.
+  const giftedData = useMemo(() => data.map((value) => ({ value: value - min })), [data, min]);
 
-  const areaPath = useMemo(() => {
-    if (!fill || !linePath || data.length < 2) return '';
-    const start = pointAt(0);
-    const end = pointAt(data.length - 1);
-    const floor = plotHeight - INSET;
-    return `${linePath} L${end.x.toFixed(2)},${floor} L${start.x.toFixed(2)},${floor} Z`;
-  }, [fill, linePath, data.length, pointAt, plotHeight]);
+  // One segment's worth of track. gifted-charts positions points by spacing rather
+  // than by fitting a width, so this is what makes the line span the plot exactly.
+  const spacing = count < 2 ? 0 : usableWidth / (count - 1);
 
   const baselineY = useMemo(() => {
     const ratio = span === 0 ? 0.5 : (baseline - min) / span;
@@ -354,9 +378,6 @@ function ChartPlot({
     showBaseline && data.length > 1 && baseline >= min && baseline <= max && span > 0;
 
   const active = activeIndex != null ? pointAt(activeIndex) : null;
-
-  // Document-global, so a constant id would collide between two charts on one screen.
-  const gradientId = `arloChartFill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
   const summary =
     accessibilityLabel ??
@@ -372,48 +393,72 @@ function ChartPlot({
       {...(scrubbable ? panResponder.panHandlers : {})}
     >
       {width > 0 && data.length > 0 ? (
-        <Svg width={width} height={plotHeight}>
-          {fill ? (
-            <Defs>
-              <LinearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor={color} stopOpacity={0.22} />
-                <Stop offset="1" stopColor={color} stopOpacity={0} />
-              </LinearGradient>
-            </Defs>
-          ) : null}
-
-          {showBaselineLine ? (
-            <Path
-              d={`M${INSET},${baselineY.toFixed(2)} L${(width - INSET).toFixed(2)},${baselineY.toFixed(2)}`}
-              stroke={t.colors.border}
-              strokeWidth={1}
-              strokeDasharray="3 4"
+        <>
+          {/* Inset so the stroke and the scrub dot don't clip at the edges. The
+              overlay below shares these offsets, which is what keeps the dot on
+              the line. */}
+          <View
+            style={{ position: 'absolute', left: INSET, top: INSET - GIFTED_TOP_PADDING }}
+            pointerEvents="none"
+          >
+            <LineChart
+              data={giftedData}
+              width={usableWidth}
+              height={usableHeight}
+              curved={curve === 'smooth'}
+              curveType={CurveType.CUBIC}
+              color={color}
+              thickness={STROKE}
+              areaChart={fill}
+              startFillColor={color}
+              endFillColor={color}
+              startOpacity={0.22}
+              endOpacity={0}
+              // The scale is pre-shifted into 0..span by `giftedData`.
+              maxValue={span === 0 ? 1 : span}
+              spacing={spacing}
+              initialSpacing={0}
+              endSpacing={0}
+              // No axis furniture — the value readout is the label.
+              hideAxesAndRules
+              hideYAxisText
+              hideDataPoints
+              xAxisThickness={0}
+              yAxisThickness={0}
+              yAxisLabelWidth={0}
+              xAxisLabelsHeight={0}
+              adjustToWidth
+              disableScroll
+              // Scrubbing is driven by this component's own PanResponder, which
+              // is what `Chart.Value` and `Chart.Delta` read from context.
+              isAnimated={false}
+              disableForeignObject
             />
-          ) : null}
+          </View>
 
-          {areaPath ? <Path d={areaPath} fill={`url(#${gradientId})`} /> : null}
-
-          <Path
-            d={linePath}
-            stroke={color}
-            strokeWidth={STROKE}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-
-          {active ? (
-            <>
+          <Svg width={width} height={plotHeight} style={{ position: 'absolute' }} pointerEvents="none">
+            {showBaselineLine ? (
               <Path
-                d={`M${active.x.toFixed(2)},${INSET} L${active.x.toFixed(2)},${(plotHeight - INSET).toFixed(2)}`}
+                d={`M${INSET},${baselineY.toFixed(2)} L${(width - INSET).toFixed(2)},${baselineY.toFixed(2)}`}
                 stroke={t.colors.border}
                 strokeWidth={1}
+                strokeDasharray="3 4"
               />
-              {/* Surface ring keeps the dot readable where it overlaps the line. */}
-              <Circle cx={active.x} cy={active.y} r={6} fill={color} stroke={t.colors.surface} strokeWidth={2} />
-            </>
-          ) : null}
-        </Svg>
+            ) : null}
+
+            {active ? (
+              <>
+                <Path
+                  d={`M${active.x.toFixed(2)},${INSET} L${active.x.toFixed(2)},${(plotHeight - INSET).toFixed(2)}`}
+                  stroke={t.colors.border}
+                  strokeWidth={1}
+                />
+                {/* Surface ring keeps the dot readable where it overlaps the line. */}
+                <Circle cx={active.x} cy={active.y} r={6} fill={color} stroke={t.colors.surface} strokeWidth={2} />
+              </>
+            ) : null}
+          </Svg>
+        </>
       ) : null}
     </View>
   );
@@ -438,7 +483,10 @@ function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
             accessibilityRole="tab"
             accessibilityLabel={option}
             accessibilityState={{ selected }}
-            onPress={() => onPeriodChange?.(option)}
+            onPress={() => {
+              void haptic('selection');
+              onPeriodChange?.(option);
+            }}
             hitSlop={8}
             style={({ pressed }) => ({
               flex: 1,

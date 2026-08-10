@@ -25,8 +25,14 @@ module.exports = {
         'expo(nent)?',
         '@expo(nent)?/.*',
         'expo-modules-core',
+        // gifted-charts resolves its gradient peer behind a try/catch, so an
+        // untransformed ESM build surfaces as "Gradient package was not found"
+        // rather than a parse error. Keep it transformed.
+        'expo-linear-gradient',
         'react-native-svg',
         'react-native-reanimated',
+        'react-native-gifted-charts',
+        'gifted-charts-core',
         '@arloui/.*',
       ].join('|') +
       ')/)',
@@ -36,6 +42,10 @@ module.exports = {
     // react-native-reanimated (v4 + worklets) is a peer dep consumers install;
     // map it to a lightweight manual mock so animated components render in tests.
     '^react-native-reanimated$': path.join(__dirname, 'mocks/react-native-reanimated.js'),
+    // react-native-gifted-charts requires a gradient package at import time; the
+    // real one drags in expo-modules-core. Gradients are decoration here, so a
+    // View stands in. See mocks/expo-linear-gradient.js.
+    '^expo-linear-gradient$': path.join(__dirname, 'mocks/expo-linear-gradient.js'),
   },
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
   coveragePathIgnorePatterns: [

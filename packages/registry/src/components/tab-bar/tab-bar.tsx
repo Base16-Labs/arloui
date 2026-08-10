@@ -115,7 +115,13 @@ function TabBarRoot({
   // lighter one — an opaque pill on glass would punch a hole in the effect.
   const glassIndicator = useGlassSurface('small');
   const isGlass = surface === 'glass';
-  const [barWidth, setBarWidth] = useState(0);
+  /**
+   * Width of the row the tabs actually lay out in, measured on the row itself.
+   * Measuring the outer view instead would include its border — a floating bar
+   * carries one on every side — and the pill would then divide a track 2px wider
+   * than the real one, drifting a little further right on each successive tab.
+   */
+  const [trackWidth, setTrackWidth] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
   const items = Children.toArray(children).filter(
     isValidElement,
@@ -128,7 +134,8 @@ function TabBarRoot({
   const [visibility] = useState(() => new Animated.Value(hidden ? 1 : 0));
   const floating = width === 'floating';
   const innerPadding = floating ? 4 : 0;
-  const itemWidth = items.length > 0 ? Math.max(0, barWidth - innerPadding * 2) / items.length : 0;
+  const itemWidth =
+    items.length > 0 ? Math.max(0, trackWidth - innerPadding * 2) / items.length : 0;
   const indicatorWidth = floating ? itemWidth : Math.min(34, itemWidth * 0.46);
   const indicatorOffset = floating ? 0 : Math.max(0, (itemWidth - indicatorWidth) / 2);
 
@@ -162,8 +169,8 @@ function TabBarRoot({
     }).start();
   }, [hidden, reduceMotion, t.motion.duration.fast, visibility]);
 
-  function handleLayout(event: LayoutChangeEvent) {
-    setBarWidth(event.nativeEvent.layout.width);
+  function handleTrackLayout(event: LayoutChangeEvent) {
+    setTrackWidth(event.nativeEvent.layout.width);
   }
 
   const indicatorTranslate = Animated.add(Animated.multiply(selection, itemWidth), indicatorOffset);
@@ -201,7 +208,6 @@ function TabBarRoot({
   return (
     <Animated.View
       pointerEvents={hidden && !floating ? 'none' : 'auto'}
-      onLayout={handleLayout}
       style={[
         {
           alignSelf: floating ? 'center' : 'stretch',
@@ -228,7 +234,7 @@ function TabBarRoot({
         <GlassBackdrop material={isGlass ? 'medium' : undefined}>{blurComponent}</GlassBackdrop>
       ) : null}
 
-      {floating && barWidth > 0 && items.length > 0 ? (
+      {floating && trackWidth > 0 && items.length > 0 ? (
         <Animated.View
           pointerEvents="none"
           style={{
@@ -250,7 +256,10 @@ function TabBarRoot({
         />
       ) : null}
 
-      <View style={{ minHeight: barHeight, flexDirection: 'row', paddingHorizontal: innerPadding }}>
+      <View
+        onLayout={handleTrackLayout}
+        style={{ minHeight: barHeight, flexDirection: 'row', paddingHorizontal: innerPadding }}
+      >
         {items.map((item) => {
           const active = item.props.value === value;
           return cloneElement(item, {
