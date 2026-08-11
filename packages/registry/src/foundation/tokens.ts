@@ -213,6 +213,12 @@ export const typography = {
   labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
   labelMedium: { fontSize: 12, lineHeight: 14.4, fontWeight: '400' as const, letterSpacing: 0 },
   labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: '400' as const, letterSpacing: 0 },
+  overline: {
+    fontSize: 11,
+    lineHeight: 13.2,
+    fontWeight: '600' as const,
+    letterSpacing: 1.1,
+  },
   buttonLarge: { fontSize: 20, lineHeight: 22, fontWeight: '600' as const, letterSpacing: 0 },
   buttonMedium: { fontSize: 17, lineHeight: 18.7, fontWeight: '600' as const, letterSpacing: 0 },
   buttonSmall: { fontSize: 14, lineHeight: 15.4, fontWeight: '600' as const, letterSpacing: 0 },

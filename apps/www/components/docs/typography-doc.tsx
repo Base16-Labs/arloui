@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { typography } from '@arloui/tokens/typography';
 import { CodeBlock } from '@/components/ui/CodeBlock';
 import { DoDont, RuleCard } from '@/components/docs/doc-cards';
 import { cn } from '@/lib/cn';
@@ -18,24 +19,39 @@ type TypeRow = {
   sample: string;
 };
 
-const rows: TypeRow[] = [
-  { category: 'Display', token: 'displayLarge', label: 'Display large', size: 34, lineHeight: 42.5, letterSpacing: -0.68, weights: '400 / 600', emphasized: true, sample: 'Build with clarity' },
-  { category: 'Display', token: 'displayMedium', label: 'Display medium', size: 28, lineHeight: 35, letterSpacing: -0.56, weights: '400 / 600', emphasized: true, sample: 'Build with clarity' },
-  { category: 'Display', token: 'displaySmall', label: 'Display small', size: 24, lineHeight: 30, letterSpacing: -0.48, weights: '400 / 600', emphasized: true, sample: 'Build with clarity' },
-  { category: 'Heading', token: 'headingLarge', label: 'Heading large', size: 20, lineHeight: 26, letterSpacing: -0.2, weights: '400 / 600', emphasized: true, sample: 'Account settings' },
-  { category: 'Heading', token: 'headingMedium', label: 'Heading medium', size: 17, lineHeight: 22.1, letterSpacing: -0.17, weights: '400 / 600', emphasized: true, sample: 'Account settings' },
-  { category: 'Heading', token: 'headingSmall', label: 'Heading small', size: 14, lineHeight: 18.2, letterSpacing: -0.14, weights: '400 / 600', emphasized: true, sample: 'Account settings' },
-  { category: 'Body', token: 'bodyLarge', label: 'Body large', size: 17, lineHeight: 23.8, letterSpacing: 0, weights: '400', sample: 'Manage your profile and preferences.' },
-  { category: 'Body', token: 'bodyMedium', label: 'Body medium', size: 14, lineHeight: 19.6, letterSpacing: 0, weights: '400', sample: 'Manage your profile and preferences.' },
-  { category: 'Body', token: 'bodySmall', label: 'Body small', size: 12, lineHeight: 16.8, letterSpacing: 0, weights: '400', sample: 'Manage your profile and preferences.' },
-  { category: 'Label', token: 'labelLarge', label: 'Label large', size: 14, lineHeight: 16.8, letterSpacing: 0, weights: '400', sample: 'LAST UPDATED' },
-  { category: 'Label', token: 'labelMedium', label: 'Label medium', size: 12, lineHeight: 14.4, letterSpacing: 0, weights: '400', sample: 'LAST UPDATED' },
-  { category: 'Label', token: 'labelSmall', label: 'Label small', size: 11, lineHeight: 13.2, letterSpacing: 0, weights: '400', sample: 'LAST UPDATED' },
-  { category: 'Button', token: 'buttonLarge', label: 'Button large', size: 20, lineHeight: 22, letterSpacing: 0, weights: '600', sample: 'Continue' },
-  { category: 'Button', token: 'buttonMedium', label: 'Button medium', size: 17, lineHeight: 18.7, letterSpacing: 0, weights: '600', sample: 'Continue' },
-  { category: 'Button', token: 'buttonSmall', label: 'Button small', size: 14, lineHeight: 15.4, letterSpacing: 0, weights: '600', sample: 'Continue' },
-  { category: 'Button', token: 'buttonLabel', label: 'Button label', size: 12, lineHeight: 13.2, letterSpacing: 0, weights: '600', sample: 'Continue' },
-];
+const rowDefinitions = [
+  ['Display', 'displayLarge', 'Display large', true, 'Build with clarity'],
+  ['Display', 'displayMedium', 'Display medium', true, 'Build with clarity'],
+  ['Display', 'displaySmall', 'Display small', true, 'Build with clarity'],
+  ['Heading', 'headingLarge', 'Heading large', true, 'Account settings'],
+  ['Heading', 'headingMedium', 'Heading medium', true, 'Account settings'],
+  ['Heading', 'headingSmall', 'Heading small', true, 'Account settings'],
+  ['Body', 'bodyLarge', 'Body large', false, 'Manage your profile and preferences.'],
+  ['Body', 'bodyMedium', 'Body medium', false, 'Manage your profile and preferences.'],
+  ['Body', 'bodySmall', 'Body small', false, 'Manage your profile and preferences.'],
+  ['Label', 'labelLarge', 'Label large', false, 'LAST UPDATED'],
+  ['Label', 'labelMedium', 'Label medium', false, 'LAST UPDATED'],
+  ['Label', 'labelSmall', 'Label small', false, 'LAST UPDATED'],
+  ['Button', 'buttonLarge', 'Button large', false, 'Continue'],
+  ['Button', 'buttonMedium', 'Button medium', false, 'Continue'],
+  ['Button', 'buttonSmall', 'Button small', false, 'Continue'],
+  ['Button', 'buttonLabel', 'Button label', false, 'Continue'],
+] as const;
+
+const rows: TypeRow[] = rowDefinitions.map(([category, token, label, emphasized, sample]) => {
+  const recipe = typography[token];
+  return {
+    category,
+    token,
+    label,
+    size: recipe.fontSize,
+    lineHeight: recipe.lineHeight,
+    letterSpacing: recipe.letterSpacing,
+    weights: emphasized ? '400 / 600' : recipe.fontWeight,
+    emphasized: emphasized || undefined,
+    sample,
+  };
+});
 
 const categories = ['All', 'Display', 'Heading', 'Body', 'Label', 'Button'] as const;
 

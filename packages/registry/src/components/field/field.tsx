@@ -93,11 +93,11 @@ function fieldDims(t: Tokens, isPlain: boolean, size: InputSize, multiline: bool
   }
   if (isPlain) {
     return size === 'md'
-      ? { minHeight: 35, paddingX: 0, paddingY: 0, font: t.typography.displayMedium, label: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.sm }
-      : { minHeight: 26, paddingX: 0, paddingY: 0, font: t.typography.headingLarge, label: t.typography.label, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
+      ? { minHeight: t.typography.displayMedium.lineHeight, paddingX: 0, paddingY: 0, font: t.typography.displayMedium, label: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.sm }
+      : { minHeight: t.typography.headingLarge.lineHeight, paddingX: 0, paddingY: 0, font: t.typography.headingLarge, label: t.typography.label, gap: t.spacing[1], iconSize: t.sizing.icon.xs };
   }
   return size === 'md'
-    ? { minHeight: 52, paddingX: t.spacing[3], paddingY: t.spacing[2], font: t.typography.body, label: t.typography.bodySm, gap: t.spacing[2], iconSize: t.sizing.icon.sm }
+    ? { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[3], paddingY: t.spacing[2], font: t.typography.body, label: t.typography.bodySm, gap: t.spacing[2], iconSize: t.sizing.icon.sm }
     : { minHeight: 36, paddingX: t.spacing[3], paddingY: t.spacing[1], font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[2], iconSize: t.sizing.icon.xs };
 }
 
@@ -184,7 +184,7 @@ function FieldLabel({ children, style }: { children: ReactNode; style?: StylePro
           fontFamily: t.fontFamilies.sans,
           fontSize: t.typography.bodySm.fontSize,
           lineHeight: t.typography.bodySm.lineHeight,
-          fontWeight: '600',
+          fontWeight: t.fontWeights.semibold,
         },
         style,
       ]}
@@ -375,8 +375,8 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
             alignSelf: multiline ? 'stretch' : undefined,
             width: plainInputWidth,
             textAlign: isPlain && !multiline ? 'center' : 'left',
-            padding: 0,
-            margin: 0,
+            padding: t.spacing[0],
+            margin: t.spacing[0],
           },
           Platform.OS === 'web'
             ? ({ outlineStyle: 'none', ...(multiline ? { resize: 'none' } : null) } as unknown as TextStyle)
