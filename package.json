@@ -55,7 +55,8 @@
     "release": "turbo run build --filter=arloui && changeset publish",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "prepare": "node scripts/prepare.mjs"
+    "prepare": "node scripts/prepare.mjs",
+    "design:figma": "npm run script --workspace @arloui/design-to-figma --"
   },
   "dependencies": {
     "react": "19.1.0",

@@ -1,0 +1,23 @@
+{
+  "name": "@arloui/design-to-figma",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Plans Figma component sets from the rendered component export, and emits the plugin script that draws them.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "script": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist .turbo"
+  },
+  "devDependencies": {
+    "@arloui/tsconfig": "file:../../packages/tsconfig",
+    "@types/node": "^20.16.10",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.9"
+  }
+}
