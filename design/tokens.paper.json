@@ -2621,6 +2621,21 @@
     },
     {
       "type": "fontSize",
+      "name": "--text-overline",
+      "value": "11px"
+    },
+    {
+      "type": "lineHeight",
+      "name": "--leading-overline",
+      "value": "13.2px"
+    },
+    {
+      "type": "letterSpacing",
+      "name": "--tracking-overline",
+      "value": "0.1em"
+    },
+    {
+      "type": "fontSize",
       "name": "--text-button-large",
       "value": "20px"
     },

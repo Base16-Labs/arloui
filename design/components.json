@@ -4616,7 +4616,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -4639,7 +4639,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -4648,10 +4649,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -4661,13 +4667,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -4691,7 +4698,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -4700,10 +4708,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -4713,13 +4726,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -4743,7 +4757,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -4752,10 +4767,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -4765,20 +4785,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -4787,7 +4809,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -4810,7 +4832,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -4819,10 +4842,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -4832,13 +4860,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -4862,7 +4891,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -4871,10 +4901,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -4884,13 +4919,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -4914,7 +4950,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -4923,10 +4960,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -4936,20 +4978,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -4972,7 +5016,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -4996,7 +5040,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -5005,10 +5050,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5018,13 +5068,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5049,7 +5100,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -5058,10 +5110,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5071,13 +5128,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5102,7 +5160,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -5111,10 +5170,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5124,20 +5188,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -5146,7 +5212,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -5170,7 +5236,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -5179,10 +5246,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5192,13 +5264,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5223,7 +5296,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -5232,10 +5306,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5245,13 +5324,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5276,7 +5356,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -5285,10 +5366,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5298,20 +5384,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -5334,7 +5422,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -5357,7 +5445,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -5366,10 +5455,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5379,13 +5473,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5409,7 +5504,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -5418,10 +5514,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5431,13 +5532,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5461,7 +5563,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -5470,10 +5573,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5483,20 +5591,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -5505,7 +5615,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -5528,7 +5638,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -5537,10 +5648,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5550,13 +5666,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5580,7 +5697,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -5589,10 +5707,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5602,13 +5725,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5632,7 +5756,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -5641,10 +5766,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5654,20 +5784,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -5690,7 +5822,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -5714,7 +5846,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -5723,10 +5856,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5736,13 +5874,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5767,7 +5906,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -5776,10 +5916,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5789,13 +5934,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5820,7 +5966,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -5829,10 +5976,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5842,20 +5994,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -5864,7 +6018,7 @@
               "style": {
                 "alignItems": "center",
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -5888,7 +6042,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -5897,10 +6052,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5910,13 +6070,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5941,7 +6102,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -5950,10 +6112,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -5963,13 +6130,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -5994,7 +6162,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -6003,10 +6172,15 @@
                           "figma": "Text & Content/text-tertiary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -6016,20 +6190,22 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -6054,7 +6230,7 @@
                 "borderBottomColor": "#E5E7EB",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -6077,7 +6253,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -6086,10 +6263,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6124,13 +6306,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -6154,7 +6337,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -6163,10 +6347,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6201,13 +6390,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -6231,7 +6421,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -6240,10 +6431,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6278,13 +6474,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -6295,7 +6492,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -6306,7 +6504,7 @@
                 "borderBottomColor": "#27272A",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -6329,7 +6527,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -6338,10 +6537,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6376,13 +6580,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -6406,7 +6611,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -6415,10 +6621,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6453,13 +6664,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -6483,7 +6695,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -6492,10 +6705,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6530,13 +6748,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -6547,7 +6766,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -6572,7 +6792,7 @@
                 "borderBottomColor": "#E5E7EB",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -6596,7 +6816,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -6605,10 +6826,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6643,13 +6869,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -6674,7 +6901,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -6683,10 +6911,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6721,13 +6954,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -6752,7 +6986,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -6761,10 +6996,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6799,13 +7039,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -6816,7 +7057,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -6827,7 +7069,7 @@
                 "borderBottomColor": "#27272A",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -6851,7 +7093,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -6860,10 +7103,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6898,13 +7146,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -6929,7 +7178,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -6938,10 +7188,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -6976,13 +7231,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7007,7 +7263,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -7016,10 +7273,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7054,13 +7316,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -7071,7 +7334,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -7096,7 +7360,7 @@
                 "borderBottomColor": "#E5E7EB",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -7119,7 +7383,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -7128,10 +7393,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7166,13 +7436,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7196,7 +7467,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -7205,10 +7477,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7243,13 +7520,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7273,7 +7551,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -7282,10 +7561,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7320,13 +7604,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -7337,7 +7622,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -7348,7 +7634,7 @@
                 "borderBottomColor": "#27272A",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -7371,7 +7657,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -7380,10 +7667,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7418,13 +7710,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7448,7 +7741,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -7457,10 +7751,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7495,13 +7794,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7525,7 +7825,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -7534,10 +7835,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7572,13 +7878,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -7589,7 +7896,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -7614,7 +7922,7 @@
                 "borderBottomColor": "#E5E7EB",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -7638,7 +7946,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -7647,10 +7956,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7685,13 +7999,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7716,7 +8031,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -7725,10 +8041,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7763,13 +8084,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7794,7 +8116,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -7803,10 +8126,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7841,13 +8169,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -7858,7 +8187,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -7869,7 +8199,7 @@
                 "borderBottomColor": "#27272A",
                 "borderBottomWidth": 1,
                 "flexDirection": "row",
-                "gap": 2
+                "gap": 4
               },
               "children": [
                 {
@@ -7893,7 +8223,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -7902,10 +8233,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -7940,13 +8276,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -7971,7 +8308,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -7980,10 +8318,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -8018,13 +8361,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -8049,7 +8393,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -8058,10 +8403,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     },
@@ -8096,13 +8446,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -8113,7 +8464,8 @@
                   "figma": "Borders & Dividers/border"
                 },
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -8182,7 +8534,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -8191,10 +8544,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8205,13 +8563,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -8258,7 +8617,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -8267,10 +8627,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8281,13 +8646,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -8334,7 +8700,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -8343,10 +8710,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8357,20 +8729,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             },
@@ -8425,7 +8799,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -8434,10 +8809,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8448,13 +8828,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -8501,7 +8882,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -8510,10 +8892,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8524,13 +8911,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -8577,7 +8965,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -8586,10 +8975,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8600,20 +8994,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             }
@@ -8683,7 +9079,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -8692,10 +9089,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8706,13 +9108,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -8760,7 +9163,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -8769,10 +9173,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8783,13 +9192,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -8837,7 +9247,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -8846,10 +9257,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8860,20 +9276,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             },
@@ -8929,7 +9347,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -8938,10 +9357,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -8952,13 +9376,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9006,7 +9431,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -9015,10 +9441,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9029,13 +9460,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9083,7 +9515,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -9092,10 +9525,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9106,20 +9544,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             }
@@ -9188,7 +9628,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -9197,10 +9638,15 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9211,13 +9657,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9264,7 +9711,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -9273,10 +9721,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9287,13 +9740,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9340,7 +9794,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -9349,10 +9804,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9363,20 +9823,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             },
@@ -9431,7 +9893,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -9440,10 +9903,15 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9454,13 +9922,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9507,7 +9976,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -9516,10 +9986,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9530,13 +10005,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9583,7 +10059,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -9592,10 +10069,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9606,20 +10088,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             }
@@ -9689,7 +10173,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -9698,10 +10183,15 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9712,13 +10202,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9766,7 +10257,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -9775,10 +10267,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9789,13 +10286,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -9843,7 +10341,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -9852,10 +10351,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9866,20 +10370,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             },
@@ -9935,7 +10441,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -9944,10 +10451,15 @@
                           "figma": "Text & Content/text-inverse"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -9958,13 +10470,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -10012,7 +10525,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -10021,10 +10535,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10035,13 +10554,14 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 },
@@ -10089,7 +10609,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -10098,10 +10619,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10112,20 +10638,22 @@
                       "figma": "radius-full"
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-4",
+                      "figma": "space-4"
                     }
                   }
                 }
               ],
               "tokens": {
                 "gap": {
-                  "hardcoded": true
+                  "paper": "--spacing-2",
+                  "figma": "space-2"
                 }
               }
             }
@@ -10174,7 +10702,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -10183,10 +10712,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10196,13 +10730,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10227,7 +10762,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -10236,10 +10772,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10249,13 +10790,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10280,7 +10822,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -10289,10 +10832,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10302,13 +10850,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -10323,7 +10872,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -10358,7 +10908,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -10367,10 +10918,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10380,13 +10936,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10411,7 +10968,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -10420,10 +10978,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10433,13 +10996,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10464,7 +11028,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -10473,10 +11038,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10486,13 +11056,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -10507,7 +11078,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -10556,7 +11128,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -10565,10 +11138,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10578,13 +11156,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10609,7 +11188,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -10618,10 +11198,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10631,13 +11216,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10662,7 +11248,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -10671,10 +11258,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10684,13 +11276,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -10705,7 +11298,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -10740,7 +11334,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -10749,10 +11344,15 @@
                           "figma": "Text & Content/text-primary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10762,13 +11362,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10793,7 +11394,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -10802,10 +11404,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10815,13 +11422,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10846,7 +11454,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -10855,10 +11464,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10868,13 +11482,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -10889,7 +11504,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -10938,7 +11554,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -10947,10 +11564,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -10960,13 +11582,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -10991,7 +11614,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -11000,10 +11624,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11013,13 +11642,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -11044,7 +11674,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -11053,10 +11684,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11066,13 +11702,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -11087,7 +11724,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -11122,7 +11760,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -11131,10 +11770,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11144,13 +11788,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -11175,7 +11820,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -11184,10 +11830,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11197,13 +11848,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -11228,7 +11880,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -11237,10 +11890,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11250,13 +11908,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -11271,7 +11930,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }
@@ -11320,7 +11980,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -11329,10 +11990,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11342,13 +12008,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -11373,7 +12040,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -11382,10 +12050,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11395,13 +12068,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -11426,7 +12100,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -11435,10 +12110,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11448,13 +12128,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -11469,7 +12150,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             },
@@ -11504,7 +12186,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "600",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "All",
                       "tokens": {
@@ -11513,10 +12196,15 @@
                           "figma": "Interactive Elements/accent"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11526,13 +12214,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -11557,7 +12246,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Unread",
                       "tokens": {
@@ -11566,10 +12256,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11579,13 +12274,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 },
@@ -11610,7 +12306,8 @@
                         "fontFamily": "Manrope",
                         "fontSize": 14,
                         "fontWeight": "500",
-                        "lineHeight": 20
+                        "letterSpacing": 0,
+                        "lineHeight": 19.6
                       },
                       "text": "Archived",
                       "tokens": {
@@ -11619,10 +12316,15 @@
                           "figma": "Text & Content/text-secondary"
                         },
                         "fontSize": {
+                          "paper": "--text-body-medium",
+                          "figma": "Font Size/body-medium"
+                        },
+                        "letterSpacing": {
                           "hardcoded": true
                         },
                         "lineHeight": {
-                          "hardcoded": true
+                          "paper": "--leading-body-medium",
+                          "figma": "Line Height/body-medium"
                         }
                       }
                     }
@@ -11632,13 +12334,14 @@
                       "hardcoded": true
                     },
                     "minHeight": {
-                      "hardcoded": true
+                      "figma": "Touch Targets/touch-target-minimum"
                     },
                     "minWidth": {
                       "hardcoded": true
                     },
                     "paddingHorizontal": {
-                      "hardcoded": true
+                      "paper": "--spacing-3",
+                      "figma": "space-3"
                     }
                   }
                 }
@@ -11653,7 +12356,8 @@
                   "figma": "radius-full"
                 },
                 "padding": {
-                  "hardcoded": true
+                  "paper": "--spacing-1",
+                  "figma": "space-1"
                 }
               }
             }

@@ -4798,6 +4798,27 @@
           }
         },
         {
+          "name": "Font Size/overline",
+          "type": "FLOAT",
+          "valuesByMode": {
+            "Value": 11
+          }
+        },
+        {
+          "name": "Line Height/overline",
+          "type": "FLOAT",
+          "valuesByMode": {
+            "Value": 13.2
+          }
+        },
+        {
+          "name": "Letter Spacing/overline",
+          "type": "FLOAT",
+          "valuesByMode": {
+            "Value": 1.1
+          }
+        },
+        {
           "name": "Font Size/button-large",
           "type": "FLOAT",
           "valuesByMode": {

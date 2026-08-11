@@ -510,6 +510,12 @@
 
   --tracking-label-small: 0em;
 
+  --text-overline: 11px;
+
+  --leading-overline: 13.2px;
+
+  --tracking-overline: 0.1em;
+
   --text-button-large: 20px;
 
   --leading-button-large: 22px;
