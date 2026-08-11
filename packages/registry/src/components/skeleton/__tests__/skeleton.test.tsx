@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Skeleton } from '../skeleton';
+import { radii, sizing, spacing } from '../../../foundation/tokens';
 import { renderWithTheme, screen } from '../../../../test/render';
 
 describe('Skeleton', () => {
@@ -20,15 +21,15 @@ describe('Skeleton', () => {
       StyleSheet.flatten(
         screen.getByTestId('skeleton', { includeHiddenElements: true }).props.style,
       ).height,
-    ).toBe(12);
+    ).toBe(spacing[3]);
 
     rerender(<Skeleton testID="skeleton" shape="circle" animation="none" />);
     const circle = StyleSheet.flatten(
       screen.getByTestId('skeleton', { includeHiddenElements: true }).props.style,
     );
-    expect(circle.width).toBe(40);
-    expect(circle.height).toBe(40);
-    expect(circle.borderRadius).toBe(999);
+    expect(circle.width).toBe(sizing.buttonHeight.md);
+    expect(circle.height).toBe(sizing.buttonHeight.md);
+    expect(circle.borderRadius).toBe(radii.full);
   });
 
   it('stays out of the accessibility tree', () => {

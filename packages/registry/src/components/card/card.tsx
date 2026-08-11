@@ -58,7 +58,7 @@ function CardTitle({ children, style }: { children: ReactNode; style?: StyleProp
           fontFamily: t.fontFamilies.sans,
           fontSize: t.typography.title2.fontSize,
           lineHeight: t.typography.title2.lineHeight,
-          fontWeight: '600',
+          fontWeight: t.fontWeights.semibold,
         },
         style,
       ]}

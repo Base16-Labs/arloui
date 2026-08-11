@@ -4,10 +4,9 @@ import {
   Easing,
   Platform,
   Pressable,
-  StyleSheet,
-  View,
   type PressableProps,
   type StyleProp,
+  type View,
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
@@ -33,8 +32,18 @@ type Dims = {
 
 function toggleDims(t: Tokens): Record<ToggleSize, Dims> {
   return {
-    sm: { trackWidth: 40, trackHeight: 24, thumbSize: 18, thumbInset: 3 },
-    md: { trackWidth: 52, trackHeight: 32, thumbSize: 26, thumbInset: 3 },
+    sm: {
+      trackWidth: t.sizing.buttonHeight.md,
+      trackHeight: t.sizing.icon.md,
+      thumbSize: 18,
+      thumbInset: 3,
+    },
+    md: {
+      trackWidth: t.sizing.buttonHeight.xl,
+      trackHeight: t.sizing.buttonHeight.sm,
+      thumbSize: 26,
+      thumbInset: 3,
+    },
   };
 }
 
@@ -42,7 +51,7 @@ function toggleColors(t: Tokens, disabled: boolean) {
   return {
     trackOn: disabled ? t.colors.interactiveDisabled : t.colors.interactivePrimary,
     trackOff: disabled ? t.colors.interactiveDisabled : t.colors.surfaceInput,
-    thumb: disabled ? t.colors.textTertiary : '#FFFFFF',
+    thumb: disabled ? t.colors.textTertiary : t.colors.textInteractivePrimary,
     border: disabled ? t.colors.borderSecondary : t.colors.borderPrimary,
   };
 }
@@ -133,13 +142,8 @@ export const Toggle = forwardRef<View, ToggleProps>(function Toggle(
               backgroundColor: colors.thumb,
             },
             Platform.OS === 'ios' || Platform.OS === 'web'
-              ? {
-                  shadowColor: '#101828',
-                  shadowOpacity: 0.12,
-                  shadowRadius: 3,
-                  shadowOffset: { width: 0, height: 1 },
-                }
-              : { elevation: 3 },
+              ? (t.shadows.sm as ViewStyle)
+              : { elevation: t.shadows.sm.elevation },
             { transform: [{ translateX: thumbTranslateX }] },
           ]}
         />

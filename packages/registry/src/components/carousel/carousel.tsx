@@ -286,7 +286,7 @@ function CarouselDots({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 6,
+        gap: t.spacing[2],
         paddingTop: overlay ? 0 : t.spacing[3],
         paddingBottom: overlay ? 0 : t.spacing[1],
       }}
