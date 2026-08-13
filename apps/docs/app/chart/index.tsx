@@ -12,7 +12,7 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 type Shape = 'rising' | 'falling' | 'volatile' | 'flat';
 type FillMode = 'area' | 'line';
 
-const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'neutral'];
+const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'brand', 'neutral'];
 const SHAPES: Shape[] = ['rising', 'falling', 'volatile', 'flat'];
 const FILLS: FillMode[] = ['area', 'line'];
 const CURVES: ChartCurve[] = ['steep', 'smooth'];

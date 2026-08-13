@@ -2,7 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type BarChartTone } from '@arloui/registry';
+import { Chart, useTokens, type ChartTone } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -32,7 +32,7 @@ const SIGNED = [
 ];
 
 const DATASETS: Dataset[] = ['week', 'signed'];
-const TONES: BarChartTone[] = ['brand', 'series', 'direction'];
+const TONES: ChartTone[] = ['brand', 'series', 'auto'];
 
 const money = (value: number) => `$${value.toLocaleString('en-US')}`;
 
@@ -42,7 +42,7 @@ export default function BarChartCanvas() {
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [dataset, setDataset] = useState<Dataset>('week');
-  const [tone, setTone] = useState<BarChartTone>('brand');
+  const [tone, setTone] = useState<ChartTone>('brand');
   // Off by default: tapping a bar is how you read one exact figure.
   const [showValues, setShowValues] = useState(false);
   const [showLabels, setShowLabels] = useState(true);
@@ -97,7 +97,7 @@ export default function BarChartCanvas() {
               showValues={showValues}
               showLabels={showLabels}
               format={money}
-              selectedIndex={selected}
+              activeIndex={selected}
               onSelect={(index) => setSelected(index === selected ? null : index)}
             />
           </Animated.View>

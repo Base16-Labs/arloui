@@ -7,23 +7,47 @@
  * thing the mark has to carry.
  *
  * If you want a value readout, a baseline, or scrubbing, you want `Chart`.
+ *
+ * This was the first form to draw its own path, and the geometry it used is now
+ * shared: it measures through the same `makeScale` and `linePath` as `Chart.Plot`,
+ * so a sparkline and a plot of the same series have the same shape.
  */
 import { useId, useMemo, useState } from 'react';
 import { View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
-import type { ChartTone } from './chart';
+import {
+  areaPath,
+  densityMetrics,
+  linePath,
+  makeScale,
+  seriesStats,
+  toPoints,
+  toneColor,
+  type ChartCurve,
+  type ChartData,
+  type ChartDensity,
+  type ChartTone,
+} from './core';
 
 export type SparklineProps = {
-  data: number[];
-  /** Matches `Chart`: `'auto'` tones by whether the series ended above where it started. */
+  data: ChartData;
+  /**
+   * Honours `auto` (default; tones by whether the series ended above where it
+   * started), `positive`, `negative`, `brand`, and `neutral`. One series has no
+   * categories, so `series` is treated as `brand`.
+   */
   tone?: ChartTone;
+  /** Inline marks default to `compact`: a thinner stroke and a smaller dot. */
+  density?: ChartDensity;
   width?: number;
   height?: number;
   /** Fade a gradient under the line. Off by default — inline marks stay light. */
   fill?: boolean;
   /** Dot on the final point, for "where it ended up". */
   showEndDot?: boolean;
+  curve?: ChartCurve;
+  /** Overrides the density's stroke width. */
   strokeWidth?: number;
   /**
    * Sparklines are decorative next to a value that is already announced, so they
@@ -33,68 +57,47 @@ export type SparklineProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const INSET = 3;
-
 export function Sparkline({
   data,
   tone = 'auto',
+  density = 'compact',
   width: widthProp,
   height = 28,
   fill = false,
   showEndDot = false,
-  strokeWidth = 2,
+  curve = 'steep',
+  strokeWidth,
   accessibilityLabel,
   style,
 }: SparklineProps) {
   const t = useTokens();
   const [measured, setMeasured] = useState(0);
   const width = widthProp ?? measured;
+  const metrics = densityMetrics(density);
+  const stroke = strokeWidth ?? metrics.stroke;
+  // Half a stroke plus the end dot, so neither clips against the edge of the box.
+  const inset = showEndDot ? Math.max(metrics.inset, stroke + 1.5) : Math.ceil(stroke / 2) + 1;
 
-  const { min, span, first, last } = useMemo(() => {
-    const head = data[0];
-    if (head == null) return { min: 0, span: 0, first: 0, last: 0 };
-    let lo = head;
-    let hi = head;
-    for (const v of data) {
-      if (v < lo) lo = v;
-      if (v > hi) hi = v;
-    }
-    return { min: lo, span: hi - lo, first: head, last: data[data.length - 1] ?? head };
-  }, [data]);
+  const points = useMemo(() => toPoints(data), [data]);
+  const stats = useMemo(() => seriesStats(points), [points]);
+  const color = toneColor(t, tone, { rising: stats.last >= stats.first });
 
-  const color =
-    tone === 'neutral'
-      ? t.colors.textSecondary
-      : tone === 'positive'
-        ? t.colors.chartPositive
-        : tone === 'negative'
-          ? t.colors.chartNegative
-          : last >= first
-            ? t.colors.chartPositive
-            : t.colors.chartNegative;
-
-  const usableW = Math.max(0, width - INSET * 2);
-  const usableH = Math.max(0, height - INSET * 2);
-
-  const points = useMemo(() => {
-    if (width === 0 || data.length === 0) return [];
-    return data.map((value, index) => {
-      const x = data.length < 2 ? INSET + usableW / 2 : INSET + (index / (data.length - 1)) * usableW;
-      // A flat series has no range to normalise against, so it runs down the middle.
-      const ratio = span === 0 ? 0.5 : (value - min) / span;
-      return { x, y: INSET + (1 - ratio) * usableH };
+  const plotted = useMemo(() => {
+    if (width === 0 || points.length === 0) return [];
+    const scale = makeScale({
+      count: points.length,
+      min: stats.min,
+      span: stats.span,
+      width,
+      height,
+      inset,
     });
-  }, [data, width, usableW, usableH, min, span]);
+    return points.map((point, index) => ({ x: scale.x(index), y: scale.y(point.value) }));
+  }, [points, width, height, inset, stats.min, stats.span]);
 
-  const linePath = points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`)
-    .join(' ');
-  const end = points[points.length - 1];
-  const start = points[0];
-  const areaPath =
-    fill && linePath && start && end
-      ? `${linePath} L${end.x.toFixed(2)},${height - INSET} L${start.x.toFixed(2)},${height - INSET} Z`
-      : '';
+  const line = linePath(plotted, curve);
+  const area = fill ? areaPath(plotted, height - inset, curve) : '';
+  const end = plotted[plotted.length - 1];
 
   // Per instance, not per tone: two `tone="auto"` sparklines on one screen resolve
   // to different colours but would share one document-global gradient id, so the
@@ -115,9 +118,9 @@ export function Sparkline({
       importantForAccessibility={accessibilityLabel == null ? 'no-hide-descendants' : 'auto'}
       style={[{ width: widthProp, height }, style]}
     >
-      {width > 0 && points.length > 0 ? (
+      {width > 0 && plotted.length > 0 ? (
         <Svg width={width} height={height}>
-          {areaPath ? (
+          {area ? (
             <>
               <Defs>
                 <LinearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -125,18 +128,20 @@ export function Sparkline({
                   <Stop offset="1" stopColor={color} stopOpacity={0} />
                 </LinearGradient>
               </Defs>
-              <Path d={areaPath} fill={`url(#${gradientId})`} />
+              <Path d={area} fill={`url(#${gradientId})`} />
             </>
           ) : null}
           <Path
-            d={linePath}
+            d={line}
             stroke={color}
-            strokeWidth={strokeWidth}
+            strokeWidth={stroke}
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
-          {showEndDot && end ? <Circle cx={end.x} cy={end.y} r={strokeWidth + 0.5} fill={color} /> : null}
+          {showEndDot && end ? (
+            <Circle cx={end.x} cy={end.y} r={stroke + 0.5} fill={color} />
+          ) : null}
         </Svg>
       ) : null}
     </View>

@@ -3226,11 +3226,12 @@ function ChartDocPage() {
           <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
             <div className="mx-auto max-w-[420px]">
               {[
-                ['Chart', 'holds the series and the scrub state'],
+                ['Chart', 'holds the series, the format, and the scrub state'],
                 ['Chart.Value', 'headline number, rolls as you scrub'],
                 ['Chart.Delta', 'change from the baseline, always signed'],
                 ['Chart.Plot', 'the line or area, and the scrub target'],
                 ['Chart.Periods', 'the range selector'],
+                ['Chart.Empty', 'what the plot draws when there is no series'],
               ].map(([name, detail]) => (
                 <div
                   key={name}
@@ -3281,12 +3282,23 @@ function ChartDocPage() {
         <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
           <CodeBlock language="tsx">{`npx arloui add chart
 
-import { Chart } from "@/components/ui/chart";
+import { Chart, formatMoney } from "@/components/ui/chart";
 
-<Chart data={points} periods={["1D", "1W", "1M", "1Y"]} period={p} onPeriodChange={setP}>
-  <Chart.Value format={money} />
-  <Chart.Delta format={money} />
+// No children renders the documented composition:
+// value, delta, plot, periods — in that order.
+<Chart
+  data={points}
+  format={formatMoney("USD")}
+  periods={["1D", "1W", "1M", "1Y"]}
+  period={p}
+  onPeriodChange={setP}
+/>
+
+// Name the parts to reorder or drop one. \`format\` flows down from the root.
+<Chart data={points} format={formatMoney("USD")} chrome="reference" reference={{ value: 1000, label: "Target" }}>
+  <Chart.Empty>No trades yet</Chart.Empty>
   <Chart.Plot height={200} fill />
+  <Chart.Value />
   <Chart.Periods />
 </Chart>
 
@@ -3294,6 +3306,62 @@ import { Chart } from "@/components/ui/chart";
 <Chart.Bar data={week} showValues onSelect={setSelected} />
 <Chart.Donut data={breakdown} centerLabel="Monthly spend" />
 <Chart.Meter value={88} max={100} label="Budget used" warnAt={0.75} dangerAt={0.9} />`}</CodeBlock>
+
+          <p className="mt-4 text-[13px] text-ink-3">
+            The data model is <code className="font-mono text-[11.5px]">number[]</code> or{' '}
+            <code className="font-mono text-[11.5px]">
+              {'{ value, at?, label?, meta? }[]'}
+            </code>
+            . Pass <code className="font-mono text-[11.5px]">formatAt</code> on the root and the
+            readout says <em>when</em> as well as what. Selection is
+            controlled-or-uncontrolled everywhere — the same{' '}
+            <code className="font-mono text-[11.5px]">activeIndex</code> /{' '}
+            <code className="font-mono text-[11.5px]">onScrub</code> /{' '}
+            <code className="font-mono text-[11.5px]">onSelect</code> contract on the root, Bar,
+            and Donut.
+          </p>
+        </Section>
+
+        <Section
+          id="axes"
+          title="Two axes"
+          sub="Closed sets, like Card. Everything else is data."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[520px] space-y-4 text-[13px]">
+              <div>
+                <code className="font-mono text-[11.5px] text-ink">density</code>
+                <span className="ml-2 text-ink-3">compact · default</span>
+                <p className="mt-1 text-ink-2">
+                  Stroke weight, dot and bar radius, and whether labels render at all.
+                  <code className="ml-1 font-mono text-[11.5px]">compact</code> is what makes a
+                  chart survive inside a table row.
+                </p>
+              </div>
+              <div>
+                <code className="font-mono text-[11.5px] text-ink">chrome</code>
+                <span className="ml-2 text-ink-3">none · baseline · reference</span>
+                <p className="mt-1 text-ink-2">
+                  Furniture around the data. There is no{' '}
+                  <code className="font-mono text-[11.5px]">axis</code> member and there will not
+                  be one — ticks and gridlines are how a chart this size stops being readable.
+                  <code className="ml-1 font-mono text-[11.5px]">reference</code> is one labelled
+                  line at a value you name, not a band system.
+                </p>
+              </div>
+              <div>
+                <code className="font-mono text-[11.5px] text-ink">tone</code>
+                <span className="ml-2 text-ink-3">
+                  auto · positive · negative · brand · series · neutral
+                </span>
+                <p className="mt-1 text-ink-2">
+                  One vocabulary across all five forms. Each form documents what it does with the
+                  members it cannot honour — a line has no categories to enumerate, a meter has no
+                  direction to infer, and neither invents one.
+                </p>
+              </div>
+            </div>
+          </div>
         </Section>
 
         <Section
@@ -3344,8 +3412,38 @@ import { Chart } from "@/components/ui/chart";
                 do: 'Keep segments straight between points.',
                 dont: 'Smooth the path — a spline invents peaks that were never in the data.',
               },
+              {
+                do: 'Let bars cross-fade when the data changes.',
+                dont: 'Grow bars from zero — a bar’s height is its datum, so that animates the number.',
+              },
             ]}
           />
+        </Section>
+
+        <Section
+          id="not-in-the-kit"
+          title="Not in the kit"
+          sub="Five forms, drawn by Arlo. The rest is yours."
+        >
+          <p className="text-[15px] leading-relaxed text-ink-2">
+            Arlo owns the geometry and the render loop for the five forms above — there is no
+            charting library underneath, only{' '}
+            <code className="font-mono text-[11.5px]">react-native-svg</code>. That is what makes
+            the crosshair land on the line and the period morph possible, and it is also why the
+            list of forms is closed.
+          </p>
+          <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+            These are <strong>not</strong> coming: candlestick, radar, population pyramid, scatter,
+            3-D anything, heatmaps, and stacked or grouped bars. Horizontal and range bars are
+            earned later, on evidence, once the five behave. If you need one of them, the scale and
+            the path builders the five are drawn with are exported from{' '}
+            <code className="font-mono text-[11.5px]">chart/core.ts</code> —{' '}
+            <code className="font-mono text-[11.5px]">makeScale</code>,{' '}
+            <code className="font-mono text-[11.5px]">linePath</code>,{' '}
+            <code className="font-mono text-[11.5px]">barPath</code>,{' '}
+            <code className="font-mono text-[11.5px]">annulusPath</code> — so a sixth form you
+            write measures the way these do.
+          </p>
         </Section>
 
         <Section

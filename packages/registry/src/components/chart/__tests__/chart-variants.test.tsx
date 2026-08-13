@@ -49,7 +49,7 @@ describe('BarChart', () => {
   });
 
   it('marks the selected bar', () => {
-    renderWithTheme(<BarChart data={week} selectedIndex={2} onSelect={() => {}} />);
+    renderWithTheme(<BarChart data={week} activeIndex={2} onSelect={() => {}} />);
     expect(screen.getByRole('button', { name: 'W, 44' }).props.accessibilityState).toMatchObject({
       selected: true,
     });
@@ -108,7 +108,7 @@ describe('BarChart', () => {
     expect(screen.queryByText('$30.00')).toBeNull();
     expect(screen.queryByText('$44.00')).toBeNull();
 
-    rerender(<BarChart data={week} format={money} selectedIndex={2} onSelect={() => {}} />);
+    rerender(<BarChart data={week} format={money} activeIndex={2} onSelect={() => {}} />);
     layoutBars();
     expect(screen.getByText('$44.00')).toBeTruthy();
     expect(screen.queryByText('$30.00')).toBeNull();
@@ -189,7 +189,7 @@ describe('DonutChart', () => {
 
   it('reports selection to a controlled owner', () => {
     const onSelect = jest.fn();
-    renderWithTheme(<DonutChart data={spend} selectedIndex={null} onSelect={onSelect} />);
+    renderWithTheme(<DonutChart data={spend} activeIndex={null} onSelect={onSelect} />);
     fireEvent.press(screen.getByRole('button', { name: 'Rent, 1200, 60 percent' }));
     expect(onSelect).toHaveBeenCalledWith(0, spend[0]);
   });

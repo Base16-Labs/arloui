@@ -12,27 +12,40 @@
 - Forms
 - When to use
 - Code
+- Two axes
 - Tokens
 - Accessibility
 - Do · Don't
+- Not in the kit
 - Related
 
 ## States
 
-`scrub` · `rising` · `falling` · `neutral` · `empty` · `reduced motion`
+`scrub` · `rising` · `falling` · `neutral` · `loading` · `empty` · `not enough data` · `reduced motion`
 
 ## Tokens used
 
 - `colors.chartPositive`
 - `colors.chartNegative`
-- `colors.chartSeries`
+- `colors.chartSeries1`
+- `colors.chartSeries2`
+- `colors.chartSeries3`
+- `colors.chartSeries4`
 - `colors.chartOther`
+- `colors.interactivePrimary`
 - `colors.textPrimary`
+- `colors.textSecondary`
 - `colors.textTertiary`
-- `colors.surface`
+- `colors.surfaceElevated`
+- `colors.surfaceInput`
+- `colors.borderSecondary`
 - `colors.feedbackWarning`
 - `colors.feedbackError`
-- `motion.duration.base`
+- `radii.md`
+- `radii.full`
+- `motion.chart.data`
+- `motion.chart.barSwap`
+- `motion.duration.slow`
 
 ## Links
 

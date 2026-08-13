@@ -148,8 +148,6 @@
       ],
       "dependencies": [
         "react-native-svg",
-        "react-native-gifted-charts",
-        "expo-linear-gradient",
         "expo-haptics"
       ],
       "tags": [

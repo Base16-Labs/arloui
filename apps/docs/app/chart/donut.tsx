@@ -89,7 +89,7 @@ export default function DonutChartCanvas() {
               centerLabel="Monthly spend"
               format={money}
               showLegend={showLegend}
-              selectedIndex={selected}
+              activeIndex={selected}
               onSelect={(index) => setSelected(index === selected ? null : index)}
             />
           </Animated.View>

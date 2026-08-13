@@ -315,6 +315,23 @@ export const motion = {
     heavy: { stiffness: 300, damping: 40, mass: 1.2 }, // drag-to-dismiss commit, large surface
   },
   pressed: { scale: 0.97, opacity: 0.85 },
+  /**
+   * Chart recipes. A chart animates two things on two clocks: `control` is the
+   * period pill answering a tap (press feedback), `data` is the series morphing
+   * in place under a period change.
+   *
+   * Two rules live in these values rather than in memory. **Bars never scale** —
+   * a bar's height is its datum, so it cross-fades (`barSwap`) instead of
+   * sweeping up from zero; that is the documented exception to Rule 02. And
+   * **scrub has no duration** — it is direct manipulation, tracked 1:1, which is
+   * also why Reduce Motion leaves it alone.
+   */
+  chart: {
+    control: { duration: 130, spring: { stiffness: 400, damping: 30, mass: 1 } },
+    data: { duration: 280, easing: [0.77, 0, 0.175, 1] as const },
+    enter: { duration: 400, easing: [0.23, 1, 0.32, 1] as const },
+    barSwap: { duration: 200, easing: [0.23, 1, 0.32, 1] as const },
+  },
 } as const;
 
 /** Grey-900 tint shadows — mirrors `@arloui/tokens` shadow scale (RN shadow props). */

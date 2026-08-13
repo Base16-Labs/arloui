@@ -29,6 +29,7 @@ import {
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import { densityMetrics, type ChartDensity, type ChartTone } from './core';
 
 /**
  * Created once at module scope. Building it inside render returns a new component
@@ -37,14 +38,19 @@ import { useTokens } from '../../foundation/theme-provider';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export type MeterShape = 'bar' | 'ring';
-export type MeterTone = 'brand' | 'positive' | 'negative' | 'neutral';
 
 export type MeterProps = {
   value: number;
   max?: number;
   min?: number;
   shape?: MeterShape;
-  tone?: MeterTone;
+  /**
+   * Honours `brand` (default), `positive`, `negative`, and `neutral`. A meter is
+   * one value against a target — it has no series to enumerate and no direction to
+   * infer — so `series` and `auto` both resolve to `brand`.
+   */
+  tone?: ChartTone;
+  density?: ChartDensity;
   label?: string;
   /** Text in the middle of a ring, or beside a bar. Defaults to a percentage. */
   valueLabel?: string;
@@ -68,6 +74,7 @@ export function Meter({
   min = 0,
   shape = 'bar',
   tone = 'brand',
+  density = 'default',
   label,
   valueLabel,
   showValue = true,
@@ -79,6 +86,7 @@ export function Meter({
   style,
 }: MeterProps) {
   const t = useTokens();
+  const metrics = densityMetrics(density);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [progress] = useState(() => new Animated.Value(0));
 
@@ -137,6 +145,8 @@ export function Meter({
   const color = useMemo(() => {
     if (dangerAt != null && fraction >= dangerAt) return t.colors.feedbackError;
     if (warnAt != null && fraction >= warnAt) return t.colors.feedbackWarning;
+    // `auto` and `series` land on brand: there is no direction to infer from one
+    // value, and no categories to enumerate.
     return tone === 'positive'
       ? t.colors.chartPositive
       : tone === 'negative'
@@ -156,6 +166,13 @@ export function Meter({
   const shownReadout =
     valueLabel ?? `${Math.round((reduceMotion ? fraction : shownFraction) * 100)}%`;
   const a11y = accessibilityLabel ?? label;
+
+  /**
+   * `compact` drops the caption, which is the inline case: a bare bar sitting next
+   * to text that already names it. The value readout is governed by `showValue`
+   * and is left alone — a meter with neither a label nor a number is a decoration.
+   */
+  const withLabel = label != null && metrics.showLabels;
 
   const track = t.colors.surfaceInput;
 
@@ -203,7 +220,7 @@ export function Meter({
             >
               {shownReadout}
             </Text>
-            {label ? (
+            {withLabel ? (
               <Text
                 numberOfLines={1}
                 style={{
@@ -230,9 +247,9 @@ export function Meter({
       accessibilityValue={{ min, max, now: value, text: readout }}
       style={[{ gap: t.spacing[1] }, style]}
     >
-      {label || showValue ? (
+      {withLabel || showValue ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          {label ? (
+          {withLabel ? (
             <Text
               numberOfLines={1}
               style={{

@@ -2,7 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type MeterShape, type MeterTone } from '@arloui/registry';
+import { Chart, useTokens, type ChartTone, type MeterShape } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -10,7 +10,7 @@ import { VariantChip, VariantControlRow } from '@/components/playground/variant-
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
 const SHAPES: MeterShape[] = ['bar', 'ring'];
-const TONES: MeterTone[] = ['brand', 'positive', 'negative', 'neutral'];
+const TONES: ChartTone[] = ['brand', 'positive', 'negative', 'neutral'];
 /** Three levels so the threshold colours are visible side by side. */
 const LEVELS = [
   { value: 42, label: 'Goal' },
@@ -25,7 +25,7 @@ export default function MeterCanvas() {
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [shape, setShape] = useState<MeterShape>('bar');
-  const [tone, setTone] = useState<MeterTone>('brand');
+  const [tone, setTone] = useState<ChartTone>('brand');
   const [thresholds, setThresholds] = useState(true);
   const [previewOffset] = useState(() => new Animated.Value(0));
 
