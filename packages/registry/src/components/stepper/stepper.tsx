@@ -487,7 +487,14 @@ export function Stepper({
             color={valueColor}
             fontFamily={t.fontFamilies.sans}
             fontWeight="600"
-            reduceMotion={reduceMotion}
+            // Typing doesn't roll. The counter anchors its columns to the ones
+            // place, so an appended digit shifts every place left: typing "12"
+            // rolls the "1" you just entered up to "2" and slides a fresh "1" in
+            // beside it. Right for a value that counts, wrong for one you are
+            // spelling out. Snapping while focused leaves each keystroke landing
+            // where you put it, and the commit on blur still rolls — from the
+            // draft to the clamped, quantized, formatted value.
+            reduceMotion={reduceMotion || editing}
             spring={counterSpring}
             duration={t.motion.duration.fast}
           />
@@ -732,7 +739,10 @@ function StepperButton({
         justifyContent: 'center',
         flexShrink: 0,
         backgroundColor: surface,
-        opacity: !enabled ? 0.4 : pressed ? t.motion.pressed.opacity : 1,
+        // Disabled reads off the icon's `textDisabled` ink alone. Dimming the
+        // whole button on top of it multiplies the two alphas together, and the
+        // glyph drops below the point where it's visible at all.
+        opacity: pressed && enabled ? t.motion.pressed.opacity : 1,
         transform: [{ scale: pressed && enabled ? t.motion.pressed.scale : 1 }],
         cursor: Platform.OS === 'web' && enabled ? 'pointer' : undefined,
       })}

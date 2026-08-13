@@ -17,7 +17,7 @@ export const lightSemanticColors = {
   textPrimary: '#101828',
   textSecondary: '#4A5565',
   textTertiary: '#99A1AF',
-  textDisabled: 'rgba(16,24,40,0.05)',
+  textDisabled: 'rgba(16,24,40,0.35)',
   textInverse: '#FFFFFF',
   textPlaceholder: '#D1D5DC',
   textInteractivePrimary: '#FFFFFF',
