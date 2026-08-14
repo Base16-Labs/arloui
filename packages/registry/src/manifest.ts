@@ -37,6 +37,16 @@ export const FOUNDATION: RegistryEntry[] = [
     meta: { tags: ['foundation', 'provider'] },
   },
   {
+    name: 'glass',
+    kind: 'foundation',
+    title: 'Liquid Glass',
+    description:
+      'Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface="glass"`.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
+    meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
+  },
+  {
     name: 'haptics',
     kind: 'foundation',
     title: 'Haptics',
@@ -266,8 +276,8 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tab Bar',
     description:
-      'An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.',
+    registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },
       { source: 'components/tab-bar/index.ts', target: 'tab-bar/index.ts' },

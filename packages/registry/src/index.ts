@@ -119,6 +119,12 @@ export {
   type TextAreaSize,
   type TextAreaState,
 } from './components/text-area';
+export {
+  GlassBackdrop,
+  useGlassSurface,
+  type GlassMaterial,
+  type GlassSurface,
+} from './foundation/glass';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
 
 export { COMPONENTS, FOUNDATION, REGISTRY } from './manifest';

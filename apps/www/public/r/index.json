@@ -30,6 +30,24 @@
       }
     },
     {
+      "name": "glass",
+      "kind": "foundation",
+      "title": "Liquid Glass",
+      "description": "Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface=\"glass\"`.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "meta": {
+        "tags": [
+          "foundation",
+          "material",
+          "glass",
+          "blur"
+        ]
+      }
+    },
+    {
       "name": "haptics",
       "kind": "foundation",
       "title": "Haptics",
@@ -290,10 +308,11 @@
       "name": "tab-bar",
       "kind": "primitive",
       "title": "Tab Bar",
-      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.",
+      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "glass"
       ],
       "meta": {
         "tags": [

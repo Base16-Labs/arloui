@@ -11,10 +11,15 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
 import { useTokens } from '../../foundation/theme-provider';
 
 export type TabBarWidth = 'full' | 'floating';
-export type TabBarSurface = 'transparent' | 'filled';
+/**
+ * `'filled'` opaque nav fill · `'transparent'` no fill (host paints behind it) ·
+ * `'glass'` translucent Liquid Glass material.
+ */
+export type TabBarSurface = 'transparent' | 'filled' | 'glass';
 
 export type TabBarIconProps = {
   active: boolean;
@@ -40,7 +45,7 @@ export type TabBarProps = {
   showLabels?: boolean;
   hidden?: boolean;
   bottomInset?: number;
-  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a transparent surface for legibility. */
+  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a transparent or glass surface. */
   blurComponent?: ReactNode;
   style?: StyleProp<ViewStyle>;
 };
@@ -103,7 +108,20 @@ function TabBarRoot({
   style,
 }: TabBarProps) {
   const t = useTokens();
-  const [barWidth, setBarWidth] = useState(0);
+  // A nav bar sits over scrolling content, so it takes the medium material — enough
+  // separation to stay legible without fully hiding what passes underneath.
+  const glass = useGlassSurface('medium');
+  // The selection pill sits on top of the bar's own material, so it takes the
+  // lighter one — an opaque pill on glass would punch a hole in the effect.
+  const glassIndicator = useGlassSurface('small');
+  const isGlass = surface === 'glass';
+  /**
+   * Width of the row the tabs actually lay out in, measured on the row itself.
+   * Measuring the outer view instead would include its border — a floating bar
+   * carries one on every side — and the pill would then divide a track 2px wider
+   * than the real one, drifting a little further right on each successive tab.
+   */
+  const [trackWidth, setTrackWidth] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
   const items = Children.toArray(children).filter(
     isValidElement,
@@ -116,7 +134,8 @@ function TabBarRoot({
   const [visibility] = useState(() => new Animated.Value(hidden ? 1 : 0));
   const floating = width === 'floating';
   const innerPadding = floating ? 4 : 0;
-  const itemWidth = items.length > 0 ? Math.max(0, barWidth - innerPadding * 2) / items.length : 0;
+  const itemWidth =
+    items.length > 0 ? Math.max(0, trackWidth - innerPadding * 2) / items.length : 0;
   const indicatorWidth = floating ? itemWidth : Math.min(34, itemWidth * 0.46);
   const indicatorOffset = floating ? 0 : Math.max(0, (itemWidth - indicatorWidth) / 2);
 
@@ -150,13 +169,19 @@ function TabBarRoot({
     }).start();
   }, [hidden, reduceMotion, t.motion.duration.fast, visibility]);
 
-  function handleLayout(event: LayoutChangeEvent) {
-    setBarWidth(event.nativeEvent.layout.width);
+  function handleTrackLayout(event: LayoutChangeEvent) {
+    setTrackWidth(event.nativeEvent.layout.width);
   }
 
   const indicatorTranslate = Animated.add(Animated.multiply(selection, itemWidth), indicatorOffset);
   const barHeight = showLabels ? 64 : 56;
+  // A glass bar paints nothing here — its fill rides above the blur layer inside
+  // GlassBackdrop, so the blur only samples the content passing underneath.
   const backgroundColor = surface === 'filled' ? t.colors.navBackground : 'transparent';
+  const borderColor = isGlass ? glass.borderColor : t.colors.navBorder;
+  // Glass and filled both read as a real surface, so both keep an edge; only a
+  // fully transparent bar goes borderless.
+  const hasEdge = surface === 'filled' || isGlass;
 
   // Floating bars shrink in place on scroll (like Instagram's pill) so they stay
   // reachable; full-width bars slide off-screen since a stretched bar scales poorly.
@@ -173,17 +198,16 @@ function TabBarRoot({
           }),
         },
       ];
-  // A filled surface stays fully opaque while hiding so it keeps reading as
-  // "filled" even mid-scroll; only transparent/floating bars fade for de-emphasis.
+  // Filled and glass surfaces hold their opacity while hiding so they keep reading as
+  // a real surface even mid-scroll; only transparent bars fade for de-emphasis.
   const hideOpacity = visibility.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, surface === 'filled' ? 1 : floating ? 0.55 : 0.2],
+    outputRange: [1, hasEdge ? 1 : floating ? 0.55 : 0.2],
   });
 
   return (
     <Animated.View
       pointerEvents={hidden && !floating ? 'none' : 'auto'}
-      onLayout={handleLayout}
       style={[
         {
           alignSelf: floating ? 'center' : 'stretch',
@@ -192,30 +216,25 @@ function TabBarRoot({
           minHeight: barHeight + bottomInset,
           paddingBottom: bottomInset,
           borderRadius: floating ? t.radii.full : 0,
-          borderTopWidth: floating ? 1 : surface === 'filled' ? 1 : 0,
+          borderTopWidth: floating ? 1 : hasEdge ? 1 : 0,
           borderRightWidth: floating ? 1 : 0,
           borderBottomWidth: floating ? 1 : 0,
           borderLeftWidth: floating ? 1 : 0,
-          borderColor: t.colors.navBorder,
+          borderColor,
           backgroundColor,
           overflow: 'hidden',
           transform: hideTransform,
           opacity: hideOpacity,
         },
-        floating && surface === 'filled' ? (t.shadows.md as ViewStyle) : null,
+        floating && hasEdge ? (t.shadows.md as ViewStyle) : null,
         style,
       ]}
     >
-      {surface === 'transparent' && blurComponent ? (
-        <View
-          pointerEvents="none"
-          style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
-        >
-          {blurComponent}
-        </View>
+      {surface !== 'filled' ? (
+        <GlassBackdrop material={isGlass ? 'medium' : undefined}>{blurComponent}</GlassBackdrop>
       ) : null}
 
-      {floating && barWidth > 0 && items.length > 0 ? (
+      {floating && trackWidth > 0 && items.length > 0 ? (
         <Animated.View
           pointerEvents="none"
           style={{
@@ -225,13 +244,22 @@ function TabBarRoot({
             width: indicatorWidth,
             height: barHeight - 8,
             borderRadius: t.radii.full,
-            backgroundColor: surface === 'filled' ? t.colors.surfaceStrong : t.colors.surfaceElevated,
+            backgroundColor: isGlass
+              ? glassIndicator.backgroundColor
+              : surface === 'filled'
+                ? t.colors.surfaceStrong
+                : t.colors.surfaceElevated,
+            borderWidth: isGlass ? glassIndicator.borderWidth : 0,
+            borderColor: isGlass ? glassIndicator.borderColor : 'transparent',
             transform: [{ translateX: indicatorTranslate }],
           }}
         />
       ) : null}
 
-      <View style={{ minHeight: barHeight, flexDirection: 'row', paddingHorizontal: innerPadding }}>
+      <View
+        onLayout={handleTrackLayout}
+        style={{ minHeight: barHeight, flexDirection: 'row', paddingHorizontal: innerPadding }}
+      >
         {items.map((item) => {
           const active = item.props.value === value;
           return cloneElement(item, {
