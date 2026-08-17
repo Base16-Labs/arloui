@@ -285,6 +285,45 @@ export const tabBarData = {
   ],
 };
 
+export const cardData = {
+  slug: 'card',
+  category: 'Layout & surface',
+  title: 'Card',
+  lede: 'A surface that groups related content, with two independent axes — tone for how far it lifts off the page, surface for what it is made of — plus four presets for the shapes that recur: stat, list, media, and action.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+  states: ['default', 'raised', 'floating', 'glass', 'pressable', 'padding', 'margin', 'radius'],
+  tokens: [
+    'colors.surface',
+    'colors.surfaceRaised',
+    'colors.border',
+    'colors.borderSecondary',
+    'radii.none … radii.full',
+    'spacing.2 … spacing.8',
+    'shadows.md',
+    'materials.glassLarge',
+    'motion.pressed.scale',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'presets', label: 'Presets' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/cards' },
+  ],
+};
+
 export const skeletonData = {
   slug: 'skeleton',
   category: 'Feedback',
@@ -1032,6 +1071,7 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/spinner': docDataToMarkdown(spinnerData),
   '/docs/components/tabs': docDataToMarkdown(tabsData),
   '/docs/components/button': docDataToMarkdown(buttonData),
+  '/docs/components/card': docDataToMarkdown(cardData),
   '/docs/components/input': docDataToMarkdown(inputData),
   '/docs/components/toggle': docDataToMarkdown(toggleData),
   '/docs/components/checkbox': docDataToMarkdown(checkboxData),

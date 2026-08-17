@@ -72,6 +72,37 @@ export const lightSemanticColors = {
   feedbackInfo: P[500],
   feedbackInfoBg: P[50],
 
+  /**
+   * Direction tones for charts. Deliberately NOT `feedbackSuccess`/`feedbackError`:
+   * that pair is Success-500 against Error-500, which measures ΔE 7.6 under
+   * deuteranopia (inside the 6–8 "floor" band) and puts the green at 2.16:1 on a
+   * light surface — too weak for a 2px line. Stepping to Success-700 / Error-600
+   * clears both: ΔE 9.2 deutan, and both poles above 3:1.
+   *
+   * Direction must never be carried by color alone — pair these with a signed
+   * value (+/−) or an arrow.
+   */
+  chartPositive: S[700],
+  chartNegative: E[600],
+  /**
+   * Categorical series colours for part-to-whole and multi-category charts.
+   *
+   * Four slots, not more: this is the largest set that clears the data-viz checks
+   * on EVERY pair (not just neighbours) in BOTH modes, which is the honest bar for
+   * a donut where all slices are on screen at once. Light is worst-pair ΔE 8.7 and
+   * dark ΔE 9.0 under deuteranopia, all above 3:1 on their own surface. A fifth
+   * hue only clears in light, so there isn't one.
+   *
+   * Assign in this fixed order and never cycle. Anything past the fourth category
+   * folds into `chartOther`, and charts using these always carry a legend or direct
+   * labels so identity is never colour alone.
+   */
+  chartSeries1: P[600],
+  chartSeries2: paletteSecondary.lime[600],
+  chartSeries3: paletteSecondary.pink[700],
+  chartSeries4: paletteSecondary.yellow[700],
+  chartOther: G[500],
+
   navBackground: base.white,
   navBorder: G[200],
   navActive: P[500],
@@ -129,6 +160,22 @@ export const darkSemanticColors = {
   feedbackErrorBg: E[950],
   feedbackInfo: P[400],
   feedbackInfoBg: P[950],
+
+  /**
+   * Dark keeps the brighter Success-400 — on a dark surface it separates from
+   * Error-500 by ΔE 14.0 under deuteranopia, the best of any pair tested, and both
+   * clear 3:1. It sits just above the categorical lightness band, which is a
+   * weight-parity guideline for multi-series palettes; only one pole is ever drawn
+   * at a time here, so parity does not apply.
+   */
+  chartPositive: S[400],
+  chartNegative: E[500],
+  /** Dark keeps slots 1, 2 and 4; only the pink lightens for the darker surface. */
+  chartSeries1: P[600],
+  chartSeries2: paletteSecondary.lime[600],
+  chartSeries3: paletteSecondary.pink[500],
+  chartSeries4: paletteSecondary.yellow[700],
+  chartOther: Z[400],
 
   navBackground: Z[900],
   navBorder: Z[800],

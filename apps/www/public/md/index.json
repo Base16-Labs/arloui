@@ -1,5 +1,5 @@
 {
-  "count": 43,
+  "count": 44,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -44,6 +44,10 @@
     {
       "path": "/docs/components/button",
       "md": "/md/docs/components/button.md"
+    },
+    {
+      "path": "/docs/components/card",
+      "md": "/md/docs/components/card.md"
     },
     {
       "path": "/docs/components/carousel",

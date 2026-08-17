@@ -14,7 +14,27 @@ export {
   type SocialAuthButtonProps,
   type SocialAuthProvider,
 } from './components/button';
-export { Card, type CardProps } from './components/card';
+export { AnimatedCounter, type AnimatedCounterProps } from './components/animated-counter';
+export {
+  ActionCard,
+  Card,
+  ListCard,
+  MediaCard,
+  StatCard,
+  type ActionCardAction,
+  type ActionCardProps,
+  type ActionCardTone,
+  type CardPadding,
+  type CardProps,
+  type CardRadius,
+  type CardSpacing,
+  type CardSurface,
+  type ListCardProps,
+  type MediaCardLayout,
+  type MediaCardProps,
+  type StatCardProps,
+} from './components/card';
+export { Sparkline, type SparklineProps } from './components/chart/sparkline';
 export {
   Carousel,
   type CarouselIndicator,
@@ -120,6 +140,12 @@ export {
   type TextAreaState,
 } from './components/text-area';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
+export {
+  GlassBackdrop,
+  useGlassSurface,
+  type GlassMaterial,
+  type GlassSurface,
+} from './foundation/glass';
 
 export { COMPONENTS, FOUNDATION, REGISTRY } from './manifest';
 export type { Registry, RegistryEntry, RegistryFile, RegistryItemKind } from './schema';

@@ -37,6 +37,16 @@ export const FOUNDATION: RegistryEntry[] = [
     meta: { tags: ['foundation', 'provider'] },
   },
   {
+    name: 'glass',
+    kind: 'foundation',
+    title: 'Liquid Glass',
+    description:
+      'Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface="glass"`.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
+    meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
+  },
+  {
     name: 'haptics',
     kind: 'foundation',
     title: 'Haptics',
@@ -93,15 +103,56 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A flexible surface for grouping related content with header, body, footer, and hierarchy options.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.',
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'glass', 'animated-counter', 'chart', 'button'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
+      { source: 'components/card/stat-card.tsx', target: 'card/stat-card.tsx' },
+      { source: 'components/card/list-card.tsx', target: 'card/list-card.tsx' },
+      { source: 'components/card/media-card.tsx', target: 'card/media-card.tsx' },
+      { source: 'components/card/action-card.tsx', target: 'card/action-card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
       figma: 'Components/Card/Default',
-      tags: ['surface', 'primitive'],
+      tags: ['surface', 'primitive', 'glass'],
+    },
+  },
+  {
+    name: 'animated-counter',
+    kind: 'primitive',
+    title: 'Animated counter',
+    description:
+      'A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.',
+    registryDependencies: [],
+    files: [
+      {
+        source: 'components/animated-counter/animated-counter.tsx',
+        target: 'animated-counter/animated-counter.tsx',
+      },
+      { source: 'components/animated-counter/index.ts', target: 'animated-counter/index.ts' },
+    ],
+    meta: {
+      tags: ['motion', 'numeric', 'counter', 'primitive'],
+    },
+  },
+  {
+    name: 'chart',
+    kind: 'primitive',
+    title: 'Chart',
+    description:
+      'Inline sparkline used by StatCard. The other chart forms live on a separate branch.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
+      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
+      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
+      { source: 'components/chart/index.ts', target: 'chart/index.ts' },
+    ],
+    meta: {
+      tags: ['chart', 'data', 'visualization', 'primitive'],
     },
   },
   {

@@ -12,6 +12,7 @@ type IndexItem = {
   href?:
     | '/badge'
     | '/button'
+    | '/cards'
     | '/chip'
     | '/input'
     | '/textarea'
@@ -33,7 +34,7 @@ type IndexItem = {
 const COMPONENTS: IndexItem[] = [
   { title: 'Badge', category: 'Feedback', href: '/badge' },
   { title: 'Button', category: 'Controls', href: '/button' },
-  { title: 'Card', category: 'Layout' },
+  { title: 'Card', category: 'Layout', href: '/cards' },
   { title: 'Carousel', category: 'Layout', href: '/carousel' },
   { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
   { title: 'Chip', category: 'Controls', href: '/chip' },
@@ -179,7 +180,7 @@ function IndexRow({ item }: { item: IndexItem }) {
     <Pressable
       disabled={!item.href}
       onPress={() => {
-        if (item.href) router.push(item.href);
+        if (item.href) router.push(item.href as Parameters<typeof router.push>[0]);
       }}
       style={({ pressed }) => ({
         minHeight: 64,
