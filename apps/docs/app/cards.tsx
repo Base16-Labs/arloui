@@ -22,7 +22,7 @@ type Variant = 'stat' | 'list' | 'media' | 'action';
 
 const VARIANTS: Variant[] = ['stat', 'list', 'media', 'action'];
 const RADII: CardRadius[] = ['none', 'sm', 'md', 'lg', 'xl', '2xl'];
-const MARGINS: CardSpacing[] = ['none', 'xs', 'sm', 'md', 'lg'];
+const PADDINGS: CardSpacing[] = ['xs', 'sm', 'md', 'lg', 'xl'];
 
 const money = (v: number) =>
   `$${v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -35,7 +35,7 @@ export default function CardsCanvas() {
   const [variant, setVariant] = useState<Variant>('stat');
   const [dismissed, setDismissed] = useState(false);
   const [radius, setRadius] = useState<CardRadius>('xl');
-  const [margin, setMargin] = useState<CardSpacing>('none');
+  const [padding, setPadding] = useState<CardSpacing>('md');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export default function CardsCanvas() {
                 <>
                   <StatCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                     label="Balance"
                     value={12480.32}
                     delta={412.19}
@@ -94,7 +94,7 @@ export default function CardsCanvas() {
                   />
                   <StatCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                     label="Spend"
                     value={2310.4}
                     delta={-186.2}
@@ -104,7 +104,7 @@ export default function CardsCanvas() {
                   />
                   <StatCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                     label="Subscribers"
                     value={18402}
                     icon={<Ionicons name="people-outline" size={18} color={t.colors.textTertiary} />}
@@ -114,7 +114,7 @@ export default function CardsCanvas() {
 
               {variant === 'list' ? (
                 <>
-                  <ListCard.Group radius={radius} margin={margin}>
+                  <ListCard.Group radius={radius} padding={padding}>
                     <ListCard
                       title="Spotify"
                       subtitle="Yesterday"
@@ -157,7 +157,7 @@ export default function CardsCanvas() {
                 <>
                   <MediaCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                     title="Kyoto in autumn"
                     subtitle="12 photos · shared album"
                     onPress={() => {}}
@@ -167,7 +167,7 @@ export default function CardsCanvas() {
                   />
                   <MediaCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                     layout="overlay"
                     title="Weekend in Lagos"
                     subtitle="Updated 2h ago"
@@ -184,7 +184,7 @@ export default function CardsCanvas() {
                   {!dismissed ? (
                     <ActionCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                       title="Turn on two-factor auth"
                       body="Add a second step when signing in from a new device."
                       icon={<Ionicons name="shield-checkmark" size={20} color={t.colors.interactivePrimary} />}
@@ -207,7 +207,7 @@ export default function CardsCanvas() {
                   )}
                   <ActionCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                     tone="error"
                     title="Payment failed"
                     body="We couldn't charge your card ending in 4242."
@@ -216,7 +216,7 @@ export default function CardsCanvas() {
                   />
                   <ActionCard
                     radius={radius}
-                    margin={margin}
+                    padding={padding}
                     tone="success"
                     title="You're all set"
                     body="Your account is verified and ready to go."
@@ -280,13 +280,13 @@ export default function CardsCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Margin">
-                {MARGINS.map((value) => (
+              <VariantControlRow label="Padding">
+                {PADDINGS.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
-                    active={margin === value}
-                    onPress={() => setMargin(value)}
+                    active={padding === value}
+                    onPress={() => setPadding(value)}
                   />
                 ))}
               </VariantControlRow>

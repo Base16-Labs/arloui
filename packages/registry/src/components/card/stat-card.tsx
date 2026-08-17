@@ -37,6 +37,8 @@ export type StatCardProps = {
   caption?: string;
   tone?: CardProps['tone'];
   surface?: CardProps['surface'];
+  /** Inner padding, forwarded to `Card`. */
+  padding?: CardProps['padding'];
   /** Outer spacing, forwarded to `Card`. */
   margin?: CardProps['margin'];
   /** Corner rounding, forwarded to `Card`. */
@@ -58,6 +60,7 @@ export function StatCard({
   caption,
   tone,
   surface,
+  padding = 'md',
   margin,
   radius,
   blurComponent,
@@ -80,10 +83,10 @@ export function StatCard({
     <Card
       tone={tone}
       surface={surface}
+      padding={padding}
       margin={margin}
       radius={radius}
       blurComponent={blurComponent}
-      padding="md"
       onPress={onPress}
       accessibilityLabel={onPress ? label : undefined}
       style={style}

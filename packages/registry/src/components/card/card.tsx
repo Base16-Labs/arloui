@@ -12,8 +12,8 @@
  * Geometry is three more, all reading off the token scales so a card never invents
  * a value: `padding` and `margin` share one spacing scale ('none' … 'xl'), and
  * `radius` maps straight onto the radius scale ('none' … 'full'). The presets and
- * `ListCard.Group` forward `margin` and `radius` too, so a row of cards can be
- * reshaped without dropping to `style`.
+ * `ListCard.Group` forward `padding`, `margin`, and `radius` too, so a row of cards
+ * can be reshaped without dropping to `style`.
  *
  * Surfaces use `surface` by default and step up to `surfaceRaised` for the `raised`
  * tone. Borders carry hierarchy on neutral surfaces — shadows are reserved for

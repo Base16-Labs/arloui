@@ -35,6 +35,8 @@ export type MediaCardProps = {
   /** Rendered under the text. Actions, metadata, a button row. */
   footer?: ReactNode;
   tone?: CardProps['tone'];
+  /** Inner padding, forwarded to `Card`. Defaults to `'none'` so media stays edge-to-edge. */
+  padding?: CardProps['padding'];
   /** Outer spacing, forwarded to `Card`. */
   margin?: CardProps['margin'];
   /** Corner rounding, forwarded to `Card`. */
@@ -54,6 +56,7 @@ export function MediaCard({
   badge,
   footer,
   tone,
+  padding = 'none',
   margin,
   radius,
   onPress,
@@ -66,7 +69,7 @@ export function MediaCard({
   return (
     <Card
       tone={tone}
-      padding="none"
+      padding={padding}
       margin={margin}
       radius={radius}
       onPress={onPress}

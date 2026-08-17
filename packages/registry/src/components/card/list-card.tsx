@@ -211,11 +211,14 @@ function ListCardRow({
  */
 function ListCardGroup({
   children,
+  padding = 'none',
   margin = 'none',
   radius = 'xl',
   style,
 }: {
   children: ReactNode;
+  /** Inner padding, matching `Card`'s scale. */
+  padding?: CardSpacing;
   /** Outer spacing, matching `Card`'s scale. */
   margin?: CardSpacing;
   /** Corner rounding, matching `Card`'s scale. */
@@ -223,14 +226,16 @@ function ListCardGroup({
   style?: StyleProp<ViewStyle>;
 }) {
   const t = useTokens();
-  const marginValue = {
+  const spacingScale = {
     none: 0,
     xs: t.spacing[2],
     sm: t.spacing[3],
     md: t.spacing[5],
     lg: t.spacing[6],
     xl: t.spacing[8],
-  }[margin];
+  };
+  const paddingValue = spacingScale[padding];
+  const marginValue = spacingScale[margin];
   const rows = Children.toArray(children).filter(isValidElement) as ReactElement<ListCardProps>[];
 
   return (
@@ -241,6 +246,7 @@ function ListCardGroup({
           borderRadius: t.radii[radius],
           borderWidth: 1,
           borderColor: t.colors.border,
+          padding: paddingValue,
           margin: marginValue,
           overflow: 'hidden',
         },

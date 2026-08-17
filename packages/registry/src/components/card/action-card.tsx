@@ -45,6 +45,8 @@ export type ActionCardProps = {
   onDismiss?: () => void;
   dismissAccessibilityLabel?: string;
   surface?: CardProps['surface'];
+  /** Inner padding, forwarded to `Card`. */
+  padding?: CardProps['padding'];
   /** Outer spacing, forwarded to `Card`. */
   margin?: CardProps['margin'];
   /** Corner rounding, forwarded to `Card`. */
@@ -79,6 +81,7 @@ export function ActionCard({
   onDismiss,
   dismissAccessibilityLabel = 'Dismiss',
   surface,
+  padding = 'md',
   margin,
   radius,
   blurComponent,
@@ -106,7 +109,7 @@ export function ActionCard({
     <Card
       surface={surface}
       blurComponent={blurComponent}
-      padding="md"
+      padding={padding}
       margin={margin}
       radius={radius}
       style={style}
