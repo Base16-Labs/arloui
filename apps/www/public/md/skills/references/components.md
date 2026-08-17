@@ -104,10 +104,18 @@ Solid fills use rounded corners + pressed elevation; ghost & outline use pill ra
 
 ### Tab Bar
 
+Registry **`TabBar`** — a bottom navigation bar. **`width`**: **`full`** (edge-to-edge) or **`floating`** (inset pill, `92%` wide, centred, `radii.full`). **`surface`**: **`filled`** (opaque `navBackground`), **`glass`** (translucent Liquid-Glass material), or **`transparent`** (blur-only) — for glass/transparent a host **`blurComponent`** (e.g. `expo-blur`'s `BlurView`) supplies the backdrop blur. Compose with **`TabBar.Item`** (`value`, `label`, `icon`, optional `badge`, `disabled`); active/inactive icons use **`navActive`** / **`navInactive`**.
+
+- **`scrollBehavior`** — **`hide`** (slides off, stops taking touches), **`shrink`** (shrinks in place, stays reachable), or **`fixed`** (ignores scroll). Chosen independently of `width`; defaults to `shrink` for floating and `hide` for full. Drive it with the **`useTabBarScroll()`** hook, which returns `{ hidden, onScroll }` — spread `onScroll` on the scroll view, pass `hidden` to the bar. A full-width bar set to `shrink` **morphs into a floating pill** as it recedes.
+- **`selection`** — **`snap`** (default) tracks the active tab instantly (Rule 07 — a habitual toggle shouldn't read as latency); **`jelly`** stretches the pill toward its target and settles with a soft wobble, an opt-in expressive move. Only the **floating** variant carries a pill (`interactiveSecondary`); full-width reads the active tab from icon colour, so `selection` is a no-op there.
+- Floating bars cast **`shadows.md`**; full-width bars cast a subtle upward shadow to lift off the content above. A floating bar also lays a **translucent gradient scrim** behind and below itself so content dissolves into the background near the nav rather than meeting a line; the scrim fades out on `hide` and drops on `shrink`.
+- **`showLabels`** shows a label under each icon (bar grows `56→64`); **`badge`** renders a count on the error fill; **`bottomInset`** pads for the home indicator.
+
+Guidelines:
+
 - 3–5 destinations maximum. More than five requires a different navigation model.
-- Icons are primary; labels are secondary but should always be present for clarity.
-- Active tab uses `--accent` or `--text-primary`; inactive tabs use `--text-tertiary`.
-- Keep the bar anchored to the safe area bottom — never overlap content.
+- Icons are primary; labels (`showLabels`) are secondary but aid clarity.
+- Keep the bar anchored to the safe-area bottom — never overlap content (pass `bottomInset`).
 - Avoid badge-heavy tabs; one notification count is fine, multiple is noise.
 
 ## State Patterns

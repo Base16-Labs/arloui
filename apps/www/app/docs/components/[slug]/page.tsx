@@ -622,11 +622,11 @@ function TabBarDocPage() {
             <div className="mx-auto max-w-[420px]">
               {[
                 ['Container', 'full or floating'],
-                ['Surface', 'transparent or filled'],
+                ['Surface', 'filled, glass, or transparent'],
                 ['Item', 'icon and optional label'],
-                ['Indicator', 'tracks the selected destination'],
+                ['Indicator', 'floating pill, snap or jelly motion'],
                 ['Badge', 'short, exceptional count'],
-                ['Visibility', 'fixed or driven by scroll direction'],
+                ['Visibility', 'fixed, hide, or shrink on scroll'],
               ].map(([name, detail]) => (
                 <div
                   key={name}
@@ -670,6 +670,8 @@ const scroll = useTabBarScroll();
   onValueChange={setTab}
   width="floating"
   surface="filled"
+  scrollBehavior="shrink"
+  selection="jelly"
   hidden={scroll.hidden}
 >
   <TabBar.Item

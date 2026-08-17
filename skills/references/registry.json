@@ -295,7 +295,9 @@
         "theme-provider",
         "glass"
       ],
-      "dependencies": [],
+      "dependencies": [
+        "react-native-svg"
+      ],
       "tags": [
         "navigation",
         "tabs",

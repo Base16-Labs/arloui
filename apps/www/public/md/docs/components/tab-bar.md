@@ -24,13 +24,17 @@
 ## Tokens used
 
 - `colors.navBackground`
-- `colors.navBorder`
 - `colors.navActive`
 - `colors.navInactive`
-- `colors.navIndicator`
+- `colors.interactiveSecondary`
+- `colors.interactiveError`
+- `colors.textInteractivePrimary`
+- `colors.bg`
 - `motion.duration.fast`
 - `motion.spring.snappy`
+- `motion.pressed`
 - `sizing.touchTarget.minimum`
+- `sizing.icon.md`
 - `radii.full`
 - `shadows.md`
 
