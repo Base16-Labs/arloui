@@ -35,6 +35,7 @@ import {
   Animated,
   Easing,
   Pressable,
+  StyleSheet,
   Text,
   View,
   type LayoutChangeEvent,
@@ -54,7 +55,7 @@ import {
   type ChartPoint,
   type ChartTone,
 } from './core';
-import { useControllableIndex, useReduceMotion } from './hooks';
+import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
 
 /** A bar needs a name, so `label` is required here even though `ChartPoint`'s is not. */
 export type BarDatum = ChartPoint & {
@@ -90,6 +91,12 @@ export type BarChartProps = {
   maxValue?: number;
   /** Rendered in place of the bars when `data` is empty. */
   emptyLabel?: string;
+  /**
+   * Draws grey bars at a fixed profile instead of the data. Same footprint as the
+   * loaded chart — the row does not reflow when the values land, and the labels
+   * stay off because a skeleton with real category names is half-loaded, not
+   * loading.
+   */
   loading?: boolean;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
@@ -109,6 +116,63 @@ function normalizeBars(data: BarChartProps['data']): BarDatum[] {
     typeof entry === 'number'
       ? { value: entry, label: String(index + 1) }
       : { ...entry, label: entry.label ?? String(index + 1) },
+  );
+}
+
+/**
+ * The silhouette drawn while `loading`.
+ *
+ * Bars, not a spinner: the skeleton has to hold the same footprint the data will,
+ * so the row does not reflow when it lands. The heights are a fixed, unremarkable
+ * profile rather than random — a skeleton that reshapes on every render reads as
+ * data arriving, and a reader will try to interpret it.
+ */
+const SKELETON_HEIGHTS = [0.45, 0.7, 0.35, 0.85, 0.55, 0.4, 0.65];
+
+function BarSkeleton({
+  width,
+  height,
+  count,
+  gap,
+  radius,
+}: {
+  width: number;
+  height: number;
+  count: number;
+  gap: number;
+  radius: number;
+}) {
+  const t = useTokens();
+  const pulse = useSkeletonPulse(t.motion.duration.slow);
+  if (width === 0) return null;
+
+  const slot = count > 0 ? (width - gap * (count - 1)) / count : 0;
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[StyleSheet.absoluteFill, { opacity: pulse }]}
+    >
+      <Svg width={width} height={height}>
+        {Array.from({ length: count }, (_, index) => {
+          const fraction = SKELETON_HEIGHTS[index % SKELETON_HEIGHTS.length] ?? 0.5;
+          const barHeight = height * fraction;
+          return (
+            <Path
+              key={index}
+              d={barPath({
+                x: index * (slot + gap),
+                y: height - barHeight,
+                width: slot,
+                height: barHeight,
+                radius,
+                roundedEnd: 'top',
+              })}
+              fill={t.colors.surfaceInput}
+            />
+          );
+        })}
+      </Svg>
+    </Animated.View>
   );
 }
 
@@ -350,9 +414,13 @@ export function BarChart({
       {/* Tap targets and category labels. Full-height columns on the same slot
           arithmetic as the marks above — matching the bars' widths is what makes a
           tap land on the right category, and staying full height keeps the target
-          comfortable for a short bar. */}
+          comfortable for a short bar.
+
+          Empty while loading: a skeleton you can select is a lie, and these carry
+          the real category names and values in their accessibility labels, so
+          leaving them mounted would read the not-yet-loaded data out loud. */}
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'stretch', gap }}>
-        {bars.map((bar, index) => {
+        {(loading ? [] : bars).map((bar, index) => {
           const selected = selection === index;
           return (
             <Pressable
@@ -392,6 +460,16 @@ export function BarChart({
           );
         })}
       </View>
+
+      {loading ? (
+        <BarSkeleton
+          width={width}
+          height={plotHeight}
+          count={bars.length > 0 ? bars.length : SKELETON_HEIGHTS.length}
+          gap={gap}
+          radius={metrics.barRadius}
+        />
+      ) : null}
 
       {bars.length === 0 && !loading ? (
         <View

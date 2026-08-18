@@ -94,7 +94,7 @@ import {
   type ChartReference,
   type ChartTone,
 } from './core';
-import { useControllableIndex, useReduceMotion } from './hooks';
+import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
 import { BarChart } from './bar-chart';
 import { DonutChart } from './donut-chart';
 import { Meter } from './meter';
@@ -770,30 +770,7 @@ function PlotShimmer({
   stroke: number;
 }) {
   const t = useTokens();
-  const reduceMotion = useReduceMotion();
-  const [pulse] = useState(() => new Animated.Value(0.35));
-
-  useEffect(() => {
-    if (reduceMotion || width === 0) return;
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, {
-          toValue: 0.75,
-          duration: t.motion.duration.slow,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulse, {
-          toValue: 0.35,
-          duration: t.motion.duration.slow,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [pulse, reduceMotion, width, t.motion.duration.slow]);
+  const pulse = useSkeletonPulse(t.motion.duration.slow);
 
   if (width === 0) return null;
 
@@ -808,9 +785,7 @@ function PlotShimmer({
   const shape = SHIMMER_SHAPE.map((value, index) => ({ x: scale.x(index), y: scale.y(value) }));
 
   return (
-    <Animated.View
-      style={[StyleSheet.absoluteFill, { opacity: reduceMotion ? 0.4 : pulse }]}
-    >
+    <Animated.View style={[StyleSheet.absoluteFill, { opacity: pulse }]}>
       <Svg width={width} height={height} pointerEvents="none">
         <Path
           d={linePath(shape, 'smooth')}

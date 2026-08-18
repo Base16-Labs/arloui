@@ -30,6 +30,7 @@ import {
 import Svg, { Circle } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
 import { densityMetrics, type ChartDensity, type ChartTone } from './core';
+import { useSkeletonPulse } from './hooks';
 
 /**
  * Created once at module scope. Building it inside render returns a new component
@@ -64,6 +65,15 @@ export type MeterProps = {
   thickness?: number;
   /** Ring diameter. Ignored by the bar shape. */
   size?: number;
+  /**
+   * Pulses the track and holds back the fill and the readout. The label stays —
+   * it is the one part of a meter you already know before the value arrives, and
+   * skeletoning known text just makes the row flicker.
+   *
+   * There is no `emptyLabel` counterpart: a meter is one value against a target,
+   * so it is either loading or it has a value. An empty meter is a zero.
+   */
+  loading?: boolean;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -82,6 +92,7 @@ export function Meter({
   dangerAt,
   thickness = shape === 'ring' ? 10 : 8,
   size = 120,
+  loading = false,
   accessibilityLabel,
   style,
 }: MeterProps) {
@@ -91,7 +102,12 @@ export function Meter({
   const [progress] = useState(() => new Animated.Value(0));
 
   const range = max - min;
-  const fraction = range === 0 ? 0 : Math.min(1, Math.max(0, (value - min) / range));
+  // The fill stays empty while loading — a meter that sweeps to a real number
+  // before the number is known has already told the reader something false.
+  const fraction =
+    loading || range === 0 ? 0 : Math.min(1, Math.max(0, (value - min) / range));
+  const pulse = useSkeletonPulse(t.motion.duration.slow);
+  const trackOpacity = loading ? pulse : 1;
 
   /**
    * What the readout currently says. Tracks `progress` while the fill sweeps, so
@@ -165,7 +181,7 @@ export function Meter({
   /** What is painted, which counts up with the fill — or lands flat under Reduce Motion. */
   const shownReadout =
     valueLabel ?? `${Math.round((reduceMotion ? fraction : shownFraction) * 100)}%`;
-  const a11y = accessibilityLabel ?? label;
+  const a11y = accessibilityLabel ?? (loading ? 'Loading' : label);
 
   /**
    * `compact` drops the caption, which is the inline case: a bare bar sitting next
@@ -189,7 +205,15 @@ export function Meter({
         style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }, style]}
       >
         <Svg width={size} height={size} style={{ position: 'absolute' }}>
-          <Circle cx={size / 2} cy={size / 2} r={radius} stroke={track} strokeWidth={thickness} fill="none" />
+          <AnimatedCircle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={track}
+            strokeWidth={thickness}
+            fill="none"
+            opacity={trackOpacity}
+          />
           <AnimatedCircle
             cx={size / 2}
             cy={size / 2}
@@ -209,17 +233,19 @@ export function Meter({
         </Svg>
         {showValue ? (
           <View style={{ alignItems: 'center' }}>
-            <Text
-              style={{
-                color: t.colors.textPrimary,
-                fontFamily: t.fontFamilies.sans,
-                fontSize: t.typography.title2.fontSize,
-                lineHeight: t.typography.title2.lineHeight,
-                fontWeight: '700',
-              }}
-            >
-              {shownReadout}
-            </Text>
+            {!loading ? (
+              <Text
+                style={{
+                  color: t.colors.textPrimary,
+                  fontFamily: t.fontFamilies.sans,
+                  fontSize: t.typography.title2.fontSize,
+                  lineHeight: t.typography.title2.lineHeight,
+                  fontWeight: '700',
+                }}
+              >
+                {shownReadout}
+              </Text>
+            ) : null}
             {withLabel ? (
               <Text
                 numberOfLines={1}
@@ -265,7 +291,7 @@ export function Meter({
           ) : (
             <View />
           )}
-          {showValue ? (
+          {showValue && !loading ? (
             <Text
               style={{
                 color: t.colors.textPrimary,
@@ -280,12 +306,13 @@ export function Meter({
           ) : null}
         </View>
       ) : null}
-      <View
+      <Animated.View
         style={{
           height: thickness,
           borderRadius: t.radii.full,
           backgroundColor: track,
           overflow: 'hidden',
+          opacity: trackOpacity,
         }}
       >
         <Animated.View
@@ -299,7 +326,7 @@ export function Meter({
             }),
           }}
         />
-      </View>
+      </Animated.View>
     </View>
   );
 }

@@ -13,7 +13,14 @@
  * so a sparkline and a plot of the same series have the same shape.
  */
 import { useId, useMemo, useState } from 'react';
-import { View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
 import {
@@ -29,6 +36,7 @@ import {
   type ChartDensity,
   type ChartTone,
 } from './core';
+import { useSkeletonPulse } from './hooks';
 
 export type SparklineProps = {
   data: ChartData;
@@ -50,6 +58,11 @@ export type SparklineProps = {
   /** Overrides the density's stroke width. */
   strokeWidth?: number;
   /**
+   * Draws the silhouette as a pulsing line instead of the series. Holds the same
+   * box, so the row it sits in does not reflow when the data lands.
+   */
+  loading?: boolean;
+  /**
    * Sparklines are decorative next to a value that is already announced, so they
    * are hidden from assistive tech unless you pass a label.
    */
@@ -67,6 +80,7 @@ export function Sparkline({
   showEndDot = false,
   curve = 'steep',
   strokeWidth,
+  loading = false,
   accessibilityLabel,
   style,
 }: SparklineProps) {
@@ -118,7 +132,28 @@ export function Sparkline({
       importantForAccessibility={accessibilityLabel == null ? 'no-hide-descendants' : 'auto'}
       style={[{ width: widthProp, height }, style]}
     >
-      {width > 0 && plotted.length > 0 ? (
+      {loading ? (
+        <SparklineSkeleton width={width} height={height} inset={inset} stroke={stroke} />
+      ) : null}
+
+      {/*
+        Empty is a flat rule at the baseline, never a "No data" caption: a
+        sparkline is inline beside a number that already carries the label, and a
+        28px box has no room for text. The rule holds the height so the row keeps
+        its rhythm.
+      */}
+      {!loading && width > 0 && plotted.length === 0 ? (
+        <Svg width={width} height={height}>
+          <Path
+            d={`M ${inset} ${height / 2} L ${width - inset} ${height / 2}`}
+            stroke={t.colors.borderSecondary}
+            strokeWidth={stroke}
+            strokeLinecap="round"
+          />
+        </Svg>
+      ) : null}
+
+      {!loading && width > 0 && plotted.length > 0 ? (
         <Svg width={width} height={height}>
           {area ? (
             <>
@@ -145,5 +180,55 @@ export function Sparkline({
         </Svg>
       ) : null}
     </View>
+  );
+}
+
+/**
+ * The pulsing silhouette drawn while `loading`.
+ *
+ * A fixed rise-and-settle profile, not the real shape and not a random one: a
+ * skeleton that reshapes on every render reads as data arriving and a reader will
+ * try to interpret it.
+ */
+const SKELETON_SHAPE = [0.35, 0.5, 0.42, 0.68, 0.58, 0.8, 0.72, 0.9];
+
+function SparklineSkeleton({
+  width,
+  height,
+  inset,
+  stroke,
+}: {
+  width: number;
+  height: number;
+  inset: number;
+  stroke: number;
+}) {
+  const t = useTokens();
+  const pulse = useSkeletonPulse(t.motion.duration.slow);
+  if (width === 0) return null;
+
+  const scale = makeScale({
+    count: SKELETON_SHAPE.length,
+    min: 0,
+    span: 1,
+    width,
+    height,
+    inset,
+  });
+  const shape = SKELETON_SHAPE.map((value, index) => ({ x: scale.x(index), y: scale.y(value) }));
+
+  return (
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: pulse }]}>
+      <Svg width={width} height={height}>
+        <Path
+          d={linePath(shape, 'smooth')}
+          stroke={t.colors.borderSecondary}
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </Svg>
+    </Animated.View>
   );
 }

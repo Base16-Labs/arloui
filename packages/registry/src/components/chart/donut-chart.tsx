@@ -31,6 +31,7 @@
  */
 import { useMemo } from 'react';
 import {
+  Animated,
   Pressable,
   Text,
   View,
@@ -48,7 +49,7 @@ import {
   type ChartDensity,
   type ChartPoint,
 } from './core';
-import { useControllableIndex } from './hooks';
+import { useControllableIndex, useSkeletonPulse } from './hooks';
 
 export type DonutSlice = ChartPoint & {
   label: string;
@@ -73,6 +74,12 @@ export type DonutChartProps = {
   /** Categories past the palette's capacity are folded into one neutral slice. */
   maxSlices?: number;
   emptyLabel?: string;
+  /**
+   * Draws the ring as a pulsing track and holds back the centre readout and the
+   * legend. Same footprint as the loaded chart, so nothing reflows when the data
+   * lands.
+   */
+  loading?: boolean;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -94,6 +101,7 @@ export function DonutChart({
   showLegend = true,
   maxSlices = 4,
   emptyLabel = 'No data',
+  loading = false,
   accessibilityLabel,
   style,
 }: DonutChartProps) {
@@ -144,7 +152,9 @@ export function DonutChart({
 
   const summary =
     accessibilityLabel ??
-    (segments.length === 0
+    (loading
+      ? 'Chart loading'
+      : segments.length === 0
       ? emptyLabel
       : `Donut chart. ${slices
           .map(
@@ -169,13 +179,17 @@ export function DonutChart({
           alignItems: 'center',
         }}
       >
+        {loading ? (
+          <DonutSkeleton size={size} outerRadius={outerRadius} innerRadius={innerRadius} />
+        ) : null}
+
         <Svg
           width={size}
           height={size}
           style={{ position: 'absolute' }}
           pointerEvents="none"
         >
-          {segments.length > 0 ? (
+          {segments.length > 0 && !loading ? (
             segments.map((segment) => {
               const dimmed = selection != null && selection !== segment.index;
               return (
@@ -199,7 +213,7 @@ export function DonutChart({
                 />
               );
             })
-          ) : (
+          ) : loading ? null : (
             // An empty ring is still a ring — the track shows where the data goes.
             <Path
               d={annulusPath({
@@ -216,19 +230,21 @@ export function DonutChart({
         </Svg>
 
         <View style={{ alignItems: 'center', paddingHorizontal: thickness }}>
-          <Text
-            numberOfLines={1}
-            style={{
-              color: t.colors.textPrimary,
-              fontFamily: t.fontFamilies.sans,
-              fontSize: t.typography.title2.fontSize,
-              lineHeight: t.typography.title2.lineHeight,
-              fontWeight: '700',
-            }}
-          >
-            {segments.length === 0 ? emptyLabel : resolvedCenterValue}
-          </Text>
-          {centerLabel && segments.length > 0 ? (
+          {!loading ? (
+            <Text
+              numberOfLines={1}
+              style={{
+                color: t.colors.textPrimary,
+                fontFamily: t.fontFamilies.sans,
+                fontSize: t.typography.title2.fontSize,
+                lineHeight: t.typography.title2.lineHeight,
+                fontWeight: '700',
+              }}
+            >
+              {segments.length === 0 ? emptyLabel : resolvedCenterValue}
+            </Text>
+          ) : null}
+          {centerLabel && segments.length > 0 && !loading ? (
             <Text
               numberOfLines={1}
               style={{
@@ -244,7 +260,7 @@ export function DonutChart({
         </View>
       </View>
 
-      {showLegend && segments.length > 0 ? (
+      {showLegend && segments.length > 0 && !loading ? (
         <View style={{ gap: t.spacing[2] }}>
           {segments.map((segment) => {
             const selected = selection === segment.index;
@@ -302,5 +318,46 @@ export function DonutChart({
         </View>
       ) : null}
     </View>
+  );
+}
+
+/**
+ * The pulsing track drawn while `loading`.
+ *
+ * The same annulus the data will fill, at the same radius — a donut that loads as
+ * a spinner and then becomes a ring changes size twice on the way in. Nothing is
+ * drawn in the centre: the total is the one number a reader would try hardest to
+ * believe, so it stays absent rather than being faked with a grey bar.
+ */
+function DonutSkeleton({
+  size,
+  outerRadius,
+  innerRadius,
+}: {
+  size: number;
+  outerRadius: number;
+  innerRadius: number;
+}) {
+  const t = useTokens();
+  const pulse = useSkeletonPulse(t.motion.duration.slow);
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={{ position: 'absolute', width: size, height: size, opacity: pulse }}
+    >
+      <Svg width={size} height={size}>
+        <Path
+          d={annulusPath({
+            cx: outerRadius,
+            cy: outerRadius,
+            outerRadius,
+            innerRadius,
+            startAngle: 0,
+            endAngle: Math.PI * 2,
+          })}
+          fill={t.colors.surfaceInput}
+        />
+      </Svg>
+    </Animated.View>
   );
 }

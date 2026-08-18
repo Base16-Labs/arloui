@@ -1,12 +1,12 @@
 /**
  * Arlo UI — Chart hooks
  *
- * The two behaviours every form shares. They live here rather than in `chart.tsx`
+ * The behaviours every form shares. They live here rather than in `chart.tsx`
  * because `Chart` imports the other four forms to build its namespace — a form
  * reaching back into `chart.tsx` for a hook would close that loop.
  */
 import { useCallback, useEffect, useState } from 'react';
-import { AccessibilityInfo } from 'react-native';
+import { AccessibilityInfo, Animated, Easing } from 'react-native';
 
 /**
  * Controlled-or-uncontrolled, one contract for the root's scrub and for `Bar` and
@@ -50,3 +50,49 @@ export function useReduceMotion(): boolean {
   }, []);
   return reduceMotion;
 }
+
+/**
+ * The skeleton pulse every form loads with.
+ *
+ * One hook rather than a copy per form so all five breathe on the same clock —
+ * a StatCard sparkline and the Bar chart under it loading out of phase reads as
+ * two unrelated things failing, not as one screen filling in.
+ *
+ * Charts skeleton rather than spin: the silhouette holds the space the marks
+ * will occupy, so nothing reflows when the data lands. Under Reduce Motion the
+ * pulse resolves to a flat resting opacity — still visibly "not the data", with
+ * no animation.
+ */
+export function useSkeletonPulse(durationMs: number): Animated.Value | number {
+  const reduceMotion = useReduceMotion();
+  const [pulse] = useState(() => new Animated.Value(SKELETON_MIN_OPACITY));
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: SKELETON_MAX_OPACITY,
+          duration: durationMs,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: SKELETON_MIN_OPACITY,
+          duration: durationMs,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse, reduceMotion, durationMs]);
+
+  return reduceMotion ? SKELETON_REST_OPACITY : pulse;
+}
+
+const SKELETON_MIN_OPACITY = 0.35;
+const SKELETON_MAX_OPACITY = 0.75;
+/** Reduce Motion resting value — the midpoint, so it reads the same weight. */
+const SKELETON_REST_OPACITY = 0.55;
