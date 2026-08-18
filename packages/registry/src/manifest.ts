@@ -41,12 +41,18 @@ export const FOUNDATION: RegistryEntry[] = [
     kind: 'foundation',
     title: 'Liquid Glass',
     description:
-      'Decides what a glass surface is made of and resolves the material tokens into a fill, border, and blur strength. On iOS 26 it hands the surface to the real system material via `expo-glass-effect`; everywhere else it renders a translucent overlay over a host blur layer. Pulled in by components that support `surface="glass"`.',
+      'Decides what a glass surface is made of and resolves the material tokens into a fill, border, and blur strength. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. Pulled in by components that support `surface="glass"`.',
     /*
      * `expo-glass-effect` is optional on purpose. It is loaded through a guarded
      * `require`, so a project that never installs it still gets a working glass
      * surface — the fallback — rather than a resolution error. Listing it here is
      * how `arloui add` offers it; it is not a hard requirement.
+     *
+     * It does, however, require the New Architecture. `GlassView` overrides
+     * Fabric-only view lifecycle methods, so autolinking it into an app with
+     * `newArchEnabled: false` fails the iOS build outright rather than falling
+     * back. Old-architecture projects should leave it uninstalled and take the
+     * fallback path, which needs nothing.
      */
     dependencies: ['expo-glass-effect'],
     registryDependencies: ['tokens', 'theme-provider'],

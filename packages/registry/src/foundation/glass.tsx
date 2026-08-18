@@ -21,6 +21,25 @@
  * material; this file decides. That is what keeps `surface="glass"` a single
  * concept rather than an iOS feature with a sad Android branch.
  *
+ * ## `expo-glass-effect` requires the New Architecture
+ *
+ * The graceful degradation below is a **runtime** guarantee, and only that. It
+ * covers not having the package, not having the native module, being on Android,
+ * and being on an iOS older than 26 — but it cannot cover the build.
+ *
+ * `GlassView` overrides `mountChildComponentView` / `unmountChildComponentView`,
+ * which only exist on `ExpoView` under Fabric. In an app with
+ * `newArchEnabled: false`, autolinking still compiles the pod and Swift fails
+ * with "method does not override any method from its superclass" — a broken
+ * build, not a fallback.
+ *
+ * So: install `expo-glass-effect` only in a New Architecture app. An old-arch
+ * project that wants the rest of Arlo keeps the package out and gets the
+ * fallback path, which is fully supported and needs nothing installed. If it
+ * arrives transitively, exclude it from autolinking in `package.json`:
+ *
+ *   { "expo": { "autolinking": { "exclude": ["expo-glass-effect"] } } }
+ *
  *   const glass = useGlassSurface('medium');
  *   <View style={{ borderColor: glass.borderColor, borderWidth: glass.borderWidth }}>
  *     <GlassBackdrop material="medium">{blurComponent}</GlassBackdrop>

@@ -11,6 +11,7 @@
     "playground:clear": "expo start --lan --port 8081 --clear",
     "playground:tunnel": "expo start --tunnel --port 8081",
     "ios": "expo start --ios --port 8081",
+    "ios:native": "expo run:ios",
     "android": "expo start --android --port 8081",
     "web": "node ./scripts/sync-icon-gallery.mjs && expo start --web",
     "build:web": "node ./scripts/sync-icon-gallery.mjs && expo export --platform web",
