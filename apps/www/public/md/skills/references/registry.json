@@ -135,6 +135,29 @@
       ]
     },
     {
+      "name": "stepper",
+      "kind": "primitive",
+      "title": "Stepper",
+      "description": "A numeric stepper with hold-to-repeat, min/max clamping, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "haptics",
+        "animated-counter"
+      ],
+      "dependencies": [
+        "expo-haptics",
+        "react-native-svg"
+      ],
+      "tags": [
+        "input",
+        "numeric",
+        "counter",
+        "motion",
+        "primitive"
+      ]
+    },
+    {
       "name": "chart",
       "kind": "primitive",
       "title": "Chart",

@@ -1056,6 +1056,45 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
   ].join('\n');
 }
 
+export const stepperData = {
+  slug: 'stepper',
+  category: 'Controls',
+  title: 'Stepper',
+  lede: 'A numeric control with decrement and increment affordances whose value rolls between numbers instead of snapping, in both input appearances, with the buttons either straddling the value or grouped at one edge beside a value you can tap to type.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/stepper',
+  states: ['filled', 'plain', 'split', 'grouped', 'editable', 'disabled', 'error', 'at min', 'hold to repeat'],
+  tokens: [
+    'colors.surfaceInput',
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.textDisabled',
+    'colors.borderError',
+    'colors.textInteractiveError',
+    'radii.md',
+    'radii.full',
+    'motion.spring.snappy',
+    'motion.pressed.scale',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/stepper',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/stepper' },
+  ],
+};
+
 const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/foundations/fluidity': ESSAYS.fluidity,
   ...Object.fromEntries(
@@ -1082,6 +1121,7 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/badge': docDataToMarkdown(badgeData),
   '/docs/components/chip': docDataToMarkdown(chipData),
   '/docs/components/toast': docDataToMarkdown(toastData),
+  '/docs/components/stepper': docDataToMarkdown(stepperData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [

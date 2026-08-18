@@ -138,6 +138,22 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'stepper',
+    kind: 'primitive',
+    title: 'Stepper',
+    description:
+      'A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.',
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'animated-counter'],
+    files: [
+      { source: 'components/stepper/stepper.tsx', target: 'stepper/stepper.tsx' },
+      { source: 'components/stepper/index.ts', target: 'stepper/index.ts' },
+    ],
+    meta: {
+      tags: ['input', 'numeric', 'counter', 'motion', 'primitive'],
+    },
+  },
+  {
     name: 'chart',
     kind: 'primitive',
     title: 'Chart',

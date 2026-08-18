@@ -37,6 +37,7 @@ npx arloui diff button
 - **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
 - **card** — Card. A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.
 - **animated-counter** — Animated counter. A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.
+- **stepper** — Stepper. A numeric stepper with hold-to-repeat, min/max clamping, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.
 - **chart** — Chart. Inline sparkline used by StatCard. The other chart forms live on a separate branch.
 - **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
 - **spinner** — Spinner. A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.
