@@ -1056,6 +1056,68 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
   ].join('\n');
 }
 
+export const chartData = {
+  slug: 'chart',
+  category: 'Data',
+  title: 'Chart',
+  lede: 'Five chart forms sharing one validated palette, all reached through the Chart namespace: a scrubbable single-series line, an inline sparkline, categorical bars, a part-to-whole donut, and a meter against a target.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
+  states: [
+    'scrub',
+    'rising',
+    'falling',
+    'neutral',
+    'loading',
+    'empty',
+    'not enough data',
+    'reduced motion',
+  ],
+  tokens: [
+    'colors.chartPositive',
+    'colors.chartNegative',
+    'colors.chartSeries1',
+    'colors.chartSeries2',
+    'colors.chartSeries3',
+    'colors.chartSeries4',
+    'colors.chartOther',
+    'colors.interactivePrimary',
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.textTertiary',
+    'colors.surfaceElevated',
+    'colors.surfaceInput',
+    'colors.borderSecondary',
+    'colors.feedbackWarning',
+    'colors.feedbackError',
+    'radii.md',
+    'radii.full',
+    'motion.chart.data',
+    'motion.chart.barSwap',
+    'motion.duration.slow',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'forms', label: 'Forms' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'axes', label: 'Two axes' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'not-in-the-kit', label: 'Not in the kit' },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/chart' },
+  ],
+};
+
 const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/foundations/fluidity': ESSAYS.fluidity,
   ...Object.fromEntries(
@@ -1082,6 +1144,7 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/badge': docDataToMarkdown(badgeData),
   '/docs/components/chip': docDataToMarkdown(chipData),
   '/docs/components/toast': docDataToMarkdown(toastData),
+  '/docs/components/chart': docDataToMarkdown(chartData),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [

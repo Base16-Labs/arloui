@@ -107,6 +107,10 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Tabs', slug: 'tabs' },
     ],
   },
+  {
+    label: 'Data',
+    items: [{ label: 'Chart', slug: 'chart' }],
+  },
 ];
 
 /** Documented component count — keep copy in sync with `componentGroups`. */

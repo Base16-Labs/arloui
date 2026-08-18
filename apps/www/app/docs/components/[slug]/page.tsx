@@ -24,6 +24,7 @@ import { CarouselDocPlayground } from '@/components/docs/carousel-preview';
 import { GalleryDocPlayground } from '@/components/docs/gallery-preview';
 import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
 import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
+import { ChartFormsPreview } from '@/components/docs/chart-preview';
 import { DevicePreview } from '@/components/ui/DevicePreview';
 import { GithubMark } from '@/components/ui/GithubMark';
 import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
@@ -47,6 +48,7 @@ import {
   badgeData,
   chipData,
   toastData,
+  chartData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -125,6 +127,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'toast') {
     return <ToastDocPage />;
+  }
+
+  if (slug === 'chart') {
+    return <ChartDocPage />;
   }
 
   return (
@@ -2984,5 +2990,272 @@ function Section({
       {sub && <p className="mt-1.5 mb-5 text-[13px] text-ink-3">{sub}</p>}
       {children}
     </section>
+  );
+}
+
+function ChartDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(chartData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{chartData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {chartData.title}
+        </h1>
+        <Lede>{chartData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={chartData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="chart" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="The scrubbable line chart, composed from its parts."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Chart', 'holds the series, the format, and the scrub state'],
+                ['Chart.Value', 'headline number, rolls as you scrub'],
+                ['Chart.Delta', 'change from the baseline, always signed'],
+                ['Chart.Plot', 'the line or area, and the scrub target'],
+                ['Chart.Periods', 'the range selector'],
+                ['Chart.Empty', 'what the plot draws when there is no series'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <code className="font-mono text-[11.5px] text-ink">{name}</code>
+                  <span className="text-right text-ink-3">{detail}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="forms"
+          title="Forms"
+          sub="Five charts on one palette, all under the Chart namespace."
+        >
+          <ChartFormsPreview />
+          <p className="mt-4 text-[13px] text-ink-3">
+            Static previews. Scrubbing, selection, and the threshold colours are live in the
+            playground.
+          </p>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="Pick the form by the question the reader is asking."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              <strong>Chart</strong> for &quot;how is this number doing&quot; — one series over time,
+              with a readout you scrub. It carries no axis furniture on purpose: it answers shape and
+              direction, not what exactly happened on Tuesday.
+            </li>
+            <li>
+              <strong>Chart.Sparkline</strong> inline beside a number that is already labelled.{' '}
+              <strong>Chart.Bar</strong> to compare categories. <strong>Chart.Donut</strong> for
+              part-to-whole, never more than four slices before the rest fold into Other.
+            </li>
+            <li>
+              <strong>Chart.Meter</strong> for one value against a target — a budget, a quota, a goal.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add chart
+
+import { Chart, formatMoney } from "@/components/ui/chart";
+
+// No children renders the documented composition:
+// value, delta, plot, periods — in that order.
+<Chart
+  data={points}
+  format={formatMoney("USD")}
+  periods={["1D", "1W", "1M", "1Y"]}
+  period={p}
+  onPeriodChange={setP}
+/>
+
+// Name the parts to reorder or drop one. \`format\` flows down from the root.
+<Chart data={points} format={formatMoney("USD")} chrome="reference" reference={{ value: 1000, label: "Target" }}>
+  <Chart.Empty>No trades yet</Chart.Empty>
+  <Chart.Plot height={200} fill />
+  <Chart.Value />
+  <Chart.Periods />
+</Chart>
+
+<Chart.Sparkline data={points} height={44} showEndDot />
+<Chart.Bar data={week} showValues onSelect={setSelected} />
+<Chart.Donut data={breakdown} centerLabel="Monthly spend" />
+<Chart.Meter value={88} max={100} label="Budget used" warnAt={0.75} dangerAt={0.9} />`}</CodeBlock>
+
+          <p className="mt-4 text-[13px] text-ink-3">
+            The data model is <code className="font-mono text-[11.5px]">number[]</code> or{' '}
+            <code className="font-mono text-[11.5px]">
+              {'{ value, at?, label?, meta? }[]'}
+            </code>
+            . Pass <code className="font-mono text-[11.5px]">formatAt</code> on the root and the
+            readout says <em>when</em> as well as what. Selection is
+            controlled-or-uncontrolled everywhere — the same{' '}
+            <code className="font-mono text-[11.5px]">activeIndex</code> /{' '}
+            <code className="font-mono text-[11.5px]">onScrub</code> /{' '}
+            <code className="font-mono text-[11.5px]">onSelect</code> contract on the root, Bar,
+            and Donut.
+          </p>
+        </Section>
+
+        <Section
+          id="axes"
+          title="Two axes"
+          sub="Closed sets, like Card. Everything else is data."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[520px] space-y-4 text-[13px]">
+              <div>
+                <code className="font-mono text-[11.5px] text-ink">density</code>
+                <span className="ml-2 text-ink-3">compact · default</span>
+                <p className="mt-1 text-ink-2">
+                  Stroke weight, dot and bar radius, and whether labels render at all.
+                  <code className="ml-1 font-mono text-[11.5px]">compact</code> is what makes a
+                  chart survive inside a table row.
+                </p>
+              </div>
+              <div>
+                <code className="font-mono text-[11.5px] text-ink">chrome</code>
+                <span className="ml-2 text-ink-3">none · baseline · reference</span>
+                <p className="mt-1 text-ink-2">
+                  Furniture around the data. There is no{' '}
+                  <code className="font-mono text-[11.5px]">axis</code> member and there will not
+                  be one — ticks and gridlines are how a chart this size stops being readable.
+                  <code className="ml-1 font-mono text-[11.5px]">reference</code> is one labelled
+                  line at a value you name, not a band system.
+                </p>
+              </div>
+              <div>
+                <code className="font-mono text-[11.5px] text-ink">tone</code>
+                <span className="ml-2 text-ink-3">
+                  auto · positive · negative · brand · series · neutral
+                </span>
+                <p className="mt-1 text-ink-2">
+                  One vocabulary across all five forms. Each form documents what it does with the
+                  members it cannot honour — a line has no categories to enumerate, a meter has no
+                  direction to infer, and neither invents one.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="One validated palette across every form."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {chartData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="Direction is never carried by colour alone."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              <code>Chart.Delta</code> always renders an explicit sign. The positive and negative
+              tones sit near the deuteranopia separation floor, so the sign is what keeps direction
+              readable — don&apos;t replace it with a bare coloured number.
+            </li>
+            <li>
+              Donuts always carry a legend, and categories past the palette&apos;s capacity fold into
+              one neutral Other slice rather than repeating a hue.
+            </li>
+            <li>
+              Each chart exposes a summary label to assistive tech. Sparklines are hidden by default,
+              since the number beside them is already announced — pass{' '}
+              <code>accessibilityLabel</code> when one stands alone.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Show the data, not the chart junk.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Let the value readout be the label, and update it as you scrub.',
+                dont: 'Add gridlines, ticks, and axis labels to a chart this size.',
+              },
+              {
+                do: 'Keep segments straight between points.',
+                dont: 'Smooth the path — a spline invents peaks that were never in the data.',
+              },
+              {
+                do: 'Let bars cross-fade when the data changes.',
+                dont: 'Grow bars from zero — a bar’s height is its datum, so that animates the number.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="not-in-the-kit"
+          title="Not in the kit"
+          sub="Five forms, drawn by Arlo. The rest is yours."
+        >
+          <p className="text-[15px] leading-relaxed text-ink-2">
+            Arlo owns the geometry and the render loop for the five forms above — there is no
+            charting library underneath, only{' '}
+            <code className="font-mono text-[11.5px]">react-native-svg</code>. That is what makes
+            the crosshair land on the line and the period morph possible, and it is also why the
+            list of forms is closed.
+          </p>
+          <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+            These are <strong>not</strong> coming: candlestick, radar, population pyramid, scatter,
+            3-D anything, heatmaps, and stacked or grouped bars. Horizontal and range bars are
+            earned later, on evidence, once the five behave. If you need one of them, the scale and
+            the path builders the five are drawn with are exported from{' '}
+            <code className="font-mono text-[11.5px]">chart/core.ts</code> —{' '}
+            <code className="font-mono text-[11.5px]">makeScale</code>,{' '}
+            <code className="font-mono text-[11.5px]">linePath</code>,{' '}
+            <code className="font-mono text-[11.5px]">barPath</code>,{' '}
+            <code className="font-mono text-[11.5px]">annulusPath</code> — so a sixth form you
+            write measures the way these do.
+          </p>
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="What charts usually sit inside or beside."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Card', 'Badge', 'Skeleton', 'Spinner'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...chartData.headings]} actions={[...chartData.actions]} />
+    </>
   );
 }
