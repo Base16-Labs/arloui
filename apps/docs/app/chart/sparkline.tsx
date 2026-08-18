@@ -2,16 +2,31 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens } from '@arloui/registry';
+import {
+  Chart,
+  useTokens,
+  type ChartCurve,
+  type ChartDensity,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
-type Size = 'inline' | 'standalone';
+type Height = 'inline' | 'standalone';
+type State = 'default' | 'loading' | 'empty';
 
-const SIZES: Size[] = ['inline', 'standalone'];
+const HEIGHTS: Height[] = ['inline', 'standalone'];
+/**
+ * Its own row, not folded into height. `density` is what actually thins the stroke
+ * and shrinks the end dot; height only changes the box. The two were conflated
+ * under a single "Size" chip, so `default` density never rendered on a sparkline
+ * at all — the form defaults to `compact`.
+ */
+const DENSITIES: ChartDensity[] = ['compact', 'default'];
+const CURVES: ChartCurve[] = ['steep', 'smooth'];
+const STATES: State[] = ['default', 'loading', 'empty'];
 
 /** Deterministic series so the canvas looks the same on every render. */
 function series(direction: 'up' | 'down'): number[] {
@@ -30,7 +45,10 @@ export default function SparklineCanvas() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [size, setSize] = useState<Size>('standalone');
+  const [size, setSize] = useState<Height>('standalone');
+  const [density, setDensity] = useState<ChartDensity>('compact');
+  const [curve, setCurve] = useState<ChartCurve>('steep');
+  const [state, setState] = useState<State>('default');
   const [fill, setFill] = useState(true);
   const [showEndDot, setShowEndDot] = useState(true);
   const [previewOffset] = useState(() => new Animated.Value(0));
@@ -83,6 +101,7 @@ export default function SparklineCanvas() {
                 [
                   ['Rising', rising, 'auto'],
                   ['Falling', falling, 'auto'],
+                  ['Brand', rising, 'brand'],
                   ['Neutral', rising, 'neutral'],
                 ] as const
               ).map(([label, data, tone]) => (
@@ -99,11 +118,14 @@ export default function SparklineCanvas() {
                     {label}
                   </Text>
                   <Chart.Sparkline
-                    data={data}
+                    data={state === 'empty' ? [] : data}
                     tone={tone}
+                    density={density}
+                    curve={curve}
                     height={height}
                     fill={fill}
                     showEndDot={showEndDot}
+                    loading={state === 'loading'}
                     accessibilityLabel={`${label} trend`}
                   />
                 </View>
@@ -139,13 +161,43 @@ export default function SparklineCanvas() {
             onNext={() => router.replace('/gallery')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Size">
-                {SIZES.map((value) => (
+              <VariantControlRow label="Height">
+                {HEIGHTS.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
                     active={size === value}
                     onPress={() => setSize(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Density">
+                {DENSITIES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={density === value}
+                    onPress={() => setDensity(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Curve">
+                {CURVES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={curve === value}
+                    onPress={() => setCurve(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="State">
+                {STATES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={state === value}
+                    onPress={() => setState(value)}
                   />
                 ))}
               </VariantControlRow>

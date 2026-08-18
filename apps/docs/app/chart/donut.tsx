@@ -2,7 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens } from '@arloui/registry';
+import { Chart, useTokens, type ChartDensity } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -10,6 +10,7 @@ import { VariantChip, VariantControlRow } from '@/components/playground/variant-
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type Dataset = 'spend' | 'many';
+type State = 'default' | 'loading' | 'empty';
 
 const SPEND = [
   { label: 'Rent', value: 1200 },
@@ -30,6 +31,20 @@ const MANY = [
 ];
 
 const DATASETS: Dataset[] = ['spend', 'many'];
+const DENSITIES: ChartDensity[] = ['default', 'compact'];
+const STATES: State[] = ['default', 'loading', 'empty'];
+/**
+ * Ring weights, not arbitrary numbers: `thin` is the inline-beside-a-legend look,
+ * `default` the standalone one, and `thick` is where the centre readout starts to
+ * crowd — worth being able to see before someone ships it.
+ */
+const THICKNESSES = [
+  { label: 'thin', value: 16 },
+  { label: 'default', value: 26 },
+  { label: 'thick', value: 38 },
+] as const;
+/** The fold-into-Other cap. 4 is the palette's validated capacity and the default. */
+const CAPS = [2, 3, 4] as const;
 
 const money = (value: number) => `$${value.toLocaleString('en-US')}`;
 
@@ -40,10 +55,14 @@ export default function DonutChartCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [dataset, setDataset] = useState<Dataset>('spend');
   const [showLegend, setShowLegend] = useState(true);
+  const [density, setDensity] = useState<ChartDensity>('default');
+  const [thickness, setThickness] = useState<number>(26);
+  const [maxSlices, setMaxSlices] = useState<number>(4);
+  const [state, setState] = useState<State>('default');
   const [selected, setSelected] = useState<number | null>(null);
   const [previewOffset] = useState(() => new Animated.Value(0));
 
-  const data = dataset === 'spend' ? SPEND : MANY;
+  const data = state === 'empty' ? [] : dataset === 'spend' ? SPEND : MANY;
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -88,6 +107,10 @@ export default function DonutChartCanvas() {
               data={data}
               centerLabel="Monthly spend"
               format={money}
+              density={density}
+              thickness={thickness}
+              maxSlices={maxSlices}
+              loading={state === 'loading'}
               showLegend={showLegend}
               activeIndex={selected}
               onSelect={(index) => setSelected(index === selected ? null : index)}
@@ -132,6 +155,46 @@ export default function DonutChartCanvas() {
                       setDataset(value);
                       setSelected(null);
                     }}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Thickness">
+                {THICKNESSES.map((option) => (
+                  <VariantChip
+                    key={option.label}
+                    label={option.label}
+                    active={thickness === option.value}
+                    onPress={() => setThickness(option.value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Density">
+                {DENSITIES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={density === value}
+                    onPress={() => setDensity(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Cap">
+                {CAPS.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={String(value)}
+                    active={maxSlices === value}
+                    onPress={() => setMaxSlices(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="State">
+                {STATES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={state === value}
+                    onPress={() => setState(value)}
                   />
                 ))}
               </VariantControlRow>

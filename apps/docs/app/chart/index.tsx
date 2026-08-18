@@ -2,7 +2,14 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type ChartCurve, type ChartTone } from '@arloui/registry';
+import {
+  Chart,
+  useTokens,
+  type ChartChrome,
+  type ChartCurve,
+  type ChartDensity,
+  type ChartTone,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -11,11 +18,20 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type Shape = 'rising' | 'falling' | 'volatile' | 'flat';
 type FillMode = 'area' | 'line';
+/**
+ * `sparse` is the single-point series — the chart's "not enough data" case, which
+ * is distinct from empty: there IS a datum, there just isn't a line to draw
+ * through it.
+ */
+type State = 'default' | 'loading' | 'empty' | 'sparse';
 
 const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'brand', 'neutral'];
 const SHAPES: Shape[] = ['rising', 'falling', 'volatile', 'flat'];
 const FILLS: FillMode[] = ['area', 'line'];
 const CURVES: ChartCurve[] = ['steep', 'smooth'];
+const DENSITIES: ChartDensity[] = ['default', 'compact'];
+const CHROMES: ChartChrome[] = ['baseline', 'reference', 'none'];
+const STATES: State[] = ['default', 'loading', 'empty', 'sparse'];
 const PERIODS = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
 /** Deterministic sample series so the canvas looks the same on every render. */
@@ -53,9 +69,29 @@ export default function ChartCanvas() {
   const [fillMode, setFillMode] = useState<FillMode>('area');
   const [curve, setCurve] = useState<ChartCurve>('steep');
   const [period, setPeriod] = useState('1D');
+  const [density, setDensity] = useState<ChartDensity>('default');
+  const [chrome, setChrome] = useState<ChartChrome>('baseline');
+  const [state, setState] = useState<State>('default');
+  const [scrubbed, setScrubbed] = useState<number | null>(null);
   const [previewOffset] = useState(() => new Animated.Value(0));
 
-  const data = useMemo(() => series(shape, period), [shape, period]);
+  const full = useMemo(() => series(shape, period), [shape, period]);
+  const data = useMemo(() => {
+    if (state === 'empty') return [];
+    if (state === 'sparse') return full.slice(0, 1);
+    return full;
+  }, [full, state]);
+
+  /**
+   * The reference line has to sit inside the series to be worth looking at, so it
+   * tracks the data rather than being a constant that drifts off-plot when the
+   * shape changes.
+   */
+  const reference = useMemo(() => {
+    if (full.length === 0) return undefined;
+    const mean = full.reduce((sum, value) => sum + value, 0) / full.length;
+    return { value: Number(mean.toFixed(2)), label: 'Average' };
+  }, [full]);
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -101,15 +137,25 @@ export default function ChartCanvas() {
             <Chart
               data={data}
               tone={tone}
+              density={density}
+              chrome={chrome}
+              reference={reference}
+              loading={state === 'loading'}
               periods={PERIODS}
               period={period}
               onPeriodChange={setPeriod}
+              onScrub={(index) => setScrubbed(index)}
             >
               <Chart.Value format={money} />
               <Chart.Delta format={money} />
               <Chart.Plot height={200} fill={fillMode === 'area'} curve={curve} />
               <Chart.Periods />
             </Chart>
+            {/*
+              The scrub index, echoed back. Without it you can see the readout move
+              but cannot tell whether `onScrub` fired, which is the half of the
+              contract a consumer wires up.
+            */}
             <Text
               style={{
                 color: t.colors.textTertiary,
@@ -119,7 +165,9 @@ export default function ChartCanvas() {
                 textAlign: 'center',
               }}
             >
-              Drag across the chart to scrub
+              {scrubbed == null
+                ? 'Drag across the chart to scrub'
+                : `onScrub → index ${scrubbed} of ${data.length - 1}`}
             </Text>
           </Animated.View>
 
@@ -188,6 +236,36 @@ export default function ChartCanvas() {
                     label={value}
                     active={curve === value}
                     onPress={() => setCurve(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Density">
+                {DENSITIES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={density === value}
+                    onPress={() => setDensity(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Chrome">
+                {CHROMES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={chrome === value}
+                    onPress={() => setChrome(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="State">
+                {STATES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={state === value}
+                    onPress={() => setState(value)}
                   />
                 ))}
               </VariantControlRow>

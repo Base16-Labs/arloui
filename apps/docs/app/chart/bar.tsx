@@ -2,7 +2,12 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type ChartTone } from '@arloui/registry';
+import {
+  Chart,
+  useTokens,
+  type ChartDensity,
+  type ChartTone,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
@@ -10,6 +15,7 @@ import { VariantChip, VariantControlRow } from '@/components/playground/variant-
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type Dataset = 'week' | 'signed';
+type State = 'default' | 'loading' | 'empty';
 
 const WEEK = [
   { label: 'M', value: 42 },
@@ -32,7 +38,14 @@ const SIGNED = [
 ];
 
 const DATASETS: Dataset[] = ['week', 'signed'];
-const TONES: ChartTone[] = ['brand', 'series', 'auto'];
+/**
+ * Every tone `Chart.Bar` honours, in the order its props document them. An earlier
+ * set stopped at three, which left `positive`, `negative`, and `neutral` shipping
+ * untested by eye.
+ */
+const TONES: ChartTone[] = ['brand', 'series', 'auto', 'positive', 'negative', 'neutral'];
+const DENSITIES: ChartDensity[] = ['default', 'compact'];
+const STATES: State[] = ['default', 'loading', 'empty'];
 
 const money = (value: number) => `$${value.toLocaleString('en-US')}`;
 
@@ -46,10 +59,12 @@ export default function BarChartCanvas() {
   // Off by default: tapping a bar is how you read one exact figure.
   const [showValues, setShowValues] = useState(false);
   const [showLabels, setShowLabels] = useState(true);
+  const [density, setDensity] = useState<ChartDensity>('default');
+  const [state, setState] = useState<State>('default');
   const [selected, setSelected] = useState<number | null>(null);
   const [previewOffset] = useState(() => new Animated.Value(0));
 
-  const data = dataset === 'week' ? WEEK : SIGNED;
+  const data = state === 'empty' ? [] : dataset === 'week' ? WEEK : SIGNED;
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -94,6 +109,8 @@ export default function BarChartCanvas() {
               data={data}
               height={200}
               tone={tone}
+              density={density}
+              loading={state === 'loading'}
               showValues={showValues}
               showLabels={showLabels}
               format={money}
@@ -160,6 +177,26 @@ export default function BarChartCanvas() {
                     label={option}
                     active={showValues === (option === 'show')}
                     onPress={() => setShowValues(option === 'show')}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Density">
+                {DENSITIES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={density === value}
+                    onPress={() => setDensity(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="State">
+                {STATES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={state === value}
+                    onPress={() => setState(value)}
                   />
                 ))}
               </VariantControlRow>

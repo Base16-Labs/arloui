@@ -2,21 +2,42 @@ import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type ChartTone, type MeterShape } from '@arloui/registry';
+import {
+  Chart,
+  useTokens,
+  type ChartDensity,
+  type ChartTone,
+  type MeterShape,
+} from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
+type State = 'default' | 'loading';
+
 const SHAPES: MeterShape[] = ['bar', 'ring'];
 const TONES: ChartTone[] = ['brand', 'positive', 'negative', 'neutral'];
-/** Three levels so the threshold colours are visible side by side. */
+const DENSITIES: ChartDensity[] = ['default', 'compact'];
+const STATES: State[] = ['default', 'loading'];
+
+const WARN_AT = 0.75;
+const DANGER_AT = 0.85;
+
+/**
+ * One level per threshold band, so switching thresholds on shows all three
+ * colours at once. These have to straddle WARN_AT and DANGER_AT: an earlier set
+ * ran 42/72/88, which skipped the warning band entirely — 0.72 is below 0.75, so
+ * the meter went straight from brand to danger and the middle colour was
+ * unreachable from the playground.
+ */
 const LEVELS = [
   { value: 42, label: 'Goal' },
-  { value: 72, label: 'Storage' },
-  { value: 88, label: 'Budget used' },
+  { value: 79, label: 'Storage' },
+  { value: 92, label: 'Budget used' },
 ] as const;
+/** The warning level — the band that is easiest to get wrong, so it is the one on show. */
 const RING_LEVEL = LEVELS[1];
 
 export default function MeterCanvas() {
@@ -27,6 +48,8 @@ export default function MeterCanvas() {
   const [shape, setShape] = useState<MeterShape>('bar');
   const [tone, setTone] = useState<ChartTone>('brand');
   const [thresholds, setThresholds] = useState(true);
+  const [density, setDensity] = useState<ChartDensity>('default');
+  const [state, setState] = useState<State>('default');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -39,7 +62,7 @@ export default function MeterCanvas() {
     }).start();
   }, [previewOffset, sheetOpen]);
 
-  const threshold = thresholds ? { warnAt: 0.75, dangerAt: 0.85 } : {};
+  const threshold = thresholds ? { warnAt: WARN_AT, dangerAt: DANGER_AT } : {};
 
   return (
     <>
@@ -79,6 +102,8 @@ export default function MeterCanvas() {
                   value={value}
                   max={100}
                   label={label}
+                  density={density}
+                  loading={state === 'loading'}
                   {...threshold}
                 />
               ))}
@@ -140,6 +165,26 @@ export default function MeterCanvas() {
                     label={option}
                     active={thresholds === (option === 'on')}
                     onPress={() => setThresholds(option === 'on')}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Density">
+                {DENSITIES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={density === value}
+                    onPress={() => setDensity(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="State">
+                {STATES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={state === value}
+                    onPress={() => setState(value)}
                   />
                 ))}
               </VariantControlRow>
