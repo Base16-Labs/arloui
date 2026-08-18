@@ -6,6 +6,7 @@ export {
   type ButtonHaptic,
   type ButtonProps,
   type ButtonSize,
+  type ButtonSurface,
   type ButtonTone,
   type ButtonVariant,
   type FabButtonProps,
@@ -149,7 +150,9 @@ export {
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
 export {
   GlassBackdrop,
+  isNativeGlassAvailable,
   useGlassSurface,
+  useReduceTransparency,
   type GlassMaterial,
   type GlassSurface,
 } from './foundation/glass';

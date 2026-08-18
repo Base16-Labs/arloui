@@ -253,7 +253,7 @@ export const tabBarData = {
   figma: '#',
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tab-bar',
-  states: ['default', 'selected', 'pressed', 'disabled', 'hidden on scroll'],
+  states: ['default', 'selected', 'pressed', 'disabled', 'glass', 'hidden on scroll'],
   tokens: [
     'colors.navBackground',
     'colors.navBorder',
@@ -444,7 +444,9 @@ export const buttonData = {
     'disabled',
     'focus',
     'icon-only',
+    'glass',
     'reduced motion',
+    'reduced transparency',
     'RTL',
     'dynamic type',
   ],

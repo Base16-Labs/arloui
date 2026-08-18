@@ -9,6 +9,7 @@ import {
   type ButtonAppearance,
   type ButtonHaptic,
   type ButtonSize,
+  type ButtonSurface,
   type ButtonTone,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -22,10 +23,13 @@ type PreviewState = 'default' | 'pressed' | 'loading' | 'disabled';
 
 const TONES: ButtonTone[] = ['primary', 'neutral', 'danger'];
 const APPEARANCES: ButtonAppearance[] = ['solid', 'soft', 'ghost', 'outline'];
+const SURFACES: ButtonSurface[] = ['default', 'glass'];
 const SIZES: ButtonSize[] = ['sm', 'md', 'lg', 'xl'];
 const ICONS: IconLayout[] = ['none', 'leading', 'trailing', 'both', 'icon-only'];
 const STATES: PreviewState[] = ['default', 'pressed', 'loading', 'disabled'];
 const HAPTICS: ButtonHaptic[] = ['light', 'medium', 'none'];
+/** Saturated bands so the material has something to refract and mute. */
+const GLASS_BACKDROP_BANDS = ['#F97316', '#2B7FFF', '#059669', '#DB2777', '#7C3AED'];
 
 export default function ButtonCanvas() {
   const t = useTokens();
@@ -38,6 +42,7 @@ export default function ButtonCanvas() {
   const [icons, setIcons] = useState<IconLayout>('both');
   const [state, setState] = useState<PreviewState>('default');
   const [haptic, setHaptic] = useState<ButtonHaptic>('light');
+  const [surface, setSurface] = useState<ButtonSurface>('default');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -104,9 +109,27 @@ export default function ButtonCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
+            {/*
+              Glass needs something to be glass *over*. On the flat canvas the
+              material is invisible and the variant looks broken, so the preview
+              lays down colour behind the button — the bands also make refraction
+              legible, since a straight edge crossing the surface is where you can
+              actually see it bend.
+            */}
+            {surface === 'glass' ? (
+              <View
+                pointerEvents="none"
+                style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+              >
+                {GLASS_BACKDROP_BANDS.map((color, index) => (
+                  <View key={color} style={{ flex: 1, backgroundColor: color }} />
+                ))}
+              </View>
+            ) : null}
             <Button
               tone={tone}
               appearance={appearance}
+              surface={surface}
               size={size}
               loading={state === 'loading'}
               disabled={state === 'disabled'}
@@ -186,6 +209,16 @@ export default function ButtonCanvas() {
                     label={value}
                     active={appearance === value}
                     onPress={() => setAppearance(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Surface">
+                {SURFACES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={surface === value}
+                    onPress={() => setSurface(value)}
                   />
                 ))}
               </VariantControlRow>

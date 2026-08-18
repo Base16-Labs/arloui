@@ -4,6 +4,7 @@ export {
   type ButtonHaptic,
   type ButtonProps,
   type ButtonSize,
+  type ButtonSurface,
   type ButtonTone,
   type ButtonVariant,
 } from './button';

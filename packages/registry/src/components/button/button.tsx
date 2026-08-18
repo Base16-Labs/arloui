@@ -31,6 +31,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
 import { useTokens } from '../../foundation/theme-provider';
 import { usePressFeedback, type ButtonHaptic } from './press-feedback';
 
@@ -39,6 +40,8 @@ type Tokens = ReturnType<typeof useTokens>;
 export type ButtonTone = 'primary' | 'neutral' | 'danger';
 export type ButtonAppearance = 'solid' | 'soft' | 'ghost' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
+/** What the button is made of: an opaque fill, or the Liquid Glass material. */
+export type ButtonSurface = 'default' | 'glass';
 export type { ButtonHaptic };
 
 /** @deprecated Prefer `tone` + `appearance`. */
@@ -53,6 +56,16 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   tone?: ButtonTone;
   appearance?: ButtonAppearance;
   size?: ButtonSize;
+  /**
+   * `'glass'` swaps the tone's opaque fill for the Liquid Glass material — the
+   * real system surface on iOS 26, Arlo's translucent overlay everywhere else.
+   *
+   * The label and icons keep their tone colour, so a glass button still reads as
+   * primary or danger; only what sits behind them changes. `appearance` still
+   * applies on the fallback path, but a glass surface and a `ghost` appearance
+   * are close to the same request — prefer `solid` or `soft` with it.
+   */
+  surface?: ButtonSurface;
   loading?: boolean;
   disabled?: boolean;
   leadingIcon?: React.ReactNode;
@@ -63,6 +76,12 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   mono?: boolean;
   fullWidth?: boolean;
   haptic?: ButtonHaptic;
+  /**
+   * Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a `glass`
+   * surface. Ignored on the native glass path, where the system material blurs
+   * for itself.
+   */
+  blurComponent?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   labelStyle?: StyleProp<TextStyle>;
 };
@@ -187,6 +206,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     tone: toneProp,
     appearance: appearanceProp,
     size = 'md',
+    surface = 'default',
     loading = false,
     disabled = false,
     leadingIcon,
@@ -195,6 +215,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     mono = false,
     fullWidth = false,
     haptic = 'light',
+    blurComponent,
     onPressIn,
     onPressOut,
     onFocus,
@@ -227,6 +248,15 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   const palette = useDisabledVisual ? variants.disabled[appearance] : variants.tone[tone][appearance];
   const dims = variants.size[size];
 
+  /*
+   * A disabled button never goes to glass. The material's whole job is to look
+   * live and reactive, which is the opposite of what disabled has to communicate —
+   * and on iOS 26 an interactive system surface would still respond to touch on a
+   * control that does nothing.
+   */
+  const isGlass = surface === 'glass' && !useDisabledVisual;
+  const glass = useGlassSurface('small');
+
   const hitSlop = useMemo(
     () => touchTargetInset(dims.minHeight, t.sizing.touchTarget.minimum),
     [dims.minHeight, t.sizing.touchTarget.minimum],
@@ -245,7 +275,13 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       ? t.colors.interactiveTertiaryPressed
       : t.colors.touchFeedbackMain;
 
-  const showFeedbackOverlay = !disabled && pressed;
+  /*
+   * Native glass answers a press itself — `isInteractive` makes the system
+   * material react — so our tint would stack a flat wash on top of that and read
+   * as two different things responding. The fallback still needs it: a
+   * translucent overlay does nothing on its own when pressed.
+   */
+  const showFeedbackOverlay = !disabled && pressed && !(isGlass && glass.native);
 
   const focusWebStyle = useMemo((): ViewStyle | undefined => {
     if (Platform.OS !== 'web' || !focused) return undefined;
@@ -272,10 +308,12 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       <Animated.View
         style={[
           {
-            backgroundColor: palette.bg,
-            borderColor: palette.border,
-            borderWidth: palette.borderWidth,
+            backgroundColor: isGlass ? glass.backgroundColor : palette.bg,
+            borderColor: isGlass ? glass.borderColor : palette.border,
+            borderWidth: isGlass ? glass.borderWidth : palette.borderWidth,
             borderRadius: cornerRadius,
+            // The backdrop fills these bounds and is clipped by them.
+            overflow: isGlass ? 'hidden' : undefined,
             minHeight: dims.minHeight,
             minWidth: iconOnly ? dims.minHeight : 64,
             width: iconOnly ? dims.minHeight : undefined,
@@ -286,6 +324,11 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
           style,
         ]}
       >
+        {isGlass ? (
+          <GlassBackdrop material="small" interactive>
+            {blurComponent}
+          </GlassBackdrop>
+        ) : null}
         {showFeedbackOverlay ? (
           <View
             pointerEvents="none"

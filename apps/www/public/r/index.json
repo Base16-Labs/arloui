@@ -33,7 +33,10 @@
       "name": "glass",
       "kind": "foundation",
       "title": "Liquid Glass",
-      "description": "Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface=\"glass\"`.",
+      "description": "Decides what a glass surface is made of and resolves the material tokens into a fill, border, and blur strength. On iOS 26 it hands the surface to the real system material via `expo-glass-effect`; everywhere else it renders a translucent overlay over a host blur layer. Pulled in by components that support `surface=\"glass\"`.",
+      "dependencies": [
+        "expo-glass-effect"
+      ],
       "registryDependencies": [
         "tokens",
         "theme-provider"
@@ -43,7 +46,8 @@
           "foundation",
           "material",
           "glass",
-          "blur"
+          "blur",
+          "ios26"
         ]
       }
     },
@@ -84,7 +88,7 @@
       "name": "button",
       "kind": "primitive",
       "title": "Button",
-      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.",
+      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.",
       "dependencies": [
         "expo-haptics",
         "react-native-svg"
@@ -92,7 +96,8 @@
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "haptics"
+        "haptics",
+        "glass"
       ],
       "meta": {
         "figma": "Components/Button/Primary",
@@ -378,10 +383,11 @@
       "name": "tab-bar",
       "kind": "primitive",
       "title": "Tab Bar",
-      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.",
+      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "glass"
       ],
       "meta": {
         "tags": [
