@@ -37,6 +37,36 @@ export const motion = {
     scale: 0.97,
     opacity: 0.85,
   },
+  /**
+   * Chart recipes. A chart animates two different things and they are not on the
+   * same clock, so the split is a token rather than a number chosen per component.
+   *
+   * `control` is the period pill answering a tap — that is press feedback, so it
+   * lands on the press tier. `data` is the series itself re-shaping under a period
+   * change: a morph in place, so `easeInOut` on `base`. `enter` is a plot drawing
+   * itself for the first time.
+   *
+   * Two rules are written into these values rather than left to memory:
+   *
+   * - **Bars never scale.** A bar's height *is* its datum, so growing one from
+   *   zero animates the number rather than the mark. This is the documented
+   *   exception to Rule 02 — bars cross-fade and re-anchor, they do not sweep up.
+   *   `barSwap` is that cross-fade.
+   * - **Scrub has no duration.** It is direct manipulation: the crosshair is under
+   *   the finger at 1:1 or it is broken. Nothing here applies to it, and Reduce
+   *   Motion does not touch it either — removing motion from a gesture the user is
+   *   physically driving would make the chart feel dead, not calmer.
+   */
+  chart: {
+    /** Period control answering a tap. Instant, then a spring settle. */
+    control: { duration: 130, spring: { stiffness: 400, damping: 30, mass: 1 } },
+    /** Series morphing between periods: resample to equal length, then interpolate. */
+    data: { duration: 280, easing: [0.77, 0, 0.175, 1] as const },
+    /** First paint of a plot: the path draws in rather than popping. */
+    enter: { duration: 400, easing: [0.23, 1, 0.32, 1] as const },
+    /** Bars re-anchoring on a data change. A cross-fade — never a height sweep. */
+    barSwap: { duration: 200, easing: [0.23, 1, 0.32, 1] as const },
+  },
 } as const;
 
 export type MotionTokens = typeof motion;

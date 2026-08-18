@@ -142,17 +142,35 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Chart',
     description:
-      'Inline sparkline used by StatCard. The other chart forms live on a separate branch.',
-    dependencies: ['react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider'],
+      'Five chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars, rounded data-ends, negatives below the baseline), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), and Chart.Meter (one value against a target, as a bar or a ring).',
+    /*
+     * Arlo draws every mark itself, on `react-native-svg` and nothing else. The
+     * geometry is in `chart/core.ts`.
+     *
+     * `react-native-gifted-charts` and `expo-linear-gradient` used to be here.
+     * Both are gone: the first was paying a full integration cost for features
+     * none of the five forms used (an unconditional 10px pad we cancelled, a
+     * painted donut hole that leaked `centerColor` into the public API, bars with
+     * no accessibility under a synthetic press layer, and plot geometry computed
+     * twice and kept in agreement by hand), and the second only ever existed
+     * because gifted resolved a gradient package at import time — the area fill is
+     * an SVG `<LinearGradient>` now.
+     */
+    dependencies: ['react-native-svg', 'expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'animated-counter', 'haptics'],
     files: [
-      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
+      { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
       { source: 'components/chart/core.ts', target: 'chart/core.ts' },
+      { source: 'components/chart/hooks.ts', target: 'chart/hooks.ts' },
       { source: 'components/chart/format.ts', target: 'chart/format.ts' },
+      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
+      { source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' },
+      { source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' },
+      { source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' },
       { source: 'components/chart/index.ts', target: 'chart/index.ts' },
     ],
     meta: {
-      tags: ['chart', 'data', 'visualization', 'primitive'],
+      tags: ['chart', 'data', 'visualization', 'gesture', 'motion', 'primitive'],
     },
   },
   {

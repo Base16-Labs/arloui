@@ -22,3 +22,29 @@ try {
 } catch {
   // react-native not resolvable in this package — fine.
 }
+
+// Animated mount transitions (the chart plot's draw-in, for one) schedule frames
+// with setTimeout and are not always cleared on unmount. Those callbacks then fire
+// after the test environment has been torn down, which logs "state update after
+// teardown" noise and can crash the worker rather than fail a test. Track the
+// handles and drop any that are still pending when a test ends.
+const realSetTimeout = global.setTimeout;
+const realClearTimeout = global.clearTimeout;
+const pendingTimers = new Set();
+
+global.setTimeout = (...args) => {
+  const handle = realSetTimeout(...args);
+  pendingTimers.add(handle);
+  return handle;
+};
+global.setTimeout.__isMockFunction = false;
+
+global.clearTimeout = (handle) => {
+  pendingTimers.delete(handle);
+  return realClearTimeout(handle);
+};
+
+afterEach(() => {
+  for (const handle of pendingTimers) realClearTimeout(handle);
+  pendingTimers.clear();
+});
