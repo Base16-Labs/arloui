@@ -147,19 +147,24 @@
       "name": "chart",
       "kind": "primitive",
       "title": "Chart",
-      "description": "Inline sparkline used by StatCard. The other chart forms live on a separate branch.",
+      "description": "Five chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars, rounded data-ends, negatives below the baseline), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), and Chart.Meter (one value against a target, as a bar or a ring).",
       "dependencies": [
-        "react-native-svg"
+        "react-native-svg",
+        "expo-haptics"
       ],
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "animated-counter",
+        "haptics"
       ],
       "meta": {
         "tags": [
           "chart",
           "data",
           "visualization",
+          "gesture",
+          "motion",
           "primitive"
         ]
       }
