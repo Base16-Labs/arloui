@@ -1,29 +1,30 @@
 /**
  * Arlo UI — Card
  *
- * Compound component:
- *   <Card>, <Card.Media>, <Card.Header>, <Card.Title>, <Card.Subtitle>, <Card.Body>, <Card.Footer>
+ * The surface primitive:  <Card>, <Card.Media>, <Card.Header>, <Card.Title>,
+ * <Card.Subtitle>, <Card.Body>, <Card.Footer>.
  *
- * Two independent axes:
- *   - `tone`:    how much the card lifts off the page — 'default' · 'raised' · 'floating'.
- *   - `surface`: what it's made of — 'default' opaque fill, or 'glass' for the
- *                translucent Liquid Glass material (pair with `blurComponent`).
+ * Five variant axes, each off a token scale so a card never invents a value:
+ *   - `surface`   — what it's made of: `default` (surface-card), `elevated`
+ *                   (surface-elevated), `bleed` (translucent, lets a coloured
+ *                   background or image show through — the Luma look), or `inverse`
+ *                   (flips to the opposite end of the scale; text flips with it).
+ *   - `elevation` — the shadow, `none` … `lg`. Per the design skill, depth comes
+ *                   from layering first, so the default is `none`.
+ *   - `border`    — border width in px (`1` default; there are no border-width tokens).
+ *   - `padding`   — inner padding off the spacing scale. `none` for edge-to-edge media.
+ *   - `radius`    — corner rounding off the radius scale.
  *
- * Geometry is three more, all reading off the token scales so a card never invents
- * a value: `padding` and `margin` share one spacing scale ('none' … 'xl'), and
- * `radius` maps straight onto the radius scale ('none' … 'full'). The presets and
- * `ListCard.Group` forward `padding`, `margin`, and `radius` too, so a row of cards
- * can be reshaped without dropping to `style`.
- *
- * Surfaces use `surface` by default and step up to `surfaceRaised` for the `raised`
- * tone. Borders carry hierarchy on neutral surfaces — shadows are reserved for
- * `floating` (modal/menu separation only). Per the design skill, depth comes from
- * layering and spacing first, not shadows.
+ * Card is the surface, not a family of pre-baked layouts. A metric tile, an image
+ * card, a prompt card, a settings group (a `List`), or a `Carousel` is `Card` plus
+ * its slots and the shipped primitives (`List.Row`, `Button`, `Badge`) — those are
+ * recipes documented alongside the component, not props on it.
  *
  * Pass `onPress` to make the whole card a single tap target; it picks up the same
- * press feedback as the rest of the system and reports itself as a button.
+ * press feedback as the rest of the system, fires a `haptic` on press-down
+ * (`'light'` by default — set `'none'` in dense grids), and reports itself as a button.
  */
-import { type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import {
   Pressable,
   Text,
@@ -33,70 +34,71 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
+import { haptic as triggerHaptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 
-type Tone = 'default' | 'raised' | 'floating';
-export type CardSurface = 'default' | 'glass';
+/** What the card is made of. */
+export type CardSurface = 'default' | 'elevated' | 'bleed' | 'inverse';
 
-/**
- * One scale for both `padding` and `margin`, so "sm" means the same distance
- * whichever side of the border it lands on.
- */
+/** Shadow depth, off the shadow scale. */
+export type CardElevation = 'none' | 'sm' | 'md' | 'lg';
+
+/** Haptic fired on press-down when the card is interactive. */
+export type CardHaptic = 'none' | 'light' | 'medium' | 'heavy';
+
+/** Inner padding, off the spacing scale. */
 export type CardSpacing = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-/** @deprecated Prefer `CardSpacing` — the same scale now covers margin too. */
-export type CardPadding = CardSpacing;
 
-/** Corner rounding, straight off the radius scale. */
+/** Corner rounding, off the radius scale. */
 export type CardRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 
 type CardProps = {
   children: ReactNode;
-  tone?: Tone;
-  /** `'glass'` swaps the opaque fill for the translucent Liquid Glass material. */
+  /** What the card is made of. Defaults to `'default'` (surface-card). */
   surface?: CardSurface;
-  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a glass surface. */
-  blurComponent?: ReactNode;
+  /** Shadow depth. Defaults to `'none'` — depth from layering before shadows. */
+  elevation?: CardElevation;
+  /** Border width in px. Defaults to `1`. No border-width tokens exist, so this is a literal. */
+  border?: number;
   /** Inner padding. Use `'none'` when the card is edge-to-edge media. */
   padding?: CardSpacing;
-  /**
-   * Outer spacing. Layout is usually the parent's job — reach for a `gap` on the
-   * list before reaching for this — but a card dropped into a screen you don't
-   * control needs a way to hold itself off the edges.
-   */
-  margin?: CardSpacing;
   /** Corner rounding. Defaults to `'xl'`, the standard card radius. */
   radius?: CardRadius;
   /** Makes the whole card a tap target with press feedback and `accessibilityRole="button"`. */
   onPress?: PressableProps['onPress'];
   onLongPress?: PressableProps['onLongPress'];
+  /** Haptic on press-down for an interactive card. Defaults to `'light'`; set `'none'` in dense grids. */
+  haptic?: CardHaptic;
   disabled?: boolean;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
 };
 
+/**
+ * Lets the text slots follow the surface: on an `inverse` card the title and
+ * subtitle flip to the inverse foreground without the caller restyling them.
+ */
+const CardTextContext = createContext<{ title: string; subtitle: string; inverse: boolean } | null>(
+  null,
+);
+
 function CardRoot({
   children,
-  tone = 'default',
   surface = 'default',
-  blurComponent,
+  elevation = 'none',
+  border = 1,
   padding = 'md',
-  margin = 'none',
   radius = 'xl',
   onPress,
   onLongPress,
+  haptic = 'light',
   disabled = false,
   accessibilityLabel,
   style,
 }: CardProps) {
   const t = useTokens();
-  // Cards are large surfaces, so they take the heaviest material — content behind a
-  // card should read as background texture, not as competing detail.
-  const glass = useGlassSurface('large');
-  const isGlass = surface === 'glass';
   const interactive = onPress != null || onLongPress != null;
 
-  // `sm`/`md`/`lg` keep the values they already had, so existing cards don't shift.
   const spacingScale: Record<CardSpacing, number> = {
     none: 0,
     xs: t.spacing[2],
@@ -105,39 +107,51 @@ function CardRoot({
     lg: t.spacing[6],
     xl: t.spacing[8],
   };
-  const paddingValue = spacingScale[padding];
-  const marginValue = spacingScale[margin];
 
-  const bg = isGlass
-    ? glass.backgroundColor
-    : tone === 'raised'
-      ? t.colors.surfaceRaised
-      : tone === 'floating'
-        ? t.colors.surfaceStrong
-        : t.colors.surface;
+  const bg =
+    surface === 'elevated'
+      ? t.colors.surfaceElevated
+      : surface === 'bleed'
+        ? t.colors.surfaceBleed
+        : surface === 'inverse'
+          ? t.colors.surfaceInverse
+          : t.colors.surfaceCard;
 
-  const containerStyle: ViewStyle = {
+  const inverse = surface === 'inverse';
+  const textColors = {
+    title: inverse ? t.colors.textInverse : t.colors.textPrimary,
+    subtitle: inverse ? t.colors.textInverse : t.colors.textSecondary,
+    inverse,
+  };
+
+  const shadow = elevation === 'none' ? null : (t.shadows[elevation] as ViewStyle);
+
+  // The shadow lives on the OUTER layer: a shadow can't escape a view with
+  // `overflow: 'hidden'`, and the inner layer needs that clip to round media and
+  // the border to the corners. So the outer casts, the inner clips.
+  const outerStyle: ViewStyle = {
     backgroundColor: bg,
-    borderColor: isGlass ? glass.borderColor : t.colors.border,
-    borderWidth: 1,
     borderRadius: t.radii[radius],
-    padding: paddingValue,
-    margin: marginValue,
-    gap: padding === 'none' ? 0 : t.spacing[3],
-    // Clip media and the blur layer to the card's corners.
-    overflow: 'hidden',
     opacity: disabled ? 0.45 : 1,
   };
 
-  const shadow = tone === 'floating' ? (t.shadows.md as ViewStyle) : null;
+  const innerStyle: ViewStyle = {
+    borderColor: surface === 'bleed' ? t.colors.borderSecondary : t.colors.border,
+    borderWidth: border,
+    borderRadius: t.radii[radius],
+    padding: spacingScale[padding],
+    gap: padding === 'none' ? 0 : t.spacing[3],
+    overflow: 'hidden',
+  };
+
+  const content = (
+    <View style={innerStyle}>
+      <CardTextContext.Provider value={textColors}>{children}</CardTextContext.Provider>
+    </View>
+  );
 
   if (!interactive) {
-    return (
-      <View style={[containerStyle, shadow, style]}>
-        {isGlass ? <GlassBackdrop>{blurComponent}</GlassBackdrop> : null}
-        {children}
-      </View>
-    );
+    return <View style={[outerStyle, shadow, style]}>{content}</View>;
   }
 
   return (
@@ -146,10 +160,11 @@ function CardRoot({
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled }}
       disabled={disabled}
+      onPressIn={haptic === 'none' ? undefined : () => void triggerHaptic(haptic)}
       onPress={onPress}
       onLongPress={onLongPress}
       style={({ pressed }) => [
-        containerStyle,
+        outerStyle,
         shadow,
         pressed && !disabled
           ? { opacity: t.motion.pressed.opacity, transform: [{ scale: t.motion.pressed.scale }] }
@@ -157,8 +172,7 @@ function CardRoot({
         style,
       ]}
     >
-      {isGlass ? <GlassBackdrop>{blurComponent}</GlassBackdrop> : null}
-      {children}
+      {content}
     </Pressable>
   );
 }
@@ -177,9 +191,7 @@ function CardMedia({
   height?: number;
   style?: StyleProp<ViewStyle>;
 }) {
-  return (
-    <View style={[{ height, width: '100%', overflow: 'hidden' }, style]}>{children}</View>
-  );
+  return <View style={[{ height, width: '100%', overflow: 'hidden' }, style]}>{children}</View>;
 }
 
 function CardHeader({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
@@ -189,11 +201,12 @@ function CardHeader({ children, style }: { children: ReactNode; style?: StylePro
 
 function CardTitle({ children, style }: { children: ReactNode; style?: StyleProp<TextStyle> }) {
   const t = useTokens();
+  const ctx = useContext(CardTextContext);
   return (
     <Text
       style={[
         {
-          color: t.colors.textPrimary,
+          color: ctx?.title ?? t.colors.textPrimary,
           fontFamily: t.fontFamilies.sans,
           fontSize: t.typography.title2.fontSize,
           lineHeight: t.typography.title2.lineHeight,
@@ -209,11 +222,14 @@ function CardTitle({ children, style }: { children: ReactNode; style?: StyleProp
 
 function CardSubtitle({ children, style }: { children: ReactNode; style?: StyleProp<TextStyle> }) {
   const t = useTokens();
+  const ctx = useContext(CardTextContext);
   return (
     <Text
       style={[
         {
-          color: t.colors.textSecondary,
+          color: ctx?.subtitle ?? t.colors.textSecondary,
+          // On an inverse surface there is no second text token, so soften the same ink.
+          opacity: ctx?.inverse ? 0.7 : 1,
           fontFamily: t.fontFamilies.sans,
           fontSize: t.typography.bodySm.fontSize,
           lineHeight: t.typography.bodySm.lineHeight,
@@ -226,22 +242,8 @@ function CardSubtitle({ children, style }: { children: ReactNode; style?: StyleP
   );
 }
 
-function CardBody({
-  children,
-  padded = false,
-  style,
-}: {
-  children: ReactNode;
-  /** Restores the card's inner padding for this section when the card is `padding="none"`. */
-  padded?: boolean;
-  style?: StyleProp<ViewStyle>;
-}) {
-  const t = useTokens();
-  return (
-    <View style={[padded ? { padding: t.spacing[5], gap: t.spacing[3] } : null, style]}>
-      {children}
-    </View>
-  );
+function CardBody({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  return <View style={style}>{children}</View>;
 }
 
 function CardFooter({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {

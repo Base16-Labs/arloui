@@ -35,9 +35,10 @@ npx arloui diff button
 ### primitive
 
 - **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
-- **card** — Card. A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.
+- **card** — Card. The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.
+- **list** — List. A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.
 - **animated-counter** — Animated counter. A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.
-- **chart** — Chart. Inline sparkline used by StatCard. The other chart forms live on a separate branch.
+- **chart** — Chart. Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.
 - **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
 - **spinner** — Spinner. A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.
 - **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.

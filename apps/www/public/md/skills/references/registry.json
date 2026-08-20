@@ -100,25 +100,37 @@
       "name": "card",
       "kind": "primitive",
       "title": "Card",
-      "description": "A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.",
+      "description": "The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "glass",
-        "animated-counter",
-        "chart",
-        "button"
+        "haptics"
       ],
       "dependencies": [
-        "expo-haptics",
-        "react-native-svg"
+        "expo-haptics"
       ],
       "tags": [
         "surface",
-        "primitive",
-        "glass"
+        "primitive"
       ],
       "figma": "Components/Card/Default"
+    },
+    {
+      "name": "list",
+      "kind": "primitive",
+      "title": "List",
+      "description": "A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.",
+      "registryDependencies": [
+        "tokens",
+        "theme-provider"
+      ],
+      "dependencies": [],
+      "tags": [
+        "list",
+        "row",
+        "primitive"
+      ],
+      "figma": "Components/List/Default"
     },
     {
       "name": "animated-counter",
@@ -138,7 +150,7 @@
       "name": "chart",
       "kind": "primitive",
       "title": "Chart",
-      "description": "Inline sparkline used by StatCard. The other chart forms live on a separate branch.",
+      "description": "Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.",
       "registryDependencies": [
         "tokens",
         "theme-provider"

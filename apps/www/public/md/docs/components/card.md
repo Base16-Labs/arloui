@@ -1,6 +1,6 @@
 # Card
 
-> A surface that groups related content, with two independent axes — tone for how far it lifts off the page, surface for what it is made of — plus four presets for the shapes that recur: stat, list, media, and action.
+> The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Five variant axes off token scales — surface, elevation, border, padding, radius — and optional whole-card press with a haptic. It ships no baked-in layouts; a metric, media, prompt, list, or carousel card is a composition, not a component.
 
 **Type:** Component  
 **Category:** Layout & surface  
@@ -9,7 +9,8 @@
 ## On this page
 
 - Anatomy
-- Presets
+- Variants
+- Recipes
 - When to use
 - Code
 - Tokens
@@ -19,18 +20,19 @@
 
 ## States
 
-`default` · `raised` · `floating` · `glass` · `pressable` · `padding` · `margin` · `radius`
+`default` · `elevated` · `bleed` · `inverse` · `elevation` · `border` · `pressable`
 
 ## Tokens used
 
-- `colors.surface`
-- `colors.surfaceRaised`
+- `colors.surfaceCard`
+- `colors.surfaceElevated`
+- `colors.surfaceBleed`
+- `colors.surfaceInverse`
+- `colors.textInverse`
 - `colors.border`
-- `colors.borderSecondary`
 - `radii.none … radii.full`
 - `spacing.2 … spacing.8`
-- `shadows.md`
-- `materials.glassLarge`
+- `shadows.none … shadows.lg`
 - `motion.pressed.scale`
 
 ## Links

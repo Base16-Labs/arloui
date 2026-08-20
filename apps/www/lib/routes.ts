@@ -73,6 +73,8 @@ export const componentGroups: ComponentGroup[] = [
   {
     label: 'Layout & surface',
     items: [
+      { label: 'Card', slug: 'card' },
+      { label: 'List', slug: 'list' },
       { label: 'Sheet', slug: 'sheet' },
       { label: 'Carousel', slug: 'carousel' },
       { label: 'Gallery', slug: 'gallery' },

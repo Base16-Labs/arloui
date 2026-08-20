@@ -1,5 +1,5 @@
 {
-  "count": 44,
+  "count": 45,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -72,6 +72,10 @@
     {
       "path": "/docs/components/input",
       "md": "/md/docs/components/input.md"
+    },
+    {
+      "path": "/docs/components/list",
+      "md": "/md/docs/components/list.md"
     },
     {
       "path": "/docs/components/radio",

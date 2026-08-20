@@ -13,6 +13,7 @@ type IndexItem = {
     | '/badge'
     | '/button'
     | '/cards'
+    | '/list'
     | '/chip'
     | '/input'
     | '/textarea'
@@ -46,12 +47,11 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Header', category: 'Nav' },
   { title: 'Icons', category: 'Foundations', href: '/icons' },
   { title: 'Input', category: 'Controls', href: '/input' },
-  { title: 'List', category: 'Lists' },
+  { title: 'List', category: 'Lists', href: '/list' },
   { title: 'Nav', category: 'Nav' },
   { title: 'Note', category: 'Type' },
   { title: 'Pill', category: 'Controls' },
   { title: 'Radio', category: 'Controls', href: '/radio' },
-  { title: 'Row', category: 'Lists' },
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
   { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
   { title: 'Spinner', category: 'Feedback', href: '/spinner' },
