@@ -170,11 +170,24 @@ function TabBarRoot({
   const barHeight = showLabels ? 64 : 56;
   const isGlass = surface === 'glass';
   const glass = useGlassSurface('medium');
+  // Nothing of our own behind glass — `GlassBackdrop` paints the material, and a
+  // fill here would stack the overlay on itself and leave a near-opaque bar
+  // wearing a glass token.
   const backgroundColor = isGlass
-    ? glass.backgroundColor
+    ? 'transparent'
     : surface === 'filled'
       ? t.colors.navBackground
       : 'transparent';
+  /*
+   * No tint on the bar, deliberately.
+   *
+   * Button tints because it has a tone to keep — a glass primary button that
+   * came out colourless was the thing that read as broken. The bar has no such
+   * colour: `navBackground` is `#FFFFFF` / `#18181B`, the same neutral the
+   * material's overlay already paints, so tinting with it only adds opacity, and
+   * tinting with `navIndicator` would turn a neutral nav surface accent-blue
+   * because a token happened to be to hand. The bar's colour is the material.
+   */
 
   // Floating bars shrink in place on scroll (like Instagram's pill) so they stay
   // reachable; full-width bars slide off-screen since a stretched bar scales poorly.
@@ -226,7 +239,15 @@ function TabBarRoot({
         style,
       ]}
     >
-      {isGlass ? <GlassBackdrop material="medium">{blurComponent}</GlassBackdrop> : null}
+      {isGlass ? (
+        <GlassBackdrop
+          // The pill's real radius, not `radii.full`'s 9999 sentinel — see Button.
+          borderRadius={floating ? barHeight / 2 : 0}
+          material="medium"
+        >
+          {blurComponent}
+        </GlassBackdrop>
+      ) : null}
 
       {surface === 'transparent' && blurComponent ? (
         <View

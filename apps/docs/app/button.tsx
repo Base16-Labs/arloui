@@ -28,8 +28,6 @@ const SIZES: ButtonSize[] = ['sm', 'md', 'lg', 'xl'];
 const ICONS: IconLayout[] = ['none', 'leading', 'trailing', 'both', 'icon-only'];
 const STATES: PreviewState[] = ['default', 'pressed', 'loading', 'disabled'];
 const HAPTICS: ButtonHaptic[] = ['light', 'medium', 'none'];
-/** Saturated bands so the material has something to refract and mute. */
-const GLASS_BACKDROP_BANDS = ['#F97316', '#2B7FFF', '#059669', '#DB2777', '#7C3AED'];
 
 export default function ButtonCanvas() {
   const t = useTokens();
@@ -110,22 +108,16 @@ export default function ButtonCanvas() {
             }}
           >
             {/*
-              Glass needs something to be glass *over*. On the flat canvas the
-              material is invisible and the variant looks broken, so the preview
-              lays down colour behind the button — the bands also make refraction
-              legible, since a straight edge crossing the surface is where you can
-              actually see it bend.
+              Glass previews on the plain canvas, like every other surface.
+
+              This used to lay saturated bands behind a glass button, because an
+              untinted material over a flat background is invisible and the
+              variant read as broken. The tint is what fixed that: the button
+              carries its own tone now, so it has something to show on a plain
+              background — and the bands had started doing harm, since a rainbow
+              behind the one variant made it impossible to judge the tone colour
+              the preview exists to show.
             */}
-            {surface === 'glass' ? (
-              <View
-                pointerEvents="none"
-                style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
-              >
-                {GLASS_BACKDROP_BANDS.map((color, index) => (
-                  <View key={color} style={{ flex: 1, backgroundColor: color }} />
-                ))}
-              </View>
-            ) : null}
             <Button
               tone={tone}
               appearance={appearance}

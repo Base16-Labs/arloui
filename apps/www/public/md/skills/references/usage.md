@@ -29,7 +29,7 @@ npx arloui diff button
 
 - **tokens** — Design tokens. Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.
 - **theme-provider** — Theme provider. React context that exposes tokens and follows the system color scheme.
-- **glass** — Liquid Glass. Decides what a glass surface is made of and resolves the material tokens into a fill, border, and blur strength. On iOS 26 it hands the surface to the real system material via `expo-glass-effect`; everywhere else it renders a translucent overlay over a host blur layer. Pulled in by components that support `surface="glass"`.
+- **glass** — Liquid Glass. Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. `GlassBackdrop` paints the whole surface, including a component's own colour as the material's tint and the press response that deepens it, so a glass control keeps its tone rather than going colourless. Pulled in by components that support `surface="glass"`.
 - **haptics** — Haptics. Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.
 
 ### primitive

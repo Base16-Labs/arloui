@@ -13,7 +13,9 @@ import {
   __resetGlassCacheForTests,
   isNativeGlassAvailable,
   useGlassSurface,
+  withAlpha,
 } from '../glass';
+import { materials } from '../tokens';
 import { renderWithTheme, screen } from '../../../test/render';
 
 // `require`, not `import`: the package is an optional peer that this workspace
@@ -153,5 +155,84 @@ describe('GlassBackdrop', () => {
     glassEffect.__setLiquidGlassAvailable(false);
     const { toJSON } = renderWithTheme(<GlassBackdrop />);
     expect(toJSON()).toBeNull();
+  });
+
+  /**
+   * A tint is a component's own colour surviving the surface swap, so it has to
+   * land on both paths — a tinted button that reads as primary on iOS 26 and as
+   * colourless glass on Android is the same bug in a different place.
+   */
+  it('tints the system material at the material\'s resting opacity', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(<GlassBackdrop material="medium" tintColor="#155DFC" />);
+
+    expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(
+      `rgba(21,93,252,${materials.glassMedium.tintOpacity})`,
+    );
+  });
+
+  it('leaves the material untinted when no tint is asked for', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(<GlassBackdrop material="medium" />);
+    expect(screen.getByTestId('native-glass-view').props.tintColor).toBeUndefined();
+  });
+
+  /**
+   * `GlassView` re-assigns `glassEffectView.effect` whenever `tintColor` changes —
+   * it has to, or the change does not take — and re-assigning the effect makes
+   * `UIVisualEffectView` re-render the material, which is a flash on every press.
+   * So the press delta rides on an overlay and the material's props stay put.
+   */
+  it('never moves the native tint to answer a press', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    const { rerender } = renderWithTheme(
+      <GlassBackdrop material="medium" tintColor="#155DFC" pressed />,
+    );
+    const resting = `rgba(21,93,252,${materials.glassMedium.tintOpacity})`;
+
+    expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(resting);
+    rerender(<GlassBackdrop material="medium" tintColor="#155DFC" />);
+    expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(resting);
+  });
+
+  /** Off by default: the gesture belongs to the `Pressable` ancestor. */
+  it('does not hand the touch to the system material unless asked', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(<GlassBackdrop material="medium" />);
+    expect(screen.getByTestId('native-glass-view').props.isInteractive).toBe(false);
+  });
+});
+
+describe('withAlpha', () => {
+  it.each([
+    ['#155DFC', 'rgba(21,93,252,0.5)'],
+    ['#15D', 'rgba(17,85,221,0.5)'],
+    ['#155DFCAA', 'rgba(21,93,252,0.5)'],
+    ['rgb(21, 93, 252)', 'rgba(21,93,252,0.5)'],
+    ['rgba(21,93,252,0.9)', 'rgba(21,93,252,0.5)'],
+  ])('re-alphas %s', (input, expected) => {
+    expect(withAlpha(input, 0.5)).toBe(expected);
+  });
+
+  /**
+   * The material token is the authority on how strongly a tint reads. Honouring
+   * a tone's own alpha instead would let a translucent tone — `interactiveSecondary`
+   * is `rgba(229,231,235,0.7)` — quietly under-tint its surface.
+   */
+  it('replaces an existing alpha rather than multiplying it', () => {
+    expect(withAlpha('rgba(229,231,235,0.7)', 0.5)).toBe('rgba(229,231,235,0.5)');
+  });
+
+  /**
+   * A tint at full strength is a visible mistake someone fixes; a silently
+   * dropped tint is not. So anything unparseable comes back untouched.
+   */
+  it.each(['transparent', 'rebeccapurple', '#12345'])('leaves %s alone', (input) => {
+    expect(withAlpha(input, 0.5)).toBe(input);
+  });
+
+  it('clamps out-of-range alphas', () => {
+    expect(withAlpha('#155DFC', 4)).toBe('rgba(21,93,252,1)');
+    expect(withAlpha('#155DFC', -1)).toBe('rgba(21,93,252,0)');
   });
 });

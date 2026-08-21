@@ -45,6 +45,9 @@
 - `colors.borderPrimary`
 - `colors.borderError`
 - `colors.borderSecondary`
+- `materials.glassSmall`
+- `materials.glassSmall.tintOpacity`
+- `materials.glassSmall.tintOpacityPressed`
 - `sizing.buttonHeight.sm`
 - `sizing.buttonHeight.md`
 - `sizing.buttonHeight.lg`

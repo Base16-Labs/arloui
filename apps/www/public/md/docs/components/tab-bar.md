@@ -28,6 +28,7 @@
 - `colors.navActive`
 - `colors.navInactive`
 - `colors.navIndicator`
+- `materials.glassMedium`
 - `motion.duration.fast`
 - `motion.spring.snappy`
 - `sizing.touchTarget.minimum`

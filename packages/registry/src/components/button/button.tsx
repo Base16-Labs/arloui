@@ -60,10 +60,12 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
    * `'glass'` swaps the tone's opaque fill for the Liquid Glass material — the
    * real system surface on iOS 26, Arlo's translucent overlay everywhere else.
    *
-   * The label and icons keep their tone colour, so a glass button still reads as
-   * primary or danger; only what sits behind them changes. `appearance` still
-   * applies on the fallback path, but a glass surface and a `ghost` appearance
-   * are close to the same request — prefer `solid` or `soft` with it.
+   * The button keeps its colour. The tone's fill becomes the material's tint
+   * rather than disappearing, so a glass primary button still reads as the
+   * primary button and a glass danger button still reads as danger — what
+   * changes is that the colour is now made of glass, not that there is no
+   * colour. `appearance` still applies, but a glass surface and a `ghost`
+   * appearance are close to the same request — prefer `solid` or `soft` with it.
    */
   surface?: ButtonSurface;
   loading?: boolean;
@@ -257,6 +259,17 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   const isGlass = surface === 'glass' && !useDisabledVisual;
   const glass = useGlassSurface('small');
 
+  /*
+   * The tone's fill, handed to the material as a tint instead of being dropped.
+   *
+   * `ghost` and `outline` have no fill to give, so they tint from the tone's
+   * foreground — otherwise a glass ghost button would be the one glass button
+   * with no colour at all, which is the inconsistency rather than the restraint.
+   * `glassSmall.tintOpacity` decides how much survives; this is the whole
+   * colour decision.
+   */
+  const glassTint = palette.bg === 'transparent' ? palette.fg : palette.bg;
+
   const hitSlop = useMemo(
     () => touchTargetInset(dims.minHeight, t.sizing.touchTarget.minimum),
     [dims.minHeight, t.sizing.touchTarget.minimum],
@@ -269,6 +282,13 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   );
 
   const cornerRadius = t.radii.full;
+  /*
+   * `radii.full` is 9999 — a sentinel that RN's own clamping turns into a pill.
+   * `UICornerRadius` does no such clamping, so the system material has to be
+   * handed the pill's real radius or it builds its lit edge from a shape the
+   * button does not have.
+   */
+  const glassCornerRadius = Math.min(cornerRadius, dims.minHeight / 2);
 
   const feedbackOverlayColor =
     appearance === 'outline' || appearance === 'ghost'
@@ -276,12 +296,16 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       : t.colors.touchFeedbackMain;
 
   /*
-   * Native glass answers a press itself — `isInteractive` makes the system
-   * material react — so our tint would stack a flat wash on top of that and read
-   * as two different things responding. The fallback still needs it: a
-   * translucent overlay does nothing on its own when pressed.
+   * Glass answers a press by deepening its own tint, so the grey wash is for
+   * opaque buttons only.
+   *
+   * Painting `touchFeedbackMain` over a glass button is what made a press look
+   * like the glass going away: a flat neutral layer across the whole surface is
+   * exactly the thing a material is not. `GlassBackdrop` takes `pressed` and
+   * moves the tone colour from `tintOpacity` to `tintOpacityPressed` instead,
+   * which is the same response on both the native and the fallback path.
    */
-  const showFeedbackOverlay = !disabled && pressed && !(isGlass && glass.native);
+  const showFeedbackOverlay = !disabled && pressed && !isGlass;
 
   const focusWebStyle = useMemo((): ViewStyle | undefined => {
     if (Platform.OS !== 'web' || !focused) return undefined;
@@ -308,7 +332,9 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       <Animated.View
         style={[
           {
-            backgroundColor: isGlass ? glass.backgroundColor : palette.bg,
+            // No fill of our own on glass: `GlassBackdrop` paints the material,
+            // and a second fill under it stacks the overlay on itself.
+            backgroundColor: isGlass ? 'transparent' : palette.bg,
             borderColor: isGlass ? glass.borderColor : palette.border,
             borderWidth: isGlass ? glass.borderWidth : palette.borderWidth,
             borderRadius: cornerRadius,
@@ -325,7 +351,20 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
         ]}
       >
         {isGlass ? (
-          <GlassBackdrop material="small" interactive>
+          /*
+           * No `interactive`. The material would be answering touches on an
+           * `absoluteFill` with `pointerEvents: 'none'` under the `Pressable`
+           * that actually owns the gesture — so it reacted on its own schedule,
+           * sometimes to a press that landed on a neighbouring control. `pressed`
+           * gives the same response deterministically, and identically on the
+           * fallback path.
+           */
+          <GlassBackdrop
+            material="small"
+            tintColor={glassTint}
+            pressed={pressed && !isPressDisabled}
+            borderRadius={glassCornerRadius}
+          >
             {blurComponent}
           </GlassBackdrop>
         ) : null}

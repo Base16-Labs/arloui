@@ -40,13 +40,27 @@
  *
  *   { "expo": { "autolinking": { "exclude": ["expo-glass-effect"] } } }
  *
+ * ## Who paints what
+ *
+ * `GlassBackdrop` paints the whole surface: the fill, the tint, and the press
+ * response. The component takes only the edge and the shape, and never sets a
+ * `backgroundColor` of its own on a glass container — a fill there stacks under
+ * the backdrop's and turns the material into an almost-opaque panel.
+ *
  *   const glass = useGlassSurface('medium');
- *   <View style={{ borderColor: glass.borderColor, borderWidth: glass.borderWidth }}>
- *     <GlassBackdrop material="medium">{blurComponent}</GlassBackdrop>
+ *   <View style={{
+ *     borderColor: glass.borderColor,
+ *     borderWidth: glass.borderWidth,
+ *     borderRadius: radius,
+ *     overflow: 'hidden',
+ *   }}>
+ *     <GlassBackdrop material="medium" borderRadius={radius} tintColor={tone} pressed={pressed}>
+ *       {blurComponent}
+ *     </GlassBackdrop>
  *     …
  *   </View>
  */
-import { useEffect, useState, type ReactNode } from 'react';
+import { useSyncExternalStore, type ReactNode } from 'react';
 import { AccessibilityInfo, Platform, StyleSheet, View } from 'react-native';
 import { useTokens } from './theme-provider';
 
@@ -161,47 +175,125 @@ export function isNativeGlassAvailable(): boolean {
 }
 
 /**
- * Mirrors the user's Reduce Transparency setting.
+ * Reduce Transparency, as one answer for the whole app.
  *
- * Glass is the one material this setting is aimed at, so it outranks the native
+ * This deliberately is **not** per-component state. It used to be: every
+ * `useGlassSurface` call owned a `useState(false)` and its own async
+ * `isReduceTransparencyEnabled()` probe. That is one store per hook call, and a
+ * glass component calls the hook at least twice — once in the component for its
+ * border and fill, once inside `GlassBackdrop` for the material itself. Two
+ * stores resolving independently can disagree for a frame, and when they
+ * disagree the component paints a fallback fill underneath a system material, or
+ * hands `GlassBackdrop` a `native` answer its parent has not taken yet. Both
+ * read on screen as the surface changing on its own, with nothing touched.
+ *
+ * A module-level store with a single subscription cannot do that: every consumer
+ * reads the same value in the same render, so the surface only ever changes when
+ * the setting actually changes.
+ *
+ * The OS subscription is intentionally never torn down. It is one listener for
+ * the process, and dropping it when the last glass component unmounts would just
+ * mean re-probing — and re-flickering — the next time one mounts.
+ *
+ * Glass is the material this setting is aimed at, so it outranks the native
  * path: someone who has asked the OS to stop making surfaces see-through should
  * not be handed the most see-through surface we own because their phone happens
  * to be new enough to render it well. When it is on we fall back, and the
  * fallback's own overlay is what carries the surface.
  */
+let reduceTransparency = false;
+let reduceTransparencySubscribed = false;
+const reduceTransparencyListeners = new Set<() => void>();
+
+function setReduceTransparency(next: boolean): void {
+  if (next === reduceTransparency) return;
+  reduceTransparency = next;
+  for (const listener of reduceTransparencyListeners) listener();
+}
+
+function getReduceTransparency(): boolean {
+  return reduceTransparency;
+}
+
+function subscribeReduceTransparency(listener: () => void): () => void {
+  reduceTransparencyListeners.add(listener);
+  if (!reduceTransparencySubscribed && Platform.OS === 'ios') {
+    reduceTransparencySubscribed = true;
+    // `?.` because the method is iOS/Android-only and absent on some hosts; the
+    // `catch` because a rejected probe must leave glass working, not unhandled.
+    AccessibilityInfo.isReduceTransparencyEnabled?.()
+      .then(setReduceTransparency)
+      .catch(() => {});
+    AccessibilityInfo.addEventListener('reduceTransparencyChanged', setReduceTransparency);
+  }
+  return () => {
+    reduceTransparencyListeners.delete(listener);
+  };
+}
+
 export function useReduceTransparency(): boolean {
-  const [reduce, setReduce] = useState(false);
-  useEffect(() => {
-    if (Platform.OS !== 'ios') return;
-    let active = true;
-    AccessibilityInfo.isReduceTransparencyEnabled?.().then((on) => {
-      if (active) setReduce(on);
-    });
-    const subscription = AccessibilityInfo.addEventListener(
-      'reduceTransparencyChanged',
-      setReduce,
-    );
-    return () => {
-      active = false;
-      subscription.remove();
+  return useSyncExternalStore(
+    subscribeReduceTransparency,
+    getReduceTransparency,
+    getReduceTransparency,
+  );
+}
+
+/**
+ * `#RGB`, `#RRGGBB`, `#RRGGBBAA`, `rgb()`, and `rgba()` re-alpha'd.
+ *
+ * Tone colours arrive as opaque hex, and a tint has to be translucent or it
+ * stops being glass — so every tint goes through here rather than through a
+ * separate set of pre-mixed colour tokens, which would have to be re-derived
+ * every time a tone changed.
+ *
+ * Anything it cannot parse (`transparent`, a named colour, a platform colour) is
+ * returned untouched: a tint that renders at full strength is a visible mistake
+ * someone will fix, where a silently dropped tint is not.
+ */
+export function withAlpha(color: string, alpha: number): string {
+  const a = Math.max(0, Math.min(1, alpha));
+  const hex = color.trim();
+
+  if (hex.startsWith('#')) {
+    const body = hex.slice(1);
+    // Widths 4 and 8 carry an alpha. It is read past deliberately: the material
+    // token is the authority on how strongly a tint reads, and honouring a
+    // tone's own alpha would let a translucent tone quietly under-tint its
+    // surface.
+    const step = body.length === 3 || body.length === 4 ? 1 : 2;
+    if (body.length < step * 3) return color;
+    const channel = (index: number) => {
+      const raw = body.slice(index * step, index * step + step);
+      return parseInt(step === 1 ? raw + raw : raw, 16);
     };
-  }, []);
-  return reduce;
+    return `rgba(${channel(0)},${channel(1)},${channel(2)},${a})`;
+  }
+
+  const parts = /^rgba?\(([^)]+)\)$/i.exec(hex)?.[1]?.split(',');
+  if (parts && parts.length >= 3) {
+    const [r, g, b] = parts.map((part) => part.trim());
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  return color;
 }
 
 /**
  * Resolve a glass material against the active theme and the platform.
  *
- * Components should treat the returned values as the complete surface treatment —
- * don't layer an opaque `backgroundColor` underneath, or the material stops
- * reading as translucent.
+ * Components take `borderColor`, `borderWidth`, and `native` from here and leave
+ * `backgroundColor` to `GlassBackdrop`, which is what actually paints it. It is
+ * on the returned object because the fallback's overlay and the component's edge
+ * come from the same token and have to agree — not as an invitation to paint it
+ * on the container, which stacks the material's fill on top of itself.
  */
 export function useGlassSurface(material: GlassMaterial = 'medium'): GlassSurface {
   const t = useTokens();
-  const reduceTransparency = useReduceTransparency();
+  const reduced = useReduceTransparency();
   const dark = t.name === 'dark';
   const tokens = t.materials[MATERIAL_TOKEN[material]];
-  const native = isNativeGlassAvailable() && !reduceTransparency;
+  const native = isNativeGlassAvailable() && !reduced;
 
   if (native) {
     return {
@@ -227,6 +319,12 @@ export function useGlassSurface(material: GlassMaterial = 'medium'): GlassSurfac
 /**
  * Mounts the glass surface behind a component's content.
  *
+ * **This is the only thing that paints a glass surface.** A component that also
+ * sets `backgroundColor: glass.backgroundColor` on the container stacks the
+ * material's overlay on top of itself — 0.64 over 0.64 lands near 0.87, which is
+ * an almost-opaque panel wearing a glass token. Take `borderColor`,
+ * `borderWidth`, and `borderRadius` from `useGlassSurface`; leave the fill here.
+ *
  * On iOS 26 this is the system material, handed the theme's colour scheme
  * explicitly rather than `'auto'` — Arlo has its own `ThemeProvider`, so a user
  * reading a light app on a dark-mode phone must get light glass, and `'auto'`
@@ -246,27 +344,65 @@ export function useGlassSurface(material: GlassMaterial = 'medium'): GlassSurfac
  * degrades to whatever the parent paints rather than breaking.
  *
  * The parent must set `overflow: 'hidden'` and its own `borderRadius` — the
- * backdrop fills the parent's bounds and is clipped by it.
+ * backdrop fills the parent's bounds and is clipped by it. Pass the same radius
+ * as `borderRadius` too: `UIGlassEffect` builds its lit edge from the shape it is
+ * given, and a rectangular material clipped to a pill loses that edge and reads
+ * as a flat cut-out that shifts as the backdrop moves behind it.
  */
 export function GlassBackdrop({
   material,
   interactive = false,
   tintColor,
+  pressed = false,
+  borderRadius,
   children,
 }: {
   material?: GlassMaterial;
   /**
-   * Lets the system material react to touch. Only meaningful on the native path
-   * and only for controls — a card does not respond to being pressed, and a
-   * button that does not is the thing that feels broken on iOS 26.
+   * Hands the press response to the system material.
+   *
+   * Only meaningful on the native path, and **only when this backdrop is the
+   * thing being touched**. It is off by default because the usual arrangement is
+   * the opposite one: the backdrop is an `absoluteFill` with `pointerEvents:
+   * 'none'` under a `Pressable` ancestor that owns the gesture. Telling
+   * `UIGlassEffect` to answer touches on a view that has been told not to receive
+   * them gets you a material reacting on its own schedule — sometimes to a press
+   * that landed elsewhere, sometimes not to the one that landed on it — on top of
+   * whatever response the `Pressable` is already running. Controls should pass
+   * `pressed` instead.
    */
   interactive?: boolean;
-  /** Tints the material. Leave unset for untinted glass. */
+  /**
+   * Tints the material with a component's own colour, so a glass primary button
+   * still reads as primary. Pass the solid tone colour — the material's
+   * `tintOpacity` token decides how much of it survives. Leave unset for
+   * untinted glass.
+   */
   tintColor?: string;
+  /**
+   * Deepens the tint to `tintOpacityPressed` while a control is held.
+   *
+   * This is the press response for a tinted glass surface, and it is a plain
+   * overlay on purpose. The native material's own props cannot carry it:
+   * `GlassView` re-assigns `glassEffectView.effect` whenever `tintColor` or
+   * `isInteractive` changes — it has to, or the change does not take — and
+   * re-assigning the effect makes `UIVisualEffectView` re-render the material,
+   * which is a visible flash on every press. So the native material's props stay
+   * fixed for the life of the surface and the colour moves above it.
+   */
+  pressed?: boolean;
+  /** The parent's corner radius, so the material builds the right shape. */
+  borderRadius?: number;
   children?: ReactNode;
 }) {
   const t = useTokens();
-  const surface = useGlassSurface(material ?? 'medium');
+  const resolved = material ?? 'medium';
+  const surface = useGlassSurface(resolved);
+  const tokens = t.materials[MATERIAL_TOKEN[resolved]];
+
+  const tint = tintColor
+    ? withAlpha(tintColor, pressed ? tokens.tintOpacityPressed : tokens.tintOpacity)
+    : undefined;
 
   if (surface.native) {
     const mod = loadGlassEffect();
@@ -276,14 +412,22 @@ export function GlassBackdrop({
     if (mod) {
       const GlassView = mod.GlassView;
       return (
-        <GlassView
-          pointerEvents="none"
-          glassEffectStyle={MATERIAL_GLASS_STYLE[material ?? 'medium']}
-          colorScheme={t.name === 'dark' ? 'dark' : 'light'}
-          isInteractive={interactive}
-          tintColor={tintColor}
-          style={StyleSheet.absoluteFill}
-        />
+        <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+          <GlassView
+            glassEffectStyle={MATERIAL_GLASS_STYLE[resolved]}
+            colorScheme={t.name === 'dark' ? 'dark' : 'light'}
+            isInteractive={interactive}
+            // Fixed for the life of the surface — see `pressed` above. The tint
+            // is applied at the material's resting opacity and the press delta
+            // rides on the overlay below.
+            tintColor={tintColor ? withAlpha(tintColor, tokens.tintOpacity) : undefined}
+            borderRadius={borderRadius}
+            style={StyleSheet.absoluteFill}
+          />
+          {tint && pressed ? (
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: tint, borderRadius }]} />
+          ) : null}
+        </View>
       );
     }
   }
@@ -295,6 +439,7 @@ export function GlassBackdrop({
       {material ? (
         <View style={[StyleSheet.absoluteFill, { backgroundColor: surface.backgroundColor }]} />
       ) : null}
+      {tint ? <View style={[StyleSheet.absoluteFill, { backgroundColor: tint }]} /> : null}
     </View>
   );
 }
@@ -308,4 +453,8 @@ export function __resetGlassCacheForTests(): void {
   moduleLookedUp = false;
   glassModule = null;
   nativeAvailable = undefined;
+  // The OS subscription is left in place — it is a single process-lifetime
+  // listener by design, and re-establishing it per test would only re-probe.
+  // Resetting the value is what a suite actually needs.
+  setReduceTransparency(false);
 }

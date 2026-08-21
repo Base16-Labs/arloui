@@ -108,8 +108,11 @@ function CardRoot({
   const paddingValue = spacingScale[padding];
   const marginValue = spacingScale[margin];
 
+  // Glass takes no fill here: `GlassBackdrop` paints the material, and a
+  // `backgroundColor` on the container would sit *under* the blur layer, so the
+  // blur would sample our own fill and hand it back amplified by the vibrancy.
   const bg = isGlass
-    ? glass.backgroundColor
+    ? 'transparent'
     : tone === 'raised'
       ? t.colors.surfaceRaised
       : tone === 'floating'
@@ -134,7 +137,11 @@ function CardRoot({
   if (!interactive) {
     return (
       <View style={[containerStyle, shadow, style]}>
-        {isGlass ? <GlassBackdrop>{blurComponent}</GlassBackdrop> : null}
+        {isGlass ? (
+          <GlassBackdrop material="large" borderRadius={t.radii[radius]}>
+            {blurComponent}
+          </GlassBackdrop>
+        ) : null}
         {children}
       </View>
     );
@@ -157,7 +164,11 @@ function CardRoot({
         style,
       ]}
     >
-      {isGlass ? <GlassBackdrop>{blurComponent}</GlassBackdrop> : null}
+      {isGlass ? (
+        <GlassBackdrop material="large" borderRadius={t.radii[radius]}>
+          {blurComponent}
+        </GlassBackdrop>
+      ) : null}
       {children}
     </Pressable>
   );
