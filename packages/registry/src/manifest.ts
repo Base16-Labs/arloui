@@ -41,7 +41,11 @@ export const FOUNDATION: RegistryEntry[] = [
     kind: 'foundation',
     title: 'Liquid Glass',
     description:
-      'Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface="glass"`.',
+      'Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. Pulled in by components that support `surface="glass"`.',
+    // `expo-glass-effect` is loaded through a guarded `require`, so the fallback
+    // still runs in any app that never installs it. Declared here so apps that do
+    // want the native iOS 26 material get it pulled in with the component.
+    dependencies: ['expo-glass-effect'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
     meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
@@ -277,6 +281,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Tab Bar',
     description:
       'An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.',
+    dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },

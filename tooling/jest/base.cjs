@@ -36,6 +36,10 @@ module.exports = {
     // react-native-reanimated (v4 + worklets) is a peer dep consumers install;
     // map it to a lightweight manual mock so animated components render in tests.
     '^react-native-reanimated$': path.join(__dirname, 'mocks/react-native-reanimated.js'),
+    // expo-glass-effect is an optional peer dep whose availability checks need a
+    // native module. Map it to a mock that can be switched on and off, so the
+    // native glass path is testable off-device. See mocks/expo-glass-effect.js.
+    '^expo-glass-effect$': path.join(__dirname, 'mocks/expo-glass-effect.js'),
   },
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
   coveragePathIgnorePatterns: [

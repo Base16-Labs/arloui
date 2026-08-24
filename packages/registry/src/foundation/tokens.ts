@@ -75,7 +75,7 @@ export const darkSemanticColors = {
   textInteractiveError: '#FF6467',
   interactivePrimary: '#2B7FFF',
   interactivePrimaryPressed: '#155DFC',
-  interactiveSecondary: '#27272A',
+  interactiveSecondary: 'rgba(39,39,42,0.7)',
   interactiveSecondaryPressed: '#3F3F46',
   interactiveTertiary: 'transparent',
   interactiveTertiaryPressed: 'rgba(39,39,42,0.55)',
@@ -377,6 +377,25 @@ export const blur = blurs;
  * material sits over anything that isn't already dark — a glass nav bar drifting
  * across coloured content picked up a visible cast. Zinc is hue-neutral, so the
  * material now only darkens what passes underneath.
+ *
+ * ## `tintOpacity` · `tintOpacityPressed`
+ *
+ * How much of a component's own colour survives the material. Untinted glass is
+ * colourless by construction, so a glass primary button would read as "some
+ * translucent thing with blue text" rather than as the primary button — the tone
+ * has to come through the surface, not just the label. These two alphas are what
+ * carries it, and they are deliberately one pair per material rather than per
+ * component so a tinted button, tab bar, and card agree about how strongly a
+ * tint reads.
+ *
+ * The alpha falls as the material gets heavier because a heavier material is
+ * already doing more of the hiding: `glassSmall` is thin enough that the tint has
+ * to carry the identity on its own, while `glassLarge` is most of the way to
+ * opaque before the tint is applied at all.
+ *
+ * `tintOpacityPressed` is the whole press response for a tinted glass surface —
+ * the colour deepens instead of a grey wash landing on top, which is the one
+ * press treatment that does not stop the surface reading as glass.
  */
 export const materials = {
   glassSmall: {
@@ -385,6 +404,8 @@ export const materials = {
     darkOverlay: 'rgba(24,24,27,0.64)',
     lightBorder: 'rgba(255,255,255,0.56)',
     darkBorder: 'rgba(255,255,255,0.12)',
+    tintOpacity: 0.55,
+    tintOpacityPressed: 0.72,
   },
   glassMedium: {
     blur: blurs.lg,
@@ -392,6 +413,8 @@ export const materials = {
     darkOverlay: 'rgba(24,24,27,0.72)',
     lightBorder: 'rgba(255,255,255,0.64)',
     darkBorder: 'rgba(255,255,255,0.14)',
+    tintOpacity: 0.45,
+    tintOpacityPressed: 0.6,
   },
   glassLarge: {
     blur: blurs.xl,
@@ -399,6 +422,8 @@ export const materials = {
     darkOverlay: 'rgba(24,24,27,0.82)',
     lightBorder: 'rgba(255,255,255,0.72)',
     darkBorder: 'rgba(255,255,255,0.16)',
+    tintOpacity: 0.38,
+    tintOpacityPressed: 0.5,
   },
   /** @deprecated Prefer `glassSmall`. */
   glassThin: {
@@ -407,6 +432,8 @@ export const materials = {
     darkOverlay: 'rgba(24,24,27,0.64)',
     lightBorder: 'rgba(255,255,255,0.56)',
     darkBorder: 'rgba(255,255,255,0.12)',
+    tintOpacity: 0.55,
+    tintOpacityPressed: 0.72,
   },
   /** @deprecated Prefer `glassMedium`. */
   glassRegular: {
@@ -415,6 +442,8 @@ export const materials = {
     darkOverlay: 'rgba(24,24,27,0.72)',
     lightBorder: 'rgba(255,255,255,0.64)',
     darkBorder: 'rgba(255,255,255,0.14)',
+    tintOpacity: 0.45,
+    tintOpacityPressed: 0.6,
   },
   /** @deprecated Prefer `glassLarge`. */
   glassThick: {
@@ -423,6 +452,8 @@ export const materials = {
     darkOverlay: 'rgba(24,24,27,0.82)',
     lightBorder: 'rgba(255,255,255,0.72)',
     darkBorder: 'rgba(255,255,255,0.16)',
+    tintOpacity: 0.38,
+    tintOpacityPressed: 0.5,
   },
 } as const;
 
