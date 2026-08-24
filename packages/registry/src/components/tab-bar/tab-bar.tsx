@@ -23,15 +23,17 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import { GlassBackdrop } from '../../foundation/glass';
+import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
 import { useTokens } from '../../foundation/theme-provider';
 
 export type TabBarWidth = 'full' | 'floating';
 /**
- * `'filled'` opaque nav fill · `'transparent'` no fill (host paints behind it) ·
- * `'glass'` translucent Liquid Glass material.
+ * `'filled'` is an opaque nav fill. `'glass'` is the Liquid Glass material — the
+ * real system surface on iOS 26 (via `expo-glass-effect`) and a translucent
+ * overlay over a host blur (`blurComponent`) everywhere else, so the fallback is
+ * the transparent-blur treatment without being a separate option to choose.
  */
-export type TabBarSurface = 'transparent' | 'filled' | 'glass';
+export type TabBarSurface = 'filled' | 'glass';
 /**
  * What the bar does with the `hidden` scroll signal — chosen here rather than
  * derived from `width`. `hide` slides it off, `shrink` shrinks it in place so it
@@ -166,6 +168,10 @@ function TabBarRoot({
 }: TabBarProps) {
   const t = useTokens();
   const isGlass = surface === 'glass';
+  // Resolves to the system material on iOS 26 (native: true, no fill/edge of our
+  // own) and to a translucent overlay + lit edge everywhere else. `GlassBackdrop`
+  // paints the fill; we only take the edge and the `native` flag from here.
+  const glass = useGlassSurface('medium');
   // Per-instance gradient id so two floating bars on one screen don't share (and
   // overwrite) a single document-global scrim definition.
   const scrimId = `arloTabScrim-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -371,6 +377,11 @@ function TabBarRoot({
             paddingBottom: bottomInset,
             marginBottom: morphsToFloating ? morphMargin : undefined,
             borderRadius: floating ? t.radii.full : morphsToFloating ? morphRadius : 0,
+            // Only a glass surface carries an edge — the material's lit hairline in
+            // the fallback, and nothing (width 0) on the native path where the
+            // system material draws its own specular edge. Filled stays borderless.
+            borderWidth: isGlass ? glass.borderWidth : 0,
+            borderColor: isGlass ? glass.borderColor : undefined,
             backgroundColor,
             overflow: 'hidden',
             transform: hideTransform,
@@ -390,8 +401,10 @@ function TabBarRoot({
           style,
         ]}
       >
-        {surface !== 'filled' ? (
-          <GlassBackdrop material={isGlass ? 'medium' : undefined}>{blurComponent}</GlassBackdrop>
+        {isGlass ? (
+          <GlassBackdrop material="medium" borderRadius={floating ? t.radii.full : 0}>
+            {blurComponent}
+          </GlassBackdrop>
         ) : null}
 
         {showPill && trackWidth > 0 && items.length > 0 ? (

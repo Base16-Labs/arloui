@@ -22,7 +22,7 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 type TabValue = 'home' | 'search' | 'activity' | 'profile';
 
 const WIDTHS: TabBarWidth[] = ['full', 'floating'];
-const SURFACES: TabBarSurface[] = ['transparent', 'filled', 'glass'];
+const SURFACES: TabBarSurface[] = ['filled', 'glass'];
 const BEHAVIORS: TabBarScrollBehavior[] = ['hide', 'shrink', 'fixed'];
 const SELECTIONS: TabBarSelectionMotion[] = ['snap', 'jelly'];
 
@@ -180,9 +180,9 @@ export default function TabBarCanvas() {
                   showLabels={showLabels}
                   hidden={scroll.hidden}
                   blurComponent={
-                    surface !== 'filled' ? (
+                    surface === 'glass' ? (
                       <BlurView
-                        intensity={surface === 'glass' ? 60 : 40}
+                        intensity={60}
                         tint={t.name === 'dark' ? 'dark' : 'light'}
                         style={StyleSheet.absoluteFill}
                       />

@@ -622,7 +622,7 @@ function TabBarDocPage() {
             <div className="mx-auto max-w-[420px]">
               {[
                 ['Container', 'full or floating'],
-                ['Surface', 'filled, glass, or transparent'],
+                ['Surface', 'filled or Liquid Glass'],
                 ['Item', 'icon and optional label'],
                 ['Indicator', 'floating pill, snap or jelly motion'],
                 ['Badge', 'short, exceptional count'],

@@ -249,7 +249,7 @@ export const tabBarData = {
   slug: 'tab-bar',
   category: 'Navigation',
   title: 'Tab Bar',
-  lede: "Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, transparent or filled surfaces, directional selection motion, and scroll-aware visibility.",
+  lede: "Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, filled or Liquid Glass surfaces, directional selection motion, and scroll-aware visibility.",
   figma: '#',
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tab-bar',
@@ -262,6 +262,7 @@ export const tabBarData = {
     'colors.interactiveError',
     'colors.textInteractivePrimary',
     'colors.bg',
+    'materials.glassMedium',
     'motion.duration.fast',
     'motion.spring.snappy',
     'motion.pressed',
