@@ -10,6 +10,7 @@ import {
   primitiveItems,
   archetypeItems,
   agentItems,
+  designItems,
   gettingStartedItems,
 } from '@/lib/routes';
 
@@ -144,6 +145,15 @@ export function Sidebar() {
             basePath="/docs/archetypes"
             pathname={pathname}
             anchor
+          />
+        )}
+
+        {pathname.startsWith('/docs/design') && (
+          <SidebarGroup
+            title="Design"
+            items={designItems}
+            basePath="/docs/design"
+            pathname={pathname}
           />
         )}
 
