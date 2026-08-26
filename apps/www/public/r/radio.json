@@ -20,12 +20,6 @@
     }
   ],
   "meta": {
-    "figma": [
-      {
-        "set": "RadioButton",
-        "export": "Radio"
-      }
-    ],
     "tags": [
       "form",
       "primitive"

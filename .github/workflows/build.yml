@@ -63,9 +63,9 @@ jobs:
 
       - name: Detect design payload drift
         run: |
-          if ! git diff --quiet --exit-code -- design; then
-            echo "::error::design/ is out of sync with @arloui/tokens. Run \`npm run design:sync\` from the repo root and commit the result, then re-import into Figma/Paper."
-            git --no-pager diff -- design
+          if ! git diff --quiet --exit-code -- tooling/figma-variables-sync; then
+            echo "::error::tooling/figma-variables-sync token payloads are out of sync with @arloui/tokens. Run \`npm run design:sync\` from the repo root and commit the result, then re-import into Figma/Paper."
+            git --no-pager diff -- tooling/figma-variables-sync
             exit 1
           fi
 

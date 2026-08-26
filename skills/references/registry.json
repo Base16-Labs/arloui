@@ -76,24 +76,6 @@
       "tags": [
         "action",
         "primitive"
-      ],
-      "figma": [
-        {
-          "set": "Buttons/Button",
-          "export": "Button"
-        },
-        {
-          "set": "Buttons/Ghost",
-          "export": "GhostButton"
-        },
-        {
-          "set": "Buttons/FAB",
-          "export": "FAB"
-        },
-        {
-          "set": "Buttons/Social",
-          "export": "SocialAuthButton"
-        }
       ]
     },
     {
@@ -109,12 +91,6 @@
       "tags": [
         "surface",
         "primitive"
-      ],
-      "figma": [
-        {
-          "set": "Cards",
-          "export": "Card"
-        }
       ]
     },
     {
@@ -169,12 +145,6 @@
         "segmented",
         "filter",
         "primitive"
-      ],
-      "figma": [
-        {
-          "set": "Tabs",
-          "export": "Tabs"
-        }
       ]
     },
     {
@@ -224,22 +194,6 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": [
-        {
-          "set": "Input Field BG STYLE",
-          "export": "Input",
-          "props": {
-            "appearance": "filled"
-          }
-        },
-        {
-          "set": "Input field NO BG",
-          "export": "Input",
-          "props": {
-            "appearance": "plain"
-          }
-        }
       ]
     },
     {
@@ -272,12 +226,6 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": [
-        {
-          "set": "RadioButton",
-          "export": "Radio"
-        }
       ]
     },
     {
@@ -310,12 +258,6 @@
         "form",
         "primitive",
         "multiline"
-      ],
-      "figma": [
-        {
-          "set": "Text area",
-          "export": "TextArea"
-        }
       ]
     },
     {

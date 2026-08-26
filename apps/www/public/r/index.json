@@ -77,24 +77,6 @@
         "haptics"
       ],
       "meta": {
-        "figma": [
-          {
-            "set": "Buttons/Button",
-            "export": "Button"
-          },
-          {
-            "set": "Buttons/Ghost",
-            "export": "GhostButton"
-          },
-          {
-            "set": "Buttons/FAB",
-            "export": "FAB"
-          },
-          {
-            "set": "Buttons/Social",
-            "export": "SocialAuthButton"
-          }
-        ],
         "tags": [
           "action",
           "primitive"
@@ -111,12 +93,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": [
-          {
-            "set": "Cards",
-            "export": "Card"
-          }
-        ],
         "tags": [
           "surface",
           "primitive"
@@ -171,12 +147,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": [
-          {
-            "set": "Tabs",
-            "export": "Tabs"
-          }
-        ],
         "tags": [
           "navigation",
           "tabs",
@@ -233,22 +203,6 @@
         "field"
       ],
       "meta": {
-        "figma": [
-          {
-            "set": "Input Field BG STYLE",
-            "export": "Input",
-            "props": {
-              "appearance": "filled"
-            }
-          },
-          {
-            "set": "Input field NO BG",
-            "export": "Input",
-            "props": {
-              "appearance": "plain"
-            }
-          }
-        ],
         "tags": [
           "form",
           "primitive"
@@ -284,12 +238,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": [
-          {
-            "set": "RadioButton",
-            "export": "Radio"
-          }
-        ],
         "tags": [
           "form",
           "primitive"
@@ -323,12 +271,6 @@
         "field"
       ],
       "meta": {
-        "figma": [
-          {
-            "set": "Text area",
-            "export": "TextArea"
-          }
-        ],
         "tags": [
           "form",
           "primitive",

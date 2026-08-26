@@ -7,11 +7,7 @@ export type IndexEntry = {
   description: string;
   registryDependencies?: string[];
   dependencies?: string[];
-  meta?: {
-    tags?: string[];
-    /** Published Figma component sets backing this entry; absent when none exist. */
-    figma?: Array<{ set: string; export?: string; props?: Record<string, string | boolean>; note?: string }>;
-  };
+  meta?: { tags?: string[] };
 };
 
 export type RegistryFile = { source?: string; target: string; type?: string; content: string };

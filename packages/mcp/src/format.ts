@@ -80,8 +80,6 @@ export function componentMarkdown(entry: RegistryEntry, prose: string | null): s
   if (entry.dependencies?.length) meta.push(`- **npm dependencies**: ${entry.dependencies.join(', ')}`);
   if (entry.registryDependencies?.length)
     meta.push(`- **registry dependencies**: ${entry.registryDependencies.join(', ')} (installed automatically)`);
-  if (entry.meta?.figma?.length)
-    meta.push(`- **figma**: ${entry.meta.figma.map((b) => b.set).join(', ')}`);
   const tokens = tokensUsed(entry);
   if (tokens.length) meta.push(`- **tokens used**: ${tokens.join(', ')}`);
 
