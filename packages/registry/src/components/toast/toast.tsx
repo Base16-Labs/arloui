@@ -335,7 +335,7 @@ export const ToastItem = forwardRef<ToastItemRef, ToastItemProps>(function Toast
           fontFamily: t.fontFamilies.sans,
           fontSize: t.typography.body.fontSize,
           lineHeight: t.typography.body.lineHeight,
-          fontWeight: '500',
+          fontWeight: t.fontWeights.medium,
         }}
       >
         {message}

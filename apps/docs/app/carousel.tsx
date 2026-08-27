@@ -64,7 +64,7 @@ export default function CarouselCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -129,7 +129,7 @@ export default function CarouselCanvas() {
             onPrevious={() => router.replace('/date-picker')}
             onNext={() => router.replace('/gallery')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Snap">
                 {SNAPS.map((value) => (
                   <VariantChip

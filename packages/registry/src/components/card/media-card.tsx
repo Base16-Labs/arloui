@@ -104,7 +104,7 @@ export function MediaCard({
                 right: 0,
                 bottom: 0,
                 padding: t.spacing[4],
-                gap: 2,
+                gap: 2, /* token-ignore: sub-token pairing gap; the scale starts at 4pt. */
               }}
             >
               <Text
@@ -144,7 +144,7 @@ export function MediaCard({
       </View>
 
       {!overlay ? (
-        <View style={{ padding: t.spacing[4], gap: 2 }}>
+        <View style={{ padding: t.spacing[4], gap: 2 /* token-ignore: sub-token pairing gap; the scale starts at 4pt. */ }}>
           <Text
             numberOfLines={2}
             style={{

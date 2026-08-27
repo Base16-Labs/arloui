@@ -99,7 +99,7 @@ function ListCardRow({
         <View style={{ flexShrink: 0, alignItems: 'center', justifyContent: 'center' }}>{leading}</View>
       ) : null}
 
-      <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+      <View style={{ flex: 1, minWidth: 0, gap: 2 /* token-ignore: sub-token pairing gap; the scale starts at 4pt. */ }}>
         <Text
           numberOfLines={1}
           style={{
@@ -129,7 +129,7 @@ function ListCardRow({
 
       {trailing ?? (
         value != null ? (
-          <View style={{ flexShrink: 0, alignItems: 'flex-end', gap: 2 }}>
+          <View style={{ flexShrink: 0, alignItems: 'flex-end', gap: 2 /* token-ignore: sub-token pairing gap; the scale starts at 4pt. */ }}>
             <Text
               numberOfLines={1}
               style={{

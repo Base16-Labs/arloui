@@ -75,7 +75,7 @@ export default function DatePickerCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -86,7 +86,7 @@ export default function DatePickerCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingHorizontal: 20,
+              paddingHorizontal: t.spacing[5],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -117,10 +117,10 @@ export default function DatePickerCanvas() {
             )}
             <Text
               style={{
-                marginTop: 12,
+                marginTop: t.spacing[3],
                 color: t.colors.textSecondary,
-                fontFamily: 'Manrope',
-                fontSize: 13,
+                fontFamily: t.fontFamilies.sans,
+                ...t.typography.bodySmall,
               }}
             >
               {selected
@@ -164,7 +164,7 @@ export default function DatePickerCanvas() {
             onPrevious={() => router.replace('/textarea')}
             onNext={() => router.replace('/tab-bar')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Presentation">
                 {(['calendar', 'wheel'] as const).map((option) => (
                   <VariantChip

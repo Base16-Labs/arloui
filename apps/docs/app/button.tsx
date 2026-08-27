@@ -90,7 +90,7 @@ export default function ButtonCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -127,7 +127,10 @@ export default function ButtonCanvas() {
                   />
                 ) : undefined
               }
-              labelStyle={{ fontFamily: 'Manrope SemiBold' }}
+              labelStyle={{
+                fontFamily: t.fontFamilies.sans,
+                fontWeight: t.fontWeights.semibold,
+              }}
               style={
                 state === 'pressed'
                   ? {
@@ -168,7 +171,7 @@ export default function ButtonCanvas() {
             onPrevious={() => router.replace('/icons')}
             onNext={() => router.replace('/input')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Tone">
                 {TONES.map((value) => (
                   <VariantChip

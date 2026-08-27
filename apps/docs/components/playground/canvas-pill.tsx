@@ -14,26 +14,20 @@ export function CanvasPill({
   open: boolean;
 }) {
   const t = useTokens();
-  const dark = t.name === 'dark';
-
   return (
     <View
       style={{
-        width: 160,
-        height: 32,
+        width: t.spacing[20] * 2,
+        height: t.sizing.buttonHeight.sm,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 3,
-        borderRadius: 999,
+        borderRadius: t.radii.full,
         borderWidth: 0.5,
-        borderColor: dark ? '#3F3F46' : '#E4E4E7',
-        backgroundColor: dark ? '#27272A' : '#FAFAFA',
-        shadowColor: '#000000',
-        shadowOpacity: dark ? 0.22 : 0.06,
-        shadowRadius: 12,
-        shadowOffset: { width: 0, height: 4 },
-        elevation: 4,
+        borderColor: t.colors.borderStrong,
+        backgroundColor: t.colors.surfaceRaised,
+        ...t.shadows.md,
       }}
     >
       <Pressable
@@ -46,7 +40,7 @@ export function CanvasPill({
           alignItems: 'center',
           gap: 7,
           paddingHorizontal: 7,
-          borderRadius: 999,
+          borderRadius: t.radii.full,
           opacity: pressed ? 0.6 : 1,
         })}
       >
@@ -61,8 +55,9 @@ export function CanvasPill({
         <Text
           style={{
             color: t.colors.textPrimary,
-            fontFamily: 'Manrope Medium',
-            fontSize: 12,
+            fontFamily: t.fontFamilies.sans,
+            ...t.typography.bodySmall,
+            fontWeight: t.fontWeights.medium,
           }}
         >
           {componentName}
@@ -81,15 +76,16 @@ export function CanvasPill({
           justifyContent: 'center',
           gap: 4,
           paddingHorizontal: 8,
-          borderRadius: 999,
-          backgroundColor: open || pressed ? (dark ? '#3F3F46' : '#F4F4F5') : 'transparent',
+          borderRadius: t.radii.full,
+          backgroundColor: open || pressed ? t.colors.surfaceStrong : 'transparent',
         })}
       >
         <Text
           style={{
             color: t.colors.textPrimary,
-            fontFamily: 'Manrope Medium',
-            fontSize: 12,
+            fontFamily: t.fontFamilies.sans,
+            ...t.typography.bodySmall,
+            fontWeight: t.fontWeights.medium,
           }}
         >
           Menu

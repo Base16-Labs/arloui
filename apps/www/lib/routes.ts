@@ -8,6 +8,7 @@ export const docsSections = [
   { label: 'Facets', href: '/docs/foundations' },
   { label: 'Foundations', href: '/docs/primitives' },
   { label: 'Components', href: '/docs/components' },
+  { label: 'Design', href: '/docs/design' },
   { label: 'Archetypes', href: '/docs/archetypes' },
   { label: 'Agents', href: '/docs/agents' },
   { label: 'Changelog', href: '/docs/changelog' },
@@ -59,6 +60,16 @@ export const agentItems = [
   { label: 'Skill pack', slug: 'skill-pack' },
   { label: 'MCP', slug: 'mcp' },
   { label: 'Prompt cookbook', slug: 'prompt-cookbook' },
+] as const;
+
+/**
+ * The design-side pages. ArloUI's source of truth is code, so everything here is
+ * about getting the system *into* a design tool rather than authoring it there.
+ */
+export const designItems = [
+  { label: 'Tokens in Figma', slug: 'figma-tokens' },
+  { label: 'Tokens in Paper', slug: 'paper' },
+  { label: 'Figma UI library', slug: 'figma-library' },
 ] as const;
 
 export const gettingStartedItems = [

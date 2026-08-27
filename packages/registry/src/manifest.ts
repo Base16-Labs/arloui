@@ -94,7 +94,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/button/index.ts', target: 'button/index.ts' },
     ],
     meta: {
-      figma: 'Components/Button/Primary',
       tags: ['action', 'primitive'],
     },
   },
@@ -115,7 +114,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
-      figma: 'Components/Card/Default',
       tags: ['surface', 'primitive', 'glass'],
     },
   },
@@ -212,7 +210,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
     ],
     meta: {
-      figma: 'Components/Sheet/Default',
       tags: ['surface', 'overlay', 'primitive'],
     },
   },
@@ -244,7 +241,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/input/index.ts', target: 'input/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Input/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -260,7 +256,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/checkbox/index.ts', target: 'checkbox/index.ts' },
     ],
     meta: {
-      figma: 'Components/Checkbox/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -276,7 +271,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/radio/index.ts', target: 'radio/index.ts' },
     ],
     meta: {
-      figma: 'Components/Radio/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -292,7 +286,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/toggle/index.ts', target: 'toggle/index.ts' },
     ],
     meta: {
-      figma: 'Components/Toggle/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -308,7 +301,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/text-area/index.ts', target: 'text-area/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Area/Default',
       tags: ['form', 'primitive', 'multiline'],
     },
   },
@@ -369,7 +361,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/badge/index.ts', target: 'badge/index.ts' },
     ],
     meta: {
-      figma: 'Components/Badge/Default',
       tags: ['label', 'status', 'primitive'],
     },
   },
@@ -386,7 +377,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/chip/index.ts', target: 'chip/index.ts' },
     ],
     meta: {
-      figma: 'Components/Chip/Default',
       tags: ['filter', 'tag', 'interactive', 'primitive'],
     },
   },
@@ -423,7 +413,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/date-picker/index.ts', target: 'date-picker/index.ts' },
     ],
     meta: {
-      figma: 'Components/Date Picker/Default',
       tags: ['form', 'calendar', 'date', 'primitive'],
     },
   },

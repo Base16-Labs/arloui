@@ -7,7 +7,7 @@ export type IndexEntry = {
   description: string;
   registryDependencies?: string[];
   dependencies?: string[];
-  meta?: { tags?: string[]; figma?: string };
+  meta?: { tags?: string[] };
 };
 
 export type RegistryFile = { source?: string; target: string; type?: string; content: string };

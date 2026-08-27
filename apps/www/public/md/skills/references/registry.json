@@ -93,8 +93,7 @@
       "tags": [
         "action",
         "primitive"
-      ],
-      "figma": "Components/Button/Primary"
+      ]
     },
     {
       "name": "card",
@@ -117,8 +116,7 @@
         "surface",
         "primitive",
         "glass"
-      ],
-      "figma": "Components/Card/Default"
+      ]
     },
     {
       "name": "animated-counter",
@@ -221,8 +219,7 @@
         "surface",
         "overlay",
         "primitive"
-      ],
-      "figma": "Components/Sheet/Default"
+      ]
     },
     {
       "name": "field",
@@ -255,8 +252,7 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": "Components/Text Input/Default"
+      ]
     },
     {
       "name": "checkbox",
@@ -273,8 +269,7 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": "Components/Checkbox/Default"
+      ]
     },
     {
       "name": "radio",
@@ -289,8 +284,7 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": "Components/Radio/Default"
+      ]
     },
     {
       "name": "toggle",
@@ -305,8 +299,7 @@
       "tags": [
         "form",
         "primitive"
-      ],
-      "figma": "Components/Toggle/Default"
+      ]
     },
     {
       "name": "text-area",
@@ -323,8 +316,7 @@
         "form",
         "primitive",
         "multiline"
-      ],
-      "figma": "Components/Text Area/Default"
+      ]
     },
     {
       "name": "tab-bar",
@@ -392,8 +384,7 @@
         "label",
         "status",
         "primitive"
-      ],
-      "figma": "Components/Badge/Default"
+      ]
     },
     {
       "name": "chip",
@@ -414,8 +405,7 @@
         "tag",
         "interactive",
         "primitive"
-      ],
-      "figma": "Components/Chip/Default"
+      ]
     },
     {
       "name": "toast",
@@ -451,8 +441,7 @@
         "calendar",
         "date",
         "primitive"
-      ],
-      "figma": "Components/Date Picker/Default"
+      ]
     }
   ]
 }

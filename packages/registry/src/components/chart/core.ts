@@ -172,8 +172,10 @@ export type DensityMetrics = {
 
 export function densityMetrics(density: ChartDensity): DensityMetrics {
   return density === 'compact'
-    ? { stroke: 1.5, dot: 4, barRadius: 2, gap: 1, showLabels: false, labelSize: 10, inset: 4 }
-    : { stroke: 2, dot: 6, barRadius: 4, gap: 2, showLabels: true, labelSize: 11, inset: 6 };
+    // The density scale itself, not a style consuming one — these numbers are what
+    // the rest of the charts measure against.
+    ? { stroke: 1.5, dot: 4, barRadius: 2, gap: 1, showLabels: false, labelSize: 10, inset: 4 } // token-ignore: the density scale itself.
+    : { stroke: 2, dot: 6, barRadius: 4, gap: 2, showLabels: true, labelSize: 11, inset: 6 }; // token-ignore: the density scale itself.
 }
 
 /* -------------------------------------------------------------- geometry --- */

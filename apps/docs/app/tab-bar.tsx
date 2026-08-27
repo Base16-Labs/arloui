@@ -61,9 +61,9 @@ export default function TabBarCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingTop: 64,
-              paddingHorizontal: 20,
-              paddingBottom: 88,
+              paddingTop: t.spacing[16],
+              paddingHorizontal: t.spacing[5],
+              paddingBottom: t.spacing[20] + t.spacing[2],
             }}
           >
             <View
@@ -72,7 +72,7 @@ export default function TabBarCanvas() {
                 maxWidth: 350,
                 height: 470,
                 overflow: 'hidden',
-                borderRadius: 34,
+                borderRadius: t.radii['2xl'],
                 borderWidth: 1,
                 borderColor: t.colors.border,
                 backgroundColor: t.colors.bg,
@@ -83,13 +83,18 @@ export default function TabBarCanvas() {
                 scrollEventThrottle={16}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
-                  paddingTop: 24,
-                  paddingHorizontal: 16,
-                  paddingBottom: 100,
+                  paddingTop: t.spacing[6],
+                  paddingHorizontal: t.spacing[4],
+                  paddingBottom: t.spacing[24] + t.spacing[1],
                 }}
               >
                 <View
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 22 }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: t.spacing[3],
+                    marginBottom: t.spacing[6],
+                  }}
                 >
                   <View
                     style={{
@@ -99,7 +104,7 @@ export default function TabBarCanvas() {
                       backgroundColor: '#155DFC',
                     }}
                   />
-                  <View style={{ gap: 6 }}>
+                  <View style={{ gap: t.spacing[2] }}>
                     <View
                       style={{
                         width: 112,
@@ -120,7 +125,7 @@ export default function TabBarCanvas() {
                 </View>
 
                 {Array.from({ length: 8 }, (_, index) => (
-                  <View key={index} style={{ marginBottom: 28 }}>
+                  <View key={index} style={{ marginBottom: t.spacing[6] }}>
                     <View
                       style={{
                         width: '100%',
@@ -136,7 +141,7 @@ export default function TabBarCanvas() {
                                 : '#E9D5FF',
                       }}
                     />
-                    <View style={{ marginTop: 12, flexDirection: 'row', gap: 14 }}>
+                    <View style={{ marginTop: t.spacing[3], flexDirection: 'row', gap: t.spacing[4] }}>
                       <Ionicons name="heart-outline" size={23} color={t.colors.textPrimary} />
                       <Ionicons name="chatbubble-outline" size={21} color={t.colors.textPrimary} />
                       <Ionicons name="paper-plane-outline" size={22} color={t.colors.textPrimary} />
@@ -145,9 +150,9 @@ export default function TabBarCanvas() {
                       style={{
                         marginTop: 9,
                         color: t.colors.textSecondary,
-                        fontFamily: 'Manrope Medium',
-                        fontSize: 13,
-                        lineHeight: 18,
+                        fontFamily: t.fontFamilies.sans,
+                        ...t.typography.bodyMedium,
+                        fontWeight: t.fontWeights.medium,
                       }}
                     >
                       {index % 2 === 0 ? 'A quiet moment from today.' : 'Saved from the weekend.'}
@@ -251,7 +256,7 @@ export default function TabBarCanvas() {
             onPrevious={() => router.replace('/date-picker')}
             onNext={() => router.replace('/sheet')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Width">
                 {WIDTHS.map((option) => (
                   <VariantChip

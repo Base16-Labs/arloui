@@ -8,9 +8,8 @@ export function Eyebrow({ children, style }: { children: string; style?: TextSty
     <Text
       style={[
         {
-          fontFamily: 'Space Grotesk Medium',
-          fontSize: 11,
-          letterSpacing: 1.2,
+          fontFamily: t.fontFamilies.sans,
+          ...t.typography.overline,
           textTransform: 'uppercase',
           color: t.colors.textTertiary,
         },
