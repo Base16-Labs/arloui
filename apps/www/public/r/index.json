@@ -77,7 +77,6 @@
         "haptics"
       ],
       "meta": {
-        "figma": "Components/Button/Primary",
         "tags": [
           "action",
           "primitive"
@@ -94,7 +93,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": "Components/Card/Default",
         "tags": [
           "surface",
           "primitive"
@@ -168,7 +166,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": "Components/Sheet/Default",
         "tags": [
           "surface",
           "overlay",
@@ -206,7 +203,6 @@
         "field"
       ],
       "meta": {
-        "figma": "Components/Text Input/Default",
         "tags": [
           "form",
           "primitive"
@@ -226,7 +222,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": "Components/Checkbox/Default",
         "tags": [
           "form",
           "primitive"
@@ -243,7 +238,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": "Components/Radio/Default",
         "tags": [
           "form",
           "primitive"
@@ -260,7 +254,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": "Components/Toggle/Default",
         "tags": [
           "form",
           "primitive"
@@ -278,7 +271,6 @@
         "field"
       ],
       "meta": {
-        "figma": "Components/Text Area/Default",
         "tags": [
           "form",
           "primitive",
@@ -351,7 +343,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": "Components/Badge/Default",
         "tags": [
           "label",
           "status",
@@ -374,7 +365,6 @@
         "button"
       ],
       "meta": {
-        "figma": "Components/Chip/Default",
         "tags": [
           "filter",
           "tag",
@@ -414,7 +404,6 @@
         "theme-provider"
       ],
       "meta": {
-        "figma": "Components/Date Picker/Default",
         "tags": [
           "form",
           "calendar",
