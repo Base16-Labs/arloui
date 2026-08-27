@@ -9,9 +9,15 @@
 
 export const lightSemanticColors = {
   surfaceBackground: '#F9FAFB',
+  // Card fill — a step greyer than the background and the (white) elevated surface,
+  // so a resting card reads as its own plane without a shadow. Grey-100.
+  surfaceCard: '#F3F4F6',
   surfaceInput: '#F3F4F6',
   surfaceInputActive: '#E5E7EB',
   surfaceElevated: '#FFFFFF',
+  // Translucent fill that lets a coloured background or image bleed through — a
+  // subtle frost (the app background at 50%), not the heavy blur of a tab bar.
+  surfaceBleed: 'rgba(249,250,251,0.5)',
   surfaceOverlay: 'rgba(16,24,40,0.4)',
   surfaceInverse: '#101828',
   textPrimary: '#101828',
@@ -84,9 +90,13 @@ export const lightSemanticColors = {
 
 export const darkSemanticColors = {
   surfaceBackground: '#09090B',
+  // Card fill — sits between the background and the elevated surface.
+  surfaceCard: '#18181B',
   surfaceInput: '#18181B',
   surfaceInputActive: '#27272A',
   surfaceElevated: '#27272A',
+  // Translucent fill — the app background at 50%, a subtle frost over colour.
+  surfaceBleed: 'rgba(9,9,11,0.5)',
   surfaceOverlay: 'rgba(16,24,40,0.7)',
   surfaceInverse: '#FAFAFA',
   textPrimary: '#FAFAFA',

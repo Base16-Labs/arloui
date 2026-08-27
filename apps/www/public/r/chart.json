@@ -2,7 +2,7 @@
   "name": "chart",
   "kind": "primitive",
   "title": "Chart",
-  "description": "Inline sparkline used by StatCard. The other chart forms live on a separate branch.",
+  "description": "Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.",
   "dependencies": [
     "react-native-svg"
   ],
@@ -29,7 +29,7 @@
     {
       "source": "components/chart/index.ts",
       "target": "chart/index.ts",
-      "content": "/**\n * Sparkline is the chart form StatCard needs. Other forms (Plot, Bar, Donut,\n * Meter) are not on this branch.\n */\nexport { Sparkline, type SparklineProps } from './sparkline';\nexport {\n  densityMetrics,\n  seriesStats,\n  toPoints,\n  toneColor,\n  type ChartCurve,\n  type ChartData,\n  type ChartDensity,\n  type ChartPoint,\n  type ChartTone,\n} from './core';\nexport { formatMoney, formatNumber, formatPercent } from './format';\n"
+      "content": "/**\n * Sparkline is the inline chart form — a metric tile pairs it with a value. Other\n * forms (Plot, Bar, Donut, Meter) are not on this branch.\n */\nexport { Sparkline, type SparklineProps } from './sparkline';\nexport {\n  densityMetrics,\n  seriesStats,\n  toPoints,\n  toneColor,\n  type ChartCurve,\n  type ChartData,\n  type ChartDensity,\n  type ChartPoint,\n  type ChartTone,\n} from './core';\nexport { formatMoney, formatNumber, formatPercent } from './format';\n"
     }
   ],
   "meta": {
@@ -40,5 +40,5 @@
       "primitive"
     ]
   },
-  "hash": "313fb191737dc8cd"
+  "hash": "fd2266fb6273742a"
 }

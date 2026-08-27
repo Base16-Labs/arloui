@@ -30,6 +30,8 @@ import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview
 import { componentGroups } from '@/lib/routes';
 import {
   buttonData,
+  cardData,
+  listData,
   checkboxData,
   datePickerData,
   docDataToMarkdown,
@@ -105,6 +107,14 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'spinner') {
     return <SpinnerDocPage />;
+  }
+
+  if (slug === 'card') {
+    return <CardDocPage />;
+  }
+
+  if (slug === 'list') {
+    return <ListDocPage />;
   }
 
   if (slug === 'carousel') {
@@ -2096,6 +2106,401 @@ function FormControlDocPage({
       </main>
 
       <RightRail headings={[...data.headings]} actions={[...data.actions]} />
+    </>
+  );
+}
+
+function CardDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(cardData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{cardData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {cardData.title}
+        </h1>
+        <Lede>{cardData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={cardData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="card" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A bordered, rounded surface with ordered slots — nothing baked in."
+        >
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="overflow-hidden rounded-[20px] border border-line-strong bg-[#F3F4F6] dark:bg-[#18181B]">
+                <div className="h-20 bg-[#155DFC]/80" />
+                <div className="space-y-2 p-5">
+                  <div className="h-3.5 w-2/3 rounded bg-[#101828] dark:bg-[#FAFAFA]" />
+                  <div className="h-2.5 w-1/2 rounded bg-[#99A1AF]" />
+                  <div className="h-2 w-full rounded bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="h-2 w-5/6 rounded bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                  <div className="flex justify-end gap-2 pt-2">
+                    <div className="h-7 w-16 rounded-full bg-[#E5E7EB] dark:bg-[#27272A]" />
+                    <div className="h-7 w-16 rounded-full bg-[#155DFC]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ['Card', 'the bordered, rounded surface'],
+                ['Card.Media', 'edge-to-edge media (padding="none")'],
+                ['Card.Header', 'Title over Subtitle'],
+                ['Card.Body', 'primary content'],
+                ['Card.Footer', 'right-aligned action row'],
+                ['surface', 'default · elevated · bleed · inverse'],
+                ['elevation', 'shadow none … lg'],
+                ['border', 'literal px width (1 default)'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="variants"
+          title="Variants"
+          sub="Five axes, each off a token scale — the default is already production-quality."
+        >
+          <div className="grid gap-x-8 gap-y-0 sm:grid-cols-2">
+            {[
+              ['surface', 'default (surface-card) · elevated · bleed (translucent, for coloured backdrops) · inverse (text flips)'],
+              ['elevation', 'none … lg — depth from layering first, so none is the default'],
+              ['border', 'literal px width; 1 by default (there are no border-width tokens)'],
+              ['padding', 'off the spacing scale; none for edge-to-edge media'],
+              ['radius', 'off the radius scale; xl by default'],
+              ['haptic', 'light by default on an interactive card; none in dense grids'],
+            ].map(([name, detail]) => (
+              <div
+                key={name}
+                className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 text-[13px]"
+              >
+                <span className="font-mono text-[12px] text-ink">{name}</span>
+                <span className="max-w-[62%] text-right text-ink-2">{detail}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="recipes"
+          title="Recipes are compositions, not props"
+          sub="Card ships no baked-in layouts — you assemble the familiar shapes."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              <b className="font-medium text-ink">Media card</b> — <code className="font-mono text-[12.5px]">padding=&quot;none&quot;</code> + <code className="font-mono text-[12.5px]">Card.Media</code> over a padded <code className="font-mono text-[12.5px]">Card.Body</code>.
+            </li>
+            <li>
+              <b className="font-medium text-ink">List / settings card</b> — a <code className="font-mono text-[12.5px]">List</code> inside a <code className="font-mono text-[12.5px]">padding=&quot;none&quot;</code> card.
+            </li>
+            <li>
+              <b className="font-medium text-ink">Carousel card</b> — a full-bleed <code className="font-mono text-[12.5px]">Carousel</code> with overlay dots; the card is the container it sits in.
+            </li>
+            <li>
+              <b className="font-medium text-ink">Prompt / action card</b> — an icon, a pitch, and a <code className="font-mono text-[12.5px]">Card.Footer</code> of buttons.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="A container for grouping related content.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Group content that belongs together; reach for the lightest surface that works before a card.</li>
+            <li>Keep depth from layering and spacing — add elevation only when a card must lift off the page.</li>
+            <li>Use bleed over hero imagery or a coloured backdrop; inverse to invert a card against its surroundings.</li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add card
+
+import { Card } from "@/components/ui/card";
+
+<Card surface="elevated" elevation="md">
+  <Card.Header>
+    <Card.Title>Weekly summary</Card.Title>
+    <Card.Subtitle>Your week at a glance</Card.Subtitle>
+  </Card.Header>
+  <Card.Body>
+    <Text>Depth comes from layering before shadows.</Text>
+  </Card.Body>
+  <Card.Footer>
+    <Button appearance="ghost" size="sm">Dismiss</Button>
+    <Button size="sm">View</Button>
+  </Card.Footer>
+</Card>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Media recipe — padding="none" lets the image bleed to the corners */}
+<Card padding="none" radius="xl">
+  <Card.Media height={160}>
+    <Image source={cover} style={StyleSheet.absoluteFill} />
+  </Card.Media>
+  <Card.Body style={{ padding: 16 }}>
+    <Card.Title>Kyoto in autumn</Card.Title>
+    <Card.Subtitle>12 photos · shared album</Card.Subtitle>
+  </Card.Body>
+</Card>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Whole-card tap target with a haptic */}
+<Card surface="bleed" onPress={open} haptic="light">
+  <Card.Title>Tap me</Card.Title>
+</Card>`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Surfaces, shadows, radius, and press motion.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {cardData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Interactive cards read as buttons.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>A card with <code className="font-mono text-[12.5px]">onPress</code> reports <code className="font-mono text-[12.5px]">accessibilityRole=&quot;button&quot;</code>; pass an <code className="font-mono text-[12.5px]">accessibilityLabel</code>.</li>
+            <li>The inverse surface flips the title and subtitle ink automatically, keeping contrast.</li>
+            <li>Press scales to 0.97 and drops opacity; a light haptic fires on press-down.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Let the content carry the card.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Reach for spacing and a subtle border before elevation.',
+                dont: 'Drop a shadow on every card — reserve elevation for cards that truly lift.',
+              },
+              {
+                do: 'Compose media, list, and prompt cards from the slots.',
+                dont: 'Wait for a MediaCard or ActionCard prop — those are compositions.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Reach for the right container.">
+          <div className="flex flex-wrap gap-2">
+            {['List', 'Carousel', 'Sheet', 'Button'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...cardData.headings]} actions={[...cardData.actions]} />
+    </>
+  );
+}
+
+function ListDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(listData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{listData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {listData.title}
+        </h1>
+        <Lede>{listData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={listData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="list" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A container that owns the surface and separators; rows are the items."
+        >
+          <div className="rounded-xl border border-line bg-surface-sunken p-6 sm:p-10 dark:bg-surface-raised">
+            <div className="mx-auto max-w-[360px]">
+              <div className="overflow-hidden rounded-[16px] border border-line-strong bg-[#FFFFFF] dark:bg-[#18181B]">
+                {[0, 1, 2].map((i) => (
+                  <div key={i}>
+                    {i > 0 ? <div className="ml-14 h-px bg-[#E5E7EB] dark:bg-[#27272A]" /> : null}
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <div className="h-6 w-6 shrink-0 rounded-md bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="h-2.5 w-1/2 rounded bg-[#101828] dark:bg-[#FAFAFA]" />
+                        <div className="h-2 w-1/3 rounded bg-[#99A1AF]" />
+                      </div>
+                      <div className="h-2.5 w-12 rounded bg-[#99A1AF]" />
+                      <div className="h-3 w-3 shrink-0 rounded-sm bg-[#D1D5DC] dark:bg-[#3F3F46]" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-5 sm:grid-cols-2">
+              {[
+                ['List', 'container — surface + separators'],
+                ['List.Row', 'the item (44pt min)'],
+                ['leading', 'icon or media thumbnail'],
+                ['title / subtitle', 'subtitle takes a node'],
+                ['value', 'trailing amount + tone'],
+                ['trailing', 'accessory icon (e.g. chevron)'],
+                ['divider', 'inset · balanced · edge · none'],
+                ['density', 'comfortable · compact'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px]"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="shrink-0 font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="variants"
+          title="Variants"
+          sub="One compound API; the List decides only how rows relate."
+        >
+          <div className="grid gap-x-8 gap-y-0 sm:grid-cols-2">
+            {[
+              ['separated', 'false keeps rows contiguous with a hairline; true spaces each onto its own surface'],
+              ['divider', 'inset (clears the leading asset, Apple style) · balanced · edge · none'],
+              ['density', 'comfortable (default) or compact — how far apart items sit'],
+              ['valueTone', 'default · positive · negative — direction for amounts'],
+            ].map(([name, detail]) => (
+              <div
+                key={name}
+                className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 text-[13px]"
+              >
+                <span className="font-mono text-[12px] text-ink">{name}</span>
+                <span className="max-w-[62%] text-right text-ink-2">{detail}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-[14px] leading-relaxed text-ink-2">
+            The List draws no surface of its own — wrap it in a <code className="font-mono text-[12.5px]">Card</code> for the grouped look, or leave it on the page for an edge-to-edge one.
+          </p>
+        </Section>
+
+        <Section id="when-to-use" title="When to use" sub="The workhorse for rows of peers.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Transactions, settings, contacts, search results — anything that reads as a stack of rows.</li>
+            <li>Use separated for standalone cards with gaps; contiguous with a hairline for a grouped list.</li>
+            <li>Pair the trailing value with a directional tone and a sign so direction is never colour alone.</li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste from the registry.">
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add list
+
+import { List } from "@/components/ui/list";
+
+<List divider="inset">
+  <List.Row
+    leading={<Icon name="music" />}
+    title="Spotify"
+    subtitle="Yesterday"
+    value="−$9.99"
+    valueTone="negative"
+    trailing={<Chevron />}
+    onPress={open}
+  />
+  <List.Row
+    title="Transfer from Ada"
+    subtitle="Mar 3"
+    value="+$1,200.00"
+    valueTone="positive"
+  />
+</List>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Separated rows, each on its own surface */}
+<List separated density="compact">
+  <List.Row leading={<Avatar />} title="Ada Lovelace" subtitle="Online" />
+  <List.Row leading={<Avatar />} title="Alan Turing" subtitle="2h ago" />
+</List>`}</CodeBlock>
+
+            <CodeBlock language="tsx">{`{/* Grouped inside a Card — the settings-list recipe */}
+<Card padding="none">
+  <List divider="inset">
+    <List.Row title="Notifications" trailing={<Chevron />} onPress={open} />
+    <List.Row title="Privacy" trailing={<Chevron />} onPress={open} />
+  </List>
+</Card>`}</CodeBlock>
+          </div>
+        </Section>
+
+        <Section id="tokens" title="Tokens used" sub="Surface, hairline, value tones, and row metrics.">
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {listData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="accessibility" title="Accessibility" sub="Rows stay reachable and legible.">
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>An interactive row reports <code className="font-mono text-[12.5px]">accessibilityRole=&quot;button&quot;</code>, labelled by its title.</li>
+            <li>Rows hold a 44pt minimum height and use a native background-highlight press.</li>
+            <li>Value tones always pair with a sign (+/−), so direction never relies on colour alone.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Let spacing and typography carry the row.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Wrap a contiguous list in a Card for the grouped-card look.',
+                dont: 'Give the List its own surface — it is transparent by design.',
+              },
+              {
+                do: 'Use the inset divider so the rule lines up under the title.',
+                dont: 'Run a full-bleed hairline through a list with leading icons.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section id="related" title="Related primitives" sub="Compose rows and containers.">
+          <div className="flex flex-wrap gap-2">
+            {['Card', 'Sheet', 'Badge', 'Button'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...listData.headings]} actions={[...listData.actions]} />
     </>
   );
 }

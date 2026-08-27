@@ -102,19 +102,30 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.',
-    dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'glass', 'animated-counter', 'chart', 'button'],
+      'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
-      { source: 'components/card/stat-card.tsx', target: 'card/stat-card.tsx' },
-      { source: 'components/card/list-card.tsx', target: 'card/list-card.tsx' },
-      { source: 'components/card/media-card.tsx', target: 'card/media-card.tsx' },
-      { source: 'components/card/action-card.tsx', target: 'card/action-card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
-      tags: ['surface', 'primitive', 'glass'],
+      tags: ['surface', 'primitive'],
+    },
+  },
+  {
+    name: 'list',
+    kind: 'primitive',
+    title: 'List',
+    description:
+      'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/list/list.tsx', target: 'list/list.tsx' },
+      { source: 'components/list/index.ts', target: 'list/index.ts' },
+    ],
+    meta: {
+      tags: ['list', 'row', 'primitive'],
     },
   },
   {
@@ -140,7 +151,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Chart',
     description:
-      'Inline sparkline used by StatCard. The other chart forms live on a separate branch.',
+      'Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.',
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
