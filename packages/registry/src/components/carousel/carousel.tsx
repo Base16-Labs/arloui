@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, Children, isValidElement, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   I18nManager,
   PanResponder,
@@ -13,6 +12,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type CarouselSnap = 'item' | 'page';
 export type CarouselIndicator = 'dots' | 'none';
@@ -70,7 +70,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
   const count = items.length;
 
   const [containerWidth, setContainerWidth] = useState(windowWidth);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   const [translateX] = useState(() => new Animated.Value(0));
@@ -87,15 +87,6 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
         : containerWidth - t.spacing[4] * 2;
   const totalWidth = count * itemWidth + (count - 1) * resolvedGap;
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((v) => active && setReduceMotion(v));
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      sub.remove();
-    };
-  }, []);
 
   const inset =
     snap === 'page' ? 0 : peek ? peekAmount : t.spacing[4];

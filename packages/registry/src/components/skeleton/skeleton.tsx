@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   Easing,
   type DimensionValue,
@@ -9,6 +8,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type SkeletonShape = 'rectangle' | 'text' | 'circle';
 export type SkeletonAnimation = 'shimmer' | 'pulse' | 'none';
@@ -39,7 +39,7 @@ export function Skeleton({
   const t = useTokens();
   const [progress] = useState(() => new Animated.Value(0));
   const [layoutWidth, setLayoutWidth] = useState(0);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const circle = shape === 'circle';
   const resolvedWidth = circle && width === '100%' ? 40 : width;
   const resolvedHeight = height ?? (circle ? resolvedWidth : shape === 'text' ? 12 : 16);
@@ -49,15 +49,6 @@ export function Skeleton({
   const sheenColor =
     highlightColor ?? (t.name === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.52)');
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => active && setReduceMotion(enabled));
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      subscription.remove();
-    };
-  }, []);
 
   useEffect(() => {
     progress.stopAnimation();

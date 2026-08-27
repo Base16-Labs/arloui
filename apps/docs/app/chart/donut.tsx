@@ -44,7 +44,7 @@ const THICKNESSES = [
   { label: 'thick', value: 38 },
 ] as const;
 /** The fold-into-Other cap. 4 is the palette's validated capacity and the default. */
-const CAPS = [2, 3, 4] as const;
+const CAPS = [2, 3, 4, 5] as const;
 
 const money = (value: number) => `$${value.toLocaleString('en-US')}`;
 
@@ -57,7 +57,8 @@ export default function DonutChartCanvas() {
   const [showLegend, setShowLegend] = useState(true);
   const [density, setDensity] = useState<ChartDensity>('default');
   const [thickness, setThickness] = useState<number>(26);
-  const [maxSlices, setMaxSlices] = useState<number>(4);
+  const [maxSlices, setMaxSlices] = useState<number>(5);
+  const [showValue, setShowValue] = useState(true);
   const [state, setState] = useState<State>('default');
   const [selected, setSelected] = useState<number | null>(null);
   const [previewOffset] = useState(() => new Animated.Value(0));
@@ -112,6 +113,12 @@ export default function DonutChartCanvas() {
               maxSlices={maxSlices}
               loading={state === 'loading'}
               showLegend={showLegend}
+              showValue={showValue}
+              empty={{
+                title: 'No spending yet',
+                description: 'Your categories will appear here once you log a transaction.',
+                action: { label: 'Log a transaction', onPress: () => setState('default') },
+              }}
               activeIndex={selected}
               onSelect={(index) => setSelected(index === selected ? null : index)}
             />
@@ -175,6 +182,16 @@ export default function DonutChartCanvas() {
                     label={value}
                     active={density === value}
                     onPress={() => setDensity(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Center">
+                {(['value', 'hidden'] as const).map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={showValue === (option === 'value')}
+                    onPress={() => setShowValue(option === 'value')}
                   />
                 ))}
               </VariantControlRow>

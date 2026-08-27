@@ -3045,7 +3045,7 @@ function ChartDocPage() {
         <Section
           id="forms"
           title="Forms"
-          sub="Five charts on one palette, all under the Chart namespace."
+          sub="Six charts on one palette, all under the Chart namespace."
         >
           <ChartFormsPreview />
           <p className="mt-4 text-[13px] text-ink-3">
@@ -3072,6 +3072,10 @@ function ChartDocPage() {
             </li>
             <li>
               <strong>Chart.Meter</strong> for one value against a target — a budget, a quota, a goal.
+            </li>
+            <li>
+              <strong>Chart.Heatmap</strong> for showing up — a calendar of filled and empty squares
+              with a headline streak the app composes. No library, no axes, one hue in tints.
             </li>
           </ul>
         </Section>
@@ -3102,7 +3106,32 @@ import { Chart, formatMoney } from "@/components/ui/chart";
 <Chart.Sparkline data={points} height={44} showEndDot />
 <Chart.Bar data={week} showValues onSelect={setSelected} />
 <Chart.Donut data={breakdown} centerLabel="Monthly spend" />
-<Chart.Meter value={88} max={100} label="Budget used" warnAt={0.75} dangerAt={0.9} />`}</CodeBlock>
+<Chart.Meter value={88} max={100} label="Budget used" warnAt={0.75} dangerAt={0.9} />
+<Chart.Heatmap data={days} onSelect={setDay} />
+
+// A second series and a likely range are props on Plot, not new forms.
+<Chart data={projected} format={formatMoney("GBP")}>
+  <Chart.Value />
+  <Chart.Plot
+    compare={baseline}
+    range={{ lower: pessimistic, upper: optimistic }}
+    tooltip
+  />
+  <Chart.Legend
+    items={[
+      { label: "Projected", color: "…" },
+      { label: "Baseline", color: "…" },
+      { label: "Likely range", color: "…", faded: true },
+    ]}
+  />
+</Chart>
+
+// Bars: two series share a category — grouped or stacked, legend names them.
+<Chart.Bar data={sleep} series={[activity]} variant="grouped" legend={["Sleep", "Activity"]} />
+<Chart.Bar data={private_} series={[state]} variant="stacked" legend={["Private", "State"]} />
+
+// Layout is a prop, not a form — the same categories as ranked rows.
+<Chart.Bar data={spend} layout="horizontal" format={formatMoney("GBP")} />`}</CodeBlock>
 
           <p className="mt-4 text-[13px] text-ink-3">
             The data model is <code className="font-mono text-[11.5px]">number[]</code> or{' '}
@@ -3152,7 +3181,7 @@ import { Chart, formatMoney } from "@/components/ui/chart";
                   auto · positive · negative · brand · series · neutral
                 </span>
                 <p className="mt-1 text-ink-2">
-                  One vocabulary across all five forms. Each form documents what it does with the
+                  One vocabulary across all six forms. Each form documents what it does with the
                   members it cannot honour — a line has no categories to enumerate, a meter has no
                   direction to infer, and neither invents one.
                 </p>
@@ -3220,10 +3249,10 @@ import { Chart, formatMoney } from "@/components/ui/chart";
         <Section
           id="not-in-the-kit"
           title="Not in the kit"
-          sub="Five forms, drawn by Arlo. The rest is yours."
+          sub="Six forms, drawn by Arlo. The rest is yours."
         >
           <p className="text-[15px] leading-relaxed text-ink-2">
-            Arlo owns the geometry and the render loop for the five forms above — there is no
+            Arlo owns the geometry and the render loop for the six forms above — there is no
             charting library underneath, only{' '}
             <code className="font-mono text-[11.5px]">react-native-svg</code>. That is what makes
             the crosshair land on the line and the period morph possible, and it is also why the
@@ -3231,14 +3260,14 @@ import { Chart, formatMoney } from "@/components/ui/chart";
           </p>
           <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
             These are <strong>not</strong> coming: candlestick, radar, population pyramid, scatter,
-            3-D anything, heatmaps, and stacked or grouped bars. Horizontal and range bars are
-            earned later, on evidence, once the five behave. If you need one of them, the scale and
-            the path builders the five are drawn with are exported from{' '}
+            and 3-D anything. If you need one of them, the scale and the path builders the six are
+            drawn with are exported from{' '}
             <code className="font-mono text-[11.5px]">chart/core.ts</code> —{' '}
             <code className="font-mono text-[11.5px]">makeScale</code>,{' '}
             <code className="font-mono text-[11.5px]">linePath</code>,{' '}
             <code className="font-mono text-[11.5px]">barPath</code>,{' '}
-            <code className="font-mono text-[11.5px]">annulusPath</code> — so a sixth form you
+            <code className="font-mono text-[11.5px]">bandPath</code>,{' '}
+            <code className="font-mono text-[11.5px]">annulusPath</code> — so a seventh form you
             write measures the way these do.
           </p>
         </Section>

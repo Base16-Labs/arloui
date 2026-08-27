@@ -20,7 +20,6 @@
  */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   BackHandler,
   Easing,
@@ -34,6 +33,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type SheetBackdrop = 'scrim' | 'passthrough';
 export type SheetSurface = 'solid' | 'glass';
@@ -278,7 +278,7 @@ function SheetRoot({
 
   const [mounted, setMounted] = useState(visible);
   const [measuredHeight, setMeasuredHeight] = useState(0);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const [snapIndex, setSnapIndex] = useState(0);
   const snapIndexRef = useRef(0);
 
@@ -300,19 +300,6 @@ function SheetRoot({
   const closing = useRef(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    snapIndexRef.current = snapIndex;
-  }, [snapIndex]);
-
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((v) => active && setReduceMotion(v));
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      sub.remove();
-    };
-  }, []);
 
   const animateOpen = () => {
     closing.current = false;

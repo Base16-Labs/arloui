@@ -1,10 +1,14 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Chart,
   useTokens,
+  type ChartChrome,
+  type BarChartLayout,
+  type BarChartSpacing,
+  type BarChartVariant,
   type ChartDensity,
   type ChartTone,
 } from '@arloui/registry';
@@ -37,7 +41,51 @@ const SIGNED = [
   { label: 'Jun', value: 9 },
 ];
 
+/** The two-series sample the grouped and stacked modes share. */
+const SLEEP: { label: string; value: number }[] = [
+  { label: 'M', value: 7.5 },
+  { label: 'T', value: 6.8 },
+  { label: 'W', value: 8.1 },
+  { label: 'T', value: 7.2 },
+  { label: 'F', value: 6.4 },
+  { label: 'S', value: 8.8 },
+  { label: 'S', value: 8.3 },
+];
+const ACTIVITY: { label: string; value: number }[] = [
+  { label: 'M', value: 5.2 },
+  { label: 'T', value: 6.1 },
+  { label: 'W', value: 4.4 },
+  { label: 'T', value: 5.8 },
+  { label: 'F', value: 7.0 },
+  { label: 'S', value: 3.9 },
+  { label: 'S', value: 4.6 },
+];
+
+/**
+ * The signed counterpart to `ACTIVITY`, so the Data control stays live in
+ * grouped and stacked.
+ *
+ * It used to be dead the moment Series left `single`: `data` was hardcoded to
+ * `SLEEP` whenever the chart was multi-series, so pressing "signed" changed
+ * nothing. A control that only works in one of three modes reads as broken in
+ * the other two.
+ *
+ * Grouped draws the negatives; stacked clamps them to zero, which is the
+ * documented rule — a negative share of a total is not a thing the shape can
+ * express.
+ */
+const SIGNED_B: { label: string; value: number }[] = [
+  { label: 'Jan', value: 21 },
+  { label: 'Feb', value: 14 },
+  { label: 'Mar', value: -18 },
+  { label: 'Apr', value: 12 },
+  { label: 'May', value: -9 },
+  { label: 'Jun', value: 27 },
+];
+
 const DATASETS: Dataset[] = ['week', 'signed'];
+const SPACINGS: BarChartSpacing[] = ['tight', 'default', 'loose'];
+const CHROMES: ChartChrome[] = ['none', 'baseline', 'reference'];
 /**
  * Every tone `Chart.Bar` honours, in the order its props document them. An earlier
  * set stopped at three, which left `positive`, `negative`, and `neutral` shipping
@@ -46,8 +94,11 @@ const DATASETS: Dataset[] = ['week', 'signed'];
 const TONES: ChartTone[] = ['brand', 'series', 'auto', 'positive', 'negative', 'neutral'];
 const DENSITIES: ChartDensity[] = ['default', 'compact'];
 const STATES: State[] = ['default', 'loading', 'empty'];
+const LAYOUTS: BarChartLayout[] = ['vertical', 'horizontal'];
+const MODES: ('single' | BarChartVariant)[] = ['single', 'grouped', 'stacked'];
 
 const money = (value: number) => `$${value.toLocaleString('en-US')}`;
+const hours = (value: number) => `${value}h`;
 
 export default function BarChartCanvas() {
   const t = useTokens();
@@ -62,9 +113,28 @@ export default function BarChartCanvas() {
   const [density, setDensity] = useState<ChartDensity>('default');
   const [state, setState] = useState<State>('default');
   const [selected, setSelected] = useState<number | null>(null);
+  const [mode, setMode] = useState<'single' | BarChartVariant>('single');
+  const [layout, setLayout] = useState<BarChartLayout>('vertical');
+  const [spacing, setSpacing] = useState<BarChartSpacing>('default');
+  const [chrome, setChrome] = useState<ChartChrome>('baseline');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
-  const data = state === 'empty' ? [] : dataset === 'week' ? WEEK : SIGNED;
+  const multi = mode !== 'single';
+  const singleData = useMemo(
+    () => (state === 'empty' ? [] : dataset === 'week' ? WEEK : SIGNED),
+    [state, dataset],
+  );
+  const multiPrimary = dataset === 'signed' ? SIGNED : SLEEP;
+  const multiSecond = dataset === 'signed' ? SIGNED_B : ACTIVITY;
+  const data = multi ? (state === 'empty' ? [] : multiPrimary) : singleData;
+  const format = multi && dataset !== 'signed' ? hours : money;
+
+  /** The AVG line tracks whichever series is on screen. */
+  const average = useMemo(() => {
+    const list = multi ? multiPrimary : singleData;
+    if (list.length === 0) return 0;
+    return list.reduce((sum, bar) => sum + bar.value, 0) / list.length;
+  }, [multi, multiPrimary, singleData]);
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -107,13 +177,31 @@ export default function BarChartCanvas() {
           >
             <Chart.Bar
               data={data}
-              height={200}
+              series={multi ? [multiSecond] : undefined}
+              variant={mode === 'stacked' ? 'stacked' : 'grouped'}
+              legend={
+                multi ? (dataset === 'signed' ? ['Flows', 'Fees'] : ['Sleep', 'Activity']) : undefined
+              }
+              layout={layout}
+              spacing={spacing}
+              height={layout === 'horizontal' ? undefined : 200}
               tone={tone}
               density={density}
               loading={state === 'loading'}
               showValues={showValues}
               showLabels={showLabels}
-              format={money}
+              format={format}
+              empty={{
+                title: 'No spending yet',
+                description: 'Categories will appear here once you log your first transaction.',
+                action: { label: 'Log a transaction', onPress: () => setState('default') },
+              }}
+              chrome={chrome}
+              reference={
+                chrome === 'reference'
+                  ? { value: Number(average.toFixed(2)), label: 'AVG' }
+                  : undefined
+              }
               activeIndex={selected}
               onSelect={(index) => setSelected(index === selected ? null : index)}
             />
@@ -147,6 +235,54 @@ export default function BarChartCanvas() {
             onNext={() => router.replace('/chart/donut')}
           >
             <View style={{ gap: 14 }}>
+              <VariantControlRow label="Series">
+                {MODES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={mode === value}
+                    onPress={() => {
+                      setMode(value);
+                      setSelected(null);
+                    }}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Spacing">
+                {SPACINGS.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={spacing === value}
+                    onPress={() => setSpacing(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Layout">
+                {LAYOUTS.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={layout === value}
+                    onPress={() => setLayout(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              {/*
+                A real three-way chrome control, not a Reference on/off toggle.
+                `none` was unreachable, which meant the rail behind horizontal
+                rows could not be turned off from here at all.
+              */}
+              <VariantControlRow label="Chrome">
+                {CHROMES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={chrome === value}
+                    onPress={() => setChrome(value)}
+                  />
+                ))}
+              </VariantControlRow>
               <VariantControlRow label="Data">
                 {DATASETS.map((value) => (
                   <VariantChip
@@ -160,12 +296,19 @@ export default function BarChartCanvas() {
                   />
                 ))}
               </VariantControlRow>
+              {/*
+                Tone is a single-series decision. With `series`, every bar takes
+                its own palette slot and `tone` is documented as ignored — so
+                under grouped or stacked the row is disabled rather than left
+                looking live and doing nothing.
+              */}
               <VariantControlRow label="Tone">
                 {TONES.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
                     active={tone === value}
+                    disabled={multi}
                     onPress={() => setTone(value)}
                   />
                 ))}

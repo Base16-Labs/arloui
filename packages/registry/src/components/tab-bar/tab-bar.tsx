@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState, Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   Pressable,
   Text,
@@ -12,6 +11,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type TabBarWidth = 'full' | 'floating';
 export type TabBarSurface = 'transparent' | 'filled';
@@ -104,7 +104,7 @@ function TabBarRoot({
 }: TabBarProps) {
   const t = useTokens();
   const [barWidth, setBarWidth] = useState(0);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const items = Children.toArray(children).filter(
     isValidElement,
   ) as ReactElement<InternalTabBarItemProps>[];
@@ -120,15 +120,6 @@ function TabBarRoot({
   const indicatorWidth = floating ? itemWidth : Math.min(34, itemWidth * 0.46);
   const indicatorOffset = floating ? 0 : Math.max(0, (itemWidth - indicatorWidth) / 2);
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => active && setReduceMotion(enabled));
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      subscription.remove();
-    };
-  }, []);
 
   useEffect(() => {
     if (reduceMotion) {

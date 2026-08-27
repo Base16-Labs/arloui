@@ -1,11 +1,12 @@
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Chart,
   useTokens,
   type ChartCurve,
+  type ChartTone,
   type ChartDensity,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -27,15 +28,44 @@ const HEIGHTS: Height[] = ['inline', 'standalone'];
 const DENSITIES: ChartDensity[] = ['compact', 'default'];
 const CURVES: ChartCurve[] = ['steep', 'smooth'];
 const STATES: State[] = ['default', 'loading', 'empty'];
+/**
+ * Tone is a control, not four rows.
+ *
+ * The canvas used to render Rising / Falling / Brand / Neutral all at once, with
+ * the tone baked into each row — so `tone` had no chip of its own and the two
+ * things it actually varies, the hue and the direction it infers, could not be
+ * changed independently. One mark and two controls says the same thing and lets
+ * you drive it.
+ */
+const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'brand', 'neutral'];
+const DIRECTIONS = ['rising', 'falling'] as const;
+const money = (value: number) => `$${value.toFixed(2)}`;
 
 /** Deterministic series so the canvas looks the same on every render. */
+/**
+ * Deterministic sample series so the canvas looks the same on every render.
+ *
+ * The jitter is a hash, not a pair of sines — the same fix the Plot's canvas
+ * needed. Two low-frequency sines summed to about ±11 against a trend of ~13.5
+ * per step, so the noise never overcame the trend and both series came out
+ * **perfectly monotonic**: zero direction changes across thirty segments. A
+ * monotonic polyline is a gentle arc with no corners in it, so `curve="steep"`
+ * and `curve="smooth"` drew the same picture and the Curve control looked broken
+ * while working exactly as specified.
+ *
+ * A series has to have corners before a control about corners can be judged.
+ */
 function series(direction: 'up' | 'down'): number[] {
+  const seed = direction === 'up' ? 1 : 2;
+  const jitter = (index: number) => {
+    const x = Math.sin(index * 12.9898 + seed * 78.233) * 43758.5453;
+    return (x - Math.floor(x) - 0.5) * 55;
+  };
   const points: number[] = [];
   for (let i = 0; i < 32; i += 1) {
     const t = i / 31;
-    const noise = Math.sin(i * 0.9) * 4 + Math.sin(i * 0.31) * 7;
     const base = direction === 'up' ? 900 + t * 420 : 1320 - t * 430;
-    points.push(Number((base + noise).toFixed(2)));
+    points.push(Number((base + jitter(i)).toFixed(2)));
   }
   return points;
 }
@@ -51,6 +81,9 @@ export default function SparklineCanvas() {
   const [state, setState] = useState<State>('default');
   const [fill, setFill] = useState(true);
   const [showEndDot, setShowEndDot] = useState(true);
+  const [tone, setTone] = useState<ChartTone>('auto');
+  const [direction, setDirection] = useState<(typeof DIRECTIONS)[number]>('rising');
+  const [showExtremes, setShowExtremes] = useState(false);
   const [previewOffset] = useState(() => new Animated.Value(0));
 
   const rising = useMemo(() => series('up'), []);
@@ -96,41 +129,25 @@ export default function SparklineCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
-            <View style={{ gap: 26 }}>
-              {(
-                [
-                  ['Rising', rising, 'auto'],
-                  ['Falling', falling, 'auto'],
-                  ['Brand', rising, 'brand'],
-                  ['Neutral', rising, 'neutral'],
-                ] as const
-              ).map(([label, data, tone]) => (
-                <View key={label} style={{ gap: 7 }}>
-                  <Text
-                    style={{
-                      color: t.colors.textTertiary,
-                      fontFamily: 'Manrope SemiBold',
-                      fontSize: 10,
-                      letterSpacing: 1.1,
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {label}
-                  </Text>
-                  <Chart.Sparkline
-                    data={state === 'empty' ? [] : data}
-                    tone={tone}
-                    density={density}
-                    curve={curve}
-                    height={height}
-                    fill={fill}
-                    showEndDot={showEndDot}
-                    loading={state === 'loading'}
-                    accessibilityLabel={`${label} trend`}
-                  />
-                </View>
-              ))}
-            </View>
+            <Chart.Sparkline
+              data={state === 'empty' ? [] : direction === 'rising' ? rising : falling}
+              tone={tone}
+              density={density}
+              curve={curve}
+              height={height}
+              fill={fill}
+              showEndDot={showEndDot}
+              showExtremes={showExtremes}
+              format={money}
+              emptyLabel="No trades yet"
+              empty={{
+                title: 'No trades yet',
+                description: 'Your price history will appear here after your first trade.',
+                action: { label: 'Make a trade', onPress: () => setState('default') },
+              }}
+              loading={state === 'loading'}
+              accessibilityLabel={`${direction} trend`}
+            />
           </Animated.View>
 
           {!sheetOpen ? (
@@ -168,6 +185,37 @@ export default function SparklineCanvas() {
                     label={value}
                     active={size === value}
                     onPress={() => setSize(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Tone">
+                {TONES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={tone === value}
+                    onPress={() => setTone(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              {/* `auto` infers its hue from direction, so the two need to move separately. */}
+              <VariantControlRow label="Direction">
+                {DIRECTIONS.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={direction === value}
+                    onPress={() => setDirection(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Extremes">
+                {(['off', 'on'] as const).map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={showExtremes === (option === 'on')}
+                    onPress={() => setShowExtremes(option === 'on')}
                   />
                 ))}
               </VariantControlRow>

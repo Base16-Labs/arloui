@@ -47,6 +47,15 @@ export const FOUNDATION: RegistryEntry[] = [
     meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
   },
   {
+    name: 'reduce-motion',
+    kind: 'foundation',
+    title: 'Reduce Motion',
+    description:
+      "The user's reduce-motion setting, as one answer for the whole app: a single module-level store with one OS subscription, rather than a `useState` and a probe per animated component. Pulled in by every component that animates.",
+    files: [{ source: 'foundation/reduce-motion.ts', target: 'reduce-motion.ts', type: 'utility' }],
+    meta: { tags: ['foundation', 'motion', 'accessibility'] },
+  },
+  {
     name: 'haptics',
     kind: 'foundation',
     title: 'Haptics',
@@ -65,7 +74,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.',
     dependencies: ['react-native-svg', 'react-native-reanimated'],
-    registryDependencies: ['tokens'],
+    registryDependencies: ['tokens', 'reduce-motion'],
     files: [
       {
         source: 'components/animated-icon/animated-icon.tsx',
@@ -84,7 +93,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'reduce-motion'],
     files: [
       { source: 'components/button/button.tsx', target: 'button/button.tsx' },
       { source: 'components/button/ghost-button.tsx', target: 'button/ghost-button.tsx' },
@@ -142,7 +151,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Chart',
     description:
-      'Five chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars, rounded data-ends, negatives below the baseline), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), and Chart.Meter (one value against a target, as a bar or a ring).',
+      'Six chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars — grouped, stacked, or horizontal rows), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), Chart.Meter (one value against a target, as a bar or a ring), and Chart.Heatmap (a calendar streak grid with no charting library).',
     /*
      * Arlo draws every mark itself, on `react-native-svg` and nothing else. The
      * geometry is in `chart/core.ts`.
@@ -157,7 +166,7 @@ export const COMPONENTS: RegistryEntry[] = [
      * an SVG `<LinearGradient>` now.
      */
     dependencies: ['react-native-svg', 'expo-haptics'],
-    registryDependencies: ['tokens', 'theme-provider', 'animated-counter', 'haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'animated-counter', 'haptics', 'reduce-motion'],
     files: [
       { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
       { source: 'components/chart/core.ts', target: 'chart/core.ts' },
@@ -167,6 +176,10 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' },
       { source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' },
       { source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' },
+      { source: 'components/chart/heatmap.tsx', target: 'chart/heatmap.tsx' },
+      { source: 'components/chart/legend.tsx', target: 'chart/legend.tsx' },
+      { source: 'components/chart/empty.tsx', target: 'chart/empty.tsx' },
+      { source: 'components/chart/skeleton.tsx', target: 'chart/skeleton.tsx' },
       { source: 'components/chart/index.ts', target: 'chart/index.ts' },
     ],
     meta: {
@@ -179,7 +192,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Skeleton',
     description:
       'A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/skeleton/skeleton.tsx', target: 'skeleton/skeleton.tsx' },
       { source: 'components/skeleton/index.ts', target: 'skeleton/index.ts' },
@@ -194,7 +207,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Spinner',
     description:
       'A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/spinner/spinner.tsx', target: 'spinner/spinner.tsx' },
       { source: 'components/spinner/index.ts', target: 'spinner/index.ts' },
@@ -209,7 +222,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Tabs',
     description:
       'Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/tabs/tabs.tsx', target: 'tabs/tabs.tsx' },
       { source: 'components/tabs/index.ts', target: 'tabs/index.ts' },
@@ -224,7 +237,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Sheet',
     description:
       'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
@@ -336,7 +349,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Tab Bar',
     description:
       'An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },
       { source: 'components/tab-bar/index.ts', target: 'tab-bar/index.ts' },
@@ -351,7 +364,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Carousel',
     description:
       'A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/carousel/carousel.tsx', target: 'carousel/carousel.tsx' },
       { source: 'components/carousel/index.ts', target: 'carousel/index.ts' },
@@ -415,7 +428,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.',
     dependencies: ['react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/toast/toast.tsx', target: 'toast/toast.tsx' },
       { source: 'components/toast/toaster.tsx', target: 'toast/toaster.tsx' },

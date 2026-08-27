@@ -298,8 +298,12 @@ export function barPath({
   width: number;
   height: number;
   radius: number;
-  /** `'top'` for a positive bar, `'bottom'` for one hanging below the baseline. */
-  roundedEnd: 'top' | 'bottom';
+  /**
+   * The end that carries the datum: `'top'` for a positive vertical bar,
+   * `'bottom'` for one hanging below the baseline, `'right'`/`'left'` for the
+   * horizontal layout where the value axis runs across.
+   */
+  roundedEnd: 'top' | 'bottom' | 'right' | 'left';
 }): string {
   const h = Math.max(0, height);
   const w = Math.max(0, width);
@@ -319,15 +323,117 @@ export function barPath({
       'Z',
     ].join(' ');
   }
+  if (roundedEnd === 'bottom') {
+    return [
+      `M${f(x)},${f(y)}`,
+      `L${f(x + w)},${f(y)}`,
+      `L${f(x + w)},${f(y + h - r)}`,
+      `A${f(r)},${f(r)} 0 0 1 ${f(x + w - r)},${f(y + h)}`,
+      `L${f(x + r)},${f(y + h)}`,
+      `A${f(r)},${f(r)} 0 0 1 ${f(x)},${f(y + h - r)}`,
+      'Z',
+    ].join(' ');
+  }
+  if (roundedEnd === 'right') {
+    return [
+      `M${f(x)},${f(y)}`,
+      `L${f(x + w - r)},${f(y)}`,
+      `A${f(r)},${f(r)} 0 0 1 ${f(x + w)},${f(y + r)}`,
+      `L${f(x + w)},${f(y + h - r)}`,
+      `A${f(r)},${f(r)} 0 0 1 ${f(x + w - r)},${f(y + h)}`,
+      `L${f(x)},${f(y + h)}`,
+      'Z',
+    ].join(' ');
+  }
   return [
-    `M${f(x)},${f(y)}`,
+    `M${f(x + r)},${f(y)}`,
     `L${f(x + w)},${f(y)}`,
-    `L${f(x + w)},${f(y + h - r)}`,
-    `A${f(r)},${f(r)} 0 0 1 ${f(x + w - r)},${f(y + h)}`,
+    `L${f(x + w)},${f(y + h)}`,
     `L${f(x + r)},${f(y + h)}`,
     `A${f(r)},${f(r)} 0 0 1 ${f(x)},${f(y + h - r)}`,
+    `L${f(x)},${f(y + r)}`,
+    `A${f(r)},${f(r)} 0 0 1 ${f(x + r)},${f(y)}`,
     'Z',
   ].join(' ');
+}
+
+/**
+ * The shaded band between two bounds — the "likely range" behind a projection.
+ * Across the upper bound left to right, back along the lower bound right to
+ * left, closed. The two sides may sample different point counts; each is placed
+ * by its own index, so a wider forecast band simply has more vertices.
+ */
+export function bandPath(
+  upper: readonly Pt[],
+  lower: readonly Pt[],
+  curve: ChartCurve = 'steep',
+): string {
+  if (upper.length === 0 || lower.length === 0) return '';
+
+  /*
+   * The band takes the same curve as the line it belongs to.
+   *
+   * It used to be straight-segment only, which meant a smooth plot drew a fitted
+   * spline over a hard-cornered band — two different readings of the same
+   * points, stacked. `curve` is one decision about how the data is interpolated,
+   * so every mark on the plot has to answer to it.
+   *
+   * `linePath` opens with `M`; the return leg has to continue the same subpath,
+   * so its leading `M` becomes an `L` down to the last lower point.
+   */
+  const forward = linePath(upper, curve);
+  const back = linePath([...lower].reverse(), curve).replace(/^M/, 'L');
+  return `${forward} ${back} Z`;
+}
+
+/**
+ * A stroked arc — the gauge's track, and the path its fill sweeps along.
+ *
+ * Distinct from `annulusPath`, which returns a *filled* wedge between two radii.
+ * A gauge is a stroke: one radius, a `strokeWidth`, and round caps, so the fill
+ * can be animated with `strokeDasharray` exactly the way the full ring already
+ * is. Building it as a wedge instead would mean animating a `d` string on every
+ * frame.
+ *
+ * Angles follow the same convention as the rest of the file: 0 is twelve
+ * o'clock and positive runs clockwise.
+ */
+export function arcPath({
+  cx,
+  cy,
+  radius,
+  startAngle,
+  endAngle,
+}: {
+  cx: number;
+  cy: number;
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+}): string {
+  const sweep = endAngle - startAngle;
+  if (sweep <= 0 || radius <= 0) return '';
+  const at = (angle: number) => ({
+    x: cx + radius * Math.sin(angle),
+    y: cy - radius * Math.cos(angle),
+  });
+  // A lone arc command cannot express a full turn — the endpoints coincide and
+  // nothing is drawn — so a full sweep goes round in two halves.
+  const TAU = Math.PI * 2;
+  if (sweep >= TAU - 1e-6) {
+    const a = at(startAngle);
+    const b = at(startAngle + Math.PI);
+    return `M${f(a.x)},${f(a.y)} A${f(radius)},${f(radius)} 0 0 1 ${f(b.x)},${f(b.y)} A${f(radius)},${f(radius)} 0 0 1 ${f(a.x)},${f(a.y)}`;
+  }
+  const from = at(startAngle);
+  const to = at(endAngle);
+  const largeArc = sweep > Math.PI ? 1 : 0;
+  return `M${f(from.x)},${f(from.y)} A${f(radius)},${f(radius)} 0 ${largeArc} 1 ${f(to.x)},${f(to.y)}`;
+}
+
+/** Length of that arc, for `strokeDasharray`. */
+export function arcLength(radius: number, sweep: number): number {
+  return Math.max(0, radius * sweep);
 }
 
 /**

@@ -9,7 +9,10 @@
     "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "dev.arloui.playground"
+      "bundleIdentifier": "dev.arloui.playground",
+      "infoPlist": {
+        "CADisableMinimumFrameDurationOnPhone": true
+      }
     },
     "android": {
       "package": "dev.arloui.playground"

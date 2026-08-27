@@ -50,6 +50,8 @@ import {
   type ChartPoint,
 } from './core';
 import { useControllableIndex, useSkeletonPulse } from './hooks';
+import { EmptyContent, type ChartEmptyProps } from './empty';
+import { SkeletonBlock } from './skeleton';
 
 export type DonutSlice = ChartPoint & {
   label: string;
@@ -57,12 +59,25 @@ export type DonutSlice = ChartPoint & {
 };
 
 export type DonutChartProps = {
+  /**
+   * Slices of a whole. Non-positive values are dropped, not clamped: a negative
+   * share of a total is not a thing a ring can express, and a zero slice has no
+   * arc to draw. Anything past `maxSlices` folds into one neutral "Other".
+   */
   data: readonly DonutSlice[];
   size?: number;
-  /** Ring thickness. */
+  /** Ring thickness. Defaults from `density` — 26 at default, 18 at compact. */
   thickness?: number;
   density?: ChartDensity;
   /** Big text in the middle. Defaults to the summed total. */
+  /**
+   * Hide the figure in the hole, for a ring that is read from its legend or
+   * captioned elsewhere. Named to match `Meter`'s `showValue`.
+   *
+   * Independent of `centerLabel`, which only ever renders when you pass one — so
+   * a caption with no number is `showValue={false}` plus a `centerLabel`.
+   */
+  showValue?: boolean;
   centerValue?: string;
   centerLabel?: string;
   /** Emphasised slice. Controlled when passed; `defaultActiveIndex` seeds the internal one. */
@@ -71,9 +86,29 @@ export type DonutChartProps = {
   onSelect?: (index: number, slice: DonutSlice) => void;
   format?: (value: number) => string;
   showLegend?: boolean;
-  /** Categories past the palette's capacity are folded into one neutral slice. */
+  /**
+   * How many arcs the ring draws, **"Other" included**. Categories past that
+   * fold into one neutral "Other" slice.
+   *
+   * Five is the ceiling and the default: the categorical palette has four
+   * validated slots, and the fifth arc is "Other". More than four categories
+   * always folds, whatever you pass.
+   */
   maxSlices?: number;
+  /**
+   * Short text for the ring's centre when there is no data. Not the whole empty
+   * state — see `empty` for the composed one.
+   */
   emptyLabel?: string;
+  /**
+   * The composed empty slot — headline, one line, one action — the same one
+   * `Chart.Empty` and `Chart.Bar` draw. Replaces the ring rather than sitting
+   * inside it: the arrangement does not fit in a 128pt hole, and a donut with
+   * nothing in it has no shape worth preserving.
+   *
+   * Wins over `emptyLabel`.
+   */
+  empty?: ChartEmptyProps;
   /**
    * Draws the ring as a pulsing track and holds back the centre readout and the
    * legend. Same footprint as the loaded chart, so nothing reflows when the data
@@ -85,13 +120,28 @@ export type DonutChartProps = {
 };
 
 /** Unselected slices fade to this, so the selected one reads as the subject. */
+/**
+ * The categorical palette's validated slots, and the most arcs a ring may draw:
+ * those four plus one "Other".
+ */
+const NAMED_SLOTS = 4;
+const MAX_ARCS = NAMED_SLOTS + 1;
+
 const DIMMED_ALPHA = 0.35;
 
 export function DonutChart({
   data,
   size = 180,
-  thickness = 26,
+  /*
+   * Density picks the default thickness; an explicit `thickness` still wins.
+   *
+   * It used to move only `metrics.gap`, which is the hairline between slices —
+   * 1pt against 2pt, about half a degree at this radius. That is not a control,
+   * it is a rounding difference. "How much mark there is" has to change the mark.
+   */
+  thickness,
   density = 'default',
+  showValue = true,
   centerValue,
   centerLabel,
   activeIndex,
@@ -99,24 +149,42 @@ export function DonutChart({
   onSelect,
   format,
   showLegend = true,
-  maxSlices = 4,
+  maxSlices = MAX_ARCS,
   emptyLabel = 'No data',
+  empty,
   loading = false,
   accessibilityLabel,
   style,
 }: DonutChartProps) {
   const t = useTokens();
   const metrics = densityMetrics(density);
+  const ringThickness = thickness ?? (density === 'compact' ? 18 : 26);
   const [selection, setSelection] = useControllableIndex(activeIndex, defaultActiveIndex);
 
   // Fold everything past the palette's validated capacity into one neutral slice
   // rather than inventing hues that would read as new identities.
+  /**
+   * `maxSlices` counts the arcs you end up with, "Other" included.
+   *
+   * It used to cap the *named* categories and then add "Other" on top, so
+   * `maxSlices={2}` over four categories drew three arcs. "Other" is a slice —
+   * a prop called `maxSlices` that returns more slices than you asked for is
+   * simply wrong, whatever the intent behind it was.
+   *
+   * The palette is what sets the ceiling: four validated slots plus "Other", so
+   * five arcs is the most a ring can show and more than four categories always
+   * folds, however high `maxSlices` goes.
+   */
   const slices = useMemo(() => {
     const positive = data.filter((slice) => slice.value > 0);
-    const cap = Math.min(maxSlices, 4);
-    if (positive.length <= cap) return [...positive];
-    const kept = positive.slice(0, cap);
-    const rest = positive.slice(cap).reduce((sum, slice) => sum + slice.value, 0);
+    const limit = Math.max(1, Math.min(maxSlices, MAX_ARCS));
+    // Fits as-is only if it is inside both the requested limit and the palette.
+    if (positive.length <= limit && positive.length <= NAMED_SLOTS) return [...positive];
+
+    // One arc is given up to "Other", and never more than the palette can name.
+    const named = Math.min(limit - 1, NAMED_SLOTS);
+    const kept = positive.slice(0, named);
+    const rest = positive.slice(named).reduce((sum, slice) => sum + slice.value, 0);
     return rest > 0
       ? [...kept, { label: 'Other', value: rest, color: t.colors.chartOther } as DonutSlice]
       : kept;
@@ -125,7 +193,7 @@ export function DonutChart({
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
 
   const outerRadius = size / 2;
-  const innerRadius = Math.max(0, outerRadius - thickness);
+  const innerRadius = Math.max(0, outerRadius - ringThickness);
 
   const segments = useMemo(() => {
     if (total <= 0) return [];
@@ -164,6 +232,24 @@ export function DonutChart({
           .join(', ')}`);
 
   const resolvedCenterValue = centerValue ?? (format ? format(total) : String(total));
+
+  /*
+   * A composed empty slot replaces the ring outright.
+   *
+   * The arrangement — tile, headline, a line, an action — does not fit in the
+   * hole, and an empty donut has no shape worth preserving around it. This is
+   * the same call the bar chart makes: when there is nothing to draw, the slot
+   * *is* the chart.
+   */
+  if (empty && !loading && segments.length === 0) {
+    return (
+      <View
+        style={[{ minHeight: size, alignSelf: 'center', justifyContent: 'center' }, style]}
+      >
+        <EmptyContent {...empty} />
+      </View>
+    );
+  }
 
   return (
     <View style={[{ gap: t.spacing[4] }, style]}>
@@ -229,8 +315,14 @@ export function DonutChart({
           )}
         </Svg>
 
-        <View style={{ alignItems: 'center', paddingHorizontal: thickness }}>
-          {!loading ? (
+        <View style={{ alignItems: 'center', paddingHorizontal: ringThickness }}>
+          {!showValue ? null : loading ? (
+            // A block where the number goes, not a hole. Same rule the plot's
+            // readouts follow: the centre value is a figure the chart does not
+            // have yet, so it must not be painted — but the space it will take
+            // should still read as "a number is coming".
+            <SkeletonBlock width={72} height={20} radius={6} />
+          ) : (
             <Text
               numberOfLines={1}
               style={{
@@ -243,7 +335,7 @@ export function DonutChart({
             >
               {segments.length === 0 ? emptyLabel : resolvedCenterValue}
             </Text>
-          ) : null}
+          )}
           {centerLabel && segments.length > 0 && !loading ? (
             <Text
               numberOfLines={1}
@@ -296,21 +388,35 @@ export function DonutChart({
                     fontFamily: t.fontFamilies.sans,
                     fontSize: t.typography.bodySm.fontSize,
                     lineHeight: t.typography.bodySm.lineHeight,
-                    fontWeight: selected ? '700' : '500',
+                    fontWeight: selected ? '700' : '600',
                   }}
                 >
                   {segment.slice.label}
                 </Text>
                 <Text
                   style={{
-                    color: t.colors.textSecondary,
+                    color: t.colors.textPrimary,
                     fontFamily: t.fontFamilies.sans,
                     fontSize: t.typography.bodySm.fontSize,
                     lineHeight: t.typography.bodySm.lineHeight,
-                    fontWeight: '600',
+                    fontWeight: '700',
                   }}
                 >
                   {format ? format(segment.slice.value) : segment.slice.value}
+                </Text>
+                {/* The share gets its own fixed column so the values line up down
+                    the legend — a ranked list you can compare at a glance. */}
+                <Text
+                  style={{
+                    width: 40,
+                    textAlign: 'right',
+                    color: t.colors.textTertiary,
+                    fontFamily: t.fontFamilies.sans,
+                    fontSize: t.typography.bodySm.fontSize,
+                    lineHeight: t.typography.bodySm.lineHeight,
+                  }}
+                >
+                  {`${Math.round(segment.percent)}%`}
                 </Text>
               </Pressable>
             );
@@ -355,7 +461,10 @@ function DonutSkeleton({
             startAngle: 0,
             endAngle: Math.PI * 2,
           })}
-          fill={t.colors.surfaceInput}
+          // `surfaceStrong`, the skeleton material the plot, the readouts, and
+          // the bars use. `surfaceInput` is a token lighter in light mode and
+          // near-invisible against the surface in dark.
+          fill={t.colors.surfaceStrong}
         />
       </Svg>
     </Animated.View>

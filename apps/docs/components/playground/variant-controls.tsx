@@ -33,10 +33,18 @@ export function VariantChip({
   label,
   active,
   onPress,
+  /**
+   * For a choice the current configuration cannot honour — `tone` under a
+   * multi-series bar chart, where every bar takes a palette slot instead. The
+   * chip stays visible because the option is real; it just cannot apply here,
+   * and a control that silently does nothing is the thing worth avoiding.
+   */
+  disabled = false,
 }: {
   label: string;
   active: boolean;
   onPress: () => void;
+  disabled?: boolean;
 }) {
   const [scale] = useState(() => new Animated.Value(1));
   const t = useTokens();
@@ -58,7 +66,8 @@ export function VariantChip({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ selected: active }}
+      accessibilityState={{ selected: active, disabled }}
+      disabled={disabled}
       onPress={onPress}
       onPressIn={() => feedback(0.96)}
       onPressOut={() => feedback(1)}
@@ -72,6 +81,7 @@ export function VariantChip({
           borderWidth: 1,
           borderColor: active ? activeBg : inactiveBorder,
           backgroundColor: active ? activeBg : inactiveBg,
+          opacity: disabled ? 0.38 : 1,
           transform: [{ scale }],
         }}
       >

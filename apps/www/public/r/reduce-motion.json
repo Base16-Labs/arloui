@@ -1,0 +1,22 @@
+{
+  "name": "reduce-motion",
+  "kind": "foundation",
+  "title": "Reduce Motion",
+  "description": "The user's reduce-motion setting, as one answer for the whole app: a single module-level store with one OS subscription, rather than a `useState` and a probe per animated component. Pulled in by every component that animates.",
+  "files": [
+    {
+      "source": "foundation/reduce-motion.ts",
+      "target": "reduce-motion.ts",
+      "type": "utility",
+      "content": "/**\n * Arlo UI — Reduce Motion\n *\n * The user's \"reduce motion\" setting, as one answer for the whole app.\n *\n * This is deliberately **not** per-component state. Every animated component\n * used to own a `useState(false)` plus its own async\n * `AccessibilityInfo.isReduceMotionEnabled()` probe and its own listener — ten\n * of them across the registry, all resolving independently. Two consequences,\n * both real:\n *\n *   1. **They can disagree.** The probes settle on their own schedules, so for\n *      a frame or two a sheet can be mid-spring while the toast it pushed in has\n *      already decided to hold still. A setting that governs the whole system\n *      cannot be answered differently in two places at once.\n *   2. **They cost N subscriptions.** One listener per animated component\n *      mounted, each doing the same work to reach the same conclusion.\n *\n * A module-level store with a single subscription cannot do either: every\n * consumer reads the same value in the same render, and motion only changes when\n * the setting does.\n *\n * The OS subscription is intentionally never torn down. It is one listener for\n * the process, and dropping it when the last animated component unmounts would\n * just mean re-probing — and re-deciding mid-animation — the next time one\n * mounts.\n *\n * ## What \"reduce motion\" means here\n *\n * Fewer and gentler, not none. Opacity and colour changes that explain state\n * stay; translation, scale, and spring overshoot go. A component that renders\n * nothing at all under this setting has removed the explanation along with the\n * movement, which is worse for the person who asked for it.\n *\n *   const reduceMotion = useReduceMotion();\n *   const style = reduceMotion ? { opacity } : { transform: [{ scale }] };\n */\nimport { useSyncExternalStore } from 'react';\nimport { AccessibilityInfo } from 'react-native';\n\nlet reduceMotion = false;\nlet subscribed = false;\nconst listeners = new Set<() => void>();\n\nfunction set(next: boolean): void {\n  if (next === reduceMotion) return;\n  reduceMotion = next;\n  for (const listener of listeners) listener();\n}\n\nfunction getSnapshot(): boolean {\n  return reduceMotion;\n}\n\nfunction subscribe(listener: () => void): () => void {\n  listeners.add(listener);\n  if (!subscribed) {\n    subscribed = true;\n    // `?.` because the method is absent on some hosts (web, older RN); the\n    // `catch` because a rejected probe must leave motion working, not throw.\n    AccessibilityInfo.isReduceMotionEnabled?.()\n      .then(set)\n      .catch(() => {});\n    AccessibilityInfo.addEventListener('reduceMotionChanged', set);\n  }\n  return () => {\n    listeners.delete(listener);\n  };\n}\n\n/** Whether the user has asked the OS to cut down on motion. */\nexport function useReduceMotion(): boolean {\n  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);\n}\n\n/**\n * Test seam. Resets the shared answer so a suite can exercise both paths in one\n * process — nothing in an app should call it. The OS subscription is left in\n * place: it is a single process-lifetime listener by design, and re-establishing\n * it per test would only re-probe.\n */\nexport function __setReduceMotionForTests(value: boolean): void {\n  set(value);\n}\n"
+    }
+  ],
+  "meta": {
+    "tags": [
+      "foundation",
+      "motion",
+      "accessibility"
+    ]
+  },
+  "hash": "c846a49b330f3fca"
+}

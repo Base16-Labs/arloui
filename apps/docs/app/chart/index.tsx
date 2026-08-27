@@ -4,6 +4,7 @@ import { Animated, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Chart,
+  seriesColorAt,
   useTokens,
   type ChartChrome,
   type ChartCurve,
@@ -18,12 +19,9 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type Shape = 'rising' | 'falling' | 'volatile' | 'flat';
 type FillMode = 'area' | 'line';
-/**
- * `sparse` is the single-point series — the chart's "not enough data" case, which
- * is distinct from empty: there IS a datum, there just isn't a line to draw
- * through it.
- */
-type State = 'default' | 'loading' | 'empty' | 'sparse';
+type State = 'default' | 'loading' | 'empty';
+/** The props-on-Plot extras: the scrub readout, a second series with a band, min/max references. */
+type Extra = 'off' | 'tooltip' | 'compare' | 'minmax' | 'stacked';
 
 const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'brand', 'neutral'];
 const SHAPES: Shape[] = ['rising', 'falling', 'volatile', 'flat'];
@@ -31,18 +29,35 @@ const FILLS: FillMode[] = ['area', 'line'];
 const CURVES: ChartCurve[] = ['steep', 'smooth'];
 const DENSITIES: ChartDensity[] = ['default', 'compact'];
 const CHROMES: ChartChrome[] = ['baseline', 'reference', 'none'];
-const STATES: State[] = ['default', 'loading', 'empty', 'sparse'];
+const STATES: State[] = ['default', 'loading', 'empty'];
+const EXTRAS: Extra[] = ['off', 'tooltip', 'compare', 'minmax', 'stacked'];
 const PERIODS = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
-/** Deterministic sample series so the canvas looks the same on every render. */
+/**
+ * Deterministic sample series so the canvas looks the same on every render.
+ *
+ * The jitter is a hash, not a pair of sines. Two low-frequency sines summed to
+ * ±11 against a trend of ~18 per step, which meant the noise never overcame the
+ * trend and `rising`, `falling`, and `flat` came out **perfectly monotonic** —
+ * zero direction changes across the whole series. A monotonic polyline is a
+ * gentle arc with no corners in it, so `curve="steep"` and `curve="smooth"` drew
+ * the same picture and the Curve control looked broken when it was working
+ * exactly as specified.
+ *
+ * A series has to have corners before a control about corners can be judged.
+ */
 function series(shape: Shape, period: string): number[] {
   const count = period === '1D' ? 24 : period === '1W' ? 28 : period === 'ALL' ? 60 : 40;
   const seed = PERIODS.indexOf(period) + 1;
+  // Deterministic hash noise: reverses direction often enough to read as a real
+  // series, and identical on every render.
+  const jitter = (index: number) => {
+    const x = Math.sin(index * 12.9898 + seed * 78.233) * 43758.5453;
+    return (x - Math.floor(x) - 0.5) * 70;
+  };
   const points: number[] = [];
   for (let i = 0; i < count; i += 1) {
     const t = i / (count - 1);
-    // A couple of out-of-phase sines stand in for market noise.
-    const noise = Math.sin(i * 0.9 + seed) * 4 + Math.sin(i * 0.31 + seed * 2) * 7;
     const base =
       shape === 'rising'
         ? 900 + t * 420
@@ -51,7 +66,7 @@ function series(shape: Shape, period: string): number[] {
           : shape === 'flat'
             ? 1100
             : 1100 + Math.sin(t * Math.PI * 2.2 + seed) * 160;
-    points.push(Number((base + (shape === 'flat' ? 0 : noise)).toFixed(2)));
+    points.push(Number((base + jitter(i)).toFixed(2)));
   }
   return points;
 }
@@ -72,15 +87,12 @@ export default function ChartCanvas() {
   const [density, setDensity] = useState<ChartDensity>('default');
   const [chrome, setChrome] = useState<ChartChrome>('baseline');
   const [state, setState] = useState<State>('default');
+  const [extra, setExtra] = useState<Extra>('off');
   const [scrubbed, setScrubbed] = useState<number | null>(null);
   const [previewOffset] = useState(() => new Animated.Value(0));
 
   const full = useMemo(() => series(shape, period), [shape, period]);
-  const data = useMemo(() => {
-    if (state === 'empty') return [];
-    if (state === 'sparse') return full.slice(0, 1);
-    return full;
-  }, [full, state]);
+  const data = useMemo(() => (state === 'empty' ? [] : full), [full, state]);
 
   /**
    * The reference line has to sit inside the series to be worth looking at, so it
@@ -92,6 +104,54 @@ export default function ChartCanvas() {
     const mean = full.reduce((sum, value) => sum + value, 0) / full.length;
     return { value: Number(mean.toFixed(2)), label: 'Average' };
   }, [full]);
+
+  /** The min/max pair the `minmax` extra draws — computed off whatever series is up. */
+  const minMax = useMemo(() => {
+    if (full.length === 0) return undefined;
+    const hi = Math.max(...full);
+    const lo = Math.min(...full);
+    return [
+      { value: hi, label: money(hi) },
+      { value: lo, label: money(lo) },
+    ];
+  }, [full]);
+
+  /** A dashed baseline under the primary, and the likely range around it. */
+  const compareData = useMemo(
+    () => full.map((value) => Number((value * 0.9 + 60).toFixed(2))),
+    [full],
+  );
+  const range = useMemo(
+    () => ({
+      lower: full.map((value) => Number((value * 0.88 + 20).toFixed(2))),
+      upper: full.map((value) => Number((value * 1.1 + 90).toFixed(2))),
+    }),
+    [full],
+  );
+
+  /** Two layers stacked on the primary — part-to-total over a continuous x. */
+  const stack = useMemo(
+    () => [
+      full.map((value) => Number((value * 0.35).toFixed(2))),
+      full.map((value) => Number((value * 0.2).toFixed(2))),
+    ],
+    [full],
+  );
+
+  // `minmax` owns the chrome: the pair needs `reference`, whatever the chrome row says.
+  const effectiveChrome: ChartChrome = extra === 'minmax' ? 'reference' : chrome;
+  const effectiveReference = extra === 'minmax' ? minMax : reference;
+
+  const seriesColor =
+    tone === 'positive'
+      ? t.colors.chartPositive
+      : tone === 'negative'
+        ? t.colors.chartNegative
+        : tone === 'neutral'
+          ? t.colors.textSecondary
+          : tone === 'brand'
+            ? t.colors.interactivePrimary
+            : t.colors.chartPositive;
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -138,17 +198,54 @@ export default function ChartCanvas() {
               data={data}
               tone={tone}
               density={density}
-              chrome={chrome}
-              reference={reference}
+              chrome={effectiveChrome}
+              reference={effectiveReference}
               loading={state === 'loading'}
               periods={PERIODS}
               period={period}
               onPeriodChange={setPeriod}
               onScrub={(index) => setScrubbed(index)}
             >
+              <Chart.Empty
+                title="No activity yet"
+                description="Your spending will show up here as a chart once you make your first transaction."
+                action={{ label: 'Log a transaction', onPress: () => setState('default') }}
+              />
               <Chart.Value format={money} />
               <Chart.Delta format={money} />
-              <Chart.Plot height={200} fill={fillMode === 'area'} curve={curve} />
+              <Chart.Plot
+                height={200}
+                fill={fillMode === 'area'}
+                curve={curve}
+                tooltip={extra === 'tooltip'}
+                compare={extra === 'compare' ? compareData : undefined}
+                range={extra === 'compare' ? range : undefined}
+                stack={extra === 'stacked' ? stack : undefined}
+              />
+              {extra === 'stacked' ? (
+                /*
+                 * Colours come from `seriesColorAt`, the same function the plot
+                 * draws with — never hand-picked tokens. Spelling them out here
+                 * is how the legend drifted: it claimed the first layer was
+                 * `chartSeries2` while the primary sat on the tone palette, and
+                 * both resolved to a green.
+                 */
+                <Chart.Legend
+                  items={['Base', 'Bonus', 'Interest'].map((label, index) => ({
+                    label,
+                    color: seriesColorAt(t, index),
+                  }))}
+                />
+              ) : null}
+              {extra === 'compare' ? (
+                <Chart.Legend
+                  items={[
+                    { label: 'Projected', color: seriesColor },
+                    { label: 'Baseline', color: t.colors.chartOther },
+                    { label: 'Likely range', color: t.colors.interactivePrimary, faded: true },
+                  ]}
+                />
+              ) : null}
               <Chart.Periods />
             </Chart>
             {/*
@@ -256,6 +353,16 @@ export default function ChartCanvas() {
                     label={value}
                     active={chrome === value}
                     onPress={() => setChrome(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Extras">
+                {EXTRAS.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={extra === value}
+                    onPress={() => setExtra(value)}
                   />
                 ))}
               </VariantControlRow>

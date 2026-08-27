@@ -1,6 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   Easing,
   PanResponder,
@@ -12,6 +11,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type ToastPosition = 'top' | 'bottom';
 export type ToastColorStyle = 'contrast' | 'same';
@@ -92,7 +92,7 @@ export const ToastItem = forwardRef<ToastItemRef, ToastItemProps>(function Toast
   const t = useTokens();
   const dark = t.name === 'dark';
 
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
 
   const [translateY] = useState(() => new Animated.Value(0));
   const [opacity] = useState(() => new Animated.Value(0));
@@ -105,15 +105,6 @@ export const ToastItem = forwardRef<ToastItemRef, ToastItemProps>(function Toast
   const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((v) => active && setReduceMotion(v));
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      sub.remove();
-    };
-  }, []);
 
   const startY = position === 'top' ? -ENTRANCE_OFFSET : ENTRANCE_OFFSET;
   const [ex1, ey1, ex2, ey2] = t.motion.easing.easeOut;

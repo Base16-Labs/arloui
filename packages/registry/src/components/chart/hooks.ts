@@ -6,7 +6,17 @@
  * reaching back into `chart.tsx` for a hook would close that loop.
  */
 import { useCallback, useEffect, useState } from 'react';
-import { AccessibilityInfo, Animated, Easing } from 'react-native';
+import { Animated, Easing } from 'react-native';
+
+/**
+ * Re-exported, not re-implemented. Reduce Motion is one answer for the whole
+ * app and lives in `foundation/reduce-motion`; this keeps the import path the
+ * chart files (and anyone who copied them) already use.
+ */
+export { useReduceMotion } from '../../foundation/reduce-motion';
+
+// Imported as well as re-exported: `useSkeletonPulse` below reads it directly.
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 /**
  * Controlled-or-uncontrolled, one contract for the root's scrub and for `Bar` and
@@ -37,19 +47,6 @@ export function useControllableIndex(
  * do **not** consult it for scrub: that is direct manipulation, and a crosshair
  * that stopped following the finger would read as broken rather than as calm.
  */
-export function useReduceMotion(): boolean {
-  const [reduceMotion, setReduceMotion] = useState(false);
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((on) => active && setReduceMotion(on));
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      subscription.remove();
-    };
-  }, []);
-  return reduceMotion;
-}
 
 /**
  * The skeleton pulse every form loads with.

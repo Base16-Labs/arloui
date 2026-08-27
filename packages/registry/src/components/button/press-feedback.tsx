@@ -18,24 +18,17 @@ import { useTokens } from '../../foundation/theme-provider';
 
 export type ButtonHaptic = 'light' | 'medium' | 'none';
 
-/** Tracks the OS "reduce motion" accessibility setting. */
-export function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    let mounted = true;
-    AccessibilityInfo.isReduceMotionEnabled?.().then((value: boolean) => {
-      if (mounted) setReduced(value);
-    });
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', (value: boolean) => {
-      setReduced(value);
-    });
-    return () => {
-      mounted = false;
-      sub?.remove?.();
-    };
-  }, []);
-  return reduced;
-}
+/**
+ * Tracks the OS "reduce motion" accessibility setting.
+ *
+ * @deprecated Prefer `useReduceMotion` from `foundation/reduce-motion`. Kept as
+ * an alias because the button family and `animated-icon` import it under this
+ * name, and anyone who copied those files imports it from here.
+ */
+export { useReduceMotion as useReducedMotion } from '../../foundation/reduce-motion';
+
+// Imported as well as re-exported: `usePressFeedback` reads it directly.
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 type PressFeedbackOptions = {
   haptic?: ButtonHaptic;
@@ -54,7 +47,7 @@ export function usePressFeedback({ haptic = 'light', onPressIn, onPressOut }: Pr
   const { motion } = useTokens();
   const [press] = useState(() => new Animated.Value(0));
   const [pressed, setPressed] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
 
   // Curve and duration come straight from the motion tokens (easeOut · instant).
   const easing = useMemo(() => {

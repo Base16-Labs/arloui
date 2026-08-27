@@ -1,6 +1,6 @@
 # Chart
 
-> Five chart forms sharing one validated palette, all reached through the Chart namespace: a scrubbable single-series line, an inline sparkline, categorical bars, a part-to-whole donut, and a meter against a target.
+> Six chart forms sharing one validated palette, all reached through the Chart namespace: a scrubbable single-series line, an inline sparkline, categorical bars (grouped, stacked, or horizontal), a part-to-whole donut, a meter against a target, and a calendar heatmap.
 
 **Type:** Component  
 **Category:** Data  
@@ -21,7 +21,7 @@
 
 ## States
 
-`scrub` · `rising` · `falling` · `neutral` · `loading` · `empty` · `not enough data` · `reduced motion`
+`scrub` · `rising` · `falling` · `neutral` · `stacked` · `gauge` · `concentric rings` · `loading` · `empty` · `not enough data` · `reduced motion`
 
 ## Tokens used
 

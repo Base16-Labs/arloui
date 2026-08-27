@@ -16,13 +16,14 @@
  *     <Chart.Periods />
  *   </Chart>
  *
- * The other four forms hang off the same namespace, each a complete chart rather
+ * The other five forms hang off the same namespace, each a complete chart rather
  * than a part of the one above:
  *
  *   <Chart.Sparkline data={points} />        inline line, no chrome
  *   <Chart.Bar data={bars} />                categorical bars
  *   <Chart.Donut data={slices} />            part-to-whole, legend required
  *   <Chart.Meter value={n} max={m} />        one value against a target
+ *   <Chart.Heatmap data={days} />            calendar grid, no library needed
  *
  * Deliberate choices:
  *
@@ -32,7 +33,9 @@
  *   "what exactly was Tuesday".
  * - **Direction, not identity.** One series, so no legend and no categorical
  *   palette — the tone is `chartPositive` / `chartNegative`, chosen by whether the
- *   series ended above or below the `baseline`.
+ *   series ended above or below the `baseline`. The exceptions are explicit: a
+ *   `compare` line and a `range` band are drawn in the neutral and the brand hue
+ *   respectively, and `Chart.Legend` names them.
  * - **Direction is never colour-alone.** `Chart.Delta` always renders a sign,
  *   because the two tones sit near the deuteranopia separation floor.
  * - **Straight segments by default.** A spline through sparse points invents peaks
@@ -72,16 +75,19 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
+import { rgbaFromHex } from '@arloui/tokens';
 import { AnimatedCounter } from '../animated-counter/animated-counter';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import {
   areaPath,
+  bandPath,
   densityMetrics,
   interpolateSeries,
   linePath,
   makeScale,
   resample,
+  seriesColorAt,
   seriesStats,
   toPoints,
   toneColor,
@@ -94,11 +100,17 @@ import {
   type ChartReference,
   type ChartTone,
 } from './core';
+import { EmptyContent, type ChartEmptyProps } from './empty';
+import { SkeletonBlock } from './skeleton';
+
+export type { ChartEmptyProps };
 import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
 import { BarChart } from './bar-chart';
 import { DonutChart } from './donut-chart';
 import { Meter } from './meter';
 import { Sparkline } from './sparkline';
+import { Heatmap } from './heatmap';
+import { ChartLegend } from './legend';
 
 export type { ChartCurve, ChartTone, ChartDensity, ChartChrome, ChartPoint, ChartData };
 
@@ -119,7 +131,7 @@ type ChartContextValue = {
   span: number;
   density: ChartDensity;
   chrome: ChartChrome;
-  reference?: ChartReference;
+  reference?: ChartReference | readonly ChartReference[];
   format?: (value: number) => string;
   formatAt?: (at: ChartPoint['at'], point: ChartPoint) => string;
   loading: boolean;
@@ -157,8 +169,11 @@ export type ChartProps = {
   density?: ChartDensity;
   /** Plot furniture. There is no `axis` member. */
   chrome?: ChartChrome;
-  /** The one labelled line drawn when `chrome="reference"`. */
-  reference?: ChartReference;
+  /**
+   * The labelled line(s) drawn when `chrome="reference"` — one line, or several
+   * for the min/max pair a dense series reads against. Not a band system.
+   */
+  reference?: ChartReference | readonly ChartReference[];
   /** Formats every value in the subtree — readout, delta, reference label. */
   format?: (value: number) => string;
   /** Formats a point's `at` for `Chart.Value`, so the readout can say *when*. */
@@ -242,7 +257,14 @@ function ChartRoot({
     const kept: ReactNode[] = [];
     Children.forEach(children, (child) => {
       if (isValidElement(child) && child.type === ChartEmpty) {
-        slot = (child as ReactElement<{ children?: ReactNode }>).props.children;
+        const props = (child as ReactElement<ChartEmptyProps>).props;
+        // `children` is the escape hatch and wins outright; otherwise the slot
+        // is the standard headline / line / action arrangement.
+        slot =
+          props.children ??
+          (props.title || props.description || props.action ? (
+            <EmptyContent {...props} />
+          ) : undefined);
         return;
       }
       kept.push(child);
@@ -305,12 +327,23 @@ function ChartRoot({
  * the plot picks the content up and draws it in its own box, so the chart keeps
  * its height and the layout doesn't jump when data arrives.
  *
+ * Failing to a blank rectangle is how a data screen looks broken, so the default
+ * arrangement is a headline, one line, and one action:
+ *
  *   <Chart data={[]}>
- *     <Chart.Empty>No trades yet</Chart.Empty>
+ *     <Chart.Empty
+ *       title="No activity yet"
+ *       description="Your spending will show up here once you make your first transaction."
+ *       action={{ label: 'Log a transaction', onPress: open }}
+ *     />
  *     <Chart.Plot />
  *   </Chart>
+ *
+ * `children` still takes anything, and a bare string still works — the slot was
+ * a string before it had this shape and consumers should not have to migrate for
+ * a default they were already happy with.
  */
-function ChartEmpty(_: { children?: ReactNode }): ReactNode {
+function ChartEmpty(_: ChartEmptyProps): ReactNode {
   return null;
 }
 
@@ -327,7 +360,7 @@ function ChartValue({
   style?: StyleProp<ViewStyle>;
 }) {
   const t = useTokens();
-  const { points, displayIndex, format: contextFormat, formatAt } = useChart();
+  const { points, displayIndex, format: contextFormat, formatAt, loading } = useChart();
   const format = formatProp ?? contextFormat;
   const point = points[displayIndex];
   const value = point?.value ?? 0;
@@ -337,6 +370,14 @@ function ChartValue({
   // point's own label. Only rendered if one of them actually says something.
   const caption =
     showAt && point ? (formatAt ? formatAt(point.at, point) : point.label) : undefined;
+
+  if (loading) {
+    return (
+      <View style={[{ alignItems: 'flex-start', gap: 6 }, style]}>
+        <SkeletonBlock width={150} height={26} radius={7} />
+      </View>
+    );
+  }
 
   return (
     <View style={[{ alignItems: 'flex-start' }, style]}>
@@ -380,7 +421,7 @@ function ChartDelta({
   style?: StyleProp<TextStyle>;
 }) {
   const t = useTokens();
-  const { points, displayIndex, baseline, color, format: contextFormat } = useChart();
+  const { points, displayIndex, baseline, color, format: contextFormat, loading } = useChart();
   const format = formatProp ?? contextFormat;
   const value = points[displayIndex]?.value ?? 0;
   const change = value - baseline;
@@ -388,6 +429,9 @@ function ChartDelta({
   const magnitude = Math.abs(change);
   const percent = baseline === 0 ? 0 : (change / Math.abs(baseline)) * 100;
   const formatted = format ? format(magnitude) : String(magnitude);
+
+  // A signed delta is a claim about direction. There is nothing to claim yet.
+  if (loading) return <SkeletonBlock width={96} height={13} radius={5} />;
 
   return (
     <Text
@@ -409,6 +453,9 @@ function ChartDelta({
   );
 }
 
+/** The two bounds of the shaded band `Chart.Plot` draws for a `range`. */
+export type ChartRange = { lower: ChartData; upper: ChartData };
+
 export type ChartPlotProps = {
   height?: number;
   /** Fade a gradient under the line. */
@@ -419,7 +466,47 @@ export type ChartPlotProps = {
   curve?: ChartCurve;
   /** Overrides the root's `chrome` for this plot. */
   chrome?: ChartChrome;
-  reference?: ChartReference;
+  /** One reference line, or several — the min/max pair a dense series reads against. */
+  reference?: ChartReference | readonly ChartReference[];
+  /**
+   * A second series, drawn dashed in the neutral hue — the baseline a projection
+   * is measured against. It never takes the scrub: one series answers to the
+   * finger, the other is context.
+   */
+  compare?: ChartData;
+  /**
+   * A shaded band between two bounds — the "likely range" behind a projection.
+   * A prop on Plot rather than a new form: the readout, the scrub, and the tone
+   * all still belong to the primary series.
+   */
+  range?: ChartRange;
+  /**
+   * Series stacked on top of the primary — part-to-total over time, the shape a
+   * bar chart draws with `variant="stacked"` when the x-axis is continuous
+   * rather than categorical.
+   *
+   * Each entry is added to the running total, so the top edge of the last layer
+   * is the sum of everything. They take the categorical palette and are drawn as
+   * filled bands, not lines: a stack is read by the thickness of each layer, and
+   * outlining every one turns it back into a set of overlapping lines.
+   *
+   * `stack` is distinct from `compare`, which is a *second* series measured
+   * against the first rather than added to it — and from `range`, which is one
+   * band around one series. Stacking implies the parts sum to something
+   * meaningful; the other two do not.
+   *
+   * The primary still owns the scrub, the readout, and the tone. Negatives are
+   * clamped to zero, matching the bar chart: a negative share of a total is not
+   * a thing the shape can express.
+   */
+  stack?: readonly ChartData[];
+  /**
+   * Floating readout pill above the crosshair while scrubbing, showing the
+   * formatted value of the point under the finger. The big `Chart.Value` stays
+   * the primary readout — this is for dense series where the eye is on the plot,
+   * not above it.
+   */
+  tooltip?: boolean;
   /** Shown when the series is empty. `Chart.Empty` wins over this. */
   emptyLabel?: string;
   /** Shown for a one-point series, which has no shape to draw. */
@@ -439,6 +526,10 @@ function ChartPlot({
   curve = 'steep',
   chrome: chromeProp,
   reference: referenceProp,
+  compare,
+  stack,
+  range,
+  tooltip = false,
   emptyLabel = 'No data',
   notEnoughLabel = 'Not enough data',
   accessibilityLabel,
@@ -466,8 +557,42 @@ function ChartPlot({
   } = useChart();
   const chrome = chromeProp ?? contextChrome;
   const reference = referenceProp ?? contextReference;
+  /*
+   * `reference` accepts one line or the min/max pair. Normalising here keeps
+   * every draw site a loop over a list rather than a branch per arity.
+   */
+  const references = useMemo(() => {
+    if (reference == null) return [];
+    return (Array.isArray(reference) ? reference : [reference]).filter(
+      (entry) => typeof entry?.value === 'number',
+    );
+  }, [reference]);
   const metrics = densityMetrics(density);
   const inset = metrics.inset;
+
+  const compareValues = useMemo(() => (compare ? valuesOf(toPoints(compare)) : []), [compare]);
+
+  /**
+   * The stack as cumulative top edges, outermost last.
+   *
+   * Each layer carries the running total rather than its own value, because that
+   * is what gets drawn: a stacked area is a set of nested areas, and the band a
+   * reader sees is the gap between one cumulative edge and the one below it.
+   * Summing at draw time instead would recompute the same totals per frame.
+   */
+  const stackLayers = useMemo(() => {
+    if (!stack || stack.length === 0) return [];
+    const layers: number[][] = [];
+    let running = values.slice();
+    for (const entry of stack) {
+      const next = valuesOf(toPoints(entry));
+      running = running.map((total, index) => total + Math.max(0, next[index] ?? 0));
+      layers.push(running);
+    }
+    return layers;
+  }, [stack, values]);
+  const upperValues = useMemo(() => (range ? valuesOf(toPoints(range.upper)) : []), [range]);
+  const lowerValues = useMemo(() => (range ? valuesOf(toPoints(range.lower)) : []), [range]);
 
   const [width, setWidth] = useState(0);
   const reduceMotion = useReduceMotion();
@@ -534,16 +659,39 @@ function ChartPlot({
    * new range would clip against the old one for the length of the tween.
    */
   const drawnValues = morphValues ?? values;
+
+  /*
+   * The scale has to fit everything that is drawn, not just the primary series —
+   * a compare line or a band that pokes past the primary's extremes would clip.
+   * The extras are static per layout, so the union is one scan.
+   */
+  const extrasRange = useMemo(() => {
+    let lo = Number.POSITIVE_INFINITY;
+    let hi = Number.NEGATIVE_INFINITY;
+    for (const list of [compareValues, upperValues, lowerValues, ...stackLayers]) {
+      for (const value of list) {
+        if (value < lo) lo = value;
+        if (value > hi) hi = value;
+      }
+    }
+    return lo === Number.POSITIVE_INFINITY ? null : { min: lo, max: hi };
+  }, [compareValues, upperValues, lowerValues, stackLayers]);
+
   const drawnRange = useMemo(() => {
-    if (morphValues == null) return { min, span };
-    let lo = morphValues[0] ?? 0;
-    let hi = lo;
-    for (const value of morphValues) {
-      if (value < lo) lo = value;
-      if (value > hi) hi = value;
+    let lo = morphValues ? (morphValues[0] ?? 0) : min;
+    let hi = morphValues ? lo : max;
+    if (morphValues) {
+      for (const value of morphValues) {
+        if (value < lo) lo = value;
+        if (value > hi) hi = value;
+      }
+    }
+    if (extrasRange) {
+      lo = Math.min(lo, extrasRange.min);
+      hi = Math.max(hi, extrasRange.max);
     }
     return { min: lo, span: hi - lo };
-  }, [morphValues, min, span]);
+  }, [morphValues, min, max, extrasRange]);
 
   const scale = useMemo(
     () =>
@@ -557,6 +705,91 @@ function ChartPlot({
       }),
     [drawnValues.length, drawnRange.min, drawnRange.span, width, height, inset],
   );
+
+  /*
+   * The extras share the primary's domain but not its point count, so each is
+   * placed by a scale of its own — a forecast band may sample monthly against a
+   * daily primary line, and both still have to land on the same x track.
+   */
+  const extraScale = useCallback(
+    (seriesCount: number) =>
+      makeScale({
+        count: seriesCount,
+        min: drawnRange.min,
+        span: drawnRange.span,
+        width,
+        height,
+        inset,
+      }),
+    [drawnRange.min, drawnRange.span, width, height, inset],
+  );
+
+  const band = useMemo(() => {
+    if (width === 0 || upperValues.length === 0 || lowerValues.length === 0) return '';
+    const upper = extraScale(upperValues.length);
+    const lower = extraScale(lowerValues.length);
+    return bandPath(
+      upperValues.map((value, index) => ({ x: upper.x(index), y: upper.y(value) })),
+      lowerValues.map((value, index) => ({ x: lower.x(index), y: lower.y(value) })),
+      curve,
+    );
+  }, [upperValues, lowerValues, width, extraScale, curve]);
+
+  /*
+   * The compare line and the band take the plot's `curve`, not a hardcoded one.
+   *
+   * This was pinned to `'steep'`, so `curve="smooth"` drew a fitted spline for the
+   * primary over a hard-cornered comparison and a hard-cornered band — three
+   * marks over the same x-range disagreeing about how the data is interpolated.
+   * `curve` is one decision for the whole plot.
+   */
+  /**
+   * Each layer as a closed band between its own top edge and the edge below it.
+   *
+   * Drawn outermost-first so the nearer layers paint over the farther ones — the
+   * fills are opaque, so a stack drawn the other way would bury every band but
+   * the last under the total.
+   */
+  const stackBands = useMemo(() => {
+    if (width === 0 || stackLayers.length === 0) return [];
+    const toPts = (list: readonly number[]) => {
+      const s = extraScale(list.length);
+      return list.map((value, index) => ({ x: s.x(index), y: s.y(value) }));
+    };
+    return stackLayers
+      .map((layer, index) => ({
+        d: bandPath(toPts(layer), toPts(stackLayers[index - 1] ?? values), curve),
+        // Slot 0 belongs to the primary, which takes a palette slot too once it
+        // is stacked — see `lineColor`.
+        color: seriesColorAt(t, index + 1),
+      }))
+      .reverse();
+  }, [stackLayers, values, width, extraScale, curve, t]);
+
+  /*
+   * Once a plot is stacked, the primary takes a palette slot and `tone` stops
+   * applying — the same rule the bar chart uses for `series`, and for the same
+   * reason: a stack is a set of categories, not one measurement with a
+   * direction, so there is nothing for `positive`/`negative` to mean.
+   *
+   * It also has to be this way to stay legible. The layers came off the
+   * categorical palette while the primary stayed on the tone palette, and those
+   * two sets are not checked against each other: the default `auto` tone
+   * resolves to `chartPositive` (#008236, green) and the first layer landed on
+   * `chartSeries2` (#65A30D, olive) — two greens side by side in the same stack,
+   * with a legend claiming they were different things.
+   */
+  const stacked = stackLayers.length > 0;
+  const lineColor = stacked ? seriesColorAt(t, 0) : color;
+
+  const comparePath = useMemo(() => {
+    if (width === 0 || compareValues.length < 2) return '';
+    const compare = extraScale(compareValues.length);
+    return linePath(
+      compareValues.map((value, index) => ({ x: compare.x(index), y: compare.y(value) })),
+      curve,
+    );
+  }, [compareValues, width, extraScale, curve]);
 
   // The scale the *gesture* reads. Pinned to the real series so the index under
   // the finger never depends on how far through a morph the chart happens to be.
@@ -601,13 +834,28 @@ function ChartPlot({
 
   const baselineY = scale.y(baseline);
   const showBaseline =
-    chrome === 'baseline' && count > 1 && baseline >= min && baseline <= max && span > 0;
-  const showReference = chrome === 'reference' && reference != null && count > 1;
-  const referenceY = showReference ? scale.y(reference.value) : 0;
+    chrome === 'baseline' &&
+    count > 1 &&
+    baseline >= drawnRange.min &&
+    baseline <= drawnRange.min + drawnRange.span &&
+    drawnRange.span > 0;
+  const showReferences = chrome === 'reference' && references.length > 0 && count > 1;
 
   const active = activeIndex != null && count > 1 && morphValues == null
     ? { x: scrubScale.x(activeIndex), y: scrubScale.y(values[activeIndex] ?? min) }
     : null;
+
+  // Measured once so the pill can be kept inside the plot at the plot's edges.
+  const [pillWidth, setPillWidth] = useState(0);
+  const activeValue = activeIndex != null ? (values[activeIndex] ?? 0) : 0;
+  const tooltipText = tooltip && active ? (format ? format(activeValue) : String(activeValue)) : null;
+  const pillLeft =
+    active && pillWidth > 0
+      ? Math.min(
+          Math.max(active.x, pillWidth / 2 + 2),
+          Math.max(pillWidth / 2 + 2, width - pillWidth / 2 - 2),
+        )
+      : (active?.x ?? 0);
 
   // Per instance: two charts on one screen resolve to different colours but would
   // share one document-global gradient id, so the first definition would win.
@@ -637,17 +885,33 @@ function ChartPlot({
       {...(scrubbable && drawable ? panResponder.panHandlers : {})}
     >
       {loading ? (
-        <PlotShimmer width={width} height={height} inset={inset} stroke={metrics.stroke} />
+        <PlotShimmer width={width} height={height} inset={inset} />
       ) : null}
 
       {drawable ? (
         <Svg width={width} height={height} style={{ position: 'absolute' }} pointerEvents="none">
+          {band ? (
+            <Path
+              d={band}
+              fill={rgbaFromHex(t.colors.interactivePrimary, 0.12)}
+              stroke="none"
+            />
+          ) : null}
+
+          {/*
+            Under the primary, which keeps the line that answers the scrub on top
+            of everything it is stacked with.
+          */}
+          {stackBands.map((layer, index) => (
+            <Path key={`stack-${index}`} d={layer.d} fill={layer.color} stroke="none" />
+          ))}
+
           {area ? (
             <>
               <Defs>
                 <LinearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={color} stopOpacity={0.22} />
-                  <Stop offset="1" stopColor={color} stopOpacity={0} />
+                  <Stop offset="0" stopColor={lineColor} stopOpacity={0.22} />
+                  <Stop offset="1" stopColor={lineColor} stopOpacity={0} />
                 </LinearGradient>
               </Defs>
               <Path d={area} fill={`url(#${gradientId})`} />
@@ -664,19 +928,33 @@ function ChartPlot({
             />
           ) : null}
 
-          {showReference ? (
+          {showReferences
+            ? references.map((entry, index) => (
+                <Path
+                  key={`reference-${index}-${entry.value}`}
+                  d={`M${inset},${scale.y(entry.value).toFixed(2)} L${(width - inset).toFixed(2)},${scale.y(entry.value).toFixed(2)}`}
+                  stroke={t.colors.borderSecondary}
+                  strokeWidth={1}
+                  strokeDasharray="2 3"
+                  fill="none"
+                />
+              ))
+            : null}
+
+          {comparePath ? (
             <Path
-              d={`M${inset},${referenceY.toFixed(2)} L${(width - inset).toFixed(2)},${referenceY.toFixed(2)}`}
-              stroke={t.colors.borderSecondary}
-              strokeWidth={1}
-              strokeDasharray="2 3"
+              d={comparePath}
+              stroke={t.colors.chartOther}
+              strokeWidth={metrics.stroke}
+              strokeLinecap="round"
+              strokeDasharray="4 4"
               fill="none"
             />
           ) : null}
 
           <Path
             d={line}
-            stroke={color}
+            stroke={lineColor}
             strokeWidth={metrics.stroke}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -696,7 +974,7 @@ function ChartPlot({
                 cx={active.x}
                 cy={active.y}
                 r={metrics.dot}
-                fill={color}
+                fill={lineColor}
                 stroke={t.colors.surfaceElevated}
                 strokeWidth={2}
               />
@@ -705,29 +983,70 @@ function ChartPlot({
         </Svg>
       ) : null}
 
-      {/* The reference line's label rides outside the SVG so it uses the same type
-          ramp as everything else, rather than SVG's own text metrics. */}
-      {drawable && showReference && metrics.showLabels ? (
+      {/* Reference labels ride outside the SVG so they use the same type ramp as
+          everything else, rather than SVG's own text metrics. */}
+      {drawable &&
+        showReferences &&
+        references.map((entry, index) => (
+          <View
+            key={`reference-label-${index}-${entry.value}`}
+            pointerEvents="none"
+            style={{ position: 'absolute', right: inset, top: scale.y(entry.value) - metrics.labelSize - 4 }}
+          >
+            <Text
+              style={{
+                color: t.colors.textTertiary,
+                fontFamily: t.fontFamilies.mono,
+                fontSize: metrics.labelSize - 1,
+                fontWeight: '500',
+              }}
+            >
+              {entry.label ?? (format ? format(entry.value) : String(entry.value))}
+            </Text>
+          </View>
+        ))}
+
+      {/* The scrub readout: a pill above the crosshair, kept inside the plot once
+          its width is known. Same ramp rule as the labels above — RN text, not
+          SVG text. */}
+      {drawable && tooltipText != null && active ? (
         <View
           pointerEvents="none"
-          style={{ position: 'absolute', right: inset, top: referenceY - metrics.labelSize - 4 }}
+          onLayout={(event) => setPillWidth(event.nativeEvent.layout.width)}
+          style={{
+            position: 'absolute',
+            left: pillLeft,
+            top: Math.max(0, active.y - metrics.dot - 28),
+            transform: [{ translateX: '-50%' }],
+            backgroundColor: t.colors.surfaceInverse,
+            borderRadius: 6,
+            paddingHorizontal: 9,
+            paddingVertical: 4,
+          }}
         >
           <Text
             style={{
-              color: t.colors.textTertiary,
+              color: t.colors.textInverse,
               fontFamily: t.fontFamilies.sans,
-              fontSize: metrics.labelSize,
-              fontWeight: '600',
+              fontSize: 11,
+              lineHeight: 14,
+              fontWeight: '700',
             }}
           >
-            {reference?.label ?? (format ? format(reference?.value ?? 0) : String(reference?.value))}
+            {tooltipText}
           </Text>
         </View>
       ) : null}
 
       {!loading && message != null ? (
         <View
-          pointerEvents="none"
+          /*
+           * `box-none`, not `none`: an empty slot can carry an action, and
+           * `none` made that button unpressable — the one control on a screen
+           * with no data, dead. `box-none` keeps the overlay itself out of the
+           * way of the plot while letting its children take a touch.
+           */
+          pointerEvents="box-none"
           // `absoluteFill`, not `absoluteFillObject`: RN 0.86 dropped the latter, and
           // it fails silently — the lookup is `undefined`, so the overlay defines no
           // geometry and collapses to zero size.
@@ -762,12 +1081,10 @@ function PlotShimmer({
   width,
   height,
   inset,
-  stroke,
 }: {
   width: number;
   height: number;
   inset: number;
-  stroke: number;
 }) {
   const t = useTokens();
   const pulse = useSkeletonPulse(t.motion.duration.slow);
@@ -784,17 +1101,18 @@ function PlotShimmer({
   });
   const shape = SHIMMER_SHAPE.map((value, index) => ({ x: scale.x(index), y: scale.y(value) }));
 
+  /*
+   * A filled silhouette, not a stroked line.
+   *
+   * The skeleton has to hold the same visual weight the plot will, and a hairline
+   * over an empty box reads as a drawn chart with no data rather than as one
+   * still arriving. Filling the silhouette gives the loading state the mass of
+   * the area it stands in for, so nothing re-weights when the series lands.
+   */
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { opacity: pulse }]}>
       <Svg width={width} height={height} pointerEvents="none">
-        <Path
-          d={linePath(shape, 'smooth')}
-          stroke={t.colors.borderSecondary}
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
+        <Path d={areaPath(shape, height - inset, 'smooth')} fill={t.colors.surfaceStrong} />
       </Svg>
     </Animated.View>
   );
@@ -803,8 +1121,32 @@ function PlotShimmer({
 /** Time-range selector. Renders nothing when the chart was given no `periods`. */
 function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
   const t = useTokens();
-  const { periods, period, onPeriodChange, color } = useChart();
+  const { periods, period, onPeriodChange, color, loading } = useChart();
   if (periods.length === 0) return null;
+
+  /*
+   * Skeleton pills while loading, not a live selector.
+   *
+   * A pressable period row over a chart that has no series lets the reader ask
+   * for 1Y and get the same shimmer back, so the control reads as broken. It
+   * keeps the row's exact footprint so nothing reflows when the data lands.
+   */
+  if (loading) {
+    return (
+      <View
+        // Not a tablist while there is nothing to select between.
+        accessibilityRole="progressbar"
+        accessibilityLabel="Loading"
+        style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, style]}
+      >
+        {periods.map((option) => (
+          <View key={option} style={{ flex: 1 }}>
+            <SkeletonBlock width="100%" height={26} radius={t.radii.md} />
+          </View>
+        ))}
+      </View>
+    );
+  }
 
   return (
     <View
@@ -857,17 +1199,16 @@ function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
 }
 
 /**
- * `Value`/`Delta`/`Plot`/`Periods`/`Empty` compose the scrubbable chart above;
- * `Sparkline`, `Bar`, `Donut`, and `Meter` are whole charts in their own right,
- * namespaced here so picking a form is one decision at one import rather than
- * four names to remember. They stay in their own files — import those directly if
- * you only copied one form into your project.
+ * `Value`/`Delta`/`Plot`/`Periods`/`Empty`/`Legend` compose the scrubbable chart
+ * above; `Sparkline`, `Bar`, `Donut`, `Meter`, and `Heatmap` are whole charts in
+ * their own right, namespaced here so picking a form is one decision at one
+ * import rather than five names to remember. They stay in their own files —
+ * import those directly if you only copied one form into your project.
  *
  * The forms Arlo does **not** ship, and will not: candlestick, radar, population
- * pyramid, scatter, 3-D anything, heatmaps, and stacked or grouped bars. They are
- * consumer-owned. `core.ts` exports the scale and the path builders, so writing
- * one against the same geometry is a supported thing to do — it is just not in
- * the kit.
+ * pyramid, scatter, and 3-D anything. They are consumer-owned. `core.ts` exports
+ * the scale and the path builders, so writing one against the same geometry is a
+ * supported thing to do — it is just not in the kit.
  */
 export const Chart = Object.assign(ChartRoot, {
   Value: ChartValue,
@@ -875,8 +1216,10 @@ export const Chart = Object.assign(ChartRoot, {
   Plot: ChartPlot,
   Periods: ChartPeriods,
   Empty: ChartEmpty,
+  Legend: ChartLegend,
   Sparkline,
   Bar: BarChart,
   Donut: DonutChart,
   Meter,
+  Heatmap,
 });

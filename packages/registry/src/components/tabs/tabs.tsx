@@ -1,6 +1,5 @@
 import { useEffect, useState, Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   Pressable,
   ScrollView,
@@ -10,6 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type TabsAppearance = 'plain' | 'underline' | 'filled' | 'segmented';
 export type TabsTone = 'neutral' | 'accent';
@@ -55,7 +55,7 @@ function TabsRoot({
   accessibilityLabel = 'Content tabs',
 }: TabsProps) {
   const t = useTokens();
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const [trackWidth, setTrackWidth] = useState(0);
   const items = Children.toArray(children).filter(isValidElement) as ReactElement<TabsItemProps>[];
   const segmented = appearance === 'segmented';
@@ -67,15 +67,6 @@ function TabsRoot({
   );
   const [selection] = useState(() => new Animated.Value(activeIndex));
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => active && setReduceMotion(enabled));
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      subscription.remove();
-    };
-  }, []);
 
   useEffect(() => {
     if (!segmented) return;
