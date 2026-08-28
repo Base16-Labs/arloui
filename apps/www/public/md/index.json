@@ -1,5 +1,5 @@
 {
-  "count": 43,
+  "count": 45,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -46,6 +46,10 @@
       "md": "/md/docs/components/button.md"
     },
     {
+      "path": "/docs/components/card",
+      "md": "/md/docs/components/card.md"
+    },
+    {
       "path": "/docs/components/carousel",
       "md": "/md/docs/components/carousel.md"
     },
@@ -68,6 +72,10 @@
     {
       "path": "/docs/components/input",
       "md": "/md/docs/components/input.md"
+    },
+    {
+      "path": "/docs/components/list",
+      "md": "/md/docs/components/list.md"
     },
     {
       "path": "/docs/components/radio",

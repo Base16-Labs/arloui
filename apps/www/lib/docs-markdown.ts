@@ -285,6 +285,88 @@ export const tabBarData = {
   ],
 };
 
+export const cardData = {
+  slug: 'card',
+  category: 'Layout & surface',
+  title: 'Card',
+  lede: 'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Five variant axes off token scales — surface, elevation, border, padding, radius — and optional whole-card press with a haptic. It ships no baked-in layouts; a metric, media, prompt, list, or carousel card is a composition, not a component.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+  states: ['default', 'elevated', 'bleed', 'inverse', 'elevation', 'border', 'pressable'],
+  tokens: [
+    'colors.surfaceCard',
+    'colors.surfaceElevated',
+    'colors.surfaceBleed',
+    'colors.surfaceInverse',
+    'colors.textInverse',
+    'colors.border',
+    'radii.none … radii.full',
+    'spacing.2 … spacing.8',
+    'shadows.none … shadows.lg',
+    'motion.pressed.scale',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'recipes', label: 'Recipes' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/cards' },
+  ],
+};
+
+export const listData = {
+  slug: 'list',
+  category: 'Layout & surface',
+  title: 'List',
+  lede: 'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle, and a trailing value alongside an optional icon. It draws no surface of its own — set separated to space rows onto their own surfaces, or keep them contiguous with an inset, balanced, edge, or no hairline.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/list',
+  states: ['separated', 'inset', 'balanced', 'edge', 'none', 'comfortable', 'compact'],
+  tokens: [
+    'colors.surface',
+    'colors.border',
+    'colors.borderSecondary',
+    'colors.chartPositive',
+    'colors.chartNegative',
+    'colors.textPrimary … textTertiary',
+    'colors.surfaceInput',
+    'radii.xl',
+    'spacing.2 … spacing.4',
+    'sizing.touchTarget.minimum',
+    'sizing.icon.sm',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/list',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/list' },
+  ],
+};
+
 export const skeletonData = {
   slug: 'skeleton',
   category: 'Feedback',
@@ -1032,6 +1114,8 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/spinner': docDataToMarkdown(spinnerData),
   '/docs/components/tabs': docDataToMarkdown(tabsData),
   '/docs/components/button': docDataToMarkdown(buttonData),
+  '/docs/components/card': docDataToMarkdown(cardData),
+  '/docs/components/list': docDataToMarkdown(listData),
   '/docs/components/input': docDataToMarkdown(inputData),
   '/docs/components/toggle': docDataToMarkdown(toggleData),
   '/docs/components/checkbox': docDataToMarkdown(checkboxData),

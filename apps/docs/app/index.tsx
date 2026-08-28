@@ -12,6 +12,8 @@ type IndexItem = {
   href?:
     | '/badge'
     | '/button'
+    | '/cards'
+    | '/list'
     | '/chip'
     | '/input'
     | '/textarea'
@@ -33,7 +35,7 @@ type IndexItem = {
 const COMPONENTS: IndexItem[] = [
   { title: 'Badge', category: 'Feedback', href: '/badge' },
   { title: 'Button', category: 'Controls', href: '/button' },
-  { title: 'Card', category: 'Layout' },
+  { title: 'Card', category: 'Layout', href: '/cards' },
   { title: 'Carousel', category: 'Layout', href: '/carousel' },
   { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
   { title: 'Chip', category: 'Controls', href: '/chip' },
@@ -45,12 +47,11 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Header', category: 'Nav' },
   { title: 'Icons', category: 'Foundations', href: '/icons' },
   { title: 'Input', category: 'Controls', href: '/input' },
-  { title: 'List', category: 'Lists' },
+  { title: 'List', category: 'Lists', href: '/list' },
   { title: 'Nav', category: 'Nav' },
   { title: 'Note', category: 'Type' },
   { title: 'Pill', category: 'Controls' },
   { title: 'Radio', category: 'Controls', href: '/radio' },
-  { title: 'Row', category: 'Lists' },
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
   { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
   { title: 'Spinner', category: 'Feedback', href: '/spinner' },
@@ -179,7 +180,7 @@ function IndexRow({ item }: { item: IndexItem }) {
     <Pressable
       disabled={!item.href}
       onPress={() => {
-        if (item.href) router.push(item.href);
+        if (item.href) router.push(item.href as Parameters<typeof router.push>[0]);
       }}
       style={({ pressed }) => ({
         minHeight: t.spacing[16],

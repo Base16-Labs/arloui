@@ -37,6 +37,16 @@ export const FOUNDATION: RegistryEntry[] = [
     meta: { tags: ['foundation', 'provider'] },
   },
   {
+    name: 'glass',
+    kind: 'foundation',
+    title: 'Liquid Glass',
+    description:
+      'Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface="glass"`.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
+    meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
+  },
+  {
     name: 'haptics',
     kind: 'foundation',
     title: 'Haptics',
@@ -92,14 +102,66 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A flexible surface for grouping related content with header, body, footer, and hierarchy options.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
       tags: ['surface', 'primitive'],
+    },
+  },
+  {
+    name: 'list',
+    kind: 'primitive',
+    title: 'List',
+    description:
+      'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/list/list.tsx', target: 'list/list.tsx' },
+      { source: 'components/list/index.ts', target: 'list/index.ts' },
+    ],
+    meta: {
+      tags: ['list', 'row', 'primitive'],
+    },
+  },
+  {
+    name: 'animated-counter',
+    kind: 'primitive',
+    title: 'Animated counter',
+    description:
+      'A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.',
+    registryDependencies: [],
+    files: [
+      {
+        source: 'components/animated-counter/animated-counter.tsx',
+        target: 'animated-counter/animated-counter.tsx',
+      },
+      { source: 'components/animated-counter/index.ts', target: 'animated-counter/index.ts' },
+    ],
+    meta: {
+      tags: ['motion', 'numeric', 'counter', 'primitive'],
+    },
+  },
+  {
+    name: 'chart',
+    kind: 'primitive',
+    title: 'Chart',
+    description:
+      'Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
+      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
+      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
+      { source: 'components/chart/index.ts', target: 'chart/index.ts' },
+    ],
+    meta: {
+      tags: ['chart', 'data', 'visualization', 'primitive'],
     },
   },
   {
