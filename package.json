@@ -36,6 +36,7 @@
     "playground:clear": "npm --workspace @arloui/docs run playground:clear",
     "playground:tunnel": "npm --workspace @arloui/docs run playground:tunnel",
     "playground:ios": "npm --workspace @arloui/docs run ios",
+  "playground:ios:native": "npm --workspace @arloui/docs run ios:native",
     "playground:android": "npm --workspace @arloui/docs run android",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

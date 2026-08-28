@@ -1,5 +1,5 @@
 {
-  "count": 45,
+  "count": 46,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -92,6 +92,10 @@
     {
       "path": "/docs/components/spinner",
       "md": "/md/docs/components/spinner.md"
+    },
+    {
+      "path": "/docs/components/stepper",
+      "md": "/md/docs/components/stepper.md"
     },
     {
       "path": "/docs/components/tab-bar",

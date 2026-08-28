@@ -21,7 +21,7 @@ type TabValue = 'home' | 'search' | 'activity' | 'profile';
 type ScrollBehavior = 'fixed' | 'on scroll';
 
 const WIDTHS: TabBarWidth[] = ['full', 'floating'];
-const SURFACES: TabBarSurface[] = ['transparent', 'filled'];
+const SURFACES: TabBarSurface[] = ['transparent', 'filled', 'glass'];
 
 export default function TabBarCanvas() {
   const t = useTokens();
@@ -179,7 +179,7 @@ export default function TabBarCanvas() {
                   showLabels={showLabels}
                   hidden={scrollBehavior === 'on scroll' ? scroll.hidden : false}
                   blurComponent={
-                    surface === 'transparent' ? (
+                    surface === 'transparent' || surface === 'glass' ? (
                       <BlurView
                         intensity={40}
                         tint={t.name === 'dark' ? 'dark' : 'light'}

@@ -40,7 +40,10 @@ export const lightSemanticColors = {
   textPrimary: G[900],
   textSecondary: G[600],
   textTertiary: G[400],
-  textDisabled: rgbaFromHex(G[900], 0.05),
+  // Mirrors the dark palette's 0.38. Low enough to read as disabled, high enough
+  // to survive a second dimming — components that also drop their opacity for a
+  // disabled state multiply the two, and 0.05 vanished entirely under that.
+  textDisabled: rgbaFromHex(G[900], 0.35),
   textInverse: base.white,
   textPlaceholder: G[300],
   textInteractivePrimary: base.white,

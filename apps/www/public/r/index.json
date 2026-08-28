@@ -33,7 +33,10 @@
       "name": "glass",
       "kind": "foundation",
       "title": "Liquid Glass",
-      "description": "Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface=\"glass\"`.",
+      "description": "Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. `GlassBackdrop` paints the whole surface, including a component's own colour as the material's tint and the press response that deepens it, so a glass control keeps its tone rather than going colourless. Pulled in by components that support `surface=\"glass\"`.",
+      "dependencies": [
+        "expo-glass-effect"
+      ],
       "registryDependencies": [
         "tokens",
         "theme-provider"
@@ -43,7 +46,8 @@
           "foundation",
           "material",
           "glass",
-          "blur"
+          "blur",
+          "ios26"
         ]
       }
     },
@@ -84,7 +88,7 @@
       "name": "button",
       "kind": "primitive",
       "title": "Button",
-      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.",
+      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.",
       "dependencies": [
         "expo-haptics",
         "react-native-svg"
@@ -92,7 +96,8 @@
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "haptics"
+        "haptics",
+        "glass"
       ],
       "meta": {
         "tags": [
@@ -149,6 +154,31 @@
           "motion",
           "numeric",
           "counter",
+          "primitive"
+        ]
+      }
+    },
+    {
+      "name": "stepper",
+      "kind": "primitive",
+      "title": "Stepper",
+      "description": "A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.",
+      "dependencies": [
+        "expo-haptics",
+        "react-native-svg"
+      ],
+      "registryDependencies": [
+        "tokens",
+        "theme-provider",
+        "haptics",
+        "animated-counter"
+      ],
+      "meta": {
+        "tags": [
+          "input",
+          "numeric",
+          "counter",
+          "motion",
           "primitive"
         ]
       }
@@ -235,7 +265,7 @@
       "name": "sheet",
       "kind": "primitive",
       "title": "Sheet",
-      "description": "A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.",
+      "description": "A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.",
       "registryDependencies": [
         "tokens",
         "theme-provider"
@@ -357,10 +387,11 @@
       "name": "tab-bar",
       "kind": "primitive",
       "title": "Tab Bar",
-      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.",
+      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.",
       "registryDependencies": [
         "tokens",
-        "theme-provider"
+        "theme-provider",
+        "glass"
       ],
       "meta": {
         "tags": [

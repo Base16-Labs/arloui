@@ -101,6 +101,7 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Radio', slug: 'radio' },
       { label: 'Input', slug: 'input' },
       { label: 'TextArea', slug: 'text-area' },
+      { label: 'Stepper', slug: 'stepper' },
       { label: 'Date Picker', slug: 'date-picker' },
     ],
   },

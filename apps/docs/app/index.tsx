@@ -24,6 +24,7 @@ type IndexItem = {
     | '/date-picker'
     | '/tab-bar'
     | '/icons'
+    | '/stepper'
     | '/toggle'
     | '/checkbox'
     | '/radio'
@@ -55,6 +56,7 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
   { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
   { title: 'Spinner', category: 'Feedback', href: '/spinner' },
+  { title: 'Stepper', category: 'Controls', href: '/stepper' },
   { title: 'Tab Bar', category: 'Nav', href: '/tab-bar' },
   { title: 'Tabs', category: 'Nav', href: '/tabs' },
   { title: 'TextArea', category: 'Controls', href: '/textarea' },

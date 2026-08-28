@@ -49,6 +49,7 @@ import {
   badgeData,
   chipData,
   toastData,
+  stepperData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
@@ -135,6 +136,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'toast') {
     return <ToastDocPage />;
+  }
+
+  if (slug === 'stepper') {
+    return <StepperDocPage />;
   }
 
   return (
@@ -3389,5 +3394,168 @@ function Section({
       {sub && <p className="mt-1.5 mb-5 text-[13px] text-ink-3">{sub}</p>}
       {children}
     </section>
+  );
+}
+
+function StepperDocPage() {
+  return (
+    <>
+      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <div className="absolute top-10 right-14">
+          <CopyButton text={docDataToMarkdown(stepperData)} label="Copy markdown" />
+        </div>
+
+        <Eyebrow>{stepperData.category}</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          {stepperData.title}
+        </h1>
+        <Lede>{stepperData.lede}</Lede>
+
+        <div className="mb-9 flex gap-2">
+          <Pill as="a" href={stepperData.source}>
+            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <DevicePreview route="stepper" />
+
+        <Section
+          id="anatomy"
+          title="Anatomy"
+          sub="A numeric input wearing the same clothes as the rest of the form vocabulary."
+        >
+          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
+            <div className="mx-auto max-w-[420px]">
+              {[
+                ['Appearance', 'filled bordered row, or plain amount display'],
+                ['Controls', 'split either side, or grouped at start / end'],
+                ['Value', 'read-only, or editable to type one directly'],
+                ['Size', 'sm · md, matching Input heights'],
+                ['Bounds', 'min, max, and step'],
+                ['Value', 'rolls between numbers, never snaps'],
+                ['Repeat', 'hold a button to step and accelerate'],
+                ['State', 'disabled, or the error palette'],
+              ].map(([name, detail]) => (
+                <div
+                  key={name}
+                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
+                >
+                  <span className="text-ink-2">{name}</span>
+                  <code className="font-mono text-[11px] text-ink-3">{detail}</code>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          id="when-to-use"
+          title="When to use"
+          sub="For small, bounded quantities the user adjusts rather than types."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              Use <code>appearance=&quot;filled&quot;</code> in a form, where it stacks flush with a
+              filled Input.
+            </li>
+            <li>
+              Use <code>appearance=&quot;plain&quot;</code> on a &quot;how many&quot; or &quot;how
+              much&quot; screen, where the number is the whole interface.
+            </li>
+            <li>
+              Group the buttons with <code>controls=&quot;end&quot;</code> for the quantity-row shape
+              — value at the start reading as the field&apos;s content, both buttons as its trailing
+              affordance.
+            </li>
+            <li>
+              Pair grouped controls with <code>editable</code> when the range is wider than a few
+              taps. Tapping the value opens a numeric keyboard; the draft commits on blur or submit,
+              clamped and quantized, and reverts if it can&apos;t be parsed.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
+          <CodeBlock language="tsx">{`npx arloui add stepper
+
+import { Stepper } from "@/components/ui/stepper";
+
+<Stepper value={qty} onValueChange={setQty} min={1} label="Quantity" />
+
+<Stepper
+  appearance="plain"
+  value={amount}
+  onValueChange={setAmount}
+  step={5}
+  format={(v) => \`$\${v.toLocaleString()}\`}
+/>
+
+{/* Both buttons at the trailing edge, value at the start, tap to type. */}
+<Stepper controls="end" allowTyping value={qty} onValueChange={setQty} />`}</CodeBlock>
+        </Section>
+
+        <Section
+          id="tokens"
+          title="Tokens used"
+          sub="Shared with Input, so the two sit flush."
+        >
+          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
+            {stepperData.tokens.map((token) => (
+              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
+                <code className="font-mono text-[11.5px] text-ink">{token}</code>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section
+          id="accessibility"
+          title="Accessibility"
+          sub="An adjustable, with its floor announced."
+        >
+          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>Reports as an adjustable control carrying its current value and its min.</li>
+            <li>
+              An editable stepper stays one adjustable rather than splitting into three stops — the
+              typing affordance is reachable through its <code>activate</code> action, so assistive
+              tech can enter a value without hunting for a separate target.
+            </li>
+            <li>
+              Decrement disables at <code>min</code> rather than silently doing nothing, so the
+              floor is perceivable and not just felt. Increment has no ceiling to disable at.
+            </li>
+            <li>The digit roll is skipped under reduce-motion; the value still updates.</li>
+          </ul>
+        </Section>
+
+        <Section id="do-dont" title="Do · Don't" sub="Floored, tappable, never rewriting the value.">
+          <DoDont
+            pairs={[
+              {
+                do: 'Enforce an upper limit where the value is used, and say so in helper text.',
+                dont: 'Expect the field to cap it for you — a stepper counts upward without a ceiling.',
+              },
+              {
+                do: 'Use plain for the one number a screen is about.',
+                dont: 'Put a plain stepper inline in a dense form — it fights the fields.',
+              },
+            ]}
+          />
+        </Section>
+
+        <Section
+          id="related"
+          title="Related primitives"
+          sub="The rest of the form vocabulary."
+        >
+          <div className="flex flex-wrap gap-2">
+            {['Input', 'Field', 'Button', 'Toggle'].map((item) => (
+              <Chip key={item}>→ {item}</Chip>
+            ))}
+          </div>
+        </Section>
+      </main>
+      <RightRail headings={[...stepperData.headings]} actions={[...stepperData.actions]} />
+    </>
   );
 }

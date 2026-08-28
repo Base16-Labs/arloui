@@ -1589,7 +1589,7 @@
     {
       "type": "color",
       "name": "--color-text-disabled",
-      "value": "rgba(16, 24, 40, 0.05)",
+      "value": "rgba(16, 24, 40, 0.35)",
       "description": "Semantic · light"
     },
     {

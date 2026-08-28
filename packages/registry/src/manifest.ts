@@ -41,10 +41,23 @@ export const FOUNDATION: RegistryEntry[] = [
     kind: 'foundation',
     title: 'Liquid Glass',
     description:
-      'Resolves glass material tokens into a fill, border, and blur strength, plus the backdrop layer that hosts a blur view. Pulled in by components that support `surface="glass"`.',
+      'Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. `GlassBackdrop` paints the whole surface, including a component\'s own colour as the material\'s tint and the press response that deepens it, so a glass control keeps its tone rather than going colourless. Pulled in by components that support `surface="glass"`.',
+    /*
+     * `expo-glass-effect` is optional on purpose. It is loaded through a guarded
+     * `require`, so a project that never installs it still gets a working glass
+     * surface — the fallback — rather than a resolution error. Listing it here is
+     * how `arloui add` offers it; it is not a hard requirement.
+     *
+     * It does, however, require the New Architecture. `GlassView` overrides
+     * Fabric-only view lifecycle methods, so autolinking it into an app with
+     * `newArchEnabled: false` fails the iOS build outright rather than falling
+     * back. Old-architecture projects should leave it uninstalled and take the
+     * fallback path, which needs nothing.
+     */
+    dependencies: ['expo-glass-effect'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
-    meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
+    meta: { tags: ['foundation', 'material', 'glass', 'blur', 'ios26'] },
   },
   {
     name: 'haptics',
@@ -82,9 +95,9 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Button',
     description:
-      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.',
+      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'glass'],
     files: [
       { source: 'components/button/button.tsx', target: 'button/button.tsx' },
       { source: 'components/button/ghost-button.tsx', target: 'button/ghost-button.tsx' },
@@ -144,6 +157,22 @@ export const COMPONENTS: RegistryEntry[] = [
     ],
     meta: {
       tags: ['motion', 'numeric', 'counter', 'primitive'],
+    },
+  },
+  {
+    name: 'stepper',
+    kind: 'primitive',
+    title: 'Stepper',
+    description:
+      'A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.',
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'animated-counter'],
+    files: [
+      { source: 'components/stepper/stepper.tsx', target: 'stepper/stepper.tsx' },
+      { source: 'components/stepper/index.ts', target: 'stepper/index.ts' },
+    ],
+    meta: {
+      tags: ['input', 'numeric', 'counter', 'motion', 'primitive'],
     },
   },
   {
@@ -214,7 +243,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Sheet',
     description:
-      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
+      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
@@ -320,8 +349,8 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tab Bar',
     description:
-      'An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.',
+    registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },
       { source: 'components/tab-bar/index.ts', target: 'tab-bar/index.ts' },

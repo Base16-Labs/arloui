@@ -9,6 +9,7 @@ import {
   type ButtonAppearance,
   type ButtonHaptic,
   type ButtonSize,
+  type ButtonSurface,
   type ButtonTone,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -22,6 +23,7 @@ type PreviewState = 'default' | 'pressed' | 'loading' | 'disabled';
 
 const TONES: ButtonTone[] = ['primary', 'neutral', 'danger'];
 const APPEARANCES: ButtonAppearance[] = ['solid', 'soft', 'ghost', 'outline'];
+const SURFACES: ButtonSurface[] = ['default', 'glass'];
 const SIZES: ButtonSize[] = ['sm', 'md', 'lg', 'xl'];
 const ICONS: IconLayout[] = ['none', 'leading', 'trailing', 'both', 'icon-only'];
 const STATES: PreviewState[] = ['default', 'pressed', 'loading', 'disabled'];
@@ -38,6 +40,7 @@ export default function ButtonCanvas() {
   const [icons, setIcons] = useState<IconLayout>('both');
   const [state, setState] = useState<PreviewState>('default');
   const [haptic, setHaptic] = useState<ButtonHaptic>('light');
+  const [surface, setSurface] = useState<ButtonSurface>('default');
   const [previewOffset] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -104,9 +107,21 @@ export default function ButtonCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
+            {/*
+              Glass previews on the plain canvas, like every other surface.
+
+              This used to lay saturated bands behind a glass button, because an
+              untinted material over a flat background is invisible and the
+              variant read as broken. The tint is what fixed that: the button
+              carries its own tone now, so it has something to show on a plain
+              background — and the bands had started doing harm, since a rainbow
+              behind the one variant made it impossible to judge the tone colour
+              the preview exists to show.
+            */}
             <Button
               tone={tone}
               appearance={appearance}
+              surface={surface}
               size={size}
               loading={state === 'loading'}
               disabled={state === 'disabled'}
@@ -189,6 +204,16 @@ export default function ButtonCanvas() {
                     label={value}
                     active={appearance === value}
                     onPress={() => setAppearance(value)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Surface">
+                {SURFACES.map((value) => (
+                  <VariantChip
+                    key={value}
+                    label={value}
+                    active={surface === value}
+                    onPress={() => setSurface(value)}
                   />
                 ))}
               </VariantControlRow>

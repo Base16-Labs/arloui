@@ -226,13 +226,15 @@ const { theme } = useTheme();
       { name: 'blur.md', value: '16', note: 'Compact overlays' },
       { name: 'blur.lg', value: '24', note: 'Default glass surface' },
       { name: 'blur.xl', value: '40', note: 'Dense modal material' },
-      { name: 'materials.glassRegular', value: '24 + overlay', note: 'Cross-platform glass fallback' },
+      { name: 'materials.glassMedium', value: '24 + overlay', note: 'Cross-platform glass fallback' },
+      { name: 'materials.glassMedium.tintOpacity', value: '0.45', note: "How much of a component's own colour survives the material" },
+      { name: 'materials.glassMedium.tintOpacityPressed', value: '0.6', note: 'Tint deepens on press — the press response for a tinted glass surface' },
     ],
     snippet: `import { Platform, StyleSheet, View, useColorScheme } from 'react-native';
 import { BlurView } from 'expo-blur';
 
 const scheme = useColorScheme() ?? 'light';
-const material = theme.materials.glassRegular;
+const material = theme.materials.glassMedium;
 const overlay =
   scheme === 'dark' ? material.darkOverlay : material.lightOverlay;
 const border =

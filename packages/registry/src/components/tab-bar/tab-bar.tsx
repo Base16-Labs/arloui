@@ -11,10 +11,11 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
 import { useTokens } from '../../foundation/theme-provider';
 
 export type TabBarWidth = 'full' | 'floating';
-export type TabBarSurface = 'transparent' | 'filled';
+export type TabBarSurface = 'transparent' | 'filled' | 'glass';
 
 export type TabBarIconProps = {
   active: boolean;
@@ -36,11 +37,22 @@ export type TabBarProps = {
   onValueChange: (value: string) => void;
   children: ReactNode;
   width?: TabBarWidth;
+  /**
+   * What the bar is made of. `'filled'` is an opaque nav fill, `'transparent'`
+   * lets content through and leans on `blurComponent` for legibility, and
+   * `'glass'` is the Liquid Glass material — the real system surface on iOS 26,
+   * Arlo's translucent overlay everywhere else.
+   */
   surface?: TabBarSurface;
   showLabels?: boolean;
   hidden?: boolean;
   bottomInset?: number;
-  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a transparent surface for legibility. */
+  /**
+   * Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a
+   * `transparent` or `glass` surface for legibility. On the native glass path it
+   * is ignored — the system material does its own blurring, and stacking ours
+   * under it would blur the backdrop twice.
+   */
   blurComponent?: ReactNode;
   style?: StyleProp<ViewStyle>;
 };
@@ -159,7 +171,26 @@ function TabBarRoot({
 
   const indicatorTranslate = Animated.add(Animated.multiply(selection, itemWidth), indicatorOffset);
   const barHeight = showLabels ? t.spacing[16] : t.spacing[14];
-  const backgroundColor = surface === 'filled' ? t.colors.navBackground : 'transparent';
+  const isGlass = surface === 'glass';
+  const glass = useGlassSurface('medium');
+  // Nothing of our own behind glass — `GlassBackdrop` paints the material, and a
+  // fill here would stack the overlay on itself and leave a near-opaque bar
+  // wearing a glass token.
+  const backgroundColor = isGlass
+    ? 'transparent'
+    : surface === 'filled'
+      ? t.colors.navBackground
+      : 'transparent';
+  /*
+   * No tint on the bar, deliberately.
+   *
+   * Button tints because it has a tone to keep — a glass primary button that
+   * came out colourless was the thing that read as broken. The bar has no such
+   * colour: `navBackground` is `#FFFFFF` / `#18181B`, the same neutral the
+   * material's overlay already paints, so tinting with it only adds opacity, and
+   * tinting with `navIndicator` would turn a neutral nav surface accent-blue
+   * because a token happened to be to hand. The bar's colour is the material.
+   */
 
   // Floating bars shrink in place on scroll (like Instagram's pill) so they stay
   // reachable; full-width bars slide off-screen since a stretched bar scales poorly.
@@ -183,9 +214,11 @@ function TabBarRoot({
       ];
   // A filled surface stays fully opaque while hiding so it keeps reading as
   // "filled" even mid-scroll; only transparent/floating bars fade for de-emphasis.
+  // Glass holds too — fading a translucent material just makes it disappear, and
+  // on iOS 26 it would fade the system surface out from under its own content.
   const hideOpacity = visibility.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, surface === 'filled' ? 1 : floating ? 0.55 : 0.2],
+    outputRange: [1, surface === 'filled' || isGlass ? 1 : floating ? 0.55 : 0.2],
   });
 
   return (
@@ -200,11 +233,11 @@ function TabBarRoot({
           minHeight: barHeight + bottomInset,
           paddingBottom: bottomInset,
           borderRadius: floating ? t.radii.full : 0,
-          borderTopWidth: floating ? 1 : surface === 'filled' ? 1 : 0,
-          borderRightWidth: floating ? 1 : 0,
-          borderBottomWidth: floating ? 1 : 0,
-          borderLeftWidth: floating ? 1 : 0,
-          borderColor: t.colors.navBorder,
+          borderTopWidth: isGlass ? glass.borderWidth : floating ? 1 : surface === 'filled' ? 1 : 0,
+          borderRightWidth: isGlass ? (floating ? glass.borderWidth : 0) : floating ? 1 : 0,
+          borderBottomWidth: isGlass ? (floating ? glass.borderWidth : 0) : floating ? 1 : 0,
+          borderLeftWidth: isGlass ? (floating ? glass.borderWidth : 0) : floating ? 1 : 0,
+          borderColor: isGlass ? glass.borderColor : t.colors.navBorder,
           backgroundColor,
           overflow: 'hidden',
           transform: hideTransform,
@@ -214,6 +247,16 @@ function TabBarRoot({
         style,
       ]}
     >
+      {isGlass ? (
+        <GlassBackdrop
+          // The pill's real radius, not `radii.full`'s 9999 sentinel — see Button.
+          borderRadius={floating ? barHeight / 2 : 0}
+          material="medium"
+        >
+          {blurComponent}
+        </GlassBackdrop>
+      ) : null}
+
       {surface === 'transparent' && blurComponent ? (
         <View
           pointerEvents="none"

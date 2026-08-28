@@ -19,7 +19,7 @@
 
 ## States
 
-`default` · `selected` · `pressed` · `disabled` · `hidden on scroll`
+`default` · `selected` · `pressed` · `disabled` · `glass` · `hidden on scroll`
 
 ## Tokens used
 
@@ -28,6 +28,7 @@
 - `colors.navActive`
 - `colors.navInactive`
 - `colors.navIndicator`
+- `materials.glassMedium`
 - `motion.duration.fast`
 - `motion.spring.snappy`
 - `sizing.touchTarget.minimum`
