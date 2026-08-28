@@ -2,16 +2,19 @@
  * Arlo UI — Sheet (Bottom Drawer)
  *
  * A bottom-anchored surface with a grabber, drag-to-dismiss, safe-area padding,
- * and token-based width, height, and padding controls. Two composable axes drive the material treatment:
+ * and token-based width, height, and padding controls.
  *
  *   - `backdrop`: 'scrim' (modal — dims and blocks the background, default) or
  *     'passthrough' (iOS-style — the background stays visible and interactive).
- *   - `surface`:  'solid' (opaque elevated fill, default) or 'glass' (translucent
- *     Liquid-Glass material). Combine `backdrop="passthrough"` + `surface="glass"`
- *     for a floating glass sheet over live content.
  *
- * Motion, colors, radii, and the glass material all come from tokens. Gestures use
- * the RN `Animated` API + `PanResponder`, so there are no extra dependencies.
+ * The sheet draws one surface: the elevated fill. It carried a `surface="glass"`
+ * variant, dropped along with Card's — and for the same reason. It never went
+ * through the glass foundation at all, reaching into `materials.glassMedium`
+ * directly, so it was a second, hand-rolled definition of what glass looks like
+ * that could drift from the one every other component shares.
+ *
+ * Motion, colors, and radii come from tokens. Gestures use the RN `Animated` API
+ * + `PanResponder`, so there are no extra dependencies.
  *
  * Compound parts: `<Sheet.Handle>`, `<Sheet.Header>`, `<Sheet.Body>`, `<Sheet.Footer>`.
  *
@@ -36,7 +39,6 @@ import {
 import { useTokens } from '../../foundation/theme-provider';
 
 export type SheetBackdrop = 'scrim' | 'passthrough';
-export type SheetSurface = 'solid' | 'glass';
 export type SheetWidth = 'default' | 'stack';
 /** `'auto'` hugs the content, `'half'` uses half the screen, and `'full'` fills the available height. */
 export type SheetHeight = 'auto' | 'half' | 'full';
@@ -94,8 +96,6 @@ export type SheetProps = {
   onClose: () => void;
   /** `'scrim'` dims + blocks the background (modal); `'passthrough'` leaves it interactive. */
   backdrop?: SheetBackdrop;
-  /** `'solid'` opaque fill or `'glass'` translucent Liquid-Glass material. */
-  surface?: SheetSurface;
   /** `'default'` uses one surface; `'stack'` adds a second surface behind it. */
   width?: SheetWidth;
   /**
@@ -140,8 +140,6 @@ export type SheetProps = {
     vy: number;
     snapIndex: number;
   }) => void;
-  /** Optional blur layer (e.g. `expo-blur`'s BlurView) rendered behind a glass surface. */
-  blurComponent?: ReactNode;
   /** Safe-area insets from the host app (e.g. `react-native-safe-area-context`'s `useSafeAreaInsets()`). */
   topInset?: number;
   bottomInset?: number;
@@ -210,7 +208,6 @@ function SheetRoot({
   visible,
   onClose,
   backdrop = 'scrim',
-  surface = 'solid',
   width,
   height,
   snapPoints,
@@ -229,7 +226,6 @@ function SheetRoot({
   motion: motionOverride,
   gesture: gestureOverride,
   onDragEnd,
-  blurComponent,
   topInset = 0,
   bottomInset = 0,
   children,
@@ -248,7 +244,6 @@ function SheetRoot({
   const dismissVelocity = gestureOverride?.dismissVelocity ?? 0.75;
   const overdragResistance = gestureOverride?.overdragResistance ?? 0.18;
 
-  const isGlass = surface === 'glass';
   const isScrim = backdrop === 'scrim';
   const resolvedWidth: SheetWidth = width ?? (presentation === 'stack' ? 'stack' : 'default');
   const resolvedHeight: SheetHeight | number = height ?? detent ?? 'auto';
@@ -494,16 +489,8 @@ function SheetRoot({
 
   if (!mounted) return null;
 
-  const surfaceColor = isGlass
-    ? dark
-      ? t.materials.glassMedium.darkOverlay
-      : t.materials.glassMedium.lightOverlay
-    : t.colors.surfaceElevated;
-  const surfaceBorder = isGlass
-    ? dark
-      ? t.materials.glassMedium.darkBorder
-      : t.materials.glassMedium.lightBorder
-    : t.colors.border;
+  const surfaceColor = t.colors.surfaceElevated;
+  const surfaceBorder = t.colors.border;
   const shadow = dark ? t.shadows.none : t.shadows.xl;
 
   return (
@@ -598,24 +585,14 @@ function SheetRoot({
               borderTopRightRadius: resolvedRadius,
               borderBottomLeftRadius: isInset ? resolvedRadius : 0,
               borderBottomRightRadius: isInset ? resolvedRadius : 0,
+              // Top only. The other three sides carried the glass surface's full
+              // hairline and are 0 without it, which is RN's default anyway.
               borderTopWidth: 1,
-              borderLeftWidth: isGlass ? 1 : 0,
-              borderRightWidth: isGlass ? 1 : 0,
-              borderBottomWidth: isInset && isGlass ? 1 : 0,
               borderColor: surfaceBorder,
               backgroundColor: surfaceColor,
               overflow: 'hidden',
             }}
           >
-            {isGlass && blurComponent ? (
-              <View
-                pointerEvents="none"
-                style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
-              >
-                {blurComponent}
-              </View>
-            ) : null}
-
             {showHandle ? (
               <View {...panResponder.panHandlers}>
                 <SheetHandle width={handleWidth} height={handleHeight} />
@@ -694,7 +671,7 @@ function SheetHeader({
               fontFamily: t.fontFamilies.sans,
               fontSize: t.typography.headingLarge.fontSize,
               lineHeight: t.typography.headingLarge.lineHeight,
-              fontWeight: '600',
+              fontWeight: t.fontWeights.semibold,
             },
             titleStyle,
           ]}

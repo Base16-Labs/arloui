@@ -29,24 +29,28 @@ npx arloui diff button
 
 - **tokens** — Design tokens. Color, typography, spacing, radius, motion, shadow, focus ring, blur, and glass material tokens. Single source of truth for the visual system.
 - **theme-provider** — Theme provider. React context that exposes tokens and follows the system color scheme.
-- **glass** — Liquid Glass. Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. Pulled in by components that support `surface="glass"`.
+- **glass** — Liquid Glass. Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. `GlassBackdrop` paints the whole surface, including a component's own colour as the material's tint and the press response that deepens it, so a glass control keeps its tone rather than going colourless. Pulled in by components that support `surface="glass"`.
 - **haptics** — Haptics. Haptic feedback wrapper that no-ops when expo-haptics is not installed. Pulled in by components that use press feedback.
 
 ### primitive
 
-- **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.
-- **card** — Card. A flexible surface for grouping related content with header, body, footer, and hierarchy options.
+- **button** — Button. Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.
+- **card** — Card. The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.
+- **list** — List. A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.
+- **animated-counter** — Animated counter. A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.
+- **stepper** — Stepper. A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.
+- **chart** — Chart. Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.
 - **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
 - **spinner** — Spinner. A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.
 - **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.
-- **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.
+- **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.
 - **field** — Field. Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.
 - **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.
 - **checkbox** — Checkbox. An animated check box with two sizes, check icon, and disabled state.
 - **radio** — Radio. An animated radio button with a scaling dot indicator, two sizes, and disabled state.
 - **toggle** — Toggle. An animated on/off switch with two sizes, disabled state, and smooth thumb transition.
 - **text-area** — TextArea. A multiline text field for comments, notes, bios, support messages, and long-form form content.
-- **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.
+- **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, a filled or Liquid Glass surface, badges, labels, selectable scroll behaviour (hide, shrink, or fixed), and a snap or jelly selection indicator.
 - **carousel** — Carousel. A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.
 - **gallery** — Gallery. A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.
 - **badge** — Badge. A non-interactive status label with dot, count, and icon variants across five semantic tones.

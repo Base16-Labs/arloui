@@ -41,14 +41,23 @@ export const FOUNDATION: RegistryEntry[] = [
     kind: 'foundation',
     title: 'Liquid Glass',
     description:
-      'Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. Pulled in by components that support `surface="glass"`.',
-    // `expo-glass-effect` is loaded through a guarded `require`, so the fallback
-    // still runs in any app that never installs it. Declared here so apps that do
-    // want the native iOS 26 material get it pulled in with the component.
+      'Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. `GlassBackdrop` paints the whole surface, including a component\'s own colour as the material\'s tint and the press response that deepens it, so a glass control keeps its tone rather than going colourless. Pulled in by components that support `surface="glass"`.',
+    /*
+     * `expo-glass-effect` is optional on purpose. It is loaded through a guarded
+     * `require`, so a project that never installs it still gets a working glass
+     * surface — the fallback — rather than a resolution error. Listing it here is
+     * how `arloui add` offers it; it is not a hard requirement.
+     *
+     * It does, however, require the New Architecture. `GlassView` overrides
+     * Fabric-only view lifecycle methods, so autolinking it into an app with
+     * `newArchEnabled: false` fails the iOS build outright rather than falling
+     * back. Old-architecture projects should leave it uninstalled and take the
+     * fallback path, which needs nothing.
+     */
     dependencies: ['expo-glass-effect'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
-    meta: { tags: ['foundation', 'material', 'glass', 'blur'] },
+    meta: { tags: ['foundation', 'material', 'glass', 'blur', 'ios26'] },
   },
   {
     name: 'haptics',
@@ -86,9 +95,9 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Button',
     description:
-      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.',
+      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'glass'],
     files: [
       { source: 'components/button/button.tsx', target: 'button/button.tsx' },
       { source: 'components/button/ghost-button.tsx', target: 'button/ghost-button.tsx' },
@@ -98,7 +107,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/button/index.ts', target: 'button/index.ts' },
     ],
     meta: {
-      figma: 'Components/Button/Primary',
       tags: ['action', 'primitive'],
     },
   },
@@ -107,15 +115,82 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A flexible surface for grouping related content with header, body, footer, and hierarchy options.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
-      figma: 'Components/Card/Default',
       tags: ['surface', 'primitive'],
+    },
+  },
+  {
+    name: 'list',
+    kind: 'primitive',
+    title: 'List',
+    description:
+      'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/list/list.tsx', target: 'list/list.tsx' },
+      { source: 'components/list/index.ts', target: 'list/index.ts' },
+    ],
+    meta: {
+      tags: ['list', 'row', 'primitive'],
+    },
+  },
+  {
+    name: 'animated-counter',
+    kind: 'primitive',
+    title: 'Animated counter',
+    description:
+      'A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.',
+    registryDependencies: [],
+    files: [
+      {
+        source: 'components/animated-counter/animated-counter.tsx',
+        target: 'animated-counter/animated-counter.tsx',
+      },
+      { source: 'components/animated-counter/index.ts', target: 'animated-counter/index.ts' },
+    ],
+    meta: {
+      tags: ['motion', 'numeric', 'counter', 'primitive'],
+    },
+  },
+  {
+    name: 'stepper',
+    kind: 'primitive',
+    title: 'Stepper',
+    description:
+      'A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.',
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'animated-counter'],
+    files: [
+      { source: 'components/stepper/stepper.tsx', target: 'stepper/stepper.tsx' },
+      { source: 'components/stepper/index.ts', target: 'stepper/index.ts' },
+    ],
+    meta: {
+      tags: ['input', 'numeric', 'counter', 'motion', 'primitive'],
+    },
+  },
+  {
+    name: 'chart',
+    kind: 'primitive',
+    title: 'Chart',
+    description:
+      'Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
+      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
+      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
+      { source: 'components/chart/index.ts', target: 'chart/index.ts' },
+    ],
+    meta: {
+      tags: ['chart', 'data', 'visualization', 'primitive'],
     },
   },
   {
@@ -168,14 +243,13 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Sheet',
     description:
-      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
+      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
     ],
     meta: {
-      figma: 'Components/Sheet/Default',
       tags: ['surface', 'overlay', 'primitive'],
     },
   },
@@ -207,7 +281,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/input/index.ts', target: 'input/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Input/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -223,7 +296,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/checkbox/index.ts', target: 'checkbox/index.ts' },
     ],
     meta: {
-      figma: 'Components/Checkbox/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -239,7 +311,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/radio/index.ts', target: 'radio/index.ts' },
     ],
     meta: {
-      figma: 'Components/Radio/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -255,7 +326,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/toggle/index.ts', target: 'toggle/index.ts' },
     ],
     meta: {
-      figma: 'Components/Toggle/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -271,7 +341,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/text-area/index.ts', target: 'text-area/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Area/Default',
       tags: ['form', 'primitive', 'multiline'],
     },
   },
@@ -280,7 +349,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tab Bar',
     description:
-      'An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.',
+      'An animated bottom navigation bar with full-width and floating layouts, a filled or Liquid Glass surface, badges, labels, selectable scroll behaviour (hide, shrink, or fixed), and a snap or jelly selection indicator.',
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
@@ -333,7 +402,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/badge/index.ts', target: 'badge/index.ts' },
     ],
     meta: {
-      figma: 'Components/Badge/Default',
       tags: ['label', 'status', 'primitive'],
     },
   },
@@ -350,7 +418,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/chip/index.ts', target: 'chip/index.ts' },
     ],
     meta: {
-      figma: 'Components/Chip/Default',
       tags: ['filter', 'tag', 'interactive', 'primitive'],
     },
   },
@@ -387,7 +454,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/date-picker/index.ts', target: 'date-picker/index.ts' },
     ],
     meta: {
-      figma: 'Components/Date Picker/Default',
       tags: ['form', 'calendar', 'date', 'primitive'],
     },
   },

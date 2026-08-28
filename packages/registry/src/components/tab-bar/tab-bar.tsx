@@ -498,7 +498,7 @@ function TabBarItemView({
               right: -12,
               minWidth: 16,
               height: 16,
-              paddingHorizontal: 4,
+              paddingHorizontal: t.spacing[1],
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: t.radii.full,
@@ -510,9 +510,8 @@ function TabBarItemView({
                 // White in both themes — badge text sits on the saturated error fill.
                 color: t.colors.textInteractivePrimary,
                 fontFamily: t.fontFamilies.sans,
+                ...t.typography.labelSmall,
                 fontWeight: t.fontWeights.semibold,
-                fontSize: 9,
-                lineHeight: 12,
               }}
             >
               {badge}
@@ -527,9 +526,8 @@ function TabBarItemView({
             maxWidth: '100%',
             color,
             fontFamily: t.fontFamilies.sans,
+            ...t.typography.labelSmall,
             fontWeight: active ? t.fontWeights.semibold : t.fontWeights.medium,
-            fontSize: 10,
-            lineHeight: 13,
           }}
         >
           {label}

@@ -19,7 +19,7 @@
 
 ## States
 
-`default` · `selected` · `pressed` · `disabled` · `hidden on scroll`
+`default` · `selected` · `pressed` · `disabled` · `glass` · `hidden on scroll`
 
 ## Tokens used
 

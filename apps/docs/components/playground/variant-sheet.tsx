@@ -16,8 +16,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTokens } from '@arloui/registry';
 
-const DRAWER_EASING = Easing.bezier(0.32, 0.72, 0, 1);
-
 export function VariantSheet({
   visible,
   children,
@@ -37,10 +35,11 @@ export function VariantSheet({
 }) {
   const t = useTokens();
   const dark = t.name === 'dark';
+  const drawerEasing = Easing.bezier(...t.motion.easing.easeSheet);
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
   const sheetHeight = Math.max(420, Math.round(windowHeight * 0.57));
-  const bottomBleed = Math.max(insets.bottom, 24) + 32;
+  const bottomBleed = Math.max(insets.bottom, t.spacing[6]) + t.spacing[8];
   const closedY = sheetHeight + bottomBleed;
   const [translateY] = useState(() => new Animated.Value(closedY));
   const dragStart = useRef(0);
@@ -56,8 +55,8 @@ export function VariantSheet({
     translateY.setValue(closedY);
     Animated.timing(translateY, {
       toValue: 0,
-      duration: 500,
-      easing: DRAWER_EASING,
+      duration: t.motion.duration.slow,
+      easing: drawerEasing,
       useNativeDriver: true,
     }).start();
   };
@@ -65,9 +64,7 @@ export function VariantSheet({
   const settle = () => {
     Animated.spring(translateY, {
       toValue: 0,
-      damping: 28,
-      stiffness: 260,
-      mass: 0.8,
+      ...t.motion.spring.gentle,
       useNativeDriver: true,
     }).start();
   };
@@ -77,15 +74,15 @@ export function VariantSheet({
     closing.current = true;
     Animated.timing(translateY, {
       toValue: closedY,
-      duration: 420,
-      easing: DRAWER_EASING,
+      duration: t.motion.duration.slow,
+      easing: drawerEasing,
       useNativeDriver: true,
     }).start();
     dismissTimer.current = setTimeout(() => {
       setMounted(false);
       onClose();
       closing.current = false;
-    }, 420);
+    }, t.motion.duration.slow);
   };
 
   useEffect(() => {
@@ -99,11 +96,11 @@ export function VariantSheet({
     if (closing.current) return;
     Animated.timing(translateY, {
       toValue: closedY,
-      duration: 420,
-      easing: DRAWER_EASING,
+      duration: t.motion.duration.slow,
+      easing: drawerEasing,
       useNativeDriver: true,
     }).start();
-    const cleanup = setTimeout(() => setMounted(false), 430);
+    const cleanup = setTimeout(() => setMounted(false), t.motion.duration.slow + 10);
     return () => clearTimeout(cleanup);
     // Animation helpers intentionally track the current measured drawer height.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,27 +164,23 @@ export function VariantSheet({
       <Animated.View
         style={{
           marginBottom: -bottomBleed,
-          borderTopLeftRadius: 34,
-          borderTopRightRadius: 34,
-          backgroundColor: dark ? '#27272A' : '#FFFFFF',
+          borderTopLeftRadius: t.radii['2xl'],
+          borderTopRightRadius: t.radii['2xl'],
+          backgroundColor: t.colors.surfaceElevated,
           transform: [{ translateY }],
-          shadowColor: '#000000',
-          shadowOpacity: dark ? 0.4 : 0.16,
-          shadowRadius: 28,
-          shadowOffset: { width: 0, height: -8 },
-          elevation: 24,
+          ...t.shadows.xl,
         }}
       >
         <View
           style={{
             height: sheetHeight + bottomBleed,
-            paddingTop: 10,
-            paddingBottom: bottomBleed + Math.max(insets.bottom, 14),
-            borderTopLeftRadius: 34,
-            borderTopRightRadius: 34,
+            paddingTop: t.spacing[2],
+            paddingBottom: bottomBleed + Math.max(insets.bottom, t.spacing[4]),
+            borderTopLeftRadius: t.radii['2xl'],
+            borderTopRightRadius: t.radii['2xl'],
             borderTopWidth: 1,
-            borderColor: dark ? '#3F3F46' : '#E4E4E7',
-            backgroundColor: dark ? '#27272A' : '#FFFFFF',
+            borderColor: t.colors.borderStrong,
+            backgroundColor: t.colors.surfaceElevated,
             overflow: 'hidden',
           }}
         >
@@ -202,10 +195,10 @@ export function VariantSheet({
         >
           <View
             style={{
-              width: 54,
-              height: 5,
-              borderRadius: 999,
-              backgroundColor: dark ? '#71717A' : '#D4D4D8',
+              width: t.spacing[14],
+              height: t.spacing[1],
+              borderRadius: t.radii.full,
+              backgroundColor: t.colors.pullIndicator,
             }}
           />
         </View>
@@ -213,11 +206,10 @@ export function VariantSheet({
         <Text
           style={{
             marginTop: 3,
-            marginHorizontal: 24,
+            marginHorizontal: t.spacing[6],
             color: t.colors.textSecondary,
-            fontFamily: 'Manrope SemiBold',
-            fontSize: 11,
-            letterSpacing: 1.6,
+            fontFamily: t.fontFamilies.sans,
+            ...t.typography.overline,
           }}
         >
           VARIANTS
@@ -234,9 +226,9 @@ export function VariantSheet({
             onLayout={(event) => setScrollViewportHeight(event.nativeEvent.layout.height)}
             onContentSizeChange={(_, height) => setScrollHeight(height)}
             contentContainerStyle={{
-              paddingHorizontal: 24,
-              paddingTop: 17,
-              paddingBottom: 42,
+              paddingHorizontal: t.spacing[6],
+              paddingTop: t.spacing[4],
+              paddingBottom: t.spacing[10],
             }}
           >
             {children}
@@ -255,7 +247,7 @@ export function VariantSheet({
                 justifyContent: 'center',
               }}
             >
-              <Ionicons name="chevron-up" size={15} color={dark ? '#71717A' : '#A1A1AA'} />
+              <Ionicons name="chevron-up" size={t.sizing.icon.xs} color={t.colors.textTertiary} />
             </View>
           ) : null}
 
@@ -272,19 +264,19 @@ export function VariantSheet({
                 justifyContent: 'center',
               }}
             >
-              <Ionicons name="chevron-down" size={15} color={dark ? '#71717A' : '#A1A1AA'} />
+              <Ionicons name="chevron-down" size={t.sizing.icon.xs} color={t.colors.textTertiary} />
             </View>
           ) : null}
         </View>
 
         <View
           style={{
-            marginHorizontal: 24,
-            paddingTop: 16,
+            marginHorizontal: t.spacing[6],
+            paddingTop: t.spacing[4],
             borderTopWidth: 1,
-            borderTopColor: dark ? '#3F3F46' : '#E4E4E7',
+            borderTopColor: t.colors.borderStrong,
             flexDirection: 'row',
-            gap: 10,
+            gap: t.spacing[3],
           }}
         >
           <NeighborButton direction="previous" label={previous} onPress={onPrevious} />
@@ -307,24 +299,22 @@ function NeighborButton({
 }) {
   const next = direction === 'next';
   const t = useTokens();
-  const dark = t.name === 'dark';
-
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => ({
         flex: 1,
-        minHeight: 46,
+        minHeight: t.sizing.touchTarget.minimum,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: next ? 'flex-end' : 'flex-start',
-        gap: 8,
-        paddingHorizontal: 14,
-        borderRadius: 12,
+        gap: t.spacing[2],
+        paddingHorizontal: t.spacing[4],
+        borderRadius: t.radii.lg,
         borderWidth: 1,
-        borderColor: pressed ? (dark ? '#71717A' : '#D4D4D8') : dark ? '#3F3F46' : '#E4E4E7',
-        backgroundColor: pressed ? (dark ? '#3F3F46' : '#E4E4E7') : dark ? '#303033' : '#F4F4F5',
+        borderColor: pressed ? t.colors.borderStrong : t.colors.border,
+        backgroundColor: pressed ? t.colors.surfaceStrong : t.colors.surface,
       })}
     >
       {!next ? <Ionicons name="chevron-back" size={16} color={t.colors.textSecondary} /> : null}
@@ -332,8 +322,9 @@ function NeighborButton({
         numberOfLines={1}
         style={{
           color: t.colors.textPrimary,
-          fontFamily: 'Manrope Medium',
-          fontSize: 14,
+          fontFamily: t.fontFamilies.sans,
+          ...t.typography.bodyMedium,
+          fontWeight: t.fontWeights.medium,
         }}
       >
         {label}

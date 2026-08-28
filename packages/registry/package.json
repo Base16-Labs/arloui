@@ -27,11 +27,15 @@
     "@arloui/utils": "file:../utils"
   },
   "peerDependencies": {
+    "expo-glass-effect": ">=0.1.0",
     "expo-haptics": ">=14.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.74.0"
   },
   "peerDependenciesMeta": {
+    "expo-glass-effect": {
+      "optional": true
+    },
     "expo-haptics": {
       "optional": true
     }

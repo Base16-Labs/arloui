@@ -1,7 +1,6 @@
-import { BlurView } from 'expo-blur';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Sheet,
@@ -9,7 +8,6 @@ import {
   type SheetBackdrop,
   type SheetHeight,
   type SheetPadding,
-  type SheetSurface,
   type SheetWidth,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -21,7 +19,6 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 type PreviewState = 'open' | 'closed' | 'no handle' | 'locked';
 
 const BACKDROPS: SheetBackdrop[] = ['scrim', 'passthrough'];
-const SURFACES: SheetSurface[] = ['solid', 'glass'];
 const WIDTHS: SheetWidth[] = ['default', 'stack'];
 const HEIGHTS: SheetHeight[] = ['auto', 'half', 'full'];
 const PADDINGS: SheetPadding[] = ['none', 'md', 'lg'];
@@ -34,7 +31,6 @@ export default function SheetCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(true);
   const [backdrop, setBackdrop] = useState<SheetBackdrop>('passthrough');
-  const [surface, setSurface] = useState<SheetSurface>('glass');
   const [width, setWidth] = useState<SheetWidth>('stack');
   const [height, setHeight] = useState<SheetHeight>('auto');
   const [padding, setPadding] = useState<SheetPadding>('md');
@@ -76,7 +72,7 @@ export default function SheetCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -87,7 +83,7 @@ export default function SheetCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingHorizontal: 20,
+              paddingHorizontal: t.spacing[5],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -97,24 +93,30 @@ export default function SheetCanvas() {
                 maxWidth: 350,
                 height: 470,
                 overflow: 'hidden',
-                borderRadius: 34,
+                borderRadius: t.radii['2xl'],
                 borderWidth: 1,
                 borderColor: t.colors.border,
                 backgroundColor: t.colors.bg,
               }}
             >
-              <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
+              <View style={{ paddingHorizontal: t.spacing[5], paddingTop: t.spacing[6] }}>
                 <Text
                   style={{
                     color: t.colors.textPrimary,
-                    fontFamily: 'Manrope SemiBold',
-                    fontSize: 15,
-                    lineHeight: 20,
+                    fontFamily: t.fontFamilies.sans,
+                    ...t.typography.headingSmallEmphasized,
                   }}
                 >
                   Library
                 </Text>
-                <View style={{ marginTop: 16, flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                <View
+                  style={{
+                    marginTop: t.spacing[4],
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    gap: t.spacing[3],
+                  }}
+                >
                   {['#155DFC', '#00C950', '#F54900', '#FB2C36'].map((color) => (
                     <View
                       key={color}
@@ -135,7 +137,6 @@ export default function SheetCanvas() {
                   visible={previewVisible}
                   onClose={() => setPreviewVisible(false)}
                   backdrop={backdrop}
-                  surface={surface}
                   width={width}
                   height={height}
                   padding={padding}
@@ -143,15 +144,6 @@ export default function SheetCanvas() {
                   showHandle={showHandle}
                   dragToDismiss={dragToDismiss}
                   dismissOnBackdropPress={state !== 'locked'}
-                  blurComponent={
-                    surface === 'glass' ? (
-                      <BlurView
-                        intensity={34}
-                        tint={t.name === 'dark' ? 'dark' : 'light'}
-                        style={StyleSheet.absoluteFill}
-                      />
-                    ) : undefined
-                  }
                   bottomInset={10}
                   style={{
                     position: 'absolute',
@@ -163,9 +155,8 @@ export default function SheetCanvas() {
                     <Text
                       style={{
                         color: t.colors.textSecondary,
-                        fontFamily: 'Manrope',
-                        fontSize: 13,
-                        lineHeight: 18,
+                        fontFamily: t.fontFamilies.sans,
+                        ...t.typography.bodySmall,
                       }}
                     >
                       Save this item to a list without leaving the current screen.
@@ -176,18 +167,19 @@ export default function SheetCanvas() {
                       <Pressable
                         key={label}
                         style={({ pressed }) => ({
-                          minHeight: 44,
+                          minHeight: t.sizing.touchTarget.minimum,
                           justifyContent: 'center',
-                          borderRadius: 12,
-                          paddingHorizontal: 12,
+                          borderRadius: t.radii.lg,
+                          paddingHorizontal: t.spacing[3],
                           backgroundColor: pressed ? t.colors.surfaceStrong : t.colors.surfaceInput,
                         })}
                       >
                         <Text
                           style={{
                             color: t.colors.textPrimary,
-                            fontFamily: 'Manrope Medium',
-                            fontSize: 14,
+                            fontFamily: t.fontFamilies.sans,
+                            ...t.typography.bodyMedium,
+                            fontWeight: t.fontWeights.medium,
                           }}
                         >
                           {label}
@@ -200,7 +192,7 @@ export default function SheetCanvas() {
                       accessibilityRole="button"
                       onPress={() => undefined}
                       style={({ pressed }) => ({
-                        minHeight: 44,
+                        minHeight: t.sizing.touchTarget.minimum,
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: t.radii.full,
@@ -209,9 +201,9 @@ export default function SheetCanvas() {
                     >
                       <Text
                         style={{
-                          color: '#FFFFFF',
-                          fontFamily: 'Manrope SemiBold',
-                          fontSize: 14,
+                          color: t.colors.textInteractivePrimary,
+                          fontFamily: t.fontFamilies.sans,
+                          ...t.typography.buttonSmall,
                         }}
                       >
                         Done
@@ -226,8 +218,8 @@ export default function SheetCanvas() {
                     right: 0,
                     bottom: 0,
                     left: 0,
-                    paddingHorizontal: 20,
-                    paddingBottom: 24,
+                    paddingHorizontal: t.spacing[5],
+                    paddingBottom: t.spacing[6],
                     alignItems: 'center',
                   }}
                 >
@@ -235,8 +227,8 @@ export default function SheetCanvas() {
                     accessibilityRole="button"
                     onPress={() => setPreviewVisible(true)}
                     style={({ pressed }) => ({
-                      minHeight: 40,
-                      paddingHorizontal: 16,
+                      minHeight: t.sizing.buttonHeight.md,
+                      paddingHorizontal: t.spacing[4],
                       borderRadius: t.radii.full,
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -248,8 +240,8 @@ export default function SheetCanvas() {
                     <Text
                       style={{
                         color: t.colors.textPrimary,
-                        fontFamily: 'Manrope SemiBold',
-                        fontSize: 13,
+                        fontFamily: t.fontFamilies.sans,
+                        ...t.typography.buttonLabel,
                       }}
                     >
                       Open sheet
@@ -288,7 +280,7 @@ export default function SheetCanvas() {
             onPrevious={() => router.replace('/tab-bar')}
             onNext={() => router.replace('/icons')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Backdrop">
                 {BACKDROPS.map((option) => (
                   <VariantChip
@@ -297,19 +289,6 @@ export default function SheetCanvas() {
                     active={backdrop === option}
                     onPress={() => {
                       setBackdrop(option);
-                      setPreviewVisible(true);
-                    }}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Surface">
-                {SURFACES.map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={surface === option}
-                    onPress={() => {
-                      setSurface(option);
                       setPreviewVisible(true);
                     }}
                   />

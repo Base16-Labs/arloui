@@ -82,7 +82,7 @@ export default function BadgeCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -96,7 +96,7 @@ export default function BadgeCanvas() {
               transform: [{ translateY: previewOffset }],
             }}
           >
-            <View style={{ flexDirection: 'row', gap: 8 }}>
+            <View style={{ flexDirection: 'row', gap: t.spacing[2] }}>
               <Badge
                 tone={tone}
                 appearance={appearance}
@@ -153,7 +153,7 @@ export default function BadgeCanvas() {
             onPrevious={() => router.replace('/toggle')}
             onNext={() => router.replace('/chip')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Tone">
                 {TONES.map((value) => (
                   <VariantChip

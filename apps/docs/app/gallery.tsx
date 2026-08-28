@@ -60,7 +60,7 @@ export default function GalleryCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -69,8 +69,8 @@ export default function GalleryCanvas() {
           <Animated.View
             style={{
               flex: 1,
-              paddingTop: 80,
-              paddingHorizontal: 16,
+              paddingTop: t.spacing[20],
+              paddingHorizontal: t.spacing[4],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -79,7 +79,7 @@ export default function GalleryCanvas() {
               radius={radius}
               masonry={masonry}
               gap={t.spacing[gap]}
-              contentContainerStyle={{ paddingBottom: 100 }}
+              contentContainerStyle={{ paddingBottom: t.spacing[24] + t.spacing[1] }}
             >
               {MASONRY_HEIGHTS.map((h, i) => (
                 <View
@@ -120,7 +120,7 @@ export default function GalleryCanvas() {
             onPrevious={() => router.replace('/carousel')}
             onNext={() => router.replace('/button')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Columns">
                 {COLUMN_OPTIONS.map((value) => (
                   <VariantChip

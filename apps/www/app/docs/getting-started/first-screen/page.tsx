@@ -16,16 +16,21 @@ const inlineCode =
 
 const SCREEN = `import { View, Text } from "react-native";
 import { Button } from "@/components/ui/button";
+import { useTokens } from "@/components/arlo/theme-provider";
 
 export function ConfirmPayment({ onConfirm, onCancel }) {
+  const t = useTokens();
+
   return (
-    <View style={{ padding: 24, gap: 12 }}>
-      <Text style={{ fontSize: 22, fontWeight: "600" }}>Confirm payment?</Text>
-      <Text style={{ fontSize: 15, color: "#667085" }}>
+    <View style={{ padding: t.spacing[6], gap: t.spacing[3] }}>
+      <Text style={[t.typography.headingMediumEmphasized, { color: t.colors.textPrimary }]}>
+        Confirm payment?
+      </Text>
+      <Text style={[t.typography.bodyMedium, { color: t.colors.textSecondary }]}>
         $12.00 will be charged to your card.
       </Text>
 
-      <View style={{ gap: 8, marginTop: 8 }}>
+      <View style={{ gap: t.spacing[2], marginTop: t.spacing[2] }}>
         <Button tone="primary" onPress={onConfirm}>
           Confirm
         </Button>
