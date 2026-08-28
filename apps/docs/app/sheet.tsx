@@ -1,7 +1,6 @@
-import { BlurView } from 'expo-blur';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Sheet,
@@ -9,7 +8,6 @@ import {
   type SheetBackdrop,
   type SheetHeight,
   type SheetPadding,
-  type SheetSurface,
   type SheetWidth,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -21,7 +19,6 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 type PreviewState = 'open' | 'closed' | 'no handle' | 'locked';
 
 const BACKDROPS: SheetBackdrop[] = ['scrim', 'passthrough'];
-const SURFACES: SheetSurface[] = ['solid', 'glass'];
 const WIDTHS: SheetWidth[] = ['default', 'stack'];
 const HEIGHTS: SheetHeight[] = ['auto', 'half', 'full'];
 const PADDINGS: SheetPadding[] = ['none', 'md', 'lg'];
@@ -34,7 +31,6 @@ export default function SheetCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(true);
   const [backdrop, setBackdrop] = useState<SheetBackdrop>('passthrough');
-  const [surface, setSurface] = useState<SheetSurface>('glass');
   const [width, setWidth] = useState<SheetWidth>('stack');
   const [height, setHeight] = useState<SheetHeight>('auto');
   const [padding, setPadding] = useState<SheetPadding>('md');
@@ -141,7 +137,6 @@ export default function SheetCanvas() {
                   visible={previewVisible}
                   onClose={() => setPreviewVisible(false)}
                   backdrop={backdrop}
-                  surface={surface}
                   width={width}
                   height={height}
                   padding={padding}
@@ -149,15 +144,6 @@ export default function SheetCanvas() {
                   showHandle={showHandle}
                   dragToDismiss={dragToDismiss}
                   dismissOnBackdropPress={state !== 'locked'}
-                  blurComponent={
-                    surface === 'glass' ? (
-                      <BlurView
-                        intensity={34}
-                        tint={t.name === 'dark' ? 'dark' : 'light'}
-                        style={StyleSheet.absoluteFill}
-                      />
-                    ) : undefined
-                  }
                   bottomInset={10}
                   style={{
                     position: 'absolute',
@@ -303,19 +289,6 @@ export default function SheetCanvas() {
                     active={backdrop === option}
                     onPress={() => {
                       setBackdrop(option);
-                      setPreviewVisible(true);
-                    }}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Surface">
-                {SURFACES.map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={surface === option}
-                    onPress={() => {
-                      setSurface(option);
                       setPreviewVisible(true);
                     }}
                   />

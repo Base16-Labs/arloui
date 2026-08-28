@@ -243,7 +243,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Sheet',
     description:
-      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
+      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },

@@ -43,7 +43,7 @@ npx arloui diff button
 - **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
 - **spinner** — Spinner. A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.
 - **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.
-- **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.
+- **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.
 - **field** — Field. Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.
 - **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.
 - **checkbox** — Checkbox. An animated check box with two sizes, check icon, and disabled state.
