@@ -50,7 +50,7 @@ npx arloui diff button
 - **radio** — Radio. An animated radio button with a scaling dot indicator, two sizes, and disabled state.
 - **toggle** — Toggle. An animated on/off switch with two sizes, disabled state, and smooth thumb transition.
 - **text-area** — TextArea. A multiline text field for comments, notes, bios, support messages, and long-form form content.
-- **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.
+- **tab-bar** — Tab Bar. An animated bottom navigation bar with full-width and floating layouts, a filled or Liquid Glass surface, badges, labels, selectable scroll behaviour (hide, shrink, or fixed), and a snap or jelly selection indicator.
 - **carousel** — Carousel. A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.
 - **gallery** — Gallery. A flexible grid layout with 1–4 columns, optional masonry mode, and token-based gap and corner radius.
 - **badge** — Badge. A non-interactive status label with dot, count, and icon variants across five semantic tones.

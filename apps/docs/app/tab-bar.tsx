@@ -8,6 +8,8 @@ import {
   TabBar,
   useTabBarScroll,
   useTokens,
+  type TabBarScrollBehavior,
+  type TabBarSelectionMotion,
   type TabBarSurface,
   type TabBarWidth,
 } from '@arloui/registry';
@@ -18,10 +20,11 @@ import { VariantChip, VariantControlRow } from '@/components/playground/variant-
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type TabValue = 'home' | 'search' | 'activity' | 'profile';
-type ScrollBehavior = 'fixed' | 'on scroll';
 
 const WIDTHS: TabBarWidth[] = ['full', 'floating'];
-const SURFACES: TabBarSurface[] = ['transparent', 'filled', 'glass'];
+const SURFACES: TabBarSurface[] = ['filled', 'glass'];
+const BEHAVIORS: TabBarScrollBehavior[] = ['hide', 'shrink', 'fixed'];
+const SELECTIONS: TabBarSelectionMotion[] = ['snap', 'jelly'];
 
 export default function TabBarCanvas() {
   const t = useTokens();
@@ -33,7 +36,8 @@ export default function TabBarCanvas() {
   const [width, setWidth] = useState<TabBarWidth>('floating');
   const [surface, setSurface] = useState<TabBarSurface>('filled');
   const [showLabels, setShowLabels] = useState(false);
-  const [scrollBehavior, setScrollBehavior] = useState<ScrollBehavior>('on scroll');
+  const [scrollBehavior, setScrollBehavior] = useState<TabBarScrollBehavior>('shrink');
+  const [selection, setSelection] = useState<TabBarSelectionMotion>('snap');
 
   return (
     <>
@@ -176,12 +180,14 @@ export default function TabBarCanvas() {
                   onValueChange={(next) => setValue(next as TabValue)}
                   width={width}
                   surface={surface}
+                  scrollBehavior={scrollBehavior}
+                  selection={selection}
                   showLabels={showLabels}
-                  hidden={scrollBehavior === 'on scroll' ? scroll.hidden : false}
+                  hidden={scroll.hidden}
                   blurComponent={
-                    surface === 'transparent' || surface === 'glass' ? (
+                    surface === 'glass' ? (
                       <BlurView
-                        intensity={40}
+                        intensity={60}
                         tint={t.name === 'dark' ? 'dark' : 'light'}
                         style={StyleSheet.absoluteFill}
                       />
@@ -287,13 +293,23 @@ export default function TabBarCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Behavior">
-                {(['fixed', 'on scroll'] as const).map((option) => (
+              <VariantControlRow label="On scroll">
+                {BEHAVIORS.map((option) => (
                   <VariantChip
                     key={option}
                     label={option}
                     active={scrollBehavior === option}
                     onPress={() => setScrollBehavior(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Selection">
+                {SELECTIONS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={selection === option}
+                    onPress={() => setSelection(option)}
                   />
                 ))}
               </VariantControlRow>

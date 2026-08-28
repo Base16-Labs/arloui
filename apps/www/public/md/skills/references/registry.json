@@ -360,13 +360,15 @@
       "name": "tab-bar",
       "kind": "primitive",
       "title": "Tab Bar",
-      "description": "An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.",
+      "description": "An animated bottom navigation bar with full-width and floating layouts, a filled or Liquid Glass surface, badges, labels, selectable scroll behaviour (hide, shrink, or fixed), and a snap or jelly selection indicator.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
         "glass"
       ],
-      "dependencies": [],
+      "dependencies": [
+        "react-native-svg"
+      ],
       "tags": [
         "navigation",
         "tabs",

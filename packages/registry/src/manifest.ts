@@ -349,7 +349,8 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tab Bar',
     description:
-      'An animated bottom navigation bar with full-width and floating layouts, transparent, filled, or Liquid Glass surfaces, badges, labels, and scroll-aware visibility.',
+      'An animated bottom navigation bar with full-width and floating layouts, a filled or Liquid Glass surface, badges, labels, selectable scroll behaviour (hide, shrink, or fixed), and a snap or jelly selection indicator.',
+    dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },

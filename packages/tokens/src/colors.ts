@@ -147,7 +147,7 @@ export const darkSemanticColors = {
 
   interactivePrimary: P[500],
   interactivePrimaryPressed: P[600],
-  interactiveSecondary: Z[800],
+  interactiveSecondary: rgbaFromHex(Z[800], 0.7),
   interactiveSecondaryPressed: Z[700],
   interactiveTertiary: 'transparent',
   interactiveTertiaryPressed: rgbaFromHex(Z[800], 0.55),
