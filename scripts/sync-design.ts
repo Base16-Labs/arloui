@@ -102,6 +102,14 @@ const titleCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
  * Note the shape of the real taxonomy: focus-ring and touch-feedback do *not*
  * get their own groups, they live under Interactive Elements; and
  * `pull-indicator` sits alone under Gestures rather than with the nav tokens.
+ *
+ * `Data Visualization` is the one exception: it has no counterpart in the
+ * library yet, because the chart colours were added in code and never mirrored
+ * across. The first import will *create* the group rather than update it, which
+ * is the intended outcome — components already reach for `chartPositive` and
+ * friends, and a token a component uses but the canvas lacks is a value a
+ * designer has to hardcode. Rename it here if the library ends up calling it
+ * something else, or the next import will make a second group beside it.
  */
 const SEMANTIC_GROUPS: Array<[RegExp, string]> = [
   [/^(surface|bg)/, 'Surfaces & Backgrounds'],
@@ -111,6 +119,7 @@ const SEMANTIC_GROUPS: Array<[RegExp, string]> = [
   [/^(feedback|success|warning|danger)/, 'Feedback States'],
   [/^nav/, 'Navigation & UI Chrome'],
   [/^pull/, 'Gestures'],
+  [/^chart/, 'Data Visualization'],
 ];
 
 /** Leaf names the library spells differently from plain kebab-case. */

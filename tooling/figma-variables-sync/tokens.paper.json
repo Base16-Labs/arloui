@@ -1528,6 +1528,12 @@
     },
     {
       "type": "color",
+      "name": "--color-surface-card",
+      "value": "var(--color-grey-100)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
       "name": "--color-surface-input",
       "value": "var(--color-grey-100)",
       "description": "Semantic · light"
@@ -1542,6 +1548,12 @@
       "type": "color",
       "name": "--color-surface-elevated",
       "value": "var(--color-white)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-surface-bleed",
+      "value": "rgba(249, 250, 251, 0.5)",
       "description": "Semantic · light"
     },
     {
@@ -1762,6 +1774,48 @@
     },
     {
       "type": "color",
+      "name": "--color-chart-positive",
+      "value": "var(--color-success-700)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-chart-negative",
+      "value": "var(--color-error-600)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-chart-series1",
+      "value": "var(--color-primary-600)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-chart-series2",
+      "value": "var(--color-lime-600)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-chart-series3",
+      "value": "var(--color-pink-700)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-chart-series4",
+      "value": "var(--color-yellow-700)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-chart-other",
+      "value": "var(--color-grey-500)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
       "name": "--color-nav-background",
       "value": "var(--color-white)",
       "description": "Semantic · light"
@@ -1870,6 +1924,12 @@
     },
     {
       "type": "color",
+      "name": "--color-dark-surface-card",
+      "value": "var(--color-zinc-900)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
       "name": "--color-dark-surface-input",
       "value": "var(--color-zinc-900)",
       "description": "Semantic · dark"
@@ -1884,6 +1944,12 @@
       "type": "color",
       "name": "--color-dark-surface-elevated",
       "value": "var(--color-zinc-800)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-surface-bleed",
+      "value": "rgba(9, 9, 11, 0.5)",
       "description": "Semantic · dark"
     },
     {
@@ -2100,6 +2166,48 @@
       "type": "color",
       "name": "--color-dark-feedback-info-bg",
       "value": "var(--color-grey-950)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-chart-positive",
+      "value": "var(--color-success-400)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-chart-negative",
+      "value": "var(--color-error-500)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-chart-series1",
+      "value": "var(--color-primary-600)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-chart-series2",
+      "value": "var(--color-lime-600)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-chart-series3",
+      "value": "var(--color-pink-500)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-chart-series4",
+      "value": "var(--color-yellow-700)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-chart-other",
+      "value": "var(--color-zinc-400)",
       "description": "Semantic · dark"
     },
     {
