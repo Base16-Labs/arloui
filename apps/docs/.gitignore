@@ -4,3 +4,9 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+# Native projects are generated output (CNG) — `expo prebuild` / `expo run:ios`
+# recreate them. Tracking them flips Expo into the bare workflow, where
+# `runtimeVersion` policies are rejected outright.
+/ios/
+/android/

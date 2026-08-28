@@ -14,6 +14,7 @@ import {
   isNativeGlassAvailable,
   useGlassSurface,
   withAlpha,
+  type GlassMaterial,
 } from '../glass';
 import { materials } from '../tokens';
 import { renderWithTheme, screen } from '../../../test/render';
@@ -31,8 +32,8 @@ const glassEffect = require('expo-glass-effect') as {
 };
 
 /** Reads the resolved surface out of a render, since the hook needs a theme. */
-function Probe() {
-  const surface = useGlassSurface('medium');
+function Probe({ material }: { material?: GlassMaterial } = {}) {
+  const surface = useGlassSurface(material);
   return (
     <View
       testID="probe"
@@ -116,6 +117,29 @@ describe('useGlassSurface', () => {
     expect(surface.native).toBe(false);
     expect(surface.borderWidth).toBe(1);
     expect(surface.transparentFill).toBe(false);
+  });
+
+  /**
+   * Carried over from staging's version of this file, which the branches wrote
+   * independently. It sweeps every material rather than checking one, and it is
+   * the only place the default is pinned.
+   */
+  it('resolves each material into a translucent surface', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    for (const material of ['small', 'medium', 'large'] as const) {
+      const view = renderWithTheme(<Probe material={material} />);
+      const surface = readProbe();
+      expect(surface.native).toBe(false);
+      expect(surface.borderWidth).toBe(1);
+      expect(surface.transparentFill).toBe(false);
+      view.unmount();
+    }
+  });
+
+  it('defaults to the medium material', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    renderWithTheme(<Probe />);
+    expect(readProbe().native).toBe(false);
   });
 });
 

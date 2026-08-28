@@ -285,7 +285,7 @@ export default function IconsGalleryScreenWeb() {
                 <Text
                   style={{
                     fontFamily: t.fontFamilies.sans,
-                    fontWeight: '600',
+                    fontWeight: t.fontWeights.semibold,
                     fontSize: t.typography.bodySm.fontSize,
                     color: styleTab === 'outline' ? t.colors.bg : t.colors.textPrimary,
                   }}
@@ -310,7 +310,7 @@ export default function IconsGalleryScreenWeb() {
                 <Text
                   style={{
                     fontFamily: t.fontFamilies.sans,
-                    fontWeight: '600',
+                    fontWeight: t.fontWeights.semibold,
                     fontSize: t.typography.bodySm.fontSize,
                     color: styleTab === 'solid' ? t.colors.bg : t.colors.textPrimary,
                   }}
@@ -394,8 +394,8 @@ export default function IconsGalleryScreenWeb() {
                       whiteSpace: 'nowrap',
                       color: t.colors.textTertiary,
                       fontFamily: t.fontFamilies.mono,
-                      fontSize: 9,
-                      lineHeight: '12px',
+                      fontSize: t.typography.labelSmall.fontSize,
+                      lineHeight: `${t.typography.labelSmall.lineHeight}px`,
                       textAlign: 'center',
                       pointerEvents: 'none',
                     }}
@@ -411,7 +411,7 @@ export default function IconsGalleryScreenWeb() {
                 marginBottom: pad,
                 color: t.colors.textTertiary,
                 fontFamily: t.fontFamilies.sans,
-                fontSize: 12,
+                ...t.typography.bodySmall,
                 textAlign: 'center',
               }}
             >
@@ -508,7 +508,7 @@ export default function IconsGalleryScreenWeb() {
                           style={{
                             color: t.colors.bg,
                             fontFamily: t.fontFamilies.sans,
-                            fontWeight: '600',
+                            fontWeight: t.fontWeights.semibold,
                           }}
                         >
                           Copy SVG
@@ -530,7 +530,7 @@ export default function IconsGalleryScreenWeb() {
                           style={{
                             color: t.colors.textPrimary,
                             fontFamily: t.fontFamilies.sans,
-                            fontWeight: '600',
+                            fontWeight: t.fontWeights.semibold,
                           }}
                         >
                           Copy React usage

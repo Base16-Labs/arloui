@@ -20,6 +20,29 @@ Registry **`Button`** uses **`tone`** (`primary` | `neutral` | `danger`) × **`a
 
 Solid fills use rounded corners + pressed elevation; ghost & outline use pill radius (`radii.full`). See `references/tokens.md` for heights (`sizing.buttonHeight`).
 
+### Card
+
+Registry **`Card`** is the surface primitive — a bordered, rounded container with slots **`Card.Media`**, **`Card.Header`**, **`Card.Title`**, **`Card.Subtitle`**, **`Card.Body`**, **`Card.Footer`**. Five variant axes, each off a token scale:
+
+- **`surface`** — `default` (**`surfaceCard`**, a step greyer than the background), `elevated` (**`surfaceElevated`**), `bleed` (**`surfaceBleed`**, the app background at 50% so a coloured backdrop or image shows through — a subtle frost, not a tab-bar blur), or `inverse` (**`surfaceInverse`**; the title/subtitle ink flips to match automatically).
+- **`elevation`** — shadow `none`–`lg`, default `none` (depth from layering before shadows).
+- **`border`** — literal px width, default `1` (there are no border-width tokens).
+- **`padding`** — off the spacing scale (`none` for edge-to-edge media); **`radius`** — off the radius scale.
+
+Pass **`onPress`** to make the whole card a tap target: it reports `accessibilityRole="button"`, animates `scale 0.97` + opacity, and fires a **`haptic`** on press-down (`light` by default; set `none` in dense grids of tappable cards).
+
+**Recipes are compositions, not props.** A metric tile, image card, prompt card, a settings group (a `List`), or a `Carousel` is `Card` + its slots + the shipped primitives (`List.Row`, `Button`, `Badge`). Do not add a `MediaCard`/`ActionCard`; compose them.
+
+### List and Row
+
+Registry **`List`** is a compound stacked-row layout — **`List`** is the container, **`List.Row`** is the item, so there is never a "which do I reach for" question. The List draws **no surface of its own**: wrap it in a `Card` for the grouped look, or leave it on the page for edge-to-edge. It decides only how rows relate:
+
+- **`separated`** — `false` (default) keeps rows contiguous with a hairline; `true` spaces each onto its own surface.
+- **`divider`** (contiguous only) — `inset` (Apple style: the rule clears the leading asset — the row measures its own leading), `balanced` (content padding both sides), `edge` (full bleed), `none`.
+- **`density`** — `comfortable` (default) or `compact`; sets row vertical padding, i.e. how far apart items sit.
+
+**`List.Row`** takes **`leading`** (an icon or media thumbnail), **`title`** over an optional **`subtitle`** node (a badge fits), and a trailing **`value`** (with **`valueCaption`** and directional **`valueTone`**) alongside an optional **`trailing`** icon — value and icon can coexist. 44pt min height, native background-highlight press.
+
 ### Text Field and Search
 
 - Use quiet borders, strong cursor color, and generous vertical padding.

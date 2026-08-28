@@ -130,7 +130,7 @@ export default function ChipCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -141,7 +141,7 @@ export default function ChipCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingHorizontal: 24,
+              paddingHorizontal: t.spacing[6],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -149,7 +149,7 @@ export default function ChipCanvas() {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                gap: 8,
+                gap: t.spacing[2],
                 justifyContent: 'center',
               }}
             >
@@ -231,7 +231,7 @@ export default function ChipCanvas() {
             onPrevious={() => router.replace('/badge')}
             onNext={() => router.replace('/button')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Type">
                 {TYPES.map((value) => (
                   <VariantChipControl

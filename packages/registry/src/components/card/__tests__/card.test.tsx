@@ -34,16 +34,69 @@ describe('Card', () => {
     expect(screen.getByText('Footer')).toBeTruthy();
   });
 
-  it('renders each tone without crashing', () => {
-    for (const tone of ['default', 'raised', 'floating'] as const) {
+  it('renders each surface without crashing', () => {
+    for (const surface of ['default', 'elevated', 'bleed', 'inverse'] as const) {
       const { unmount } = renderWithTheme(
-        <Card tone={tone}>
-          <Text>{tone}</Text>
+        <Card surface={surface}>
+          <Text>{surface}</Text>
         </Card>,
       );
-      expect(screen.getByText(tone)).toBeTruthy();
+      expect(screen.getByText(surface)).toBeTruthy();
       unmount();
     }
+  });
+
+  it('renders each elevation without crashing', () => {
+    for (const elevation of ['none', 'sm', 'md', 'lg'] as const) {
+      const { unmount } = renderWithTheme(
+        <Card elevation={elevation}>
+          <Text>{elevation}</Text>
+        </Card>,
+      );
+      expect(screen.getByText(elevation)).toBeTruthy();
+      unmount();
+    }
+  });
+
+  it('applies the border width as a literal px on the content layer', () => {
+    // The border sits on the inner (clipped) layer, not the outer shadow layer.
+    const borderOf = (node: { props: { style: unknown } }) =>
+      (Object.assign({}, ...[node.props.style].flat(Infinity).filter(Boolean)) as {
+        borderWidth?: number;
+      }).borderWidth;
+
+    const view = renderWithTheme(
+      <Card border={4}>
+        <Text>b</Text>
+      </Card>,
+    );
+    // The Text's nearest card ancestor with a border is the inner content layer.
+    expect(view.getByText('b')).toBeTruthy();
+    const json = view.toJSON() as { children?: unknown[] };
+    const inner = (json.children as { props: { style: unknown } }[])[0];
+    expect(borderOf(inner)).toBe(4);
+  });
+
+  it('flips the title ink on an inverse surface', () => {
+    const colorOf = (node: { props: { style: unknown } }) =>
+      (Object.assign({}, ...[node.props.style].flat(Infinity).filter(Boolean)) as { color: string })
+        .color;
+
+    const def = renderWithTheme(
+      <Card surface="default">
+        <Card.Title>T</Card.Title>
+      </Card>,
+    );
+    const defaultColor = colorOf(def.getByText('T'));
+    def.unmount();
+
+    const inv = renderWithTheme(
+      <Card surface="inverse">
+        <Card.Title>T</Card.Title>
+      </Card>,
+    );
+    // The inverse surface must not paint the title in the default (primary) ink.
+    expect(colorOf(inv.getByText('T'))).not.toBe(defaultColor);
   });
 
   it('renders as a button with press feedback when onPress is given', () => {
@@ -70,34 +123,13 @@ describe('Card', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
-  it('paints the glass material and mounts the blur layer behind the content', () => {
-    renderWithTheme(
-      <Card surface="glass" blurComponent={<Text>blur</Text>}>
-        <Text>Glass</Text>
-      </Card>,
-    );
-
-    expect(screen.getByText('Glass')).toBeTruthy();
-    // The blur layer is decorative, so it is mounted but hidden from assistive tech.
-    expect(screen.getByText('blur', { includeHiddenElements: true })).toBeTruthy();
-  });
-
-  it('omits the blur layer when no blurComponent is supplied', () => {
-    renderWithTheme(
-      <Card surface="glass">
-        <Text>Glass</Text>
-      </Card>,
-    );
-    expect(screen.getByText('Glass')).toBeTruthy();
-  });
-
-  it('renders media and padding options', () => {
+  it('renders media edge-to-edge with padding="none"', () => {
     renderWithTheme(
       <Card padding="none">
         <Card.Media height={120}>
           <Text>Cover</Text>
         </Card.Media>
-        <Card.Body padded>
+        <Card.Body>
           <Text>Caption</Text>
         </Card.Body>
       </Card>,
@@ -112,13 +144,18 @@ describe('Card', () => {
  * mapping — a card that invents its own 14px radius is the thing to catch.
  */
 describe('Card — geometry variants', () => {
-  /** The card container is the render root; its style is an array of layers. */
+  /** The outer (shadow/radius) layer is the render root. */
   const rootStyle = (json: unknown) => {
     const node = json as { props?: { style?: unknown } };
     return Object.assign({}, ...[node.props?.style].flat(Infinity).filter(Boolean)) as Record<
       string,
       number
     >;
+  };
+  /** Padding and border live on the inner (clipped content) layer. */
+  const innerStyle = (json: unknown) => {
+    const inner = (json as { children: unknown[] }).children[0];
+    return rootStyle(inner);
   };
 
   it('maps the padding scale onto spacing tokens, with no two steps alike', () => {
@@ -129,7 +166,7 @@ describe('Card — geometry variants', () => {
           <Text>body</Text>
         </Card>,
       );
-      values.push(rootStyle(view.toJSON()).padding);
+      values.push(innerStyle(view.toJSON()).padding);
       view.unmount();
     }
     expect(values[0]).toBe(0);
@@ -154,34 +191,21 @@ describe('Card — geometry variants', () => {
     expect(rootStyle(full.toJSON()).borderRadius).toBe(9999);
   });
 
-  it('defaults to no margin and the standard card radius', () => {
+  it('defaults to the standard card radius', () => {
     const view = renderWithTheme(
       <Card>
         <Text>body</Text>
       </Card>,
     );
-    const style = rootStyle(view.toJSON());
-    expect(style.margin).toBe(0);
-    expect(style.borderRadius).toBe(16);
-  });
-
-  it('applies margin from the shared spacing scale', () => {
-    const view = renderWithTheme(
-      <Card margin="lg">
-        <Text>body</Text>
-      </Card>,
-    );
-    expect(rootStyle(view.toJSON()).margin).toBe(24);
+    expect(rootStyle(view.toJSON()).borderRadius).toBe(16);
   });
 
   it('keeps geometry working on a pressable card', () => {
     const view = renderWithTheme(
-      <Card onPress={() => {}} radius="sm" margin="xs" accessibilityLabel="card">
+      <Card onPress={() => {}} radius="sm" accessibilityLabel="card">
         <Text>body</Text>
       </Card>,
     );
-    const style = rootStyle(view.toJSON());
-    expect(style.borderRadius).toBe(4);
-    expect(style.margin).toBe(8);
+    expect(rootStyle(view.toJSON()).borderRadius).toBe(4);
   });
 });

@@ -62,7 +62,10 @@ export type UseTabBarScrollOptions = {
   topOffset?: number;
 };
 
-export function useTabBarScroll({ threshold = 18, topOffset = 24 }: UseTabBarScrollOptions = {}) {
+export function useTabBarScroll(options: UseTabBarScrollOptions = {}) {
+  const t = useTokens();
+  const threshold = options.threshold ?? t.spacing[5];
+  const topOffset = options.topOffset ?? t.spacing[6];
   const [hidden, setHidden] = useState(false);
   const lastOffset = useRef(0);
   const directionAnchor = useRef(0);
@@ -127,7 +130,7 @@ function TabBarRoot({
   const [selection] = useState(() => new Animated.Value(activeIndex));
   const [visibility] = useState(() => new Animated.Value(hidden ? 1 : 0));
   const floating = width === 'floating';
-  const innerPadding = floating ? 4 : 0;
+  const innerPadding = floating ? t.spacing[1] : t.spacing[0];
   const itemWidth = items.length > 0 ? Math.max(0, barWidth - innerPadding * 2) / items.length : 0;
   const indicatorWidth = floating ? itemWidth : Math.min(34, itemWidth * 0.46);
   const indicatorOffset = floating ? 0 : Math.max(0, (itemWidth - indicatorWidth) / 2);
@@ -167,7 +170,7 @@ function TabBarRoot({
   }
 
   const indicatorTranslate = Animated.add(Animated.multiply(selection, itemWidth), indicatorOffset);
-  const barHeight = showLabels ? 64 : 56;
+  const barHeight = showLabels ? t.spacing[16] : t.spacing[14];
   const isGlass = surface === 'glass';
   const glass = useGlassSurface('medium');
   // Nothing of our own behind glass — `GlassBackdrop` paints the material, and a
@@ -193,14 +196,19 @@ function TabBarRoot({
   // reachable; full-width bars slide off-screen since a stretched bar scales poorly.
   const hideTransform = floating
     ? [
-        { translateY: visibility.interpolate({ inputRange: [0, 1], outputRange: [0, 12] }) },
+        {
+          translateY: visibility.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, t.spacing[3]],
+          }),
+        },
         { scale: visibility.interpolate({ inputRange: [0, 1], outputRange: [1, 0.84] }) },
       ]
     : [
         {
           translateY: visibility.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, barHeight + bottomInset + 24],
+            outputRange: [0, barHeight + bottomInset + t.spacing[6]],
           }),
         },
       ];
@@ -263,10 +271,10 @@ function TabBarRoot({
           pointerEvents="none"
           style={{
             position: 'absolute',
-            top: 4,
+            top: t.spacing[1],
             left: innerPadding,
             width: indicatorWidth,
-            height: barHeight - 8,
+            height: barHeight - t.spacing[2],
             borderRadius: t.radii.full,
             backgroundColor: surface === 'filled' ? t.colors.surfaceStrong : t.colors.surfaceElevated,
             transform: [{ translateX: indicatorTranslate }],
@@ -309,10 +317,11 @@ function TabBarItemView({
   accessibilityLabel,
   active = false,
   showLabel = false,
-  color = '#000000',
+  color,
   onPress,
 }: InternalTabBarItemProps) {
   const t = useTokens();
+  const resolvedColor = color ?? t.colors.navInactive;
   return (
     <Pressable
       accessibilityRole="tab"
@@ -322,26 +331,26 @@ function TabBarItemView({
       onPress={onPress}
       style={({ pressed }) => ({
         flex: 1,
-        minWidth: 44,
-        minHeight: 44,
+        minWidth: t.sizing.touchTarget.minimum,
+        minHeight: t.sizing.touchTarget.minimum,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: showLabel ? 2 : 0,
+        gap: showLabel ? t.spacing[1] : t.spacing[0],
         opacity: disabled ? 0.38 : pressed ? t.motion.pressed.opacity : 1,
         transform: [{ scale: pressed ? t.motion.pressed.scale : 1 }],
       })}
     >
       <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-        {icon?.({ active, color, size: 24 })}
+        {icon?.({ active, color: resolvedColor, size: t.sizing.icon.md })}
         {badge != null ? (
           <View
             style={{
               position: 'absolute',
-              top: -7,
-              right: -12,
-              minWidth: 16,
-              height: 16,
-              paddingHorizontal: 4,
+              top: -t.spacing[2],
+              right: -t.spacing[3],
+              minWidth: t.sizing.icon.xs,
+              height: t.sizing.icon.xs,
+              paddingHorizontal: t.spacing[1],
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: t.radii.full,
@@ -350,11 +359,10 @@ function TabBarItemView({
           >
             <Text
               style={{
-                color: '#FFFFFF',
+                color: t.colors.textInteractivePrimary,
                 fontFamily: t.fontFamilies.sans,
+                ...t.typography.labelSmall,
                 fontWeight: t.fontWeights.semibold,
-                fontSize: 9,
-                lineHeight: 12,
               }}
             >
               {badge}
@@ -367,11 +375,10 @@ function TabBarItemView({
           numberOfLines={1}
           style={{
             maxWidth: '100%',
-            color,
+            color: resolvedColor,
             fontFamily: t.fontFamilies.sans,
+            ...t.typography.labelSmall,
             fontWeight: active ? t.fontWeights.semibold : t.fontWeights.medium,
-            fontSize: 10,
-            lineHeight: 13,
           }}
         >
           {label}

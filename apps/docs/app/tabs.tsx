@@ -69,9 +69,9 @@ export default function TabsCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingTop: 64,
-              paddingHorizontal: 20,
-              paddingBottom: 88,
+              paddingTop: t.spacing[16],
+              paddingHorizontal: t.spacing[5],
+              paddingBottom: t.spacing[20] + t.spacing[2],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -81,7 +81,7 @@ export default function TabsCanvas() {
                 maxWidth: 350,
                 height: 470,
                 overflow: 'hidden',
-                borderRadius: 34,
+                borderRadius: t.radii['2xl'],
                 borderWidth: 1,
                 borderColor: t.colors.border,
                 backgroundColor: t.colors.surface,
@@ -93,14 +93,14 @@ export default function TabsCanvas() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  paddingHorizontal: 20,
+                  paddingHorizontal: t.spacing[5],
                 }}
               >
                 <Text
                   style={{
                     color: t.colors.textPrimary,
-                    fontFamily: 'Manrope SemiBold',
-                    fontSize: 20,
+                    fontFamily: t.fontFamilies.sans,
+                    ...t.typography.headingLargeEmphasized,
                   }}
                 >
                   Discover
@@ -108,7 +108,7 @@ export default function TabsCanvas() {
                 <Ionicons name="options-outline" size={22} color={t.colors.textPrimary} />
               </View>
 
-              <View style={{ paddingHorizontal: 14 }}>
+              <View style={{ paddingHorizontal: t.spacing[4] }}>
                 <Tabs
                   value={value}
                   onValueChange={(next) => setValue(next as TabValue)}
@@ -154,7 +154,7 @@ export default function TabsCanvas() {
             onPrevious={() => router.replace('/skeleton')}
             onNext={() => router.replace('/tab-bar')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Appearance">
                 {APPEARANCES.map((option) => (
                   <VariantChip
@@ -214,10 +214,10 @@ function TabContent({ value }: { value: TabValue }) {
         : ['#FDE68A', '#E9D5FF', '#BFDBFE'];
 
   return (
-    <Animated.View style={{ flex: 1, padding: 16, gap: 14, opacity }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+    <Animated.View style={{ flex: 1, padding: t.spacing[4], gap: t.spacing[4], opacity }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
         <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: colors[0] }} />
-        <View style={{ gap: 5 }}>
+        <View style={{ gap: t.spacing[1] }}>
           <View
             style={{ width: 82, height: 9, borderRadius: 5, backgroundColor: t.colors.textPrimary }}
           />
@@ -232,9 +232,9 @@ function TabContent({ value }: { value: TabValue }) {
         </View>
       </View>
       <View style={{ height: 184, borderRadius: 18, backgroundColor: colors[1] }} />
-      <View style={{ flexDirection: 'row', gap: 10 }}>
+      <View style={{ flexDirection: 'row', gap: t.spacing[3] }}>
         {colors.map((color, index) => (
-          <View key={color} style={{ flex: 1, gap: 8 }}>
+          <View key={color} style={{ flex: 1, gap: t.spacing[2] }}>
             <View style={{ height: 74, borderRadius: 13, backgroundColor: color }} />
             <View
               style={{

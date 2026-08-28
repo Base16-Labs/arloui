@@ -107,7 +107,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/button/index.ts', target: 'button/index.ts' },
     ],
     meta: {
-      figma: 'Components/Button/Primary',
       tags: ['action', 'primitive'],
     },
   },
@@ -116,20 +115,30 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.',
-    dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'glass', 'animated-counter', 'chart', 'button'],
+      'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
-      { source: 'components/card/stat-card.tsx', target: 'card/stat-card.tsx' },
-      { source: 'components/card/list-card.tsx', target: 'card/list-card.tsx' },
-      { source: 'components/card/media-card.tsx', target: 'card/media-card.tsx' },
-      { source: 'components/card/action-card.tsx', target: 'card/action-card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
-      figma: 'Components/Card/Default',
-      tags: ['surface', 'primitive', 'glass'],
+      tags: ['surface', 'primitive'],
+    },
+  },
+  {
+    name: 'list',
+    kind: 'primitive',
+    title: 'List',
+    description:
+      'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/list/list.tsx', target: 'list/list.tsx' },
+      { source: 'components/list/index.ts', target: 'list/index.ts' },
+    ],
+    meta: {
+      tags: ['list', 'row', 'primitive'],
     },
   },
   {
@@ -171,7 +180,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Chart',
     description:
-      'Inline sparkline used by StatCard. The other chart forms live on a separate branch.',
+      'Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.',
     dependencies: ['react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
@@ -241,7 +250,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
     ],
     meta: {
-      figma: 'Components/Sheet/Default',
       tags: ['surface', 'overlay', 'primitive'],
     },
   },
@@ -273,7 +281,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/input/index.ts', target: 'input/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Input/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -289,7 +296,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/checkbox/index.ts', target: 'checkbox/index.ts' },
     ],
     meta: {
-      figma: 'Components/Checkbox/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -305,7 +311,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/radio/index.ts', target: 'radio/index.ts' },
     ],
     meta: {
-      figma: 'Components/Radio/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -321,7 +326,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/toggle/index.ts', target: 'toggle/index.ts' },
     ],
     meta: {
-      figma: 'Components/Toggle/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -337,7 +341,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/text-area/index.ts', target: 'text-area/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Area/Default',
       tags: ['form', 'primitive', 'multiline'],
     },
   },
@@ -398,7 +401,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/badge/index.ts', target: 'badge/index.ts' },
     ],
     meta: {
-      figma: 'Components/Badge/Default',
       tags: ['label', 'status', 'primitive'],
     },
   },
@@ -415,7 +417,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/chip/index.ts', target: 'chip/index.ts' },
     ],
     meta: {
-      figma: 'Components/Chip/Default',
       tags: ['filter', 'tag', 'interactive', 'primitive'],
     },
   },
@@ -452,7 +453,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/date-picker/index.ts', target: 'date-picker/index.ts' },
     ],
     meta: {
-      figma: 'Components/Date Picker/Default',
       tags: ['form', 'calendar', 'date', 'primitive'],
     },
   },

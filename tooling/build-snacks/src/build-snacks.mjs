@@ -23,11 +23,11 @@ mkdirSync(TMP, { recursive: true });
 
 // apps/docs screen file -> the www docs slug DevicePreview passes as `route`.
 const SCREENS = {
-  badge: 'badge', button: 'button', carousel: 'carousel', checkbox: 'checkbox',
-  chip: 'chip', 'date-picker': 'date-picker', gallery: 'gallery', input: 'input',
-  radio: 'radio', sheet: 'sheet', skeleton: 'skeleton', spinner: 'spinner',
-  'tab-bar': 'tab-bar', tabs: 'tabs', textarea: 'text-area', toast: 'toast',
-  toggle: 'toggle',
+  badge: 'badge', button: 'button', cards: 'card', carousel: 'carousel',
+  checkbox: 'checkbox', chip: 'chip', 'date-picker': 'date-picker', gallery: 'gallery',
+  input: 'input', list: 'list', radio: 'radio', sheet: 'sheet',
+  skeleton: 'skeleton', spinner: 'spinner', 'tab-bar': 'tab-bar', tabs: 'tabs',
+  textarea: 'text-area', toast: 'toast', toggle: 'toggle',
 };
 
 // A single Snack has no file-based routing, so stub expo-router.

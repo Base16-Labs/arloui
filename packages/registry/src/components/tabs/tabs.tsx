@@ -91,7 +91,7 @@ function TabsRoot({
   }, [activeIndex, reduceMotion, segmented, selection, t.motion.spring.snappy]);
 
   if (segmented) {
-    const segPadding = 4;
+    const segPadding = t.spacing[1];
     const thumbWidth = items.length > 0 ? Math.max(0, (trackWidth - segPadding * 2) / items.length) : 0;
     return (
       <View
@@ -148,7 +148,7 @@ function TabsRoot({
         {
           flexDirection: 'row',
           alignItems: 'center',
-          gap: appearance === 'filled' ? 8 : 2,
+          gap: appearance === 'filled' ? t.spacing[2] : t.spacing[1],
         },
         appearance === 'underline'
           ? { borderBottomWidth: 1, borderBottomColor: t.colors.border }
@@ -176,7 +176,9 @@ function TabsRoot({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 1 }}
+      contentContainerStyle={{
+        paddingHorizontal: 1, // token-ignore: preserves the scroll focus/indicator edge.
+      }}
       style={style}
     >
       {content}
@@ -225,8 +227,8 @@ function TabsItemView({
       style={({ pressed }) => ({
         flex: equal ? 1 : undefined,
         minWidth: equal ? 0 : 52,
-        minHeight: 44,
-        paddingHorizontal: appearance === 'filled' ? 16 : 12,
+        minHeight: t.sizing.touchTarget.minimum,
+        paddingHorizontal: appearance === 'filled' ? t.spacing[4] : t.spacing[3],
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: appearance === 'filled' ? t.radii.full : 0,
@@ -269,9 +271,8 @@ function TabsItemView({
                   ? t.colors.textTertiary
                   : t.colors.textSecondary,
           fontFamily: t.fontFamilies.sans,
+          ...t.typography.bodyMedium,
           fontWeight: active ? t.fontWeights.semibold : t.fontWeights.medium,
-          fontSize: 14,
-          lineHeight: 20,
         }}
       >
         {label}

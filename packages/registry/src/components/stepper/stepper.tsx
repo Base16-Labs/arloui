@@ -563,7 +563,10 @@ export function Stepper({
             style={[
               StyleSheet.absoluteFill,
               {
-                paddingVertical: 0,
+                // Clearing the platform's own input padding, not applying a spacing
+                // step — the invisible field has to sit exactly over the digits it
+                // stands in for.
+                paddingVertical: 0, // token-ignore: a reset, not a spacing choice.
                 color: 'transparent',
                 fontFamily: t.fontFamilies.sans,
                 fontSize: dims.font.fontSize,

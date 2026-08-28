@@ -84,7 +84,9 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
       ? containerWidth
       : peek
         ? containerWidth - peekAmount * 2
-        : containerWidth - t.spacing[4] * 2;
+        : // Item snap without peek is full-bleed — no resting gutter. Peek is the
+          // only thing that reserves room for neighbours.
+          containerWidth;
   const totalWidth = count * itemWidth + (count - 1) * resolvedGap;
 
   useEffect(() => {
@@ -97,8 +99,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
     };
   }, []);
 
-  const inset =
-    snap === 'page' ? 0 : peek ? peekAmount : t.spacing[4];
+  const inset = snap === 'page' ? 0 : peek ? peekAmount : 0;
 
   const offsetForIndex = (index: number) => {
     const rtlSign = I18nManager.isRTL ? 1 : -1;
@@ -286,7 +287,7 @@ function CarouselDots({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 6,
+        gap: t.spacing[2],
         paddingTop: overlay ? 0 : t.spacing[3],
         paddingBottom: overlay ? 0 : t.spacing[1],
       }}
@@ -306,7 +307,9 @@ function CarouselDots({
               overlay
                 ? i === current
                   ? t.colors.accent
-                  : 'rgba(128,128,128,0.5)'
+                  : // Bright enough to read on photos and saturated colours, with a
+                    // little bleed so it never looks like a hard chip.
+                    'rgba(255,255,255,0.8)'
                 : i === current
                   ? t.colors.accent
                   : t.colors.borderStrong,

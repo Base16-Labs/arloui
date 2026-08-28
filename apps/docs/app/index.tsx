@@ -13,6 +13,7 @@ type IndexItem = {
     | '/badge'
     | '/button'
     | '/cards'
+    | '/list'
     | '/chip'
     | '/input'
     | '/textarea'
@@ -47,12 +48,11 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Header', category: 'Nav' },
   { title: 'Icons', category: 'Foundations', href: '/icons' },
   { title: 'Input', category: 'Controls', href: '/input' },
-  { title: 'List', category: 'Lists' },
+  { title: 'List', category: 'Lists', href: '/list' },
   { title: 'Nav', category: 'Nav' },
   { title: 'Note', category: 'Type' },
   { title: 'Pill', category: 'Controls' },
   { title: 'Radio', category: 'Controls', href: '/radio' },
-  { title: 'Row', category: 'Lists' },
   { title: 'Sheet', category: 'Layout', href: '/sheet' },
   { title: 'Skeleton', category: 'Feedback', href: '/skeleton' },
   { title: 'Spinner', category: 'Feedback', href: '/spinner' },
@@ -84,13 +84,13 @@ export default function ComponentIndex() {
         <View
           style={{
             flex: 1,
-            paddingTop: 22,
+            paddingTop: t.spacing[6],
           }}
         >
           <View
             style={{
               alignItems: 'flex-end',
-              paddingHorizontal: 20,
+              paddingHorizontal: t.spacing[5],
             }}
           >
             <ThemeToggle />
@@ -98,14 +98,14 @@ export default function ComponentIndex() {
 
           <View
             style={{
-              marginTop: 44,
-              marginHorizontal: 20,
+              marginTop: t.spacing[12],
+              marginHorizontal: t.spacing[5],
               height: 52,
               flexDirection: 'row',
               alignItems: 'center',
-              gap: 10,
-              paddingHorizontal: 16,
-              borderRadius: 14,
+              gap: t.spacing[3],
+              paddingHorizontal: t.spacing[4],
+              borderRadius: t.radii.lg,
               borderWidth: 1,
               borderColor: t.colors.border,
               backgroundColor: t.colors.surfaceRaised,
@@ -122,9 +122,9 @@ export default function ComponentIndex() {
               style={{
                 flex: 1,
                 color: t.colors.textPrimary,
-                fontFamily: 'Manrope',
-                fontSize: 15,
-                paddingVertical: 0,
+                fontFamily: t.fontFamilies.sans,
+                ...t.typography.bodyMedium,
+                paddingVertical: t.spacing[0],
               }}
             />
             {query ? (
@@ -144,23 +144,23 @@ export default function ComponentIndex() {
             keyExtractor={(item) => item.title}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator
-            style={{ flex: 1, marginTop: 18 }}
+            style={{ flex: 1, marginTop: t.spacing[5] }}
             contentContainerStyle={{
               borderTopWidth: 1,
               borderTopColor: t.colors.border,
-              paddingBottom: 36,
+              paddingBottom: t.spacing[10],
             }}
             ItemSeparatorComponent={() => (
               <View style={{ height: 1, backgroundColor: t.colors.border }} />
             )}
             renderItem={({ item }) => <IndexRow item={item} />}
             ListEmptyComponent={
-              <View style={{ alignItems: 'center', paddingTop: 48 }}>
+              <View style={{ alignItems: 'center', paddingTop: t.spacing[12] }}>
                 <Text
                   style={{
                     color: t.colors.textSecondary,
-                    fontFamily: 'Manrope',
-                    fontSize: 14,
+                    fontFamily: t.fontFamilies.sans,
+                    ...t.typography.bodyMedium,
                   }}
                 >
                   No matching components
@@ -185,11 +185,11 @@ function IndexRow({ item }: { item: IndexItem }) {
         if (item.href) router.push(item.href as Parameters<typeof router.push>[0]);
       }}
       style={({ pressed }) => ({
-        minHeight: 64,
+        minHeight: t.spacing[16],
         width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: t.spacing[5],
         backgroundColor: pressed ? t.colors.surfaceRaised : t.colors.bg,
       })}
     >
@@ -197,9 +197,9 @@ function IndexRow({ item }: { item: IndexItem }) {
         style={{
           flex: 1,
           color: t.colors.textPrimary,
-          fontFamily: 'Manrope Medium',
-          fontSize: 17,
-          lineHeight: 23,
+          fontFamily: t.fontFamilies.sans,
+          ...t.typography.headingMedium,
+          fontWeight: t.fontWeights.medium,
         }}
       >
         {item.title}
@@ -207,12 +207,10 @@ function IndexRow({ item }: { item: IndexItem }) {
       <Text
         style={{
           flexShrink: 0,
-          marginLeft: 16,
+          marginLeft: t.spacing[4],
           color: t.colors.textTertiary,
-          fontFamily: 'Manrope SemiBold',
-          fontSize: 10,
-          lineHeight: 14,
-          letterSpacing: 1.1,
+          fontFamily: t.fontFamilies.sans,
+          ...t.typography.overline,
           textAlign: 'right',
           textTransform: 'uppercase',
         }}

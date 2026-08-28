@@ -26,9 +26,14 @@ const E = error;
 /** Light — Figma utility tokens (camelCase). */
 export const lightSemanticColors = {
   surfaceBackground: G[50],
+  // Card fill — a step greyer than the background and the (white) elevated surface.
+  surfaceCard: G[100],
   surfaceInput: G[100],
   surfaceInputActive: G[200],
   surfaceElevated: base.white,
+  // Translucent fill that lets a coloured background or image bleed through — a
+  // subtle frost, not the heavy blur of a tab bar. The app background at 50%.
+  surfaceBleed: rgbaFromHex(G[50], 0.5),
   surfaceOverlay: alphaRamp.black[40],
   surfaceInverse: G[900],
 
@@ -118,9 +123,14 @@ export const lightSemanticColors = {
 /** Dark — same token names; neutrals run on Zinc (see `Z` above), accents on the Main palette. */
 export const darkSemanticColors = {
   surfaceBackground: Z[950],
+  // Card fill — sits between the background and the elevated surface.
+  surfaceCard: Z[900],
   surfaceInput: Z[900],
   surfaceInputActive: Z[800],
   surfaceElevated: Z[800],
+  // Translucent fill — the app background at 50%, so a coloured backdrop shows
+  // through as a subtle frost.
+  surfaceBleed: rgbaFromHex(Z[950], 0.5),
   surfaceOverlay: alphaRamp.black[70],
   surfaceInverse: Z[50],
 

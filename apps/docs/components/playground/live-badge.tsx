@@ -12,7 +12,7 @@ export function LiveBadge() {
         alignItems: 'center',
         gap: 7,
         paddingHorizontal: 11,
-        borderRadius: 999,
+        borderRadius: t.radii.full,
         borderWidth: 1,
         borderColor: t.colors.border,
         backgroundColor: t.colors.surfaceRaised,
@@ -23,16 +23,14 @@ export function LiveBadge() {
           width: 6,
           height: 6,
           borderRadius: 3,
-          backgroundColor: '#22C55E',
+          backgroundColor: t.colors.feedbackSuccess,
         }}
       />
       <Text
         style={{
           color: t.colors.textSecondary,
-          fontFamily: 'Manrope SemiBold',
-          fontSize: 9,
-          lineHeight: 12,
-          letterSpacing: 1.1,
+          fontFamily: t.fontFamilies.sans,
+          ...t.typography.overline,
         }}
       >
         LIVE
