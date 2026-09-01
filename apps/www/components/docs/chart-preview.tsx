@@ -147,8 +147,13 @@ export function ChartBarPreview() {
   return (
     <Frame label="Chart.Bar">
       <div className="flex h-[150px] items-end gap-1.5">
-        {bars.map((b) => (
-          <div key={b.label} className="flex flex-1 flex-col items-center gap-1.5">
+        {/*
+          Keyed by position, not label. The labels are weekday initials — M T W
+          T F S S — so two Ts and two Ss collide, and React drops one of each
+          pair. A day's identity here *is* its place in the week.
+        */}
+        {bars.map((b, index) => (
+          <div key={index} className="flex flex-1 flex-col items-center gap-1.5">
             <span className="font-mono text-[10px] text-ink-3 tabular-nums">${b.value}</span>
             <div
               className="w-full rounded-[4px]"
@@ -263,6 +268,51 @@ export function ChartMeterPreview() {
   );
 }
 
+/**
+ * A month of days as filled and empty squares — the sixth form, and the one the
+ * page kept claiming without ever drawing.
+ *
+ * Deterministic rather than random: this renders on the server and again on the
+ * client, and a grid that disagrees with itself between the two is a hydration
+ * mismatch. The pattern is a fixed bitmask so both passes draw the same month.
+ */
+export function ChartHeatmapPreview() {
+  const weeks = 5;
+  const days = weeks * 7;
+  // Four intensity steps, tinted from one hue — intensity is a magnitude, so it
+  // does not spend the categorical palette.
+  const level = (index: number) => (index * 7) % 11;
+  const tint = (value: number) =>
+    value === 0 ? undefined : 0.25 + (0.75 * Math.min(3, Math.floor(value / 3))) / 3;
+
+  return (
+    <Frame label="Chart.Heatmap">
+      <div className="space-y-1.5">
+        <div className="grid grid-cols-7 gap-1.5">
+          {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((initial, index) => (
+            // Keyed by position: the weekday initials repeat.
+            <span key={index} className="text-center font-mono text-[10px] text-ink-3">
+              {initial}
+            </span>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1.5">
+          {Array.from({ length: days }, (_, index) => {
+            const alpha = tint(level(index));
+            return (
+              <div
+                key={index}
+                className="aspect-square rounded-[3px] bg-surface-raised"
+                style={alpha ? { background: CHART_SERIES[0], opacity: alpha } : undefined}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
 export function ChartFormsPreview() {
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -270,9 +320,8 @@ export function ChartFormsPreview() {
       <ChartSparklinePreview />
       <ChartBarPreview />
       <ChartMeterPreview />
-      <div className="md:col-span-2">
-        <ChartDonutPreview />
-      </div>
+      <ChartDonutPreview />
+      <ChartHeatmapPreview />
     </div>
   );
 }

@@ -38,8 +38,16 @@ export function ChartLegend({ items, style }: ChartLegendProps) {
       accessibilityRole="text"
       style={[{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: t.spacing[4] }, style]}
     >
-      {items.map((item) => (
-        <View key={item.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+      {/*
+        Keyed by position as well as label. Every other list in the chart family
+        already is: a legend's labels are the caller's text, and two series with
+        the same name is a real thing to pass — React would silently drop one.
+      */}
+      {items.map((item, index) => (
+        <View
+          key={`${item.label}-${index}`}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+        >
           <View
             style={{
               width: 10,

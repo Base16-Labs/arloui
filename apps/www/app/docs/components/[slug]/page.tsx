@@ -3081,8 +3081,18 @@ function ChartDocPage() {
         </Section>
 
         <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
-          <CodeBlock language="tsx">{`npx arloui add chart
+          <CodeBlock language="tsx">{`# The namespace — every form.
+npx arloui add chart
 
+# Or take one. Each form brings the shared core and nothing else.
+npx arloui add chart-bar
+npx arloui add chart-sparkline
+
+// The namespace is assembled in chart/index.ts, which only the full entry
+// installs. Took a single form? Import that form, and the shared helpers
+// from the core file they live in:
+//   import { BarChart } from "@/components/ui/chart/bar-chart";
+//   import { formatMoney } from "@/components/ui/chart/format";
 import { Chart, formatMoney } from "@/components/ui/chart";
 
 // No children renders the documented composition:

@@ -93,3 +93,44 @@ const SKELETON_MIN_OPACITY = 0.35;
 const SKELETON_MAX_OPACITY = 0.75;
 /** Reduce Motion resting value — the midpoint, so it reads the same weight. */
 const SKELETON_REST_OPACITY = 0.55;
+
+/**
+ * The sweep that rides on top of the pulse.
+ *
+ * Two things are happening in a chart skeleton and they say different things:
+ * the pulse is the surface breathing — "this is a placeholder" — and the sheen
+ * travelling across it is "something is on its way". Systems that use only the
+ * pulse read as inert; only the sheen and the shape stops reading as a
+ * placeholder at all. Running both is what the `Skeleton` component already
+ * does, so the charts match rather than inventing a second treatment.
+ *
+ * Returns `null` under Reduce Motion. The pulse resolves to a flat resting
+ * opacity there and the sheen simply does not run — a highlight crossing the
+ * screen on a loop is the exact thing that setting is asking to stop.
+ */
+export function useSkeletonSheen(durationMs: number): Animated.Value | null {
+  const reduceMotion = useReduceMotion();
+  const [sweep] = useState(() => new Animated.Value(0));
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(sweep, {
+          toValue: 1,
+          duration: durationMs,
+          easing: Easing.inOut(Easing.quad),
+          useNativeDriver: true,
+        }),
+        // A beat at the far edge, so the sweep reads as repeating passes rather
+        // than a band spinning on a belt.
+        Animated.delay(durationMs * 0.4),
+      ]),
+    );
+    sweep.setValue(0);
+    loop.start();
+    return () => loop.stop();
+  }, [sweep, reduceMotion, durationMs]);
+
+  return reduceMotion ? null : sweep;
+}

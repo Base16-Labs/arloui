@@ -9,18 +9,15 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
-type Dataset = 'spend' | 'many';
 type State = 'default' | 'loading' | 'empty';
 
-const SPEND = [
-  { label: 'Rent', value: 1200 },
-  { label: 'Food', value: 480 },
-  { label: 'Travel', value: 320 },
-  { label: 'Utilities', value: 180 },
-];
-
-/** Past the palette's capacity, so the chart folds the tail into one neutral slice. */
-const MANY = [
+/**
+ * One pool, taken from the front. The Categories control slices it, so the fold
+ * into "Other" is something you walk into by adding categories rather than a
+ * second control arguing with the first: the palette names four, so five is
+ * where the tail starts collapsing.
+ */
+const CATEGORIES = [
   { label: 'Rent', value: 1200 },
   { label: 'Food', value: 480 },
   { label: 'Travel', value: 320 },
@@ -30,7 +27,7 @@ const MANY = [
   { label: 'Repairs', value: 45 },
 ];
 
-const DATASETS: Dataset[] = ['spend', 'many'];
+const COUNTS = [1, 2, 3, 4, 5, 6, 7] as const;
 const DENSITIES: ChartDensity[] = ['default', 'compact'];
 const STATES: State[] = ['default', 'loading', 'empty'];
 /**
@@ -43,8 +40,6 @@ const THICKNESSES = [
   { label: 'default', value: 26 },
   { label: 'thick', value: 38 },
 ] as const;
-/** The fold-into-Other cap. 4 is the palette's validated capacity and the default. */
-const CAPS = [2, 3, 4, 5] as const;
 
 const money = (value: number) => `$${value.toLocaleString('en-US')}`;
 
@@ -53,17 +48,16 @@ export default function DonutChartCanvas() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [dataset, setDataset] = useState<Dataset>('spend');
+  const [count, setCount] = useState<number>(4);
   const [showLegend, setShowLegend] = useState(true);
   const [density, setDensity] = useState<ChartDensity>('default');
   const [thickness, setThickness] = useState<number>(26);
-  const [maxSlices, setMaxSlices] = useState<number>(5);
   const [showValue, setShowValue] = useState(true);
   const [state, setState] = useState<State>('default');
   const [selected, setSelected] = useState<number | null>(null);
   const [previewOffset] = useState(() => new Animated.Value(0));
 
-  const data = state === 'empty' ? [] : dataset === 'spend' ? SPEND : MANY;
+  const data = state === 'empty' ? [] : CATEGORIES.slice(0, count);
 
   useEffect(() => {
     Animated.spring(previewOffset, {
@@ -110,7 +104,6 @@ export default function DonutChartCanvas() {
               format={money}
               density={density}
               thickness={thickness}
-              maxSlices={maxSlices}
               loading={state === 'loading'}
               showLegend={showLegend}
               showValue={showValue}
@@ -152,14 +145,14 @@ export default function DonutChartCanvas() {
             onNext={() => router.replace('/chart/meter')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Data">
-                {DATASETS.map((value) => (
+              <VariantControlRow label="Categories">
+                {COUNTS.map((value) => (
                   <VariantChip
                     key={value}
-                    label={value === 'spend' ? 'four categories' : 'folds into Other'}
-                    active={dataset === value}
+                    label={String(value)}
+                    active={count === value}
                     onPress={() => {
-                      setDataset(value);
+                      setCount(value);
                       setSelected(null);
                     }}
                   />
@@ -192,16 +185,6 @@ export default function DonutChartCanvas() {
                     label={option}
                     active={showValue === (option === 'value')}
                     onPress={() => setShowValue(option === 'value')}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Cap">
-                {CAPS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={String(value)}
-                    active={maxSlices === value}
-                    onPress={() => setMaxSlices(value)}
                   />
                 ))}
               </VariantControlRow>

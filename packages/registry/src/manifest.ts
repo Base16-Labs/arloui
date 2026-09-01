@@ -114,7 +114,20 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'A card surface plus the four presets built on it: StatCard (metric with a rolling counter, signed delta, and inline sparkline), ListCard and ListCard.Group (rows with leading/trailing slots and hairline separators), MediaCard (cover image below or overlaid with a scrim), and ActionCard (icon, pitch, and buttons). Supports media, padding, press, and Liquid Glass.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'glass', 'animated-counter', 'chart', 'button'],
+    /*
+     * `chart-sparkline`, not `chart`. StatCard imports exactly one thing from the
+     * chart family — the inline sparkline — and depending on the namespace made
+     * every card drag in the plot, the bar, the donut, the meter, and the
+     * heatmap behind it.
+     */
+    registryDependencies: [
+      'tokens',
+      'theme-provider',
+      'glass',
+      'animated-counter',
+      'chart-sparkline',
+      'button',
+    ],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
       { source: 'components/card/stat-card.tsx', target: 'card/stat-card.tsx' },
@@ -147,41 +160,120 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'chart-core',
+    kind: 'primitive',
+    title: 'Chart core',
+    description:
+      'The geometry, tone, and density every chart form measures with, plus the shared legend, empty slot, and loading skeleton. Installed by each form; install it directly only if you are writing a form of your own against the same scale.',
+    /*
+     * Arlo draws every mark itself, on `react-native-svg` and nothing else.
+     *
+     * `react-native-gifted-charts` and `expo-linear-gradient` used to be here.
+     * Both are gone: the first was paying a full integration cost for features
+     * none of the forms used (an unconditional 10px pad we cancelled, a painted
+     * donut hole that leaked `centerColor` into the public API, bars with no
+     * accessibility under a synthetic press layer, and plot geometry computed
+     * twice and kept in agreement by hand), and the second only ever existed
+     * because gifted resolved a gradient package at import time — the area fill
+     * is an SVG `<LinearGradient>` now.
+     */
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
+    files: [
+      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
+      { source: 'components/chart/hooks.ts', target: 'chart/hooks.ts' },
+      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
+      { source: 'components/chart/legend.tsx', target: 'chart/legend.tsx' },
+      { source: 'components/chart/empty.tsx', target: 'chart/empty.tsx' },
+      { source: 'components/chart/skeleton.tsx', target: 'chart/skeleton.tsx' },
+    ],
+    meta: { tags: ['chart', 'data', 'foundation', 'primitive'] },
+  },
+  {
+    name: 'chart-plot',
+    kind: 'primitive',
+    title: 'Chart plot',
+    description:
+      'The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'animated-counter', 'haptics'],
+    files: [{ source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' }],
+    meta: { tags: ['chart', 'line', 'area', 'scrub', 'gesture', 'primitive'] },
+  },
+  {
+    name: 'chart-bar',
+    kind: 'primitive',
+    title: 'Bar chart',
+    description:
+      'Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection, a reference line, and signed values below the zero rule.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [{ source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' }],
+    meta: { tags: ['chart', 'bar', 'categorical', 'primitive'] },
+  },
+  {
+    name: 'chart-sparkline',
+    kind: 'primitive',
+    title: 'Sparkline',
+    description:
+      'A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction, with an optional end dot and high/low marks.',
+    registryDependencies: ['chart-core'],
+    files: [{ source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' }],
+    meta: { tags: ['chart', 'sparkline', 'inline', 'primitive'] },
+  },
+  {
+    name: 'chart-donut',
+    kind: 'primitive',
+    title: 'Donut chart',
+    description:
+      'Part-to-whole with a mandatory legend. Four validated slices, then everything past them folds into one neutral Other.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [{ source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' }],
+    meta: { tags: ['chart', 'donut', 'part-to-whole', 'primitive'] },
+  },
+  {
+    name: 'chart-meter',
+    kind: 'primitive',
+    title: 'Meter',
+    description:
+      'One value against a target, as a bar, a ring, or an arc gauge, with optional concentric rings and warning/danger thresholds.',
+    registryDependencies: ['chart-core'],
+    files: [{ source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' }],
+    meta: { tags: ['chart', 'meter', 'gauge', 'progress', 'primitive'] },
+  },
+  {
+    name: 'chart-heatmap',
+    kind: 'primitive',
+    title: 'Heatmap',
+    description:
+      'A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [{ source: 'components/chart/heatmap.tsx', target: 'chart/heatmap.tsx' }],
+    meta: { tags: ['chart', 'heatmap', 'calendar', 'streak', 'primitive'] },
+  },
+  {
     name: 'chart',
     kind: 'primitive',
     title: 'Chart',
     description:
-      'Six chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars — grouped, stacked, or horizontal rows), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), Chart.Meter (one value against a target, as a bar or a ring), and Chart.Heatmap (a calendar streak grid with no charting library).',
-    /*
-     * Arlo draws every mark itself, on `react-native-svg` and nothing else. The
-     * geometry is in `chart/core.ts`.
-     *
-     * `react-native-gifted-charts` and `expo-linear-gradient` used to be here.
-     * Both are gone: the first was paying a full integration cost for features
-     * none of the five forms used (an unconditional 10px pad we cancelled, a
-     * painted donut hole that leaked `centerColor` into the public API, bars with
-     * no accessibility under a synthetic press layer, and plot geometry computed
-     * twice and kept in agreement by hand), and the second only ever existed
-     * because gifted resolved a gradient package at import time — the area fill is
-     * an SVG `<LinearGradient>` now.
-     */
-    dependencies: ['react-native-svg', 'expo-haptics'],
-    registryDependencies: ['tokens', 'theme-provider', 'animated-counter', 'haptics', 'reduce-motion'],
-    files: [
-      { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
-      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
-      { source: 'components/chart/hooks.ts', target: 'chart/hooks.ts' },
-      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
-      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
-      { source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' },
-      { source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' },
-      { source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' },
-      { source: 'components/chart/heatmap.tsx', target: 'chart/heatmap.tsx' },
-      { source: 'components/chart/legend.tsx', target: 'chart/legend.tsx' },
-      { source: 'components/chart/empty.tsx', target: 'chart/empty.tsx' },
-      { source: 'components/chart/skeleton.tsx', target: 'chart/skeleton.tsx' },
-      { source: 'components/chart/index.ts', target: 'chart/index.ts' },
+      'Every chart form and the `Chart` namespace that reaches them — the plot, sparkline, bar, donut, meter, and heatmap. Take this to get the namespace; take a single form (`chart-bar`, `chart-sparkline`, …) to get one chart and the shared core, and nothing else.',
+    registryDependencies: [
+      'chart-core',
+      'chart-plot',
+      'chart-bar',
+      'chart-sparkline',
+      'chart-donut',
+      'chart-meter',
+      'chart-heatmap',
     ],
+    /*
+     * Only the barrel. Every file belongs to one of the entries above, and this
+     * is the one place that legitimately depends on all of them: it assembles
+     * `Chart.Bar`, `Chart.Donut`, and the rest into the namespace.
+     */
+    files: [{ source: 'components/chart/index.ts', target: 'chart/index.ts' }],
     meta: {
       tags: ['chart', 'data', 'visualization', 'gesture', 'motion', 'primitive'],
     },

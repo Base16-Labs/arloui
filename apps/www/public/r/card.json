@@ -12,7 +12,7 @@
     "theme-provider",
     "glass",
     "animated-counter",
-    "chart",
+    "chart-sparkline",
     "button"
   ],
   "files": [

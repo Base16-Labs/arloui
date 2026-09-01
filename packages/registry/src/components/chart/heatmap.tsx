@@ -27,13 +27,14 @@
  *   is one image to a screen reader — forty-two tappable squares is not a
  *   control surface, it is noise.
  */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Animated, Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { rgbaFromHex } from '@arloui/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import type { ChartPoint } from './core';
 import { useSkeletonPulse } from './hooks';
+import { SkeletonSheen } from './skeleton';
 
 export type HeatmapDatum = ChartPoint & {
   /** A timestamp, an ISO string, or a `Date` — normalised to local midnight. */
@@ -105,6 +106,7 @@ export function Heatmap({
 }: HeatmapProps) {
   const t = useTokens();
   const pulse = useSkeletonPulse(t.motion.duration.slow);
+  const [gridWidth, setGridWidth] = useState(0);
   const interactive = onSelect != null;
 
   const byDay = useMemo(() => {
@@ -188,8 +190,16 @@ export function Heatmap({
         accessible={!interactive}
         accessibilityRole={interactive ? undefined : 'image'}
         accessibilityLabel={interactive ? undefined : summary}
-        style={{ gap: 5, opacity: loading ? pulse : 1 }}
+        onLayout={(event) => setGridWidth(event.nativeEvent.layout.width)}
+        style={{ gap: 5, opacity: loading ? pulse : 1, overflow: 'hidden' }}
       >
+        {/*
+          The grid is a field of squares rather than one shape, so the sweep runs
+          across the block and the gaps between cells break it up on their own —
+          no clip needed, and clipping to forty-two separate rects would cost
+          more than it buys.
+        */}
+        {loading ? <SkeletonSheen width={gridWidth} /> : null}
         {showDayLabels ? (
           <View style={{ flexDirection: 'row', gap: 5 }}>
             {DAY_INITIALS.map((initial, index) => (

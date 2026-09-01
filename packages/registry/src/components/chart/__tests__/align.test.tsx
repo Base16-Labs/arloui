@@ -1,4 +1,4 @@
-import { Chart } from '../chart';
+import { Chart } from '../index';
 import { makeScale } from '../core';
 import { fireEvent, renderWithTheme, screen } from '../../../../test/render';
 

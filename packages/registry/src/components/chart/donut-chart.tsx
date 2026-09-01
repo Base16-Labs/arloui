@@ -51,7 +51,7 @@ import {
 } from './core';
 import { useControllableIndex, useSkeletonPulse } from './hooks';
 import { EmptyContent, type ChartEmptyProps } from './empty';
-import { SkeletonBlock } from './skeleton';
+import { SkeletonSheenSvg } from './skeleton';
 
 export type DonutSlice = ChartPoint & {
   label: string;
@@ -316,13 +316,15 @@ export function DonutChart({
         </Svg>
 
         <View style={{ alignItems: 'center', paddingHorizontal: ringThickness }}>
-          {!showValue ? null : loading ? (
-            // A block where the number goes, not a hole. Same rule the plot's
-            // readouts follow: the centre value is a figure the chart does not
-            // have yet, so it must not be painted — but the space it will take
-            // should still read as "a number is coming".
-            <SkeletonBlock width={72} height={20} radius={6} />
-          ) : (
+          {/*
+            The hole stays empty while loading. A skeleton block here reads as a
+            line struck through the ring rather than as a number on its way: the
+            centre is enclosed by the track, so a second pulsing shape inside a
+            pulsing ring is one shape too many. The ring's own pulse already says
+            the chart is loading, and the Svg is absolutely positioned, so an
+            empty centre cannot shift it.
+          */}
+          {!showValue || loading ? null : (
             <Text
               numberOfLines={1}
               style={{
@@ -446,6 +448,14 @@ function DonutSkeleton({
 }) {
   const t = useTokens();
   const pulse = useSkeletonPulse(t.motion.duration.slow);
+  const ring = annulusPath({
+    cx: outerRadius,
+    cy: outerRadius,
+    outerRadius,
+    innerRadius,
+    startAngle: 0,
+    endAngle: Math.PI * 2,
+  });
   return (
     <Animated.View
       pointerEvents="none"
@@ -453,20 +463,16 @@ function DonutSkeleton({
     >
       <Svg width={size} height={size}>
         <Path
-          d={annulusPath({
-            cx: outerRadius,
-            cy: outerRadius,
-            outerRadius,
-            innerRadius,
-            startAngle: 0,
-            endAngle: Math.PI * 2,
-          })}
+          d={ring}
           // `surfaceStrong`, the skeleton material the plot, the readouts, and
           // the bars use. `surfaceInput` is a token lighter in light mode and
           // near-invisible against the surface in dark.
           fill={t.colors.surfaceStrong}
         />
       </Svg>
+      {/* Clipped to the ring, or the sweep crosses the hole in the middle and
+          reads as a highlight passing behind the chart. */}
+      <SkeletonSheenSvg d={ring} width={size} height={size} />
     </Animated.View>
   );
 }

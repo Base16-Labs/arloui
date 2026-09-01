@@ -9,7 +9,7 @@
  */
 import { StyleSheet } from 'react-native';
 import { BarChart } from '../bar-chart';
-import { Chart } from '../chart';
+import { Chart } from '../index';
 import { DonutChart } from '../donut-chart';
 import { Meter } from '../meter';
 import { Sparkline } from '../sparkline';
@@ -48,6 +48,24 @@ describe('loading', () => {
     expect(screen.queryByText('Monthly spend')).toBeNull();
     // The legend is the other place the categories would leak out.
     expect(screen.queryByText('Rent')).toBeNull();
+  });
+
+  it('leaves the donut hole empty while loading', () => {
+    // The centre used to hold a skeleton block standing in for the total. Inside
+    // a ring that is itself pulsing it read as a line struck through the chart
+    // rather than as a number arriving, so the hole is now simply empty and the
+    // track's pulse carries the loading state on its own.
+    const { rerender } = renderWithTheme(<DonutChart data={spend} format={money} loading />);
+
+    const boxes = screen.UNSAFE_root
+      .findAllByType('View' as never)
+      .map((n) => (n.props as { style?: { width?: number; height?: number } }).style)
+      .filter((st) => st && st.width === 72 && st.height === 20);
+    expect(boxes).toEqual([]);
+
+    // Still renders the total once it has one, so the hole is empty, not gone.
+    rerender(<DonutChart data={spend} format={money} />);
+    expect(screen.getByText('$1680.00')).toBeTruthy();
   });
 
   it('keeps the meter label but drops its readout, and never sweeps the fill', () => {
@@ -198,7 +216,6 @@ describe('Chart.Empty', () => {
         <Chart.Plot />
       </Chart>,
     );
-    layout();
 
     expect(screen.getByText('No activity yet')).toBeTruthy();
     expect(screen.getByText('Your spending will show up here.')).toBeTruthy();
@@ -214,7 +231,6 @@ describe('Chart.Empty', () => {
         <Chart.Plot />
       </Chart>,
     );
-    layout();
     expect(screen.getByText('No trades yet')).toBeTruthy();
   });
 
@@ -225,7 +241,6 @@ describe('Chart.Empty', () => {
         <Chart.Plot />
       </Chart>,
     );
-    layout();
     expect(screen.getByText('Custom slot')).toBeTruthy();
     expect(screen.queryByText('Ignored')).toBeNull();
   });
@@ -369,5 +384,82 @@ describe('Sparkline — loading and empty', () => {
     // A genuinely flat series stays solid — it is a measurement, not an absence.
     renderWithTheme(<Sparkline data={[5, 5, 5, 5]} width={120} accessibilityLabel="t" />);
     expect(paths().find((p) => p.strokeDasharray != null)).toBeUndefined();
+  });
+});
+
+/**
+ * An empty chart is the slot and nothing else, across every form that has one.
+ *
+ * The slot used to be drawn inside the plot's own box, which left the readout,
+ * the delta, and the period selector standing around it on the plot — and the
+ * legend under the bar chart naming series that have no bars. Every one of those
+ * is a claim about data the chart does not have: a `$0.00` describing a series
+ * that is not there, periods selecting between nothing and nothing.
+ */
+describe('empty collapses to the slot', () => {
+  const slot = {
+    title: 'No activity yet',
+    description: 'Your spending will show up here.',
+    action: { label: 'Log a transaction', onPress: () => {} },
+  };
+  const money = (v: number) => `$${v.toFixed(2)}`;
+
+  /** Every literal string rendered anywhere in the tree. */
+  function texts() {
+    return screen.UNSAFE_root
+      .findAllByType('Text' as never)
+      .map((n) => (n.props as { children?: unknown }).children)
+      .filter((c): c is string => typeof c === 'string');
+  }
+
+  it('shows no readout, delta, or periods on the plot', () => {
+    renderWithTheme(
+      <Chart
+        data={[]}
+        format={money}
+        periods={['1D', '1W', '1M']}
+        period="1D"
+        onPeriodChange={() => {}}
+      >
+        <Chart.Empty {...slot} />
+        <Chart.Value />
+        <Chart.Delta />
+        <Chart.Plot />
+        <Chart.Periods />
+      </Chart>,
+    );
+
+    expect(texts()).toEqual([slot.title, slot.description]);
+    expect(screen.getByRole('button', { name: slot.action.label })).toBeTruthy();
+    // No period pills to select between nothing and nothing.
+    expect(screen.queryAllByRole('tab')).toHaveLength(0);
+  });
+
+  it('shows no legend under the bar chart', () => {
+    renderWithTheme(<BarChart data={[]} empty={slot} legend={['Sleep', 'Activity']} />);
+    expect(texts()).toEqual([slot.title, slot.description]);
+    expect(screen.queryByText('Sleep')).toBeNull();
+  });
+
+  it('is the same on the donut and the sparkline', () => {
+    const donut = renderWithTheme(<DonutChart data={[]} empty={slot} showLegend />);
+    expect(texts()).toEqual([slot.title, slot.description]);
+    donut.unmount();
+
+    renderWithTheme(
+      <Sparkline data={[]} width={240} height={120} empty={slot} accessibilityLabel="t" />,
+    );
+    expect(texts()).toEqual([slot.title, slot.description]);
+  });
+
+  /** Without a slot the forms keep their shape and their own short message. */
+  it('leaves the composition alone when no slot is given', () => {
+    renderWithTheme(
+      <Chart data={[]} format={money} periods={['1D', '1W']} period="1D" onPeriodChange={() => {}}>
+        <Chart.Plot />
+        <Chart.Periods />
+      </Chart>,
+    );
+    expect(screen.queryAllByRole('tab')).toHaveLength(2);
   });
 });

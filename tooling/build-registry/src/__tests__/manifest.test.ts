@@ -1,4 +1,4 @@
-import { access } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -46,5 +46,46 @@ describe('the real registry manifest', () => {
     const index = buildIndex(REGISTRY, resolved);
     expect(index.items).toHaveLength(REGISTRY.items.length);
     expect(index.version).toBe(REGISTRY.version);
+  });
+});
+
+/**
+ * The Chart page hand-writes a table mapping each split entry to the file it
+ * lands in and the symbol it exports. Nothing regenerates that table, so it
+ * drifts silently the moment an entry is renamed or a form moves file — which
+ * is how the page came to promise six forms while rendering five. Read it back
+ * and hold it against the manifest.
+ */
+describe('the chart docs import table', () => {
+  const DOC = join(ROOT, 'apps/www/public/md/docs/components/chart.md');
+
+  it('names entries that exist, with the files they actually install', async () => {
+    const md = await readFile(DOC, 'utf8');
+    const rows = [...md.matchAll(/^\| `(chart-[a-z]+)` \| `([^`]+)` \|/gm)];
+    expect(rows.length).toBeGreaterThan(0);
+
+    const wrong: string[] = [];
+    for (const [, name, file] of rows) {
+      const entry = REGISTRY.items.find((i) => i.name === name);
+      if (!entry) {
+        wrong.push(`${name}: documented but not in the manifest`);
+        continue;
+      }
+      // The table drops the extension, so compare against the stripped target.
+      const targets = entry.files.map((f) => f.target.replace(/\.(tsx|ts)$/, ''));
+      if (!targets.includes(file)) {
+        wrong.push(`${name}: docs say ${file}, entry installs ${targets.join(', ')}`);
+      }
+    }
+    expect(wrong).toEqual([]);
+  });
+
+  it('documents every split form the manifest ships', async () => {
+    const md = await readFile(DOC, 'utf8');
+    const shipped = REGISTRY.items
+      .map((i) => i.name)
+      .filter((n) => n.startsWith('chart-') && n !== 'chart-core');
+    const undocumented = shipped.filter((n) => !md.includes(`\`${n}\``));
+    expect(undocumented).toEqual([]);
   });
 });

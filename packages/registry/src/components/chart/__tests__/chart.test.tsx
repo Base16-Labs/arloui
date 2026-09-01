@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { Chart } from '../chart';
+import { Chart } from '../index';
 import { fireEvent, renderWithTheme, screen } from '../../../../test/render';
 
 const RISING = [10, 12, 11, 15, 18];

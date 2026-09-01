@@ -121,7 +121,7 @@
         "theme-provider",
         "glass",
         "animated-counter",
-        "chart",
+        "chart-sparkline",
         "button"
       ],
       "dependencies": [
@@ -150,21 +150,153 @@
       ]
     },
     {
-      "name": "chart",
+      "name": "chart-core",
       "kind": "primitive",
-      "title": "Chart",
-      "description": "Six chart forms sharing one validated palette, all reached through the Chart namespace: Chart (scrubbable single-series line/area with a rolling value readout and no axis furniture), Chart.Sparkline (chrome-free inline line), Chart.Bar (categorical bars — grouped, stacked, or horizontal rows), Chart.Donut (part-to-whole with a mandatory legend, folding past four categories into Other), Chart.Meter (one value against a target, as a bar or a ring), and Chart.Heatmap (a calendar streak grid with no charting library).",
+      "title": "Chart core",
+      "description": "The geometry, tone, and density every chart form measures with, plus the shared legend, empty slot, and loading skeleton. Installed by each form; install it directly only if you are writing a form of your own against the same scale.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "animated-counter",
-        "haptics",
         "reduce-motion"
       ],
       "dependencies": [
-        "react-native-svg",
+        "react-native-svg"
+      ],
+      "tags": [
+        "chart",
+        "data",
+        "foundation",
+        "primitive"
+      ]
+    },
+    {
+      "name": "chart-plot",
+      "kind": "primitive",
+      "title": "Chart plot",
+      "description": "The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`.",
+      "registryDependencies": [
+        "chart-core",
+        "animated-counter",
+        "haptics"
+      ],
+      "dependencies": [
         "expo-haptics"
       ],
+      "tags": [
+        "chart",
+        "line",
+        "area",
+        "scrub",
+        "gesture",
+        "primitive"
+      ]
+    },
+    {
+      "name": "chart-bar",
+      "kind": "primitive",
+      "title": "Bar chart",
+      "description": "Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection, a reference line, and signed values below the zero rule.",
+      "registryDependencies": [
+        "chart-core",
+        "haptics"
+      ],
+      "dependencies": [
+        "expo-haptics"
+      ],
+      "tags": [
+        "chart",
+        "bar",
+        "categorical",
+        "primitive"
+      ]
+    },
+    {
+      "name": "chart-sparkline",
+      "kind": "primitive",
+      "title": "Sparkline",
+      "description": "A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction, with an optional end dot and high/low marks.",
+      "registryDependencies": [
+        "chart-core"
+      ],
+      "dependencies": [],
+      "tags": [
+        "chart",
+        "sparkline",
+        "inline",
+        "primitive"
+      ]
+    },
+    {
+      "name": "chart-donut",
+      "kind": "primitive",
+      "title": "Donut chart",
+      "description": "Part-to-whole with a mandatory legend. Four validated slices, then everything past them folds into one neutral Other.",
+      "registryDependencies": [
+        "chart-core",
+        "haptics"
+      ],
+      "dependencies": [
+        "expo-haptics"
+      ],
+      "tags": [
+        "chart",
+        "donut",
+        "part-to-whole",
+        "primitive"
+      ]
+    },
+    {
+      "name": "chart-meter",
+      "kind": "primitive",
+      "title": "Meter",
+      "description": "One value against a target, as a bar, a ring, or an arc gauge, with optional concentric rings and warning/danger thresholds.",
+      "registryDependencies": [
+        "chart-core"
+      ],
+      "dependencies": [],
+      "tags": [
+        "chart",
+        "meter",
+        "gauge",
+        "progress",
+        "primitive"
+      ]
+    },
+    {
+      "name": "chart-heatmap",
+      "kind": "primitive",
+      "title": "Heatmap",
+      "description": "A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it.",
+      "registryDependencies": [
+        "chart-core",
+        "haptics"
+      ],
+      "dependencies": [
+        "expo-haptics"
+      ],
+      "tags": [
+        "chart",
+        "heatmap",
+        "calendar",
+        "streak",
+        "primitive"
+      ]
+    },
+    {
+      "name": "chart",
+      "kind": "primitive",
+      "title": "Chart",
+      "description": "Every chart form and the `Chart` namespace that reaches them — the plot, sparkline, bar, donut, meter, and heatmap. Take this to get the namespace; take a single form (`chart-bar`, `chart-sparkline`, …) to get one chart and the shared core, and nothing else.",
+      "registryDependencies": [
+        "chart-core",
+        "chart-plot",
+        "chart-bar",
+        "chart-sparkline",
+        "chart-donut",
+        "chart-meter",
+        "chart-heatmap"
+      ],
+      "dependencies": [],
       "tags": [
         "chart",
         "data",

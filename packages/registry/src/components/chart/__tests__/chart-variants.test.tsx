@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { StyleSheet, View } from 'react-native';
 import { BarChart } from '../bar-chart';
-import { Chart } from '../chart';
+import { Chart } from '../index';
 import { DonutChart } from '../donut-chart';
 import { Heatmap } from '../heatmap';
 import { Meter } from '../meter';
@@ -1522,4 +1522,74 @@ describe('Sparkline — curve', () => {
     expect(filled.length).toBeGreaterThan(0);
     expect(filled.every((d) => d.includes('C'))).toBe(true);
   });
+});
+
+/**
+ * A legend's labels are the caller's text, and two series named the same is a
+ * real thing to pass — a weekday chart's initials collide on their own (M T W
+ * **T** F S **S**).
+ *
+ * Asserted through the warning rather than the output: duplicate keys do not
+ * throw and both children still render on the first pass, so counting them
+ * passes either way. React's console warning is the actual symptom, and it is
+ * what a reader sees in their terminal.
+ */
+it('warns about nothing when two legend items share a label', () => {
+  const warn = jest.spyOn(console, 'error').mockImplementation(() => {});
+  try {
+    renderWithTheme(
+      <BarChart
+        data={[{ label: 'Mon', value: 3 }]}
+        series={[[{ label: 'Mon', value: 2 }]]}
+        legend={['Spend', 'Spend']}
+      />,
+    );
+    const duplicateKeyWarning = warn.mock.calls
+      .map((args) => String(args[0] ?? ''))
+      .filter((message) => message.includes('same key'));
+    expect(duplicateKeyWarning).toEqual([]);
+    expect(screen.getAllByText('Spend')).toHaveLength(2);
+  } finally {
+    warn.mockRestore();
+  }
+});
+
+/**
+ * A value label sits over its bar, whatever the spacing.
+ *
+ * The bar is centred *inside* its slot by `markInset`, so a label box the width
+ * of the bar and anchored at the slot's left edge lands that inset to the left
+ * of it — invisible at `tight`, and a clear miss at `loose`. It only appeared
+ * when `spacing` arrived: before that the bar filled its slot and the inset was
+ * always zero.
+ */
+it('centres the value label over the bar at every spacing', () => {
+  const week = [
+    { label: 'M', value: 30 },
+    { label: 'T', value: 12 },
+    { label: 'W', value: 44 },
+  ];
+
+  for (const spacing of ['tight', 'default', 'loose'] as const) {
+    const r = renderWithTheme(
+      <BarChart data={week} spacing={spacing} showValues format={(v) => `$${v}`} />,
+    );
+    const node = screen.UNSAFE_root
+      .findAllByType('View' as never)
+      .find((v) => typeof (v.props as { onLayout?: unknown }).onLayout === 'function');
+    fireEvent(node as never, 'layout', {
+      nativeEvent: { layout: { width: 300, height: 160, x: 0, y: 0 } },
+    });
+
+    // The label box spans the whole slot, so `alignItems: center` puts it on the
+    // bar's centre — which is the slot's centre — rather than the slot's edge.
+    const boxes = screen.UNSAFE_root
+      .findAllByType('View' as never)
+      .map((n) => (n.props as { style?: { width?: number; left?: number } }).style)
+      .filter((st) => st && typeof st.left === 'number' && typeof st.width === 'number');
+    const slot = 300 / week.length;
+    const labelBoxes = boxes.filter((st) => Math.abs((st!.width as number) - slot) < 0.5);
+    expect(labelBoxes.length).toBeGreaterThan(0);
+    r.unmount();
+  }
 });

@@ -7,7 +7,7 @@ jest.mock('../../../foundation/haptics', () => ({
 
 import { haptic } from '../../../foundation/haptics';
 import { BarChart } from '../bar-chart';
-import { Chart } from '../chart';
+import { Chart } from '../index';
 import { DonutChart } from '../donut-chart';
 import { fireEvent, renderWithTheme, screen } from '../../../../test/render';
 

@@ -101,15 +101,10 @@ import {
   type ChartTone,
 } from './core';
 import { EmptyContent, type ChartEmptyProps } from './empty';
-import { SkeletonBlock } from './skeleton';
+import { SkeletonBlock, SkeletonSheenSvg } from './skeleton';
 
 export type { ChartEmptyProps };
 import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
-import { BarChart } from './bar-chart';
-import { DonutChart } from './donut-chart';
-import { Meter } from './meter';
-import { Sparkline } from './sparkline';
-import { Heatmap } from './heatmap';
 import { ChartLegend } from './legend';
 
 export type { ChartCurve, ChartTone, ChartDensity, ChartChrome, ChartPoint, ChartData };
@@ -272,6 +267,13 @@ function ChartRoot({
     return { empty: slot, rest: kept };
   }, [children]);
 
+  /**
+   * Only when there is a slot to show. Without one the chart keeps its shape and
+   * the plot draws its own short message, which is the right answer for a small
+   * chart with no room for an arrangement.
+   */
+  const showEmptySlot = !loading && stats.count === 0 && empty != null;
+
   const ctx = useMemo<ChartContextValue>(
     () => ({
       points,
@@ -317,7 +319,48 @@ function ChartRoot({
 
   return (
     <ChartContext.Provider value={ctx}>
-      <View style={[{ gap: t.spacing[2] }, style]}>{children == null ? defaultComposition() : rest}</View>
+      <View style={[{ gap: t.spacing[2] }, style]}>
+        {/*
+          An empty chart is the slot and nothing else.
+          
+          The slot used to be drawn *inside* the plot's box, which left the
+          readout, the delta, and the period selector standing around it — a
+          `$0.00` and a `+0.00%` describing a series that is not there, over a
+          row of periods that select between nothing and nothing. Every one of
+          those is a claim about data the chart does not have.
+          
+          Composition is the reason this belongs at the root rather than in the
+          plot: only the root knows what else was put beside it.
+        */}
+        {showEmptySlot ? (
+          /*
+           * A bare string still has to be wrapped. The plot used to do it on the
+           * way past; with the slot rendered here instead, an unwrapped string
+           * is a raw text node inside a `View` — invalid in React Native, and
+           * invisible to anything looking for text.
+           */
+          typeof empty === 'string' ? (
+            <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: t.spacing[6] }}>
+              <Text
+                style={{
+                  color: t.colors.textTertiary,
+                  fontFamily: t.fontFamilies.sans,
+                  fontSize: t.typography.bodySm.fontSize,
+                  lineHeight: t.typography.bodySm.lineHeight,
+                }}
+              >
+                {empty}
+              </Text>
+            </View>
+          ) : (
+            empty
+          )
+        ) : children == null ? (
+          defaultComposition()
+        ) : (
+          rest
+        )}
+      </View>
     </ChartContext.Provider>
   );
 }
@@ -1109,11 +1152,14 @@ function PlotShimmer({
    * still arriving. Filling the silhouette gives the loading state the mass of
    * the area it stands in for, so nothing re-weights when the series lands.
    */
+  const silhouette = areaPath(shape, height - inset, 'smooth');
   return (
     <Animated.View style={[StyleSheet.absoluteFill, { opacity: pulse }]}>
       <Svg width={width} height={height} pointerEvents="none">
-        <Path d={areaPath(shape, height - inset, 'smooth')} fill={t.colors.surfaceStrong} />
+        <Path d={silhouette} fill={t.colors.surfaceStrong} />
       </Svg>
+      {/* On the silhouette, not across its box — see `SkeletonSheenSvg`. */}
+      <SkeletonSheenSvg d={silhouette} width={width} height={height} />
     </Animated.View>
   );
 }
@@ -1199,27 +1245,23 @@ function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
 }
 
 /**
- * `Value`/`Delta`/`Plot`/`Periods`/`Empty`/`Legend` compose the scrubbable chart
- * above; `Sparkline`, `Bar`, `Donut`, `Meter`, and `Heatmap` are whole charts in
- * their own right, namespaced here so picking a form is one decision at one
- * import rather than five names to remember. They stay in their own files —
- * import those directly if you only copied one form into your project.
+ * The plot and the pieces that compose inside it.
  *
- * The forms Arlo does **not** ship, and will not: candlestick, radar, population
- * pyramid, scatter, and 3-D anything. They are consumer-owned. `core.ts` exports
- * the scale and the path builders, so writing one against the same geometry is a
- * supported thing to do — it is just not in the kit.
+ * The `Chart` namespace — this root plus the five standalone forms — is
+ * assembled in `index.ts` rather than here. It used to be built in this file,
+ * which meant `chart.tsx` imported the bar chart, the donut, the meter, the
+ * sparkline and the heatmap purely to hang them off an object. Nothing here
+ * *used* them, but the import graph did not know that: taking `Chart.Plot`
+ * pulled in every form in the kit, and the registry had no way to offer one
+ * chart without shipping all thirteen files.
  */
-export const Chart = Object.assign(ChartRoot, {
+export const ChartPlotParts = {
   Value: ChartValue,
   Delta: ChartDelta,
   Plot: ChartPlot,
   Periods: ChartPeriods,
   Empty: ChartEmpty,
   Legend: ChartLegend,
-  Sparkline,
-  Bar: BarChart,
-  Donut: DonutChart,
-  Meter,
-  Heatmap,
-});
+};
+
+export { ChartRoot };

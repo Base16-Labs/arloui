@@ -172,10 +172,10 @@ export default function SparklineCanvas() {
           <VariantSheet
             visible={sheetOpen}
             previous="Meter"
-            next="Gallery"
+            next="Heatmap"
             onClose={() => setSheetOpen(false)}
             onPrevious={() => router.replace('/chart/meter')}
-            onNext={() => router.replace('/gallery')}
+            onNext={() => router.replace('/chart/heatmap')}
           >
             <View style={{ gap: 14 }}>
               <VariantControlRow label="Height">

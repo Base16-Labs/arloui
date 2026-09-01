@@ -252,20 +252,28 @@ export default function ChartCanvas() {
               The scrub index, echoed back. Without it you can see the readout move
               but cannot tell whether `onScrub` fired, which is the half of the
               contract a consumer wires up.
+
+              Gone while the chart has no series, along with everything else the
+              empty slot replaces. There is nothing to drag across, so an
+              invitation to try is the same kind of lie as a `$0.00` readout —
+              and it is the one piece of that furniture the playground owns
+              rather than the component.
             */}
-            <Text
-              style={{
-                color: t.colors.textTertiary,
-                fontFamily: 'Manrope',
-                fontSize: 12,
-                marginTop: 12,
-                textAlign: 'center',
-              }}
-            >
-              {scrubbed == null
-                ? 'Drag across the chart to scrub'
-                : `onScrub → index ${scrubbed} of ${data.length - 1}`}
-            </Text>
+            {data.length > 0 ? (
+              <Text
+                style={{
+                  color: t.colors.textTertiary,
+                  fontFamily: 'Manrope',
+                  fontSize: 12,
+                  marginTop: 12,
+                  textAlign: 'center',
+                }}
+              >
+                {scrubbed == null
+                  ? 'Drag across the chart to scrub'
+                  : `onScrub → index ${scrubbed} of ${data.length - 1}`}
+              </Text>
+            ) : null}
           </Animated.View>
 
           {!sheetOpen ? (

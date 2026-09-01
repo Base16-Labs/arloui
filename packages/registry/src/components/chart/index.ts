@@ -9,13 +9,37 @@
  * path builders the six are drawn with are public. A seventh form written against
  * them measures the same way these do.
  */
+import { ChartPlotParts, ChartRoot } from './chart';
+import { BarChart } from './bar-chart';
+import { DonutChart } from './donut-chart';
+import { Heatmap } from './heatmap';
+import { Meter } from './meter';
+import { Sparkline } from './sparkline';
+
 export {
-  Chart,
   type ChartEmptyProps,
   type ChartPlotProps,
   type ChartProps,
   type ChartRange,
 } from './chart';
+
+/**
+ * The namespace, assembled here rather than in `chart.tsx`.
+ *
+ * This file is the one place that legitimately depends on every form — it is the
+ * barrel. Building the namespace inside `chart.tsx` made the *plot* depend on
+ * them too, which is why the registry could only ever ship charts as one
+ * thirteen-file lump. Installing `chart-bar` on its own now pulls the bar chart
+ * and the shared core, and nothing else.
+ */
+export const Chart = Object.assign(ChartRoot, {
+  ...ChartPlotParts,
+  Sparkline,
+  Bar: BarChart,
+  Donut: DonutChart,
+  Meter,
+  Heatmap,
+});
 export {
   annulusPath,
   arcLength,

@@ -39,6 +39,7 @@ import {
 } from './core';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useSkeletonPulse } from './hooks';
+import { SkeletonSheenSvg } from './skeleton';
 
 export type SparklineProps = {
   data: ChartData;
@@ -351,6 +352,7 @@ function SparklineSkeleton({
   });
   const shape = SKELETON_SHAPE.map((value, index) => ({ x: scale.x(index), y: scale.y(value) }));
 
+  const silhouette = areaPath(shape, height - inset, 'smooth');
   return (
     <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: pulse }]}>
       <Svg width={width} height={height}>
@@ -361,8 +363,9 @@ function SparklineSkeleton({
           scratch rather than as something arriving. A filled shape carries the
           weight of the mark it stands in for.
         */}
-        <Path d={areaPath(shape, height - inset, 'smooth')} fill={t.colors.surfaceStrong} />
+        <Path d={silhouette} fill={t.colors.surfaceStrong} />
       </Svg>
+      <SkeletonSheenSvg d={silhouette} width={width} height={height} />
     </Animated.View>
   );
 }

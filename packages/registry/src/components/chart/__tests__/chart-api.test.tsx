@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { Chart } from '../chart';
+import { Chart } from '../index';
 import { BarChart } from '../bar-chart';
 import { DonutChart } from '../donut-chart';
 import { formatMoney } from '../format';
@@ -181,14 +181,17 @@ describe('rare states', () => {
     expect(screen.queryByText('No data')).toBeNull();
   });
 
-  it('takes a custom empty slot, and renders it in the plot rather than inline', () => {
+  /**
+   * The slot replaces the composition rather than sitting inside the plot. It
+   * needs no layout pass for the same reason: there is no plot left to measure.
+   */
+  it('takes a custom empty slot in place of the whole composition', () => {
     renderWithTheme(
       <Chart data={[]}>
         <Chart.Empty>No trades yet</Chart.Empty>
         <Chart.Plot />
       </Chart>,
     );
-    layoutPlot();
     expect(screen.getByText('No trades yet')).toBeTruthy();
     expect(screen.queryByText('No data')).toBeNull();
   });

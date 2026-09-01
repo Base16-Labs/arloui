@@ -73,6 +73,7 @@ import {
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
 import { ChartLegend } from './legend';
+import { SkeletonSheen, SkeletonSheenSvg } from './skeleton';
 
 /** A bar needs a name, so `label` is required here even though `ChartPoint`'s is not. */
 export type BarDatum = ChartPoint & {
@@ -263,34 +264,38 @@ function BarSkeleton({
   const slot = count > 0 ? width / count : 0;
   const barWidth = Math.max(0, slot * SPACING_FILL[spacing]);
   const markInset = Math.max(0, (slot - barWidth) / 2);
+  const bars = Array.from({ length: count }, (_, index) => {
+    const fraction = SKELETON_HEIGHTS[index % SKELETON_HEIGHTS.length] ?? 0.5;
+    const barHeight = height * fraction;
+    return barPath({
+      x: index * slot + markInset,
+      y: height - barHeight,
+      width: barWidth,
+      height: barHeight,
+      radius,
+      roundedEnd: 'top',
+    });
+  });
   return (
     <Animated.View
       pointerEvents="none"
       style={[StyleSheet.absoluteFill, { opacity: pulse }]}
     >
       <Svg width={width} height={height}>
-        {Array.from({ length: count }, (_, index) => {
-          const fraction = SKELETON_HEIGHTS[index % SKELETON_HEIGHTS.length] ?? 0.5;
-          const barHeight = height * fraction;
-          return (
-            <Path
-              key={index}
-              d={barPath({
-                x: index * slot + markInset,
-                y: height - barHeight,
-                width: barWidth,
-                height: barHeight,
-                radius,
-                roundedEnd: 'top',
-              })}
-              // `surfaceStrong`, the skeleton material the plot and the readouts
-              // use. This was `surfaceInput`, a token lighter in light mode and
-              // near-invisible against the surface in dark.
-              fill={t.colors.surfaceStrong}
-            />
-          );
-        })}
+        {bars.map((d, index) => (
+          <Path
+            key={index}
+            d={d}
+            // `surfaceStrong`, the skeleton material the plot and the readouts
+            // use. This was `surfaceInput`, a token lighter in light mode and
+            // near-invisible against the surface in dark.
+            fill={t.colors.surfaceStrong}
+          />
+        ))}
       </Svg>
+      {/* One clip across every bar, so the sweep crosses the marks and not the
+          gaps between them. */}
+      <SkeletonSheenSvg d={bars.join(' ')} width={width} height={height} />
     </Animated.View>
   );
 }
@@ -662,6 +667,23 @@ function VerticalBars({
     setWidth(event.nativeEvent.layout.width);
   }, []);
 
+  /*
+   * An empty chart is the slot and nothing else.
+   *
+   * The slot used to be an overlay inside the plot box, which left the legend
+   * standing under it naming series that have no bars — and the box itself
+   * holding a height for marks that are not coming. `emptyLabel` keeps the old
+   * behaviour, because a bare word inside the plot's own footprint is the right
+   * answer for a chart with no room for an arrangement.
+   */
+  if (!loading && bars.length === 0 && empty) {
+    return (
+      <View style={[{ minHeight: height, justifyContent: 'center' }, style]}>
+        <EmptyContent {...empty} />
+      </View>
+    );
+  }
+
   return (
     <View style={[{ gap: t.spacing[2] }, style]}>
       <View
@@ -733,7 +755,13 @@ function VerticalBars({
                   style={{
                     position: 'absolute',
                     left: index * slot,
-                    width: barWidth,
+                    // `slot`, not `barWidth`. The mark is centred *inside* its
+                    // slot by `markInset`, so a label box the width of the bar
+                    // starting at the slot's left edge sits that inset to the
+                    // left of it. Centring over the whole slot lands on the bar
+                    // whatever `spacing` does — which is what the multi-series
+                    // label below has always done.
+                    width: slot,
                     top: Math.max(0, Math.min(valueY, zeroY) - VALUE_HEIGHT),
                     alignItems: 'center',
                   }}
@@ -953,6 +981,8 @@ function HorizontalBars({
   const pulse = useSkeletonPulse(t.motion.duration.slow);
   const [selection, setSelection] = useControllableIndex(activeIndexProp, defaultActiveIndex);
   const [size, setSize] = useState({ width: 0, height: 0 });
+  // Skeleton rows are a percentage of the rail, so the sweep needs a measurement.
+  const [skeletonRowWidth, setSkeletonRowWidth] = useState(0);
   const width = size.width;
 
   const allSeries = useMemo(() => {
@@ -1186,14 +1216,18 @@ function HorizontalBars({
                     {/* `Animated.View`, not `View`: the pulse is an Animated.Value, and a
                         plain view hands the native side an object, not a number. */}
                     <Animated.View
+                      onLayout={(event) => setSkeletonRowWidth(event.nativeEvent.layout.width)}
                       style={{
                         width: `${Math.round(fraction * 100)}%`,
                         height: '100%',
                         borderRadius: ROW_RADIUS,
                         backgroundColor: t.colors.surfaceStrong,
                         opacity: pulse,
+                        overflow: 'hidden',
                       }}
-                    />
+                    >
+                      <SkeletonSheen width={skeletonRowWidth} radius={ROW_RADIUS} />
+                    </Animated.View>
                   </View>
                   <View style={{ width: row.value }} />
                 </View>
