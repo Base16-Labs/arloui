@@ -5,7 +5,8 @@
  * because `Chart` imports the other four forms to build its namespace — a form
  * reaching back into `chart.tsx` for a hook would close that loop.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { Children, isValidElement, useCallback, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Animated, Easing } from 'react-native';
 
 /**
@@ -133,4 +134,49 @@ export function useSkeletonSheen(durationMs: number): Animated.Value | null {
   }, [sweep, reduceMotion, durationMs]);
 
   return reduceMotion ? null : sweep;
+}
+
+/* ------------------------------------------------------------------------- *
+ * Composition
+ *
+ * Every form takes the same shape of children: parts that render nothing and
+ * are read instead. A chart is one SVG plus absolutely positioned overlays, so
+ * a part painting itself where it sits in the tree would land in the wrong
+ * layer — values under the marks, the zero rule over them. Declaring presence
+ * in the tree and centralising the painting keeps the layering and the single
+ * pass over the scale, while still letting the call site say what exists.
+ *
+ * The rule the parts encode: a prop answering "does this element exist?"
+ * belongs in the tree; one answering "how does the whole chart behave?"
+ * (`density`, `layout`, `tone`, `size`) stays a prop.
+ * ------------------------------------------------------------------------- */
+
+/** What a form's children declared: part type → the props each was given. */
+export type PartMap = Map<unknown, unknown[]>;
+
+/** Read a form's children into a map. Non-elements and unknown parts are ignored. */
+export function collectParts(children: ReactNode): PartMap {
+  const found: PartMap = new Map();
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+    const seen = found.get(child.type);
+    if (seen) seen.push(child.props);
+    else found.set(child.type, [child.props]);
+  });
+  return found;
+}
+
+/** Was this part named at all? The presence switch. */
+export function hasPart(parts: PartMap, type: unknown): boolean {
+  return parts.has(type);
+}
+
+/** The first of this part, for the ones that appear at most once. */
+export function partProps<T>(parts: PartMap, type: unknown): T | undefined {
+  return parts.get(type)?.[0] as T | undefined;
+}
+
+/** Every one of this part, in tree order — for series, rings, and the like. */
+export function allParts<T>(parts: PartMap, type: unknown): T[] {
+  return (parts.get(type) ?? []) as T[];
 }

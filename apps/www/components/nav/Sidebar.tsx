@@ -11,6 +11,7 @@ import {
   archetypeItems,
   agentItems,
   gettingStartedItems,
+  chartFormRoutes,
 } from '@/lib/routes';
 
 export function Sidebar() {
@@ -107,12 +108,30 @@ export function Sidebar() {
                   {group.label}
                 </div>
                 {group.items.map((item) => (
-                  <SidebarLink
-                    key={item.slug}
-                    href={`/docs/components/${item.slug}`}
-                    label={item.label}
-                    active={pathname === `/docs/components/${item.slug}`}
-                  />
+                  <div key={item.slug}>
+                    <SidebarLink
+                      href={`/docs/components/${item.slug}`}
+                      label={item.label}
+                      active={pathname === `/docs/components/${item.slug}`}
+                    />
+                    {/*
+                      Chart's forms are pages of their own but not components of
+                      their own, so they nest under it rather than sitting in the
+                      component list — which is also what `componentCount` counts.
+                    */}
+                    {item.slug === 'chart' ? (
+                      <div className="ml-3 border-l border-line pl-1.5">
+                        {chartFormRoutes.map((form) => (
+                          <SidebarLink
+                            key={form.slug}
+                            href={`/docs/components/${form.slug}`}
+                            label={form.label}
+                            active={pathname === `/docs/components/${form.slug}`}
+                          />
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
                 ))}
               </div>
             ))}

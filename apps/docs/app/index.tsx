@@ -43,7 +43,7 @@ const COMPONENTS: IndexItem[] = [
   { title: 'Card', category: 'Layout', href: '/cards' },
   { title: 'Carousel', category: 'Layout', href: '/carousel' },
   { title: 'Checkbox', category: 'Controls', href: '/checkbox' },
-  { title: 'Chart', category: 'Data', href: '/chart' },
+  { title: 'Chart · Line', category: 'Data', href: '/chart' },
   { title: 'Chart · Bar', category: 'Data', href: '/chart/bar' },
   { title: 'Chart · Donut', category: 'Data', href: '/chart/donut' },
   { title: 'Chart · Heatmap', category: 'Data', href: '/chart/heatmap' },

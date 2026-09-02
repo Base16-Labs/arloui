@@ -72,9 +72,11 @@ describe('BarChart', () => {
     const { rerender } = renderWithTheme(
       <BarChart
         data={[{ label: 'A', value: -20 }, { label: 'B', value: 40 }]}
-        showValues
         onSelect={() => {}}
-      />,
+      >
+        <BarChart.Values />
+        <BarChart.Categories />
+      </BarChart>,
     );
     expect(screen.getByRole('button', { name: 'A, -20' })).toBeTruthy();
 
@@ -118,7 +120,12 @@ describe('BarChart', () => {
   });
 
   it('still shows every value when asked explicitly', () => {
-    renderWithTheme(<BarChart data={week} format={money} showValues onSelect={() => {}} />);
+    renderWithTheme(
+      <BarChart data={week} format={money} onSelect={() => {}}>
+        <BarChart.Values />
+        <BarChart.Categories />
+      </BarChart>,
+    );
     layoutBars();
     expect(screen.getByText('$30.00')).toBeTruthy();
     expect(screen.getByText('$44.00')).toBeTruthy();
@@ -126,7 +133,9 @@ describe('BarChart', () => {
 
   it('draws the reference line with its chip when chrome is reference', () => {
     renderWithTheme(
-      <BarChart data={week} chrome="reference" reference={{ value: 28, label: 'AVG' }} />,
+      <BarChart data={week}>
+        <BarChart.Reference value={28} label="AVG" />
+      </BarChart>,
     );
     layoutBars();
     expect(screen.getByText('AVG')).toBeTruthy();
@@ -143,12 +152,14 @@ describe('BarChart', () => {
     ];
     renderWithTheme(
       <BarChart
-        data={sleep}
-        series={[activity]}
         variant="grouped"
-        legend={['Sleep', 'Activity']}
         onSelect={() => {}}
-      />,
+      >
+        <BarChart.Series data={sleep} label="Sleep" />
+        <BarChart.Series data={activity} label="Activity" />
+        <BarChart.Categories />
+        <BarChart.Legend />
+      </BarChart>,
     );
     expect(screen.getByText('Sleep')).toBeTruthy();
     expect(screen.getByText('Activity')).toBeTruthy();
@@ -159,7 +170,10 @@ describe('BarChart', () => {
     const sleep = [{ label: 'Mon', value: 7 }];
     const activity = [{ label: 'Mon', value: 5 }];
     renderWithTheme(
-      <BarChart data={sleep} series={[activity]} variant="stacked" activeIndex={0} />,
+      <BarChart variant="stacked" activeIndex={0}>
+        <BarChart.Series data={sleep} />
+        <BarChart.Series data={activity} />
+      </BarChart>,
     );
     expect(screen.getByText('12')).toBeTruthy();
   });
@@ -224,7 +238,10 @@ describe('BarChart — horizontal answers the same props as vertical', () => {
 
   it('reports the category total rather than only the first series', () => {
     renderWithTheme(
-      <BarChart data={sleep} series={[activity]} variant="stacked" layout="horizontal" />,
+      <BarChart variant="stacked" layout="horizontal">
+        <BarChart.Series data={sleep} />
+        <BarChart.Series data={activity} />
+      </BarChart>,
     );
     // 7 + 5, not 7.
     expect(screen.getByText('12')).toBeTruthy();
@@ -250,7 +267,10 @@ describe('BarChart — horizontal answers the same props as vertical', () => {
       { label: 'Tue', value: 4 },
     ];
     const { toJSON } = renderWithTheme(
-      <BarChart data={uneven} series={[second]} variant="stacked" layout="horizontal" />,
+      <BarChart variant="stacked" layout="horizontal">
+        <BarChart.Series data={uneven} />
+        <BarChart.Series data={second} />
+      </BarChart>,
     );
 
     const ends: number[] = [];
@@ -271,12 +291,11 @@ describe('BarChart — horizontal answers the same props as vertical', () => {
 
   it('draws the legend for a multi-series row chart', () => {
     renderWithTheme(
-      <BarChart
-        data={sleep}
-        series={[activity]}
-        legend={['Sleep', 'Activity']}
-        layout="horizontal"
-      />,
+      <BarChart layout="horizontal">
+        <BarChart.Series data={sleep} label="Sleep" />
+        <BarChart.Series data={activity} label="Activity" />
+        <BarChart.Legend />
+      </BarChart>,
     );
     expect(screen.getByText('Sleep')).toBeTruthy();
     expect(screen.getByText('Activity')).toBeTruthy();
@@ -296,22 +315,24 @@ describe('BarChart — horizontal answers the same props as vertical', () => {
     expect(drawn.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('honours showLabels', () => {
+  it('draws row labels only when the part is named', () => {
     const { rerender } = renderWithTheme(<BarChart data={week} layout="horizontal" />);
     expect(screen.getByText('M')).toBeTruthy();
 
-    rerender(<BarChart data={week} layout="horizontal" showLabels={false} />);
+    // Composition inverts the default: an unnamed part is an absent one.
+    rerender(
+      <BarChart data={week} layout="horizontal">
+        <BarChart.Values />
+      </BarChart>,
+    );
     expect(screen.queryByText('M')).toBeNull();
   });
 
   it('draws the reference line and its label', () => {
     renderWithTheme(
-      <BarChart
-        data={week}
-        layout="horizontal"
-        chrome="reference"
-        reference={{ value: 20, label: 'AVG' }}
-      />,
+      <BarChart data={week} layout="horizontal">
+        <BarChart.Reference value={20} label="AVG" />
+      </BarChart>,
     );
     // The chip is positioned on the rule, so it needs the rail measured first.
     layoutRows();
@@ -345,8 +366,11 @@ describe('Chart.Plot — compare, range, tooltip, references', () => {
 
   it('draws one labelled line per reference — the min/max pair', () => {
     renderWithTheme(
-      <Chart data={[1, 5, 2, 8]} chrome="reference" reference={[{ value: 8 }, { value: 1 }]}>
-        <Chart.Plot height={120} />
+      <Chart data={[1, 5, 2, 8]}>
+        <Chart.Plot height={120}>
+          <Chart.Reference value={8} />
+          <Chart.Reference value={1} />
+        </Chart.Plot>
       </Chart>,
     );
     layoutPlot();
@@ -425,14 +449,43 @@ describe('Heatmap', () => {
     expect(screen.getByText('Less')).toBeTruthy();
     expect(screen.getByText('More')).toBeTruthy();
 
-    rerender(<Heatmap data={[march(4, 2)]} showScale={false} />);
+    rerender(
+      <Heatmap data={[march(4, 2)]}>
+        <Heatmap.DayLabels />
+      </Heatmap>,
+    );
     expect(screen.queryByText('Less')).toBeNull();
   });
 
-  it('renders an empty and a loading grid without crashing', () => {
+  it('draws the composed empty slot when there is no month to draw', () => {
+    // No data and no range means no grid at all — which used to render a blank
+    // box that only a screen reader could interpret. It now says so on screen,
+    // the way every other form does.
     const { rerender } = renderWithTheme(<Heatmap data={[]} />);
-    expect(screen.getByRole('image').props.accessibilityLabel).toBe('No data');
-    rerender(<Heatmap data={[march(4, 2)]} loading />);
+    expect(screen.getByText('No activity yet')).toBeTruthy();
+
+    const onPress = jest.fn();
+    rerender(
+      <Heatmap
+        data={[]}
+        empty={{ title: 'Nothing logged', description: 'Log a day to begin.', action: { label: 'Log', onPress } }}
+      />,
+    );
+    expect(screen.getByText('Nothing logged')).toBeTruthy();
+    // The label renders as "Log →", so address it the way a screen reader does.
+    fireEvent.press(screen.getByRole('button', { name: 'Log' }));
+    expect(onPress).toHaveBeenCalled();
+  });
+
+  it('still draws an empty grid when a range says where it is', () => {
+    // Every day empty is the data, not the absence of it — so a range keeps the
+    // grid rather than swapping it for the slot.
+    renderWithTheme(<Heatmap data={[]} from="2026-03-01" to="2026-03-28" />);
+    expect(screen.getByRole('image')).toBeTruthy();
+  });
+
+  it('renders a loading grid without crashing', () => {
+    renderWithTheme(<Heatmap data={[march(4, 2)]} loading />);
     expect(screen.getByRole('image').props.accessibilityLabel).toBe('Heatmap loading');
   });
 });
@@ -726,7 +779,9 @@ describe('Chart.Plot — stack', () => {
   it('moves the primary onto the categorical palette once it is stacked', () => {
     const plain = renderWithTheme(
       <Chart data={base}>
-        <Chart.Plot height={120} fill={false} chrome="none" />
+        <Chart.Plot height={120} fill={false}>
+          {null}
+        </Chart.Plot>
       </Chart>,
       { theme: 'light' },
     );
@@ -736,7 +791,9 @@ describe('Chart.Plot — stack', () => {
 
     renderWithTheme(
       <Chart data={base}>
-        <Chart.Plot stack={[[4, 5, 4, 6], [2, 2, 3, 2]]} height={120} fill={false} chrome="none" />
+        <Chart.Plot stack={[[4, 5, 4, 6], [2, 2, 3, 2]]} height={120} fill={false}>
+          {null}
+        </Chart.Plot>
       </Chart>,
       { theme: 'light' },
     );
@@ -897,9 +954,11 @@ describe('BarChart — spacing, density, and empty', () => {
     expect(screen.getByText('M')).toBeTruthy();
   });
 
-  it('still drops row labels when asked directly', () => {
+  it('draws no row labels when the part is not named', () => {
     renderWithTheme(
-      <BarChart data={week} layout="horizontal" density="compact" showLabels={false} />,
+      <BarChart data={week} layout="horizontal" density="compact">
+        <BarChart.Values />
+      </BarChart>,
     );
     expect(screen.queryByText('M')).toBeNull();
   });
@@ -951,14 +1010,20 @@ describe('BarChart — spacing, density, and empty', () => {
     }
 
     it('draws it for signed data at baseline', () => {
-      renderWithTheme(<BarChart data={signed} chrome="baseline" />);
+      renderWithTheme(
+        <BarChart data={signed}>
+          <BarChart.Baseline />
+        </BarChart>,
+      );
       layout();
       expect(hasZeroRule()).toBe(true);
     });
 
     it('keeps it at reference, which adds a line rather than replacing the axis', () => {
       renderWithTheme(
-        <BarChart data={signed} chrome="reference" reference={{ value: 20, label: 'AVG' }} />,
+        <BarChart data={signed}>
+          <BarChart.Reference value={20} label="AVG" />
+        </BarChart>,
       );
       layout();
       expect(hasZeroRule()).toBe(true);
@@ -966,15 +1031,21 @@ describe('BarChart — spacing, density, and empty', () => {
     });
 
     it('drops it at none — the mark alone', () => {
-      renderWithTheme(<BarChart data={signed} chrome="none" />);
+      renderWithTheme(
+        <BarChart data={signed}>
+          <BarChart.Categories />
+        </BarChart>,
+      );
       layout();
       expect(hasZeroRule()).toBe(false);
     });
 
     /** All-positive data has its zero at the axis, so there is nothing to draw. */
-    it('draws nothing for all-positive data whatever the chrome', () => {
-      for (const chrome of ['none', 'baseline'] as const) {
-        const r = renderWithTheme(<BarChart data={week} chrome={chrome} />);
+    it('draws nothing for all-positive data whether or not the baseline is named', () => {
+      for (const baseline of [false, true] as const) {
+        const r = renderWithTheme(
+          <BarChart data={week}>{baseline ? <BarChart.Baseline /> : <BarChart.Categories />}</BarChart>,
+        );
         layout();
         expect(hasZeroRule()).toBe(false);
         r.unmount();
@@ -987,7 +1058,7 @@ describe('BarChart — spacing, density, and empty', () => {
    * no `maxValue` the ceiling is just the largest row, so the rail sits at
    * wherever the biggest item landed — it looks like a target and is not one.
    */
-  it('drops the row rail at chrome="none"', () => {
+  it('drops the row rail when the baseline is not named', () => {
     const rails = () =>
       screen.UNSAFE_root
         .findAllByType('View' as never)
@@ -995,12 +1066,18 @@ describe('BarChart — spacing, density, and empty', () => {
         .filter((style) => style?.overflow === 'hidden' && style?.backgroundColor !== 'transparent');
 
     const withRail = renderWithTheme(
-      <BarChart data={week} layout="horizontal" chrome="baseline" />,
+      <BarChart data={week} layout="horizontal">
+        <BarChart.Baseline />
+      </BarChart>,
     );
     expect(rails().length).toBeGreaterThan(0);
     withRail.unmount();
 
-    renderWithTheme(<BarChart data={week} layout="horizontal" chrome="none" />);
+    renderWithTheme(
+      <BarChart data={week} layout="horizontal">
+        <BarChart.Categories />
+      </BarChart>,
+    );
     expect(rails()).toHaveLength(0);
   });
 
@@ -1151,13 +1228,17 @@ describe('DonutChart', () => {
     });
   });
 
-  it('hides the centre figure at showValue={false}', () => {
+  it('hides the centre figure when the Value part is not named', () => {
     const { rerender } = renderWithTheme(
       <DonutChart data={spend} format={(v) => `$${v}`} />,
     );
     expect(screen.getByText('$1680')).toBeTruthy();
 
-    rerender(<DonutChart data={spend} format={(v) => `$${v}`} showValue={false} />);
+    rerender(
+      <DonutChart data={spend} format={(v) => `$${v}`}>
+        <DonutChart.Legend />
+      </DonutChart>,
+    );
     expect(screen.queryByText('$1680')).toBeNull();
     // Still a ring — only the readout went.
     expect(screen.getByRole('image')).toBeTruthy();
@@ -1200,26 +1281,41 @@ describe('Meter — the readout and the hole it sits in', () => {
     plain.unmount();
 
     const one = renderWithTheme(
-      <Meter shape="ring" value={53} max={100} rings={[{ value: 40 }]} />,
+      <Meter shape="ring" value={53} max={100}>
+        <Meter.Ring value={40} />
+      </Meter>,
     );
-    // One extra still leaves 72pt — comfortable.
-    expect(screen.getByText('53%')).toBeTruthy();
+    // One extra still leaves 72pt — comfortable. Naming no Value part means the
+    // geometry is not consulted at all, so this asserts the composed contract:
+    // an unnamed part is an absent one.
+    expect(screen.queryByText('53%')).toBeNull();
     one.unmount();
 
     renderWithTheme(
-      <Meter shape="ring" value={53} max={100} rings={[{ value: 40 }, { value: 20 }]} />,
+      <Meter shape="ring" value={53} max={100}>
+        <Meter.Ring value={40} />
+        <Meter.Ring value={20} />
+      </Meter>,
     );
     expect(screen.queryByText('53%')).toBeNull();
   });
 
-  it('lets an explicit showValue override the geometry either way', () => {
+  it('lets a named Value part override the geometry either way', () => {
     const forced = renderWithTheme(
-      <Meter shape="ring" value={53} max={100} rings={[{ value: 40 }, { value: 20 }]} showValue />,
+      <Meter shape="ring" value={53} max={100}>
+        <Meter.Value />
+        <Meter.Ring value={40} />
+        <Meter.Ring value={20} />
+      </Meter>,
     );
     expect(screen.getByText('53%')).toBeTruthy();
     forced.unmount();
 
-    renderWithTheme(<Meter shape="ring" value={53} max={100} showValue={false} />);
+    renderWithTheme(
+      <Meter shape="ring" value={53} max={100}>
+        <Meter.Label>Storage</Meter.Label>
+      </Meter>,
+    );
     expect(screen.queryByText('53%')).toBeNull();
   });
 

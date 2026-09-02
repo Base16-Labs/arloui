@@ -194,10 +194,15 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Chart plot',
     description:
-      'The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`.',
+      'The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`; add `Chart.Bars` inside the plot for a combo chart on one shared scale.',
     dependencies: ['expo-haptics'],
     registryDependencies: ['chart-core', 'animated-counter', 'haptics'],
-    files: [{ source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' }],
+    files: [
+      { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
+      { source: 'components/chart/chart-context.ts', target: 'chart/chart-context.ts' },
+      { source: 'components/chart/readouts.tsx', target: 'chart/readouts.tsx' },
+      { source: 'components/chart/plot.tsx', target: 'chart/plot.tsx' },
+    ],
     meta: { tags: ['chart', 'line', 'area', 'scrub', 'gesture', 'primitive'] },
   },
   {
@@ -205,10 +210,15 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Bar chart',
     description:
-      'Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection, a reference line, and signed values below the zero rule.',
+      'Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection and signed values below the zero rule. Composed: `<Chart.Bar>` with `Series`, `Values`, `Labels`, `Baseline`, `Reference`, and `Legend` parts, each drawn because it is named.',
     dependencies: ['expo-haptics'],
     registryDependencies: ['chart-core', 'haptics'],
-    files: [{ source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' }],
+    files: [
+      { source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' },
+      { source: 'components/chart/bar-shared.tsx', target: 'chart/bar-shared.tsx' },
+      { source: 'components/chart/bar-vertical.tsx', target: 'chart/bar-vertical.tsx' },
+      { source: 'components/chart/bar-horizontal.tsx', target: 'chart/bar-horizontal.tsx' },
+    ],
     meta: { tags: ['chart', 'bar', 'categorical', 'primitive'] },
   },
   {
@@ -216,7 +226,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Sparkline',
     description:
-      'A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction, with an optional end dot and high/low marks.',
+      'A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction. Composed: `Fill`, `EndDot`, and `Extremes` parts.',
     registryDependencies: ['chart-core'],
     files: [{ source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' }],
     meta: { tags: ['chart', 'sparkline', 'inline', 'primitive'] },
@@ -226,7 +236,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Donut chart',
     description:
-      'Part-to-whole with a mandatory legend. Four validated slices, then everything past them folds into one neutral Other.',
+      'Part-to-whole. Four validated slices, then everything past them folds into one neutral Other. Composed: `Value`, `Label`, and `Legend` parts.',
     dependencies: ['expo-haptics'],
     registryDependencies: ['chart-core', 'haptics'],
     files: [{ source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' }],
@@ -237,7 +247,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Meter',
     description:
-      'One value against a target, as a bar, a ring, or an arc gauge, with optional concentric rings and warning/danger thresholds.',
+      'One value against a target, as a bar, a ring, or an arc gauge, with warning/danger thresholds. Composed: `Value`, `Label`, and one `Ring` part per concentric ring.',
     registryDependencies: ['chart-core'],
     files: [{ source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' }],
     meta: { tags: ['chart', 'meter', 'gauge', 'progress', 'primitive'] },
@@ -247,7 +257,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Heatmap',
     description:
-      'A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it.',
+      'A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it. Composed: `DayLabels` and `Scale` parts.',
     dependencies: ['expo-haptics'],
     registryDependencies: ['chart-core', 'haptics'],
     files: [{ source: 'components/chart/heatmap.tsx', target: 'chart/heatmap.tsx' }],

@@ -25,10 +25,13 @@ import { GalleryDocPlayground } from '@/components/docs/gallery-preview';
 import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
 import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
 import { ChartFormsPreview } from '@/components/docs/chart-preview';
+import { ChartReference } from '@/components/docs/chart-reference';
+import { ChartFormPage } from '@/components/docs/chart-form-page';
+import { chartChoices, chartFormBySlug, chartForms, chartPitfalls } from '@/lib/chart-forms';
 import { DevicePreview } from '@/components/ui/DevicePreview';
 import { GithubMark } from '@/components/ui/GithubMark';
 import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
-import { componentGroups } from '@/lib/routes';
+import { chartFormRoutes, componentGroups } from '@/lib/routes';
 import {
   buttonData,
   checkboxData,
@@ -52,11 +55,17 @@ import {
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
-  return componentGroups.flatMap((g) => g.items.map((item) => ({ slug: item.slug })));
+  return [
+    ...componentGroups.flatMap((g) => g.items.map((item) => ({ slug: item.slug }))),
+    ...chartFormRoutes.map((form) => ({ slug: form.slug })),
+  ];
 }
 
 export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
+  const chartForm = chartFormBySlug.get(slug);
+  if (chartForm) return <ChartFormPage form={chartForm} />;
 
   const exists = componentGroups.some((g) => g.items.some((item) => item.slug === slug));
   if (!exists) notFound();
@@ -3052,6 +3061,19 @@ function ChartDocPage() {
             Static previews. Scrubbing, selection, and the threshold colours are live in the
             playground.
           </p>
+          <div className="mt-6 grid gap-2 sm:grid-cols-2">
+            {chartForms.map((form) => (
+              <a
+                key={form.slug}
+                href={`/docs/components/${form.slug}`}
+                className="rounded-xl border border-line bg-canvas p-4 transition-colors hover:border-line-strong"
+              >
+                <div className="font-mono text-[12.5px] text-ink">{form.title}</div>
+                <p className="mt-1 text-[12.5px] text-ink-2">{form.answers}</p>
+                <p className="mt-1.5 text-[12px] text-ink-3">{form.lede}</p>
+              </a>
+            ))}
+          </div>
         </Section>
 
         <Section
@@ -3059,24 +3081,42 @@ function ChartDocPage() {
           title="When to use"
           sub="Pick the form by the question the reader is asking."
         >
-          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>
-              <strong>Chart</strong> for &quot;how is this number doing&quot; — one series over time,
-              with a readout you scrub. It carries no axis furniture on purpose: it answers shape and
-              direction, not what exactly happened on Tuesday.
-            </li>
-            <li>
-              <strong>Chart.Sparkline</strong> inline beside a number that is already labelled.{' '}
-              <strong>Chart.Bar</strong> to compare categories. <strong>Chart.Donut</strong> for
-              part-to-whole, never more than four slices before the rest fold into Other.
-            </li>
-            <li>
-              <strong>Chart.Meter</strong> for one value against a target — a budget, a quota, a goal.
-            </li>
-            <li>
-              <strong>Chart.Heatmap</strong> for showing up — a calendar of filled and empty squares
-              with a headline streak the app composes. No library, no axes, one hue in tints.
-            </li>
+          <p className="mb-5 max-w-[62ch] text-[13.5px] text-ink-2">
+            Start from the question the reader is asking, then check the calls below — they are the
+            ones people get wrong.
+          </p>
+          <div className="overflow-x-auto rounded-xl border border-line bg-canvas">
+            <table className="w-full min-w-[420px] border-collapse text-left text-[13px]">
+              <thead>
+                <tr className="border-b border-line">
+                  <th className="px-4 py-2.5 font-medium text-ink-3">The reader asks</th>
+                  <th className="px-4 py-2.5 font-medium text-ink-3">Reach for</th>
+                </tr>
+              </thead>
+              <tbody>
+                {chartChoices.map((choice) => (
+                  <tr key={choice.slug} className="border-b border-line/60 last:border-0">
+                    <td className="px-4 py-2.5 text-ink-2">{choice.question}</td>
+                    <td className="px-4 py-2.5">
+                      <a href={`/docs/components/${choice.slug}`} className="text-ink underline-offset-4 hover:underline">
+                        {choice.form}
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <ul className="mt-6 space-y-3 text-[13.5px] leading-relaxed text-ink-2">
+            {chartPitfalls.map((item) => (
+              <li key={item.rule} className="flex gap-2.5">
+                <span aria-hidden className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-ink-3" />
+                <span>
+                  <strong className="font-medium text-ink">{item.rule}</strong>{' '}
+                  {item.body.replace(/`/g, '')}
+                </span>
+              </li>
+            ))}
           </ul>
         </Section>
 
@@ -3106,17 +3146,30 @@ import { Chart, formatMoney } from "@/components/ui/chart";
 />
 
 // Name the parts to reorder or drop one. \`format\` flows down from the root.
-<Chart data={points} format={formatMoney("USD")} chrome="reference" reference={{ value: 1000, label: "Target" }}>
+<Chart data={points} format={formatMoney("USD")}>
   <Chart.Empty>No trades yet</Chart.Empty>
-  <Chart.Plot height={200} fill />
   <Chart.Value />
   <Chart.Periods />
+  <Chart.Plot height={200} fill>
+    <Chart.Reference value={1000} label="Target" />
+  </Chart.Plot>
 </Chart>
 
-<Chart.Sparkline data={points} height={44} showEndDot />
-<Chart.Bar data={week} showValues onSelect={setSelected} />
-<Chart.Donut data={breakdown} centerLabel="Monthly spend" />
-<Chart.Meter value={88} max={100} label="Budget used" warnAt={0.75} dangerAt={0.9} />
+<Chart.Sparkline data={points} height={44}>
+  <Chart.Sparkline.EndDot />
+</Chart.Sparkline>
+<Chart.Bar data={week} onSelect={setSelected}>
+  <Chart.Bar.Values />
+  <Chart.Bar.Categories />
+</Chart.Bar>
+<Chart.Donut data={breakdown}>
+  <Chart.Donut.Value />
+  <Chart.Donut.Label>Monthly spend</Chart.Donut.Label>
+</Chart.Donut>
+<Chart.Meter value={88} max={100} warnAt={0.75} dangerAt={0.9}>
+  <Chart.Meter.Value />
+  <Chart.Meter.Label>Budget used</Chart.Meter.Label>
+</Chart.Meter>
 <Chart.Heatmap data={days} onSelect={setDay} />
 
 // A second series and a likely range are props on Plot, not new forms.
@@ -3136,9 +3189,19 @@ import { Chart, formatMoney } from "@/components/ui/chart";
   />
 </Chart>
 
-// Bars: two series share a category — grouped or stacked, legend names them.
-<Chart.Bar data={sleep} series={[activity]} variant="grouped" legend={["Sleep", "Activity"]} />
-<Chart.Bar data={private_} series={[state]} variant="stacked" legend={["Private", "State"]} />
+// Bars: each series is a child carrying its own name — no parallel arrays.
+<Chart.Bar variant="grouped">
+  <Chart.Bar.Series data={sleep} label="Sleep" />
+  <Chart.Bar.Series data={activity} label="Activity" />
+  <Chart.Bar.Categories />
+  <Chart.Bar.Legend />
+</Chart.Bar>
+<Chart.Bar variant="stacked">
+  <Chart.Bar.Series data={private_} label="Private" />
+  <Chart.Bar.Series data={state} label="State" />
+  <Chart.Bar.Categories />
+  <Chart.Bar.Legend />
+</Chart.Bar>
 
 // Layout is a prop, not a form — the same categories as ranked rows.
 <Chart.Bar data={spend} layout="horizontal" format={formatMoney("GBP")} />`}</CodeBlock>
@@ -3198,6 +3261,19 @@ import { Chart, formatMoney } from "@/components/ui/chart";
               </div>
             </div>
           </div>
+        </Section>
+
+        <Section
+          id="props"
+          title="Props"
+          sub="Generated from the types, so it cannot drift from the code."
+        >
+          <p className="mb-5 max-w-[62ch] text-[13px] text-ink-2">
+            What each form accepts and what it does. Presence is not here — what a chart{' '}
+            <em>draws</em> is named in the tree (see Code above); these are the props that say how
+            it behaves.
+          </p>
+          <ChartReference />
         </Section>
 
         <Section

@@ -11,6 +11,8 @@
  * - Prose pages (foundation essays) register authored markdown in `ESSAYS`.
  */
 
+import { CHART_PROPS, CHART_PROPS_MD } from './generated/chart-props';
+import { chartChoices, chartForms, chartPitfalls } from './chart-forms';
 import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
 import { archetypeDescriptions, archetypeItems } from './routes';
 
@@ -129,6 +131,27 @@ type PageData = {
   actions?: readonly DocLink[];
 };
 
+/** A body's own top-level headings, in the order it emits them. */
+function tocOf(body: string): { label: string }[] {
+  return [...body.matchAll(/^## (.+)$/gm)].map((match) => ({ label: match[1]!.trim() }));
+}
+
+/** The choosing table and the pitfalls, from the same data the page renders. */
+function chartWhenToUseMarkdown(): string {
+  const rows = chartChoices.map((choice) => `| ${choice.question} | ${choice.form} |`);
+  const bullets = chartPitfalls.map((item) => `- **${item.rule}** ${item.body}`);
+  return [
+    'Start from the question the reader is asking, then check the exceptions below —',
+    `they are the ${['zero', 'one', 'two', 'three', 'four', 'five', 'six'][chartPitfalls.length] ?? chartPitfalls.length} calls people get wrong.`,
+    '',
+    '| The reader asks | Reach for |',
+    '| --- | --- |',
+    ...rows,
+    '',
+    ...bullets,
+  ].join('\n');
+}
+
 export function docDataToMarkdown(
   data: PageData,
   kind: DocMeta['kind'] = 'Component',
@@ -140,7 +163,17 @@ export function docDataToMarkdown(
     slug: data.slug,
     lede: data.lede,
     category: data.category,
-    sections: data.headings ? [...data.headings] : undefined,
+    /*
+     * Derived from the body, not from `headings`.
+     *
+     * `headings` drives the rendered page's right rail, and a page and its
+     * markdown do not carry the same sections — the page has an interactive
+     * Anatomy and a Do · Don't the markdown has no way to express. One list
+     * serving both meant the markdown promised sections it never emitted, and
+     * trimming it to suit the markdown left the page's rail pointing at
+     * anchors that were not there. Each document now lists itself.
+     */
+    sections: body ? tocOf(body) : data.headings ? [...data.headings] : undefined,
     states: data.states,
     tokens: data.tokens,
     figma: data.figma,
@@ -230,6 +263,7 @@ export const sheetData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'customization', label: 'Customization' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
@@ -271,6 +305,7 @@ export const tabBarData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -310,6 +345,7 @@ export const cardData = {
     { id: 'presets', label: 'Presets' },
     { id: 'when-to-use', label: 'When to use' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -345,6 +381,7 @@ export const skeletonData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -379,6 +416,7 @@ export const spinnerData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -416,6 +454,7 @@ export const tabsData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -495,6 +534,7 @@ export const buttonData = {
     { id: 'motion', label: 'Motion' },
     { id: 'social-auth', label: 'Social auth' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -530,6 +570,7 @@ export const datePickerData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -582,6 +623,7 @@ export const inputData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -621,6 +663,7 @@ export const toggleData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -662,6 +705,7 @@ export const checkboxData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -700,6 +744,7 @@ export const radioData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -863,6 +908,7 @@ export const textAreaData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -900,6 +946,7 @@ export const carouselData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -938,6 +985,7 @@ export const galleryData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -978,6 +1026,7 @@ export const toastData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -1064,7 +1113,7 @@ is asking, not by the shape you want.
 
 | Form | Answers | Reach for it when |
 | --- | --- | --- |
-| \`Chart\` + \`Chart.Plot\` | "How has this moved?" | One series over time, scrubbable, with a big readout above it. The money screen. |
+| Line chart (\`Chart\`) | "How has this moved?" | One series over time, scrubbable, with a big readout above it. The money screen. |
 | \`Chart.Sparkline\` | "Which way is this going?" | An inline mark in a list row or a stat card. No axes, no scrub, often no labels. |
 | \`Chart.Bar\` | "How do these compare?" | Categories side by side — grouped, stacked, or as ranked horizontal rows. |
 | \`Chart.Donut\` | "What is this made of?" | Parts of one whole. Four named slices, then everything else folds into \`Other\`. |
@@ -1077,14 +1126,7 @@ state. The other five are standalone and take their own \`data\`.
 
 ## When to use
 
-- **A number, not a chart, when there is one number.** A meter or a big
-  \`Chart.Value\` says more than a plot with two points in it.
-- **Sparkline over Plot in a row.** If the mark is smaller than the text beside
-  it, it is a sparkline — it has no room for an axis, a scrub, or a readout.
-- **Bar over Donut past four categories.** A ring can hold four slices and an
-  \`Other\`; a fifth is a bar chart wearing the wrong shape.
-- **Heatmap only for dates.** Its x-axis is always time. A matrix of two
-  categorical axes is a different chart and is not in the kit.
+__CHART_WHEN__
 
 ## Reading the three axes
 
@@ -1120,8 +1162,9 @@ npx arloui add chart-sparkline
 
 A single form gives you the component itself (\`BarChart\`, \`Sparkline\`, and so
 on) plus \`chart-core\` — the scale, the tones and densities, the legend, the
-empty slot, and the loading skeleton. Seven files rather than thirteen, and no
-\`expo-haptics\` unless the form you took responds to touch.
+empty slot, and the loading skeleton. Seven files for a sparkline, ten for a bar
+chart, against nineteen for the kit — and no \`expo-haptics\` unless the form you
+took responds to touch.
 
 ### Which import
 
@@ -1141,7 +1184,7 @@ import { BarChart } from '@/components/ui/chart/bar-chart';
 
 | Entry | File | Export | Through the namespace |
 | --- | --- | --- | --- |
-| \`chart-plot\` | \`chart/chart\` | \`ChartRoot\`, \`ChartPlotParts\` | \`Chart\`, \`Chart.Plot\`, \`Chart.Value\`, \`Chart.Delta\`, \`Chart.Periods\` |
+| \`chart-plot\` | \`chart/chart\` | \`Chart\` | \`Chart\`, \`Chart.Plot\`, \`Chart.Value\`, \`Chart.Delta\`, \`Chart.Periods\` |
 | \`chart-bar\` | \`chart/bar-chart\` | \`BarChart\` | \`Chart.Bar\` |
 | \`chart-sparkline\` | \`chart/sparkline\` | \`Sparkline\` | \`Chart.Sparkline\` |
 | \`chart-donut\` | \`chart/donut-chart\` | \`DonutChart\` | \`Chart.Donut\` |
@@ -1152,9 +1195,68 @@ Paths follow your \`aliases.components\` — \`components/ui\` by default. The p
 are identical either way, so every example below reads the same once the import
 is swapped.
 
-\`chart-plot\` is the one form that reads differently on its own: it exports
-\`ChartRoot\` and a \`ChartPlotParts\` object rather than a namespace, so it is
-\`<ChartRoot>\` with \`ChartPlotParts.Value\` unless you also take \`chart\`.
+Every entry reads the same whether you took it alone or through \`chart\`. The
+plot's namespace is assembled in \`chart/chart\` itself, not in the barrel, so a
+standalone \`chart-plot\` gives you the same \`<Chart>\` the examples use — the
+barrel only adds the other five forms to that same object.
+
+## Two ways to call every form
+
+**Pass no children and you get the form's default composition** — the sensible
+chart, in one line:
+
+\`\`\`tsx
+<Chart data={points} format={money} periods={['1D', '1W', '1M']} period={p} onPeriodChange={setP} />
+\`\`\`
+
+**Name any child and you get exactly what you named** — nothing else is drawn:
+
+\`\`\`tsx
+<Chart data={points} format={money}>
+  <Chart.Value />
+  <Chart.Periods />
+  <Chart.Plot height={200} fill>
+    <Chart.Reference value={1000} label="Target" />
+  </Chart.Plot>
+</Chart>
+\`\`\`
+
+That inversion is the whole rule. There is no third way and no mixing: presence
+lives in the tree, so no form takes a \`showValues\`, a \`showLegend\`, or a
+\`chrome\` prop to decide what exists. For the bare mark — no zero rule, no
+labels — pass \`{null}\`, which says "I named nothing" rather than "give me the
+defaults".
+
+**Where a part goes** follows the same split: the root's children are
+information — \`Title\`, \`Value\`, \`Delta\`, \`Periods\`, \`Legend\`, \`Empty\` —
+and the plot's children are what is drawn inside the box — \`Line\`, \`Bars\`,
+\`Baseline\`, \`Reference\`, \`Crosshair\`.
+
+\`Crosshair\` is the scrub: name it and the plot answers a touch and draws the
+rule and dot that follow it; leave it out and the plot is a picture. There is no
+\`scrubbable\` prop, because a plot that tracks a finger and draws nothing is not
+a thing anyone wants.
+
+On naming: \`Value\` is the one big readout, \`Values\` is a number on every mark,
+and the category names are \`Categories\` rather than \`Labels\` — \`Label\` and
+\`Labels\` meaning different things one letter apart was a trap.
+
+The rule is presence against behaviour. A prop answering *does this element
+exist?* belongs in the tree; one answering *how does the whole chart behave?* —
+\`variant\`, \`layout\`, \`density\`, \`tone\`, \`spacing\` — stays a prop.
+
+| Form | Parts |
+| --- | --- |
+| \`Chart.Bar\` | \`Series\` \`Values\` \`Categories\` \`Baseline\` \`Reference\` \`Legend\` |
+| \`Chart.Donut\` | \`Value\` \`Label\` \`Legend\` |
+| \`Chart.Meter\` | \`Value\` \`Label\` \`Ring\` |
+| \`Chart.Sparkline\` | \`Fill\` \`EndDot\` \`Extremes\` |
+| \`Chart.Heatmap\` | \`DayLabels\` \`Scale\` |
+
+One thing this replaced outright: series and their names used to be two
+index-coupled arrays, \`series\` beside \`legend\`, where \`legend[1]\` named
+\`series[0]\` because \`data\` was series zero. A \`Series\` carries its own label.
+The meter's \`rings\` array went the same way.
 
 ## Code
 
@@ -1172,29 +1274,41 @@ A scrubbable series with a readout and a period selector:
 An inline mark in a list row — compact by default, tinted by direction:
 
 \`\`\`tsx
-<Chart.Sparkline data={prices} width={80} showEndDot={false} />
+<Chart.Sparkline data={prices} width={80} />
 \`\`\`
 
 Categories, ranked as rows rather than bars:
 
 \`\`\`tsx
-<Chart.Bar data={spend} layout="horizontal" format={money} chrome="none" />
+<Chart.Bar data={spend} layout="horizontal" format={money}>
+  <Chart.Bar.Categories />
+</Chart.Bar>
 \`\`\`
 
 Two series stacked, with a legend:
 
 \`\`\`tsx
-<Chart.Bar data={sleep} series={[activity]} variant="stacked" legend={['Sleep', 'Activity']} />
+<Chart.Bar variant="stacked">
+  <Chart.Bar.Series data={sleep} label="Sleep" />
+  <Chart.Bar.Series data={activity} label="Activity" />
+  <Chart.Bar.Categories />
+  <Chart.Bar.Legend />
+</Chart.Bar>
 \`\`\`
 
 One value against a target, as a gauge:
 
 \`\`\`tsx
-<Chart.Meter shape="arc" value={712} max={850} label="Credit score" warnAt={0.75} dangerAt={0.85} />
+<Chart.Meter shape="arc" value={712} max={850} warnAt={0.75} dangerAt={0.85}>
+  <Chart.Meter.Value />
+  <Chart.Meter.Label>Credit score</Chart.Meter.Label>
+</Chart.Meter>
 \`\`\`
 
-Every form takes the same empty slot, and it replaces the chart rather than
-sitting inside it:
+Every form that can be empty takes the same slot, and it replaces the chart
+rather than sitting inside it. A meter is exempt — an empty meter is a zero —
+and a heatmap only counts as empty with no data *and* no date range, because a
+grid of empty squares is usually the data rather than the absence of it:
 
 \`\`\`tsx
 <Chart.Bar
@@ -1206,6 +1320,59 @@ sitting inside it:
   }}
 />
 \`\`\`
+
+A second quantity that shares the x-axis but wants a different shape — volume
+behind price, rainfall behind temperature:
+
+\`\`\`tsx
+<Chart data={price} format={money}>
+  <Chart.Value />
+  <Chart.Plot>
+    <Chart.Bars data={volume} />
+  </Chart.Plot>
+</Chart>
+\`\`\`
+
+\`Chart.Line\` is the same idea for a second, third, nth line — each with its own
+colour and name, all on the one scale:
+
+\`\`\`tsx
+<Chart data={actual} format={money}>
+  <Chart.Plot>
+    <Chart.Line data={forecast} label="Forecast" dashed />
+    <Chart.Line data={budget} label="Budget" />
+  </Chart.Plot>
+</Chart>
+\`\`\`
+
+The marks are measured into the plot's own domain, so they agree about
+what a height means — bars on a scale of their own would sit at plausible but
+wrong heights, and nothing about the picture would say so. Scrubbing stays with
+the root: one gesture for the plot, however many marks are in it.
+
+### Linking two charts
+
+\`activeIndex\` is an index into one chart's own series, so two charts sharing it
+line up only if their points do. \`activeAt\` is resolved against each chart's own
+\`at\` values instead, so linked charts agree about *when*:
+
+\`\`\`tsx
+const [at, setAt] = useState<ChartPoint['at']>(undefined);
+
+<Chart data={price}  activeAt={at} onScrub={(_, p) => setAt(p?.at)}>…</Chart>
+<Chart data={volume} activeAt={at} onScrub={(_, p) => setAt(p?.at)}>…</Chart>
+\`\`\`
+
+Each chart still owns its own gesture, so this is a synchronised crosshair —
+scrub either, both follow — rather than one drag travelling between them.
+
+## Props
+
+Every prop each form accepts, read out of the source at build time — so this
+cannot drift from the types. Presence is not here: what the chart *draws* is
+named in the tree (see above), and these are the props that say how it behaves.
+
+__CHART_PROPS__
 
 ## Accessibility
 
@@ -1285,15 +1452,17 @@ export const chartData = {
    * for the section that names them, and finds the page has ended.
    */
   headings: [
-    { id: 'states', label: 'States' },
-    { id: 'tokens', label: 'Tokens used' },
+    { id: 'anatomy', label: 'Anatomy' },
     { id: 'forms', label: 'Forms' },
     { id: 'when-to-use', label: 'When to use' },
-    { id: 'axes', label: 'Reading the three axes' },
-    { id: 'install', label: 'Install' },
     { id: 'code', label: 'Code' },
+    { id: 'axes', label: 'Two axes' },
+    { id: 'props', label: 'Props' },
+    { id: 'tokens', label: 'Tokens used' },
     { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
     { id: 'not-in-the-kit', label: 'Not in the kit' },
+    { id: 'related', label: 'Related' },
   ],
   actions: [
     {
@@ -1330,7 +1499,14 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/badge': docDataToMarkdown(badgeData),
   '/docs/components/chip': docDataToMarkdown(chipData),
   '/docs/components/toast': docDataToMarkdown(toastData),
-  '/docs/components/chart': docDataToMarkdown(chartData, 'Component', CHART_BODY),
+  '/docs/components/chart': docDataToMarkdown(
+    chartData,
+    'Component',
+    CHART_BODY.replace('__CHART_PROPS__', CHART_PROPS_MD).replace(
+      '__CHART_WHEN__',
+      chartWhenToUseMarkdown(),
+    ),
+  ),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [
@@ -1353,8 +1529,93 @@ export function markdownForPath(pathname: string): string | null {
  * filesystem, so markdown cannot be read from disk on demand — it is written to
  * static assets at build time and served from there.
  */
+
+/**
+ * A chart form's page, as markdown.
+ *
+ * Built from the same data the rendered page uses, so the two cannot say
+ * different things — the prose from `chart-forms`, the reference from the
+ * generated tables.
+ */
+function chartFormMarkdown(form: (typeof chartForms)[number]): string {
+  const reference = CHART_PROPS.find((section) => section.title === form.referenceKey);
+  const props = reference?.props ?? [];
+  const parts = reference?.parts ?? [];
+  const pipe = (text: string) => text.replace(/\|/g, '\\|');
+
+  const out: string[] = [
+    `# ${form.title}`,
+    '',
+    `\`${form.referenceKey}\``,
+    '',
+    form.lede,
+    '',
+    `Answers ${form.answers}`,
+    '',
+    '## When to use',
+    '',
+    ...form.whenToUse.map((line) => `- ${line}`),
+    '',
+    '## Install',
+    '',
+    '```bash',
+    `npx arloui add ${form.entry}`,
+    '```',
+    '',
+    'A single form does not bring the `Chart` barrel, so import the component itself:',
+    '',
+    '```tsx',
+    `import { ${form.exportName} } from '@/components/ui/${form.file}';`,
+    '```',
+    '',
+    '## Code',
+    '',
+  ];
+
+  for (const example of form.examples) {
+    out.push(example.caption, '', '```tsx', example.code, '```', '');
+  }
+
+  if (props.length > 0) {
+    out.push('## Props', '', '| Prop | Type | Default | What it does |', '| --- | --- | --- | --- |');
+    for (const prop of props) {
+      const name = prop.required ? `\`${prop.name}\` **·** required` : `\`${prop.name}\``;
+      out.push(
+        `| ${name} | \`${pipe(prop.type)}\` | ${prop.default ? `\`${pipe(prop.default)}\`` : '—'} | ${pipe(prop.description) || '—'} |`,
+      );
+    }
+    out.push('');
+  }
+
+  if (parts.length > 0) {
+    out.push(
+      '## Parts',
+      '',
+      'Name one and it is drawn; name none and you get the default composition.',
+      '',
+      '| Part | Takes | What it draws |',
+      '| --- | --- | --- |',
+    );
+    for (const part of parts) {
+      const takes =
+        part.props.length > 0
+          ? part.props.map((prop) => `\`${prop.name}: ${pipe(prop.type)}\``).join(' ')
+          : '—';
+      out.push(`| \`<${part.name} />\` | ${takes} | ${pipe(part.description) || '—'} |`);
+    }
+    out.push('');
+  }
+
+  out.push('## What it will not do', '', form.notThis, '', '## Related', '', '- [Chart overview](/docs/components/chart)');
+  return out.join('\n');
+}
+
 export function allMarkdownPages(): { path: string; markdown: string }[] {
-  return Object.entries(PAGE_MARKDOWN)
-    .map(([path, markdown]) => ({ path, markdown }))
-    .sort((a, b) => a.path.localeCompare(b.path));
+  return [
+    ...Object.entries(PAGE_MARKDOWN).map(([path, markdown]) => ({ path, markdown })),
+    ...chartForms.map((form) => ({
+      path: `/docs/components/${form.slug}`,
+      markdown: chartFormMarkdown(form),
+    })),
+  ].sort((a, b) => a.path.localeCompare(b.path));
 }

@@ -12,6 +12,7 @@
 - When to use
 - Variants
 - Code
+- Props
 - Tokens
 - Accessibility
 - Do · Don't

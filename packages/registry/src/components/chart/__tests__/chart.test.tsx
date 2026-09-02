@@ -243,11 +243,12 @@ describe('Chart', () => {
     expect(screen.getByText(/\+\$20\.00/)).toBeTruthy();
   });
 
-  it('ignores scrub gestures when scrubbing is disabled', () => {
+  it('ignores scrub gestures when no Crosshair part is named', () => {
     renderWithTheme(
       <Chart data={[10, 20, 30]}>
         <Chart.Delta format={money} />
-        <Chart.Plot scrubbable={false} />
+        {/* No Crosshair part named, so the plot does not answer a touch. */}
+        <Chart.Plot>{null}</Chart.Plot>
       </Chart>,
     );
     const plot = screen.getByRole('image');

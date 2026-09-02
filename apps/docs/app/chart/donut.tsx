@@ -100,13 +100,10 @@ export default function DonutChartCanvas() {
           >
             <Chart.Donut
               data={data}
-              centerLabel="Monthly spend"
               format={money}
               density={density}
               thickness={thickness}
               loading={state === 'loading'}
-              showLegend={showLegend}
-              showValue={showValue}
               empty={{
                 title: 'No spending yet',
                 description: 'Your categories will appear here once you log a transaction.',
@@ -114,7 +111,11 @@ export default function DonutChartCanvas() {
               }}
               activeIndex={selected}
               onSelect={(index) => setSelected(index === selected ? null : index)}
-            />
+            >
+              {showValue ? <Chart.Donut.Value /> : null}
+              {showValue ? <Chart.Donut.Label>Monthly spend</Chart.Donut.Label> : null}
+              {showLegend ? <Chart.Donut.Legend /> : null}
+            </Chart.Donut>
           </Animated.View>
 
           {!sheetOpen ? (

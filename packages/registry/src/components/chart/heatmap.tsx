@@ -28,12 +28,14 @@
  *   control surface, it is noise.
  */
 import { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Animated, Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { rgbaFromHex } from '@arloui/tokens';
 import { haptic } from '../../foundation/haptics';
+import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useTokens } from '../../foundation/theme-provider';
 import type { ChartPoint } from './core';
-import { useSkeletonPulse } from './hooks';
+import { collectParts, hasPart, useSkeletonPulse } from './hooks';
 import { SkeletonSheen } from './skeleton';
 
 export type HeatmapDatum = ChartPoint & {
@@ -51,17 +53,35 @@ export type HeatmapProps = {
   /** Grid end; defaults to the latest datum, run on to Sunday. */
   to?: string | number | Date;
   /** Weekday initials over the columns. On by default. */
-  showDayLabels?: boolean;
   /** The Less–More scale under the grid. On by default. */
-  showScale?: boolean;
   /** Tapping a day. Without this the grid is one image, not forty-two buttons. */
   onSelect?: (datum: HeatmapDatum | null, date: Date) => void;
   /** Formats a day's value in its accessibility label. */
   format?: (value: number) => string;
+  /**
+   * The composed empty slot — headline, one line, one action — the same one
+   * every other form draws.
+   *
+   * A heatmap of empty squares is usually the data ("you showed up zero days"),
+   * which is why the grid is not treated as empty just because every value is.
+   * But with no data *and* no `from`/`to` there is no month to draw at all, and
+   * that is a genuinely empty chart rather than a quiet one.
+   */
+  empty?: ChartEmptyProps;
+  /** Rendered in place of the grid when there is no range to draw. */
+  emptyLabel?: string;
   /** Pulses the empty grid instead of the data. */
   loading?: boolean;
+  /** Overrides the summary read to assistive tech, which otherwise gives the range and its busiest day. */
   accessibilityLabel?: string;
+  /** Style for the grid's outer container. */
   style?: StyleProp<ViewStyle>;
+  /**
+   * The composed form: `<Heatmap.DayLabels />` rather than `showDayLabels`,
+   * `<Heatmap.Scale />` rather than `showScale`. Omit it and the map renders
+   * exactly as it always has.
+   */
+  children?: ReactNode;
 };
 
 const DAY_INITIALS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -91,7 +111,12 @@ function endOfWeek(date: Date): Date {
   return day;
 }
 
-export function Heatmap({
+type HeatmapResolved = HeatmapProps & {
+  showDayLabels?: boolean;
+  showScale?: boolean;
+};
+
+function HeatmapInner({
   data,
   levels = 3,
   from,
@@ -100,10 +125,12 @@ export function Heatmap({
   showScale = true,
   onSelect,
   format,
+  empty,
+  emptyLabel = 'No activity yet',
   loading = false,
   accessibilityLabel,
   style,
-}: HeatmapProps) {
+}: HeatmapResolved) {
   const t = useTokens();
   const pulse = useSkeletonPulse(t.motion.duration.slow);
   const [gridWidth, setGridWidth] = useState(0);
@@ -181,6 +208,18 @@ export function Heatmap({
     const value = format ? format(datum.value) : String(datum.value);
     return `${when}, ${value}`;
   };
+
+  /*
+   * Nothing to draw at all — no data and no range — so the slot replaces the
+   * grid rather than sitting inside it, the way it does on every other form.
+   */
+  if (!loading && weeks.length === 0) {
+    return (
+      <View style={[{ justifyContent: 'center' }, style]}>
+        {empty ? <EmptyContent {...empty} /> : <EmptyContent title={emptyLabel} />}
+      </View>
+    );
+  }
 
   return (
     <View style={[{ gap: t.spacing[2] }, style]}>
@@ -285,3 +324,47 @@ export function Heatmap({
     </View>
   );
 }
+
+/* ------------------------------------------------------------------------- *
+ * The composed form — see `collectParts` in `hooks.ts`.
+ * ------------------------------------------------------------------------- */
+
+/** The weekday initials down the left edge of the grid. */
+function HeatmapDayLabelsPart(): ReactNode {
+  return null;
+}
+
+/** The Less-to-More key under the grid, showing what each level of fill means. */
+function HeatmapScalePart(): ReactNode {
+  return null;
+}
+
+function resolveComposition(props: HeatmapProps): HeatmapResolved {
+  const { children, ...rest } = props;
+  // The one-liner: the grid with its gutter and key.
+  /*
+   * `undefined`, not `== null`: an absent `children` is "give me the defaults",
+   * while an explicit `{null}` is "I named nothing, draw nothing". Without the
+   * distinction there is no way to ask for a bare mark — no zero rule, no
+   * labels — short of an empty fragment, which reads like a mistake.
+   */
+  if (children === undefined) return { ...rest, showDayLabels: true, showScale: true };
+  const parts = collectParts(children);
+  return {
+    ...rest,
+    showDayLabels: hasPart(parts, HeatmapDayLabelsPart),
+    showScale: hasPart(parts, HeatmapScalePart),
+  };
+}
+
+function HeatmapRoot(props: HeatmapProps) {
+  return <HeatmapInner {...resolveComposition(props)} />;
+}
+
+/** The parts, for `Chart.Heatmap.Scale` and friends. */
+export const HeatmapParts = {
+  DayLabels: HeatmapDayLabelsPart,
+  Scale: HeatmapScalePart,
+};
+
+export const Heatmap = Object.assign(HeatmapRoot, HeatmapParts);

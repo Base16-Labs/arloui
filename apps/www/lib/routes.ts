@@ -113,6 +113,23 @@ export const componentGroups: ComponentGroup[] = [
   },
 ];
 
+/**
+ * The per-form Chart pages.
+ *
+ * Deliberately not in `componentGroups`: that list is what `componentCount`
+ * counts, and Chart is one component with six forms — folding the forms in
+ * would advertise six more components than the kit has. They are routed and
+ * listed in the sidebar under Chart instead.
+ */
+export const chartFormRoutes: { label: string; slug: string }[] = [
+  { label: 'Line chart', slug: 'chart-plot' },
+  { label: 'Bar', slug: 'chart-bar' },
+  { label: 'Sparkline', slug: 'chart-sparkline' },
+  { label: 'Donut', slug: 'chart-donut' },
+  { label: 'Meter', slug: 'chart-meter' },
+  { label: 'Heatmap', slug: 'chart-heatmap' },
+];
+
 /** Documented component count — keep copy in sync with `componentGroups`. */
 export const componentCount = componentGroups.reduce(
   (n, group) => n + group.items.length,

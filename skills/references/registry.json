@@ -173,7 +173,7 @@
       "name": "chart-plot",
       "kind": "primitive",
       "title": "Chart plot",
-      "description": "The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`.",
+      "description": "The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`; add `Chart.Bars` inside the plot for a combo chart on one shared scale.",
       "registryDependencies": [
         "chart-core",
         "animated-counter",
@@ -195,7 +195,7 @@
       "name": "chart-bar",
       "kind": "primitive",
       "title": "Bar chart",
-      "description": "Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection, a reference line, and signed values below the zero rule.",
+      "description": "Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection and signed values below the zero rule. Composed: `<Chart.Bar>` with `Series`, `Values`, `Labels`, `Baseline`, `Reference`, and `Legend` parts, each drawn because it is named.",
       "registryDependencies": [
         "chart-core",
         "haptics"
@@ -214,7 +214,7 @@
       "name": "chart-sparkline",
       "kind": "primitive",
       "title": "Sparkline",
-      "description": "A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction, with an optional end dot and high/low marks.",
+      "description": "A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction. Composed: `Fill`, `EndDot`, and `Extremes` parts.",
       "registryDependencies": [
         "chart-core"
       ],
@@ -230,7 +230,7 @@
       "name": "chart-donut",
       "kind": "primitive",
       "title": "Donut chart",
-      "description": "Part-to-whole with a mandatory legend. Four validated slices, then everything past them folds into one neutral Other.",
+      "description": "Part-to-whole. Four validated slices, then everything past them folds into one neutral Other. Composed: `Value`, `Label`, and `Legend` parts.",
       "registryDependencies": [
         "chart-core",
         "haptics"
@@ -249,7 +249,7 @@
       "name": "chart-meter",
       "kind": "primitive",
       "title": "Meter",
-      "description": "One value against a target, as a bar, a ring, or an arc gauge, with optional concentric rings and warning/danger thresholds.",
+      "description": "One value against a target, as a bar, a ring, or an arc gauge, with warning/danger thresholds. Composed: `Value`, `Label`, and one `Ring` part per concentric ring.",
       "registryDependencies": [
         "chart-core"
       ],
@@ -266,7 +266,7 @@
       "name": "chart-heatmap",
       "kind": "primitive",
       "title": "Heatmap",
-      "description": "A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it.",
+      "description": "A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it. Composed: `DayLabels` and `Scale` parts.",
       "registryDependencies": [
         "chart-core",
         "haptics"

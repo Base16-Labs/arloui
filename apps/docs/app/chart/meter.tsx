@@ -111,12 +111,16 @@ export default function MeterCanvas() {
                 tone={tone}
                 value={level}
                 max={100}
-                label="Storage"
                 density={density}
                 loading={state === 'loading'}
-                rings={extraRings}
                 {...threshold}
-              />
+              >
+                <Chart.Meter.Value />
+                <Chart.Meter.Label>Storage</Chart.Meter.Label>
+                {(extraRings ?? []).map((ring, index) => (
+                  <Chart.Meter.Ring key={index} {...ring} />
+                ))}
+              </Chart.Meter>
             </View>
           </Animated.View>
 

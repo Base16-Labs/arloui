@@ -1,5 +1,5 @@
 {
-  "count": 45,
+  "count": 51,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -56,6 +56,30 @@
     {
       "path": "/docs/components/chart",
       "md": "/md/docs/components/chart.md"
+    },
+    {
+      "path": "/docs/components/chart-bar",
+      "md": "/md/docs/components/chart-bar.md"
+    },
+    {
+      "path": "/docs/components/chart-donut",
+      "md": "/md/docs/components/chart-donut.md"
+    },
+    {
+      "path": "/docs/components/chart-heatmap",
+      "md": "/md/docs/components/chart-heatmap.md"
+    },
+    {
+      "path": "/docs/components/chart-meter",
+      "md": "/md/docs/components/chart-meter.md"
+    },
+    {
+      "path": "/docs/components/chart-plot",
+      "md": "/md/docs/components/chart-plot.md"
+    },
+    {
+      "path": "/docs/components/chart-sparkline",
+      "md": "/md/docs/components/chart-sparkline.md"
     },
     {
       "path": "/docs/components/checkbox",

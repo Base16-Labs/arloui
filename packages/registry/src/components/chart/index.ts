@@ -9,7 +9,10 @@
  * path builders the six are drawn with are public. A seventh form written against
  * them measures the same way these do.
  */
-import { ChartPlotParts, ChartRoot } from './chart';
+// The plot half is already assembled in `chart.tsx`, so a standalone
+// `chart-plot` install gets the same `Chart` the examples use. This adds the
+// other five forms to that same object.
+import { Chart as ChartBase } from './chart';
 import { BarChart } from './bar-chart';
 import { DonutChart } from './donut-chart';
 import { Heatmap } from './heatmap';
@@ -32,8 +35,7 @@ export {
  * thirteen-file lump. Installing `chart-bar` on its own now pulls the bar chart
  * and the shared core, and nothing else.
  */
-export const Chart = Object.assign(ChartRoot, {
-  ...ChartPlotParts,
+export const Chart = Object.assign(ChartBase, {
   Sparkline,
   Bar: BarChart,
   Donut: DonutChart,

@@ -198,8 +198,6 @@ export default function ChartCanvas() {
               data={data}
               tone={tone}
               density={density}
-              chrome={effectiveChrome}
-              reference={effectiveReference}
               loading={state === 'loading'}
               periods={PERIODS}
               period={period}
@@ -221,7 +219,20 @@ export default function ChartCanvas() {
                 compare={extra === 'compare' ? compareData : undefined}
                 range={extra === 'compare' ? range : undefined}
                 stack={extra === 'stacked' ? stack : undefined}
-              />
+              >
+                {/*
+                  Furniture is named inside the plot now, so the Chrome control
+                  adds and removes elements rather than switching an enum.
+                */}
+                {effectiveChrome !== 'none' ? <Chart.Baseline /> : null}
+                {effectiveChrome === 'reference'
+                  ? [effectiveReference]
+                      .flat()
+                      .flatMap((r) =>
+                        r == null ? [] : [<Chart.Reference key={r.value} value={r.value} label={r.label} />],
+                      )
+                  : null}
+              </Chart.Plot>
               {extra === 'stacked' ? (
                 /*
                  * Colours come from `seriesColorAt`, the same function the plot

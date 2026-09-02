@@ -135,9 +135,6 @@ export default function SparklineCanvas() {
               density={density}
               curve={curve}
               height={height}
-              fill={fill}
-              showEndDot={showEndDot}
-              showExtremes={showExtremes}
               format={money}
               emptyLabel="No trades yet"
               empty={{
@@ -147,7 +144,11 @@ export default function SparklineCanvas() {
               }}
               loading={state === 'loading'}
               accessibilityLabel={`${direction} trend`}
-            />
+            >
+              {fill ? <Chart.Sparkline.Fill /> : null}
+              {showEndDot ? <Chart.Sparkline.EndDot /> : null}
+              {showExtremes ? <Chart.Sparkline.Extremes /> : null}
+            </Chart.Sparkline>
           </Animated.View>
 
           {!sheetOpen ? (

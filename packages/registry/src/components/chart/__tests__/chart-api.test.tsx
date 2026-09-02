@@ -235,20 +235,25 @@ describe('chrome', () => {
     expect(baselineCount()).toBe(1);
   });
 
-  it('draws nothing at chrome="none"', () => {
+  it('draws no rule when the plot names no furniture', () => {
     renderWithTheme(
-      <Chart data={SERIES} chrome="none">
-        <Chart.Plot />
+      <Chart data={SERIES}>
+        {/* A named child inverts the default: the plot draws only what is in it. */}
+        <Chart.Plot>
+          <Chart.Line data={[1, 2, 3, 4, 5]} />
+        </Chart.Plot>
       </Chart>,
     );
     layoutPlot();
     expect(baselineCount()).toBe(0);
   });
 
-  it('draws one labelled line at chrome="reference"', () => {
+  it('draws one labelled line per Reference part', () => {
     renderWithTheme(
-      <Chart data={SERIES} chrome="reference" reference={{ value: 14, label: 'Target' }}>
-        <Chart.Plot />
+      <Chart data={SERIES}>
+        <Chart.Plot>
+          <Chart.Reference value={14} label="Target" />
+        </Chart.Plot>
       </Chart>,
     );
     layoutPlot();
@@ -258,13 +263,10 @@ describe('chrome', () => {
 
   it('labels the reference with the root format when given no label', () => {
     renderWithTheme(
-      <Chart
-        data={SERIES}
-        chrome="reference"
-        reference={{ value: 14 }}
-        format={formatMoney('USD', { locale: 'en-US', fractionDigits: 0 })}
-      >
-        <Chart.Plot />
+      <Chart data={SERIES} format={formatMoney('USD', { locale: 'en-US', fractionDigits: 0 })}>
+        <Chart.Plot>
+          <Chart.Reference value={14} />
+        </Chart.Plot>
       </Chart>,
     );
     layoutPlot();

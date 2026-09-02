@@ -13,6 +13,7 @@
 - Variants
 - States
 - Code
+- Props
 - Tokens
 - Accessibility
 - Do · Don't

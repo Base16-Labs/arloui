@@ -40,7 +40,10 @@ describe('Chart.Plot geometry', () => {
   function pathsFor(data: number[], curve: 'steep' | 'smooth' = 'steep') {
     renderWithTheme(
       <Chart data={data}>
-        <Chart.Plot height={HEIGHT} fill={false} chrome="none" curve={curve} />
+        {/* An explicit empty tree: the line alone, no zero rule. */}
+        <Chart.Plot height={HEIGHT} fill={false} curve={curve}>
+          {null}
+        </Chart.Plot>
       </Chart>,
     );
     layout();
@@ -107,7 +110,10 @@ describe('Chart.Plot geometry', () => {
   it('puts the scrub dot on the line, not near it', () => {
     renderWithTheme(
       <Chart data={[0, 25, 50, 75, 100]}>
-        <Chart.Plot height={HEIGHT} fill={false} chrome="none" />
+        <Chart.Plot height={HEIGHT} fill={false}>
+          {/* The dot is what these measure, so the crosshair is named. */}
+          <Chart.Crosshair />
+        </Chart.Plot>
       </Chart>,
     );
     layout();
@@ -141,7 +147,10 @@ describe('Chart.Plot geometry', () => {
   it('honours density: compact draws a thinner stroke and a smaller dot', () => {
     renderWithTheme(
       <Chart data={[0, 50, 100]} density="compact">
-        <Chart.Plot height={HEIGHT} fill={false} chrome="none" />
+        <Chart.Plot height={HEIGHT} fill={false}>
+          {/* The dot is what these measure, so the crosshair is named. */}
+          <Chart.Crosshair />
+        </Chart.Plot>
       </Chart>,
     );
     layout();

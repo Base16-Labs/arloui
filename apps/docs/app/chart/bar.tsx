@@ -176,35 +176,45 @@ export default function BarChartCanvas() {
             }}
           >
             <Chart.Bar
-              data={data}
-              series={multi ? [multiSecond] : undefined}
               variant={mode === 'stacked' ? 'stacked' : 'grouped'}
-              legend={
-                multi ? (dataset === 'signed' ? ['Flows', 'Fees'] : ['Sleep', 'Activity']) : undefined
-              }
               layout={layout}
               spacing={spacing}
               height={layout === 'horizontal' ? undefined : 200}
               tone={tone}
               density={density}
               loading={state === 'loading'}
-              showValues={showValues}
-              showLabels={showLabels}
               format={format}
               empty={{
                 title: 'No spending yet',
                 description: 'Categories will appear here once you log your first transaction.',
                 action: { label: 'Log a transaction', onPress: () => setState('default') },
               }}
-              chrome={chrome}
-              reference={
-                chrome === 'reference'
-                  ? { value: Number(average.toFixed(2)), label: 'AVG' }
-                  : undefined
-              }
               activeIndex={selected}
               onSelect={(index) => setSelected(index === selected ? null : index)}
-            />
+            >
+              {/*
+                The controls now toggle parts in and out of the tree rather than
+                flipping booleans. A part that is not named is not drawn — which
+                is the whole of the rule, visible in one place.
+              */}
+              <Chart.Bar.Series
+                data={data}
+                label={multi ? (dataset === 'signed' ? 'Flows' : 'Sleep') : undefined}
+              />
+              {multi ? (
+                <Chart.Bar.Series
+                  data={multiSecond}
+                  label={dataset === 'signed' ? 'Fees' : 'Activity'}
+                />
+              ) : null}
+              {showValues ? <Chart.Bar.Values /> : null}
+              {showLabels ? <Chart.Bar.Categories /> : null}
+              {chrome !== 'none' ? <Chart.Bar.Baseline /> : null}
+              {chrome === 'reference' ? (
+                <Chart.Bar.Reference value={Number(average.toFixed(2))} label="AVG" />
+              ) : null}
+              {multi ? <Chart.Bar.Legend /> : null}
+            </Chart.Bar>
           </Animated.View>
 
           {!sheetOpen ? (

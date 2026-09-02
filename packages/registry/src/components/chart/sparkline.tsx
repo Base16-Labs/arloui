@@ -13,6 +13,7 @@
  * so a sparkline and a plot of the same series have the same shape.
  */
 import { useId, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import {
   Text,
   Animated,
@@ -38,10 +39,11 @@ import {
   type ChartTone,
 } from './core';
 import { EmptyContent, type ChartEmptyProps } from './empty';
-import { useSkeletonPulse } from './hooks';
+import { collectParts, hasPart, useSkeletonPulse } from './hooks';
 import { SkeletonSheenSvg } from './skeleton';
 
 export type SparklineProps = {
+  /** The series. Bare numbers are fine — a sparkline has no axis to label. */
   data: ChartData;
   /**
    * Honours `auto` (default; tones by whether the series ended above where it
@@ -51,12 +53,12 @@ export type SparklineProps = {
   tone?: ChartTone;
   /** Inline marks default to `compact`: a thinner stroke and a smaller dot. */
   density?: ChartDensity;
+  /** Fixed width in points. Omit it and the mark measures its parent instead. */
   width?: number;
+  /** Fixed height in points. Small by default: this is an inline mark. */
   height?: number;
   /** Fade a gradient under the line. Off by default — inline marks stay light. */
-  fill?: boolean;
   /** Dot on the final point, for "where it ended up". */
-  showEndDot?: boolean;
   /**
    * Label the series' own high and low in the margins above and below the mark.
    *
@@ -68,7 +70,6 @@ export type SparklineProps = {
    * Reserves a row top and bottom, so the mark shrinks rather than running under
    * the text.
    */
-  showExtremes?: boolean;
   /** Formats the extreme labels. Raw values when omitted. */
   format?: (value: number) => string;
   /**
@@ -88,6 +89,7 @@ export type SparklineProps = {
    * Wins over `emptyLabel`.
    */
   empty?: ChartEmptyProps;
+  /** How points are joined — `steep` for straight segments, `smooth` for a spline. */
   curve?: ChartCurve;
   /** Overrides the density's stroke width. */
   strokeWidth?: number;
@@ -101,10 +103,23 @@ export type SparklineProps = {
    * are hidden from assistive tech unless you pass a label.
    */
   accessibilityLabel?: string;
+  /** Style for the mark's container. */
   style?: StyleProp<ViewStyle>;
+  /**
+   * The composed form: `<Sparkline.EndDot />` rather than `showEndDot`,
+   * `<Sparkline.Fill />` rather than `fill`. Omit it and the mark renders
+   * exactly as it always has.
+   */
+  children?: ReactNode;
 };
 
-export function Sparkline({
+type SparklineResolved = SparklineProps & {
+  fill?: boolean;
+  showEndDot?: boolean;
+  showExtremes?: boolean;
+};
+
+function SparklineInner({
   data,
   tone = 'auto',
   density = 'compact',
@@ -121,7 +136,7 @@ export function Sparkline({
   loading = false,
   accessibilityLabel,
   style,
-}: SparklineProps) {
+}: SparklineResolved) {
   const t = useTokens();
   const [measured, setMeasured] = useState(0);
   const width = widthProp ?? measured;
@@ -395,3 +410,54 @@ function ExtremeLabel({ top, text }: { top: boolean; text: string }) {
     </Text>
   );
 }
+
+/* ------------------------------------------------------------------------- *
+ * The composed form — see `collectParts` in `hooks.ts`.
+ * ------------------------------------------------------------------------- */
+
+/** A dot on the final point, so the eye lands on where the series ended. */
+function SparklineEndDotPart(): ReactNode {
+  return null;
+}
+
+/** Dots on the highest and lowest points, with their values. */
+function SparklineExtremesPart(): ReactNode {
+  return null;
+}
+
+/** A gradient wash under the line, fading to nothing at the bottom of the box. */
+function SparklineFillPart(): ReactNode {
+  return null;
+}
+
+function resolveComposition(props: SparklineProps): SparklineResolved {
+  const { children, ...rest } = props;
+  // The one-liner: the bare line. An inline mark earns nothing else by default.
+  /*
+   * `undefined`, not `== null`: an absent `children` is "give me the defaults",
+   * while an explicit `{null}` is "I named nothing, draw nothing". Without the
+   * distinction there is no way to ask for a bare mark — no zero rule, no
+   * labels — short of an empty fragment, which reads like a mistake.
+   */
+  if (children === undefined) return rest;
+  const parts = collectParts(children);
+  return {
+    ...rest,
+    showEndDot: hasPart(parts, SparklineEndDotPart),
+    showExtremes: hasPart(parts, SparklineExtremesPart),
+    fill: hasPart(parts, SparklineFillPart),
+  };
+}
+
+function SparklineRoot(props: SparklineProps) {
+  return <SparklineInner {...resolveComposition(props)} />;
+}
+
+/** The parts, for `Chart.Sparkline.EndDot` and friends. */
+export const SparklineParts = {
+  EndDot: SparklineEndDotPart,
+  Extremes: SparklineExtremesPart,
+  Fill: SparklineFillPart,
+};
+
+export const Sparkline = Object.assign(SparklineRoot, SparklineParts);

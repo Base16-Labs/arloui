@@ -32,6 +32,7 @@
  * static. Reduce Motion pins both straight to the final value.
  */
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import {
   Animated,
   Easing,
@@ -49,7 +50,7 @@ import {
   type ChartDensity,
   type ChartTone,
 } from './core';
-import { useSkeletonPulse } from './hooks';
+import { allParts, collectParts, hasPart, partProps, useSkeletonPulse } from './hooks';
 import { useReduceMotion } from '../../foundation/reduce-motion';
 
 /**
@@ -111,9 +112,13 @@ export type MeterRing = {
 };
 
 export type MeterProps = {
+  /** What to show, in the same units as `min` and `max`. */
   value: number;
+  /** Top of the range. The fill is `value` as a share of `min`..`max`. */
   max?: number;
+  /** Bottom of the range, for meters that do not start at zero. */
   min?: number;
+  /** A `bar`, a full `ring`, or an `arc` gauge open at the bottom. */
   shape?: MeterShape;
   /**
    * Honours `brand` (default), `positive`, `negative`, and `neutral`. A meter is
@@ -121,10 +126,9 @@ export type MeterProps = {
    * infer — so `series` and `auto` both resolve to `brand`.
    */
   tone?: ChartTone;
+  /** How thick the track is, unless `thickness` overrides it. */
   density?: ChartDensity;
-  label?: string;
   /** Text in the middle of a ring, or beside a bar. Defaults to a percentage. */
-  valueLabel?: string;
   /**
    * Force the numeric readout on or off. Left unset, a ring or an arc decides
    * from its own geometry: concentric `rings` eat into the hole, and once there
@@ -134,7 +138,6 @@ export type MeterProps = {
    * Set it explicitly only where you want to override that — the value stated
    * nearby (`false`), or a crowded dial you have sized yourself (`true`).
    */
-  showValue?: boolean;
   /** Fraction (0-1) past which the meter turns warning. */
   warnAt?: number;
   /** Fraction (0-1) past which the meter turns danger. */
@@ -154,7 +157,6 @@ export type MeterProps = {
    * would make them unreadable. Thresholds stay with the primary, which is the
    * one the readout reports.
    */
-  rings?: readonly MeterRing[];
   /**
    * Pulses the track and holds back the fill and the readout. The label stays —
    * it is the one part of a meter you already know before the value arrives, and
@@ -164,8 +166,16 @@ export type MeterProps = {
    * so it is either loading or it has a value. An empty meter is a zero.
    */
   loading?: boolean;
+  /** Overrides the label read to assistive tech, which otherwise uses the meter's name. */
   accessibilityLabel?: string;
+  /** Style for the meter's outer container. */
   style?: StyleProp<ViewStyle>;
+  /**
+   * The composed form: `<Meter.Value />` rather than `showValue`, and one
+   * `<Meter.Ring />` per ring rather than the `rings` array. Omit it and the
+   * meter renders exactly as it always has.
+   */
+  children?: ReactNode;
 };
 
 /**
@@ -334,7 +344,14 @@ function ExtraRing({
   );
 }
 
-export function Meter({
+type MeterResolved = MeterProps & {
+  label?: string;
+  valueLabel?: string;
+  showValue?: boolean;
+  rings?: readonly MeterRing[];
+};
+
+function MeterInner({
   value,
   max = 100,
   min = 0,
@@ -352,7 +369,7 @@ export function Meter({
   loading = false,
   accessibilityLabel,
   style,
-}: MeterProps) {
+}: MeterResolved) {
   const t = useTokens();
   const scale = METER_METRICS[density === 'compact' ? 'compact' : 'default'];
   const meterThickness = thickness ?? (shape === 'bar' ? scale.bar : scale.ring);
@@ -674,3 +691,74 @@ export function Meter({
     </View>
   );
 }
+
+/* ------------------------------------------------------------------------- *
+ * The composed form — see `collectParts` in `hooks.ts`.
+ * ------------------------------------------------------------------------- */
+
+/** The value, as a figure. On a ring or arc it sits in the hole; on a bar it sits above the track. */
+export type MeterValueProps = {
+  /** Overrides the formatted value, the way `valueLabel` did. */
+  value?: string;
+};
+function MeterValuePart(_: MeterValueProps): ReactNode {
+  return null;
+}
+
+/** The name under the readout. Takes its text as children. */
+export type MeterLabelProps = { children?: ReactNode };
+function MeterLabelPart(_: MeterLabelProps): ReactNode {
+  return null;
+}
+
+/** One concentric ring. Replaces an entry in the `rings` array. */
+export type MeterRingProps = MeterRing;
+function MeterRingPart(_: MeterRingProps): ReactNode {
+  return null;
+}
+
+/**
+ * With no children the props stand. With children the tree states what the
+ * meter shows — and `rings` becomes one element per ring, so a ring's colour
+ * and label sit on the ring rather than in a parallel position.
+ */
+function resolveComposition(props: MeterProps): MeterResolved {
+  const { children, ...rest } = props;
+  // The one-liner leaves `showValue` undefined on purpose: the geometry decides
+  // whether a readout fits (`showValue ?? readoutFits`). Forcing it true here
+  // would talk over that and put a figure back inside a crowded ring — the
+  // clash the containment work went in to stop.
+  /*
+   * `undefined`, not `== null`: an absent `children` is "give me the defaults",
+   * while an explicit `{null}` is "I named nothing, draw nothing". Without the
+   * distinction there is no way to ask for a bare mark — no zero rule, no
+   * labels — short of an empty fragment, which reads like a mistake.
+   */
+  if (children === undefined) return rest;
+
+  const parts = collectParts(children);
+  const value = partProps<MeterValueProps>(parts, MeterValuePart);
+  const label = partProps<MeterLabelProps>(parts, MeterLabelPart);
+  const rings = allParts<MeterRingProps>(parts, MeterRingPart);
+
+  return {
+    ...rest,
+    showValue: hasPart(parts, MeterValuePart),
+    valueLabel: value?.value,
+    label: typeof label?.children === 'string' ? label.children : undefined,
+    rings: rings.length > 0 ? rings : undefined,
+  };
+}
+
+function MeterRoot(props: MeterProps) {
+  return <MeterInner {...resolveComposition(props)} />;
+}
+
+/** The parts, for `Chart.Meter.Value` and friends. */
+export const MeterParts = {
+  Value: MeterValuePart,
+  Label: MeterLabelPart,
+  Ring: MeterRingPart,
+};
+
+export const Meter = Object.assign(MeterRoot, MeterParts);

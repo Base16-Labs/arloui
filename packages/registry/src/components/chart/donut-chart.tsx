@@ -30,6 +30,7 @@
  *   has to be on screen anyway.
  */
 import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import {
   Animated,
   Pressable,
@@ -49,7 +50,7 @@ import {
   type ChartDensity,
   type ChartPoint,
 } from './core';
-import { useControllableIndex, useSkeletonPulse } from './hooks';
+import { allParts, collectParts, hasPart, partProps, useControllableIndex, useSkeletonPulse } from './hooks';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { SkeletonSheenSvg } from './skeleton';
 
@@ -65,9 +66,11 @@ export type DonutChartProps = {
    * arc to draw. Anything past `maxSlices` folds into one neutral "Other".
    */
   data: readonly DonutSlice[];
+  /** The ring's outer diameter in points. */
   size?: number;
   /** Ring thickness. Defaults from `density` — 26 at default, 18 at compact. */
   thickness?: number;
+  /** How much mark there is: ring thickness and the hairline between slices. */
   density?: ChartDensity;
   /** Big text in the middle. Defaults to the summed total. */
   /**
@@ -77,15 +80,14 @@ export type DonutChartProps = {
    * Independent of `centerLabel`, which only ever renders when you pass one — so
    * a caption with no number is `showValue={false}` plus a `centerLabel`.
    */
-  showValue?: boolean;
-  centerValue?: string;
-  centerLabel?: string;
   /** Emphasised slice. Controlled when passed; `defaultActiveIndex` seeds the internal one. */
   activeIndex?: number | null;
+  /** Which slice starts selected when selection is uncontrolled. */
   defaultActiveIndex?: number | null;
+  /** Called with the tapped slice's index and datum. Passing it is what makes slices tappable. */
   onSelect?: (index: number, slice: DonutSlice) => void;
+  /** Formats the centre total and the legend's values. */
   format?: (value: number) => string;
-  showLegend?: boolean;
   /**
    * How many arcs the ring draws, **"Other" included**. Categories past that
    * fold into one neutral "Other" slice.
@@ -115,8 +117,16 @@ export type DonutChartProps = {
    * lands.
    */
   loading?: boolean;
+  /** Overrides the summary read to assistive tech, which otherwise names every slice and its share. */
   accessibilityLabel?: string;
+  /** Style for the chart's outer container. */
   style?: StyleProp<ViewStyle>;
+  /**
+   * The composed form: `<DonutChart.Value />` rather than `showValue`,
+   * `<DonutChart.Legend />` rather than `showLegend`. Omit it and the chart
+   * renders exactly as it always has.
+   */
+  children?: ReactNode;
 };
 
 /** Unselected slices fade to this, so the selected one reads as the subject. */
@@ -129,7 +139,14 @@ const MAX_ARCS = NAMED_SLOTS + 1;
 
 const DIMMED_ALPHA = 0.35;
 
-export function DonutChart({
+type DonutChartResolved = DonutChartProps & {
+  showValue?: boolean;
+  centerValue?: string;
+  centerLabel?: string;
+  showLegend?: boolean;
+};
+
+function DonutChartInner({
   data,
   size = 180,
   /*
@@ -155,7 +172,7 @@ export function DonutChart({
   loading = false,
   accessibilityLabel,
   style,
-}: DonutChartProps) {
+}: DonutChartResolved) {
   const t = useTokens();
   const metrics = densityMetrics(density);
   const ringThickness = thickness ?? (density === 'compact' ? 18 : 26);
@@ -476,3 +493,72 @@ function DonutSkeleton({
     </Animated.View>
   );
 }
+
+/* ------------------------------------------------------------------------- *
+ * The composed form — see `collectParts` in `hooks.ts`.
+ * ------------------------------------------------------------------------- */
+
+/** The total in the middle of the ring, formatted with the chart's `format`. */
+export type DonutValueProps = {
+  /** Overrides the computed total, the way `centerValue` did. */
+  value?: string;
+};
+function DonutValuePart(_: DonutValueProps): ReactNode {
+  return null;
+}
+
+/** The line under the centre readout. Takes its text as children. */
+export type DonutLabelProps = { children?: ReactNode };
+function DonutLabelPart(_: DonutLabelProps): ReactNode {
+  return null;
+}
+
+/** The slice legend, beneath the ring — each slice's name, colour, and value. */
+function DonutLegendPart(): ReactNode {
+  return null;
+}
+
+/**
+ * With no children the props stand as they are. With children the defaults
+ * invert — an unnamed part is an absent one — so the tree states what the ring
+ * shows rather than inheriting `showValue` and `showLegend` defaulting on.
+ */
+function resolveComposition(props: DonutChartProps): DonutChartResolved {
+  const { children, ...rest } = props;
+  // The one-liner: the total in the middle and the legend beneath it.
+  /*
+   * `undefined`, not `== null`: an absent `children` is "give me the defaults",
+   * while an explicit `{null}` is "I named nothing, draw nothing". Without the
+   * distinction there is no way to ask for a bare mark — no zero rule, no
+   * labels — short of an empty fragment, which reads like a mistake.
+   */
+  if (children === undefined) return { ...rest, showValue: true, showLegend: true };
+
+  const parts = collectParts(children);
+  const value = partProps<DonutValueProps>(parts, DonutValuePart);
+  const label = partProps<DonutLabelProps>(parts, DonutLabelPart);
+  const labelText = allParts<DonutLabelProps>(parts, DonutLabelPart)
+    .map((l) => (typeof l.children === 'string' ? l.children : undefined))
+    .find((l) => l != null);
+
+  return {
+    ...rest,
+    showValue: hasPart(parts, DonutValuePart),
+    centerValue: value?.value,
+    centerLabel: labelText,
+    showLegend: hasPart(parts, DonutLegendPart),
+  };
+}
+
+function DonutChartRoot(props: DonutChartProps) {
+  return <DonutChartInner {...resolveComposition(props)} />;
+}
+
+/** The parts, for `Chart.Donut.Value` and friends. */
+export const DonutChartParts = {
+  Value: DonutValuePart,
+  Label: DonutLabelPart,
+  Legend: DonutLegendPart,
+};
+
+export const DonutChart = Object.assign(DonutChartRoot, DonutChartParts);

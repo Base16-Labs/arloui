@@ -29,6 +29,10 @@ export type ChartLegendProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+/**
+ * A row of named swatches. Shared by every form that can show more than one
+ * series, so a legend reads the same under a plot as it does under a donut.
+ */
 export function ChartLegend({ items, style }: ChartLegendProps) {
   const t = useTokens();
   if (items.length === 0) return null;
