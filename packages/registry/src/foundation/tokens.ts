@@ -9,15 +9,21 @@
 
 export const lightSemanticColors = {
   surfaceBackground: '#F9FAFB',
+  // Card fill — a step greyer than the background and the (white) elevated surface,
+  // so a resting card reads as its own plane without a shadow. Grey-100.
+  surfaceCard: '#F3F4F6',
   surfaceInput: '#F3F4F6',
   surfaceInputActive: '#E5E7EB',
   surfaceElevated: '#FFFFFF',
+  // Translucent fill that lets a coloured background or image bleed through — a
+  // subtle frost (the app background at 50%), not the heavy blur of a tab bar.
+  surfaceBleed: 'rgba(249,250,251,0.5)',
   surfaceOverlay: 'rgba(16,24,40,0.4)',
   surfaceInverse: '#101828',
   textPrimary: '#101828',
   textSecondary: '#4A5565',
   textTertiary: '#99A1AF',
-  textDisabled: 'rgba(16,24,40,0.05)',
+  textDisabled: 'rgba(16,24,40,0.35)',
   textInverse: '#FFFFFF',
   textPlaceholder: '#D1D5DC',
   textInteractivePrimary: '#FFFFFF',
@@ -48,6 +54,32 @@ export const lightSemanticColors = {
   feedbackErrorBg: '#FEF2F2',
   feedbackInfo: '#2B7FFF',
   feedbackInfoBg: '#EFF6FF',
+  /**
+   * Direction tones for charts — Success-700 / Error-600, not the feedback pair.
+   * Success-500 vs Error-500 measures ΔE 7.6 under deuteranopia and puts the green
+   * at 2.16:1 on a light surface; these clear ΔE 9.2 and 3:1. Always pair with a
+   * signed value (+/−) so direction is never color-alone.
+   */
+  chartPositive: '#008236',
+  chartNegative: '#E7000B',
+  /**
+   * Categorical series colours for part-to-whole and multi-category charts.
+   *
+   * Four slots, not more: this is the largest set that clears the data-viz checks
+   * on EVERY pair (not just neighbours) in BOTH modes, which is the honest bar for
+   * a donut where all slices are on screen at once. Light is worst-pair ΔE 8.7 and
+   * dark ΔE 9.0 under deuteranopia, all above 3:1 on their own surface. A fifth
+   * hue only clears in light, so there isn't one.
+   *
+   * Assign in this fixed order and never cycle. Anything past the fourth category
+   * folds into `chartOther`, and charts using these always carry a legend or direct
+   * labels so identity is never colour alone.
+   */
+  chartSeries1: '#155DFC',
+  chartSeries2: '#65A30D',
+  chartSeries3: '#BE185D',
+  chartSeries4: '#A16207',
+  chartOther: '#6A7282',
   navBackground: '#FFFFFF',
   navBorder: '#E5E7EB',
   navActive: '#2B7FFF',
@@ -58,9 +90,13 @@ export const lightSemanticColors = {
 
 export const darkSemanticColors = {
   surfaceBackground: '#09090B',
+  // Card fill — sits between the background and the elevated surface.
+  surfaceCard: '#18181B',
   surfaceInput: '#18181B',
   surfaceInputActive: '#27272A',
   surfaceElevated: '#27272A',
+  // Translucent fill — the app background at 50%, a subtle frost over colour.
+  surfaceBleed: 'rgba(9,9,11,0.5)',
   surfaceOverlay: 'rgba(16,24,40,0.7)',
   surfaceInverse: '#FAFAFA',
   textPrimary: '#FAFAFA',
@@ -75,7 +111,7 @@ export const darkSemanticColors = {
   textInteractiveError: '#FF6467',
   interactivePrimary: '#2B7FFF',
   interactivePrimaryPressed: '#155DFC',
-  interactiveSecondary: '#27272A',
+  interactiveSecondary: 'rgba(39,39,42,0.7)',
   interactiveSecondaryPressed: '#3F3F46',
   interactiveTertiary: 'transparent',
   interactiveTertiaryPressed: 'rgba(39,39,42,0.55)',
@@ -97,6 +133,19 @@ export const darkSemanticColors = {
   feedbackErrorBg: '#460809',
   feedbackInfo: '#51A2FF',
   feedbackInfoBg: '#09090B',
+  /**
+   * Dark keeps the brighter Success-400: against Error-500 on a dark surface it
+   * separates by ΔE 14.0 under deuteranopia — the widest of any pair tested — and
+   * both poles clear 3:1.
+   */
+  chartPositive: '#05DF72',
+  chartNegative: '#FB2C36',
+  /** Dark keeps slots 1, 2 and 4; only the pink lightens for the darker surface. */
+  chartSeries1: '#155DFC',
+  chartSeries2: '#65A30D',
+  chartSeries3: '#EC4899',
+  chartSeries4: '#A16207',
+  chartOther: '#A1A1AA',
   navBackground: '#18181B',
   navBorder: '#27272A',
   navActive: '#51A2FF',
@@ -213,6 +262,12 @@ export const typography = {
   labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
   labelMedium: { fontSize: 12, lineHeight: 14.4, fontWeight: '400' as const, letterSpacing: 0 },
   labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: '400' as const, letterSpacing: 0 },
+  overline: {
+    fontSize: 11,
+    lineHeight: 13.2,
+    fontWeight: '600' as const,
+    letterSpacing: 1.1,
+  },
   buttonLarge: { fontSize: 20, lineHeight: 22, fontWeight: '600' as const, letterSpacing: 0 },
   buttonMedium: { fontSize: 17, lineHeight: 18.7, fontWeight: '600' as const, letterSpacing: 0 },
   buttonSmall: { fontSize: 14, lineHeight: 15.4, fontWeight: '600' as const, letterSpacing: 0 },
@@ -371,52 +426,89 @@ export const blur = blurs;
  * Translucent surface fallbacks for glass-like navigation and controls.
  * A platform-native Liquid Glass treatment can replace the surface on supported
  * iOS versions without changing the surrounding component contract.
+ *
+ * Dark overlays run on Zinc-900 `#18181B`, matching the dark surface swap. They
+ * were left on Grey-900 `#101828`, whose blue tint reads as navy the moment the
+ * material sits over anything that isn't already dark — a glass nav bar drifting
+ * across coloured content picked up a visible cast. Zinc is hue-neutral, so the
+ * material now only darkens what passes underneath.
+ *
+ * ## `tintOpacity` · `tintOpacityPressed`
+ *
+ * How much of a component's own colour survives the material. Untinted glass is
+ * colourless by construction, so a glass primary button would read as "some
+ * translucent thing with blue text" rather than as the primary button — the tone
+ * has to come through the surface, not just the label. These two alphas are what
+ * carries it, and they are deliberately one pair per material rather than per
+ * component so a tinted button, tab bar, and card agree about how strongly a
+ * tint reads.
+ *
+ * The alpha falls as the material gets heavier because a heavier material is
+ * already doing more of the hiding: `glassSmall` is thin enough that the tint has
+ * to carry the identity on its own, while `glassLarge` is most of the way to
+ * opaque before the tint is applied at all.
+ *
+ * `tintOpacityPressed` is the whole press response for a tinted glass surface —
+ * the colour deepens instead of a grey wash landing on top, which is the one
+ * press treatment that does not stop the surface reading as glass.
  */
 export const materials = {
   glassSmall: {
     blur: blurs.sm,
     lightOverlay: 'rgba(255,255,255,0.64)',
-    darkOverlay: 'rgba(16,24,40,0.64)',
+    darkOverlay: 'rgba(24,24,27,0.64)',
     lightBorder: 'rgba(255,255,255,0.56)',
     darkBorder: 'rgba(255,255,255,0.12)',
+    tintOpacity: 0.55,
+    tintOpacityPressed: 0.72,
   },
   glassMedium: {
     blur: blurs.lg,
     lightOverlay: 'rgba(255,255,255,0.72)',
-    darkOverlay: 'rgba(16,24,40,0.72)',
+    darkOverlay: 'rgba(24,24,27,0.72)',
     lightBorder: 'rgba(255,255,255,0.64)',
     darkBorder: 'rgba(255,255,255,0.14)',
+    tintOpacity: 0.45,
+    tintOpacityPressed: 0.6,
   },
   glassLarge: {
     blur: blurs.xl,
     lightOverlay: 'rgba(255,255,255,0.82)',
-    darkOverlay: 'rgba(16,24,40,0.82)',
+    darkOverlay: 'rgba(24,24,27,0.82)',
     lightBorder: 'rgba(255,255,255,0.72)',
     darkBorder: 'rgba(255,255,255,0.16)',
+    tintOpacity: 0.38,
+    tintOpacityPressed: 0.5,
   },
   /** @deprecated Prefer `glassSmall`. */
   glassThin: {
     blur: blurs.sm,
     lightOverlay: 'rgba(255,255,255,0.64)',
-    darkOverlay: 'rgba(16,24,40,0.64)',
+    darkOverlay: 'rgba(24,24,27,0.64)',
     lightBorder: 'rgba(255,255,255,0.56)',
     darkBorder: 'rgba(255,255,255,0.12)',
+    tintOpacity: 0.55,
+    tintOpacityPressed: 0.72,
   },
   /** @deprecated Prefer `glassMedium`. */
   glassRegular: {
     blur: blurs.lg,
     lightOverlay: 'rgba(255,255,255,0.72)',
-    darkOverlay: 'rgba(16,24,40,0.72)',
+    darkOverlay: 'rgba(24,24,27,0.72)',
     lightBorder: 'rgba(255,255,255,0.64)',
     darkBorder: 'rgba(255,255,255,0.14)',
+    tintOpacity: 0.45,
+    tintOpacityPressed: 0.6,
   },
   /** @deprecated Prefer `glassLarge`. */
   glassThick: {
     blur: blurs.xl,
     lightOverlay: 'rgba(255,255,255,0.82)',
-    darkOverlay: 'rgba(16,24,40,0.82)',
+    darkOverlay: 'rgba(24,24,27,0.82)',
     lightBorder: 'rgba(255,255,255,0.72)',
     darkBorder: 'rgba(255,255,255,0.16)',
+    tintOpacity: 0.38,
+    tintOpacityPressed: 0.5,
   },
 } as const;
 

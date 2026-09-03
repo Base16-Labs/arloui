@@ -15,6 +15,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./raw": "./src/raw.ts",
+    "./typography": "./src/typography.ts",
     "./paletteMain": "./src/paletteMain.ts",
     "./paletteSecondary": "./src/paletteSecondary.ts",
     "./semantic": "./src/semanticColors.ts",

@@ -20,6 +20,29 @@ Registry **`Button`** uses **`tone`** (`primary` | `neutral` | `danger`) × **`a
 
 Solid fills use rounded corners + pressed elevation; ghost & outline use pill radius (`radii.full`). See `references/tokens.md` for heights (`sizing.buttonHeight`).
 
+### Card
+
+Registry **`Card`** is the surface primitive — a bordered, rounded container with slots **`Card.Media`**, **`Card.Header`**, **`Card.Title`**, **`Card.Subtitle`**, **`Card.Body`**, **`Card.Footer`**. Five variant axes, each off a token scale:
+
+- **`surface`** — `default` (**`surfaceCard`**, a step greyer than the background), `elevated` (**`surfaceElevated`**), `bleed` (**`surfaceBleed`**, the app background at 50% so a coloured backdrop or image shows through — a subtle frost, not a tab-bar blur), or `inverse` (**`surfaceInverse`**; the title/subtitle ink flips to match automatically).
+- **`elevation`** — shadow `none`–`lg`, default `none` (depth from layering before shadows).
+- **`border`** — literal px width, default `1` (there are no border-width tokens).
+- **`padding`** — off the spacing scale (`none` for edge-to-edge media); **`radius`** — off the radius scale.
+
+Pass **`onPress`** to make the whole card a tap target: it reports `accessibilityRole="button"`, animates `scale 0.97` + opacity, and fires a **`haptic`** on press-down (`light` by default; set `none` in dense grids of tappable cards).
+
+**Recipes are compositions, not props.** A metric tile, image card, prompt card, a settings group (a `List`), or a `Carousel` is `Card` + its slots + the shipped primitives (`List.Row`, `Button`, `Badge`). Do not add a `MediaCard`/`ActionCard`; compose them.
+
+### List and Row
+
+Registry **`List`** is a compound stacked-row layout — **`List`** is the container, **`List.Row`** is the item, so there is never a "which do I reach for" question. The List draws **no surface of its own**: wrap it in a `Card` for the grouped look, or leave it on the page for edge-to-edge. It decides only how rows relate:
+
+- **`separated`** — `false` (default) keeps rows contiguous with a hairline; `true` spaces each onto its own surface.
+- **`divider`** (contiguous only) — `inset` (Apple style: the rule clears the leading asset — the row measures its own leading), `balanced` (content padding both sides), `edge` (full bleed), `none`.
+- **`density`** — `comfortable` (default) or `compact`; sets row vertical padding, i.e. how far apart items sit.
+
+**`List.Row`** takes **`leading`** (an icon or media thumbnail), **`title`** over an optional **`subtitle`** node (a badge fits), and a trailing **`value`** (with **`valueCaption`** and directional **`valueTone`**) alongside an optional **`trailing`** icon — value and icon can coexist. 44pt min height, native background-highlight press.
+
 ### Text Field and Search
 
 - Use quiet borders, strong cursor color, and generous vertical padding.
@@ -104,10 +127,18 @@ Solid fills use rounded corners + pressed elevation; ghost & outline use pill ra
 
 ### Tab Bar
 
+Registry **`TabBar`** — a bottom navigation bar. **`width`**: **`full`** (edge-to-edge) or **`floating`** (inset pill, `92%` wide, centred, `radii.full`). **`surface`**: **`filled`** (opaque `navBackground`) or **`glass`** (Liquid Glass — the real system material on iOS 26 via `expo-glass-effect`, and a translucent overlay over a host **`blurComponent`** (e.g. `expo-blur`'s `BlurView`) everywhere else). There is no separate `transparent` option: the blur fallback *is* the non-iOS glass path. Compose with **`TabBar.Item`** (`value`, `label`, `icon`, optional `badge`, `disabled`); active/inactive icons use **`navActive`** / **`navInactive`**.
+
+- **`scrollBehavior`** — **`hide`** (slides off, stops taking touches), **`shrink`** (shrinks in place, stays reachable), or **`fixed`** (ignores scroll). Chosen independently of `width`; defaults to `shrink` for floating and `hide` for full. Drive it with the **`useTabBarScroll()`** hook, which returns `{ hidden, onScroll }` — spread `onScroll` on the scroll view, pass `hidden` to the bar. A full-width bar set to `shrink` **morphs into a floating pill** as it recedes.
+- **`selection`** — **`snap`** (default) tracks the active tab instantly (Rule 07 — a habitual toggle shouldn't read as latency); **`jelly`** stretches the pill toward its target and settles with a soft wobble, an opt-in expressive move. Only the **floating** variant carries a pill (`interactiveSecondary`); full-width reads the active tab from icon colour, so `selection` is a no-op there.
+- Floating bars cast **`shadows.md`**; full-width bars cast a subtle upward shadow to lift off the content above. A floating bar also lays a **translucent gradient scrim** behind and below itself so content dissolves into the background near the nav rather than meeting a line; the scrim fades out on `hide` and drops on `shrink`.
+- **`showLabels`** shows a label under each icon (bar grows `56→64`); **`badge`** renders a count on the error fill; **`bottomInset`** pads for the home indicator.
+
+Guidelines:
+
 - 3–5 destinations maximum. More than five requires a different navigation model.
-- Icons are primary; labels are secondary but should always be present for clarity.
-- Active tab uses `--accent` or `--text-primary`; inactive tabs use `--text-tertiary`.
-- Keep the bar anchored to the safe area bottom — never overlap content.
+- Icons are primary; labels (`showLabels`) are secondary but aid clarity.
+- Keep the bar anchored to the safe-area bottom — never overlap content (pass `bottomInset`).
 - Avoid badge-heavy tabs; one notification count is fine, multiple is noise.
 
 ## State Patterns

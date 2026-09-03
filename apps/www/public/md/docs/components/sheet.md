@@ -1,6 +1,6 @@
 # Sheet
 
-> A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, tunable motion and gesture, default or stacked width, and token-based outer padding. Backdrop and surface stay composable, from scrim modal to pass-through Liquid Glass.
+> A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, tunable motion and gesture, default or stacked width, and token-based outer padding. The backdrop stays composable, from scrim modal to pass-through.
 
 **Type:** Component  
 **Category:** Layout & surface  
@@ -27,7 +27,6 @@
 
 - `colors.surfaceElevated`
 - `colors.surfaceOverlay`
-- `materials.glassMedium`
 - `spacing.4`
 - `spacing.6`
 - `radii.xl`

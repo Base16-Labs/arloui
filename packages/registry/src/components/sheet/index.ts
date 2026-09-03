@@ -5,7 +5,6 @@ export {
   type SheetMotionPreset,
   type SheetGesture,
   type SheetBackdrop,
-  type SheetSurface,
   type SheetWidth,
   type SheetHeight,
   type SheetPadding,

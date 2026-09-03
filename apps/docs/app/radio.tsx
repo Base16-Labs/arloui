@@ -54,7 +54,7 @@ export default function RadioCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -65,14 +65,14 @@ export default function RadioCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 20,
+              gap: t.spacing[5],
               transform: [{ translateY: previewOffset }],
             }}
           >
             {OPTIONS.map((label, i) => (
               <View
                 key={label}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}
               >
                 <Radio
                   selected={selected === i}
@@ -85,8 +85,8 @@ export default function RadioCanvas() {
                 <Text
                   style={{
                     color: t.colors.textPrimary,
-                    fontFamily: 'Manrope',
-                    fontSize: 15,
+                    fontFamily: t.fontFamilies.sans,
+                    ...t.typography.bodyMedium,
                   }}
                 >
                   {label}
@@ -122,7 +122,7 @@ export default function RadioCanvas() {
             onPrevious={() => router.replace('/checkbox')}
             onNext={() => router.replace('/toggle')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Style">
                 {APPEARANCES.map((value) => (
                   <VariantChip

@@ -6,6 +6,7 @@ export {
   type ButtonHaptic,
   type ButtonProps,
   type ButtonSize,
+  type ButtonSurface,
   type ButtonTone,
   type ButtonVariant,
   type FabButtonProps,
@@ -14,7 +15,25 @@ export {
   type SocialAuthButtonProps,
   type SocialAuthProvider,
 } from './components/button';
-export { Card, type CardProps } from './components/card';
+export { AnimatedCounter, type AnimatedCounterProps } from './components/animated-counter';
+export {
+  Card,
+  type CardElevation,
+  type CardHaptic,
+  type CardProps,
+  type CardRadius,
+  type CardSpacing,
+  type CardSurface,
+} from './components/card';
+export {
+  List,
+  type ListDensity,
+  type ListDivider,
+  type ListProps,
+  type ListRowProps,
+  type ListRowValueTone,
+} from './components/list';
+export { Sparkline, type SparklineProps } from './components/chart/sparkline';
 export {
   Carousel,
   type CarouselIndicator,
@@ -54,7 +73,6 @@ export {
   Sheet,
   type SheetProps,
   type SheetBackdrop,
-  type SheetSurface,
   type SheetWidth,
   type SheetHeight,
   type SheetPadding,
@@ -77,6 +95,13 @@ export { Badge, type BadgeAppearance, type BadgeProps, type BadgeSize, type Badg
 export { Checkbox, type CheckboxProps, type CheckboxSize } from './components/checkbox';
 export { Chip, type ChipAccent, type ChipProps, type ChipRadius, type ChipSelectionIndicator, type ChipSize, type ChipStyle, type ChipType } from './components/chip';
 export { Radio, type RadioAppearance, type RadioProps, type RadioSize } from './components/radio';
+export {
+  Stepper,
+  type StepperAppearance,
+  type StepperControls,
+  type StepperProps,
+  type StepperSize,
+} from './components/stepper';
 export { Toggle, type ToggleProps, type ToggleSize } from './components/toggle';
 export {
   TabBar,
@@ -84,6 +109,8 @@ export {
   type TabBarIconProps,
   type TabBarItemProps,
   type TabBarProps,
+  type TabBarScrollBehavior,
+  type TabBarSelectionMotion,
   type TabBarSurface,
   type TabBarWidth,
   type UseTabBarScrollOptions,
@@ -120,6 +147,14 @@ export {
   type TextAreaState,
 } from './components/text-area';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
+export {
+  GlassBackdrop,
+  isNativeGlassAvailable,
+  useGlassSurface,
+  useReduceTransparency,
+  type GlassMaterial,
+  type GlassSurface,
+} from './foundation/glass';
 
 export { COMPONENTS, FOUNDATION, REGISTRY } from './manifest';
 export type { Registry, RegistryEntry, RegistryFile, RegistryItemKind } from './schema';
