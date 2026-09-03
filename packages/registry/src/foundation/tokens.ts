@@ -374,35 +374,35 @@ export const shadows = {
 
 export const darkShadows = {
   none: {
-    shadowColor: '#51A2FF',
+    shadowColor: '#000000',
     shadowOpacity: 0,
     shadowRadius: 0,
     shadowOffset: { width: 0, height: 0 },
     elevation: 0,
   },
   sm: {
-    shadowColor: '#51A2FF',
+    shadowColor: '#000000',
     shadowOpacity: 0.18,
     shadowRadius: 2,
     shadowOffset: { width: 0, height: 0 },
     elevation: 2,
   },
   md: {
-    shadowColor: '#51A2FF',
+    shadowColor: '#000000',
     shadowOpacity: 0.22,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 1 },
     elevation: 4,
   },
   lg: {
-    shadowColor: '#51A2FF',
+    shadowColor: '#000000',
     shadowOpacity: 0.28,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 2 },
     elevation: 8,
   },
   xl: {
-    shadowColor: '#51A2FF',
+    shadowColor: '#000000',
     shadowOpacity: 0.34,
     shadowRadius: 28,
     shadowOffset: { width: 0, height: 4 },

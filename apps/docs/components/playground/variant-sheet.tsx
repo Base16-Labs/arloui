@@ -178,8 +178,26 @@ export function VariantSheet({
             paddingBottom: bottomBleed + Math.max(insets.bottom, t.spacing[4]),
             borderTopLeftRadius: t.radii['2xl'],
             borderTopRightRadius: t.radii['2xl'],
-            borderTopWidth: 1,
-            borderColor: t.colors.borderStrong,
+            /*
+             * Uniform, not `borderTopWidth` alone.
+             *
+             * A one-sided border under a corner radius makes React Native mitre
+             * the 1px top into the 0px sides along the arc, and the taper reads
+             * as a squared-off corner — the sheet stops looking rounded. A
+             * border on every side lets the radius stroke evenly. The bottom
+             * edge sits below the screen (the surface is `bottomBleed` taller
+             * than the sheet and the parent pulls it down by the same amount),
+             * and the sides land on the screen edges.
+             */
+            borderWidth: 1,
+            /*
+             * Neither border token works in both themes on an elevated surface.
+             * `borderStrong` is a mid grey against white — it reads as a line
+             * drawn across the sheet rather than an edge. But `border` in dark
+             * is the *same colour* as `surfaceElevated`, so it draws nothing at
+             * all. Picking per theme gives about the same contrast either way.
+             */
+            borderColor: dark ? t.colors.borderStrong : t.colors.border,
             backgroundColor: t.colors.surfaceElevated,
             overflow: 'hidden',
           }}

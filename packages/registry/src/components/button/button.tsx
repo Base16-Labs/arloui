@@ -108,7 +108,14 @@ function buttonVariants(t: Tokens): {
         solid: { bg: t.colors.interactivePrimary, fg: t.colors.textInteractivePrimary, border: 'transparent', borderWidth: 0 },
         soft: { bg: t.colors.feedbackInfoBg, fg: t.colors.interactivePrimary, border: 'transparent', borderWidth: 0 },
         ghost: transparent(t.colors.textInteractiveTertiary),
-        outline: { bg: 'transparent', fg: t.colors.interactivePrimary, border: t.colors.borderPrimary, borderWidth: 1 },
+        /*
+         * The border takes the tone, not the neutral grey — `borderPrimary` is
+         * the *main border weight* (a grey), not the primary tone's border, and
+         * the name reads the other way. Danger already pairs `feedbackError`
+         * with `borderError`, both the same red; primary now matches its own
+         * label the same way instead of drawing a grey box around blue text.
+         */
+        outline: { bg: 'transparent', fg: t.colors.interactivePrimary, border: t.colors.interactivePrimary, borderWidth: 1 },
       },
       neutral: {
         solid: { bg: t.colors.textSecondary, fg: t.colors.textInverse, border: 'transparent', borderWidth: 0 },

@@ -32,9 +32,7 @@
       }
     },
     "owner": "base16",
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
+    "runtimeVersion": "0.1.0",
     "updates": {
       "url": "https://u.expo.dev/0e137cd5-9ad3-436d-a976-0fab95640f4b"
     }

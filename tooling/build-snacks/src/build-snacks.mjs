@@ -26,8 +26,8 @@ const SCREENS = {
   badge: 'badge', button: 'button', cards: 'card', carousel: 'carousel',
   checkbox: 'checkbox', chip: 'chip', 'date-picker': 'date-picker', gallery: 'gallery',
   input: 'input', list: 'list', radio: 'radio', sheet: 'sheet',
-  skeleton: 'skeleton', spinner: 'spinner', 'tab-bar': 'tab-bar', tabs: 'tabs',
-  textarea: 'text-area', toast: 'toast', toggle: 'toggle',
+  skeleton: 'skeleton', spinner: 'spinner', stepper: 'stepper', 'tab-bar': 'tab-bar',
+  tabs: 'tabs', textarea: 'text-area', toast: 'toast', toggle: 'toggle',
 };
 
 // A single Snack has no file-based routing, so stub expo-router.
