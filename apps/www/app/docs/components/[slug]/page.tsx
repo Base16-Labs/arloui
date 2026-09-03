@@ -3431,7 +3431,7 @@ function StepperDocPage() {
               {[
                 ['Appearance', 'filled bordered row, or plain amount display'],
                 ['Controls', 'split either side, or grouped at start / end'],
-                ['Value', 'read-only, or editable to type one directly'],
+                ['Typing', 'read-only, or editable to type one directly'],
                 ['Size', 'sm · md, matching Input heights'],
                 ['Bounds', 'min, max, and step'],
                 ['Value', 'rolls between numbers, never snaps'],

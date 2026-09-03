@@ -8,6 +8,7 @@ jest.mock('../../../foundation/haptics', () => ({
 import { StyleSheet, Text, View } from 'react-native';
 import { haptic } from '../../../foundation/haptics';
 import { Button } from '../button';
+import { lightColors, lightSemanticColors } from '../../../foundation/tokens';
 import { renderWithTheme, screen, fireEvent } from '../../../../test/render';
 
 describe('Button', () => {
@@ -146,6 +147,44 @@ describe('Button', () => {
       renderWithTheme(<Button disabled>Continue</Button>);
       fireEvent(screen.getByRole('button', { name: 'Continue' }), 'pressIn');
       expect(findOverlay()).toBeUndefined();
+    });
+  });
+
+  /**
+   * A toned outline draws its own tone, not the neutral grey.
+   *
+   * `borderPrimary` is the main border *weight* — a grey — not the primary
+   * tone's border, and the name reads the other way round. The primary outline
+   * took it and rendered a grey box around a blue label, while danger next to
+   * it correctly used its own red. Nothing asserted the difference.
+   */
+  describe('outline borders carry their tone', () => {
+    const palette = { ...lightColors, ...lightSemanticColors };
+
+    function borderOf() {
+      const node = screen.UNSAFE_root
+        .findAllByType('View' as never)
+        .map((v) => StyleSheet.flatten((v.props as { style?: unknown }).style) as
+          | { borderWidth?: number; borderColor?: string }
+          | undefined)
+        .find((style) => style?.borderWidth === 1 && style?.borderColor != null);
+      return node?.borderColor;
+    }
+
+    it('draws a primary outline in the interactive blue, not the border grey', () => {
+      renderWithTheme(<Button appearance="outline" tone="primary" label="Go" />, { theme: 'light' });
+      expect(borderOf()).toBe(palette.interactivePrimary);
+      expect(borderOf()).not.toBe(palette.borderPrimary);
+    });
+
+    it('draws a danger outline in the error red', () => {
+      renderWithTheme(<Button appearance="outline" tone="danger" label="Delete" />, { theme: 'light' });
+      expect(borderOf()).toBe(palette.borderError);
+    });
+
+    it('keeps the neutral outline grey — it has no tone to carry', () => {
+      renderWithTheme(<Button appearance="outline" tone="neutral" label="Cancel" />, { theme: 'light' });
+      expect(borderOf()).toBe(palette.borderPrimary);
     });
   });
 });
