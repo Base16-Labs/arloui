@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import Link from 'next/link';
 import { RightRail } from '@/components/nav/RightRail';
 import { Eyebrow } from '@/components/mdx/Eyebrow';
 import { Lede } from '@/components/mdx/Lede';
@@ -24,10 +25,9 @@ import { CarouselDocPlayground } from '@/components/docs/carousel-preview';
 import { GalleryDocPlayground } from '@/components/docs/gallery-preview';
 import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
 import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
-import { ChartFormsPreview } from '@/components/docs/chart-preview';
-import { ChartReference } from '@/components/docs/chart-reference';
 import { ChartFormPage } from '@/components/docs/chart-form-page';
-import { chartChoices, chartFormBySlug, chartForms, chartPitfalls } from '@/lib/chart-forms';
+import { ChartOverviewPage } from '@/components/docs/chart-overview-page';
+import { chartFormBySlug } from '@/lib/chart-forms';
 import { DevicePreview } from '@/components/ui/DevicePreview';
 import { GithubMark } from '@/components/ui/GithubMark';
 import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
@@ -51,11 +51,12 @@ import {
   badgeData,
   chipData,
   toastData,
-  chartData,
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
   return [
+    { slug: 'chart' },
+    { slug: 'chart-plot' },
     ...componentGroups.flatMap((g) => g.items.map((item) => ({ slug: item.slug }))),
     ...chartFormRoutes.map((form) => ({ slug: form.slug })),
   ];
@@ -63,11 +64,12 @@ export function generateStaticParams() {
 
 export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (slug === 'chart-plot') permanentRedirect('/docs/components/chart-line');
 
   const chartForm = chartFormBySlug.get(slug);
   if (chartForm) return <ChartFormPage form={chartForm} />;
 
-  const exists = componentGroups.some((g) => g.items.some((item) => item.slug === slug));
+  const exists = slug === 'chart' || componentGroups.some((g) => g.items.some((item) => item.slug === slug));
   if (!exists) notFound();
 
   if (slug === 'button') {
@@ -139,7 +141,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
   }
 
   if (slug === 'chart') {
-    return <ChartDocPage />;
+    return <ChartOverviewPage />;
   }
 
   return (
@@ -2999,378 +3001,5 @@ function Section({
       {sub && <p className="mt-1.5 mb-5 text-[13px] text-ink-3">{sub}</p>}
       {children}
     </section>
-  );
-}
-
-function ChartDocPage() {
-  return (
-    <>
-      <main className="relative max-w-[820px] flex-1 px-14 pt-10 pb-20">
-        <div className="absolute top-10 right-14">
-          <CopyButton text={docDataToMarkdown(chartData)} label="Copy markdown" />
-        </div>
-
-        <Eyebrow>{chartData.category}</Eyebrow>
-        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
-          {chartData.title}
-        </h1>
-        <Lede>{chartData.lede}</Lede>
-
-        <div className="mb-9 flex gap-2">
-          <Pill as="a" href={chartData.source}>
-            <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
-          </Pill>
-        </div>
-
-        <DevicePreview route="chart" />
-
-        <Section
-          id="anatomy"
-          title="Anatomy"
-          sub="The scrubbable line chart, composed from its parts."
-        >
-          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
-            <div className="mx-auto max-w-[420px]">
-              {[
-                ['Chart', 'holds the series, the format, and the scrub state'],
-                ['Chart.Value', 'headline number, rolls as you scrub'],
-                ['Chart.Delta', 'change from the baseline, always signed'],
-                ['Chart.Plot', 'the line or area, and the scrub target'],
-                ['Chart.Periods', 'the range selector'],
-                ['Chart.Empty', 'what the plot draws when there is no series'],
-              ].map(([name, detail]) => (
-                <div
-                  key={name}
-                  className="flex items-baseline justify-between gap-4 border-b border-line py-2 text-[12.5px] last:border-0"
-                >
-                  <code className="font-mono text-[11.5px] text-ink">{name}</code>
-                  <span className="text-right text-ink-3">{detail}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Section>
-
-        <Section
-          id="forms"
-          title="Forms"
-          sub="Six charts on one palette, all under the Chart namespace."
-        >
-          <ChartFormsPreview />
-          <p className="mt-4 text-[13px] text-ink-3">
-            Static previews. Scrubbing, selection, and the threshold colours are live in the
-            playground.
-          </p>
-          <div className="mt-6 grid gap-2 sm:grid-cols-2">
-            {chartForms.map((form) => (
-              <a
-                key={form.slug}
-                href={`/docs/components/${form.slug}`}
-                className="rounded-xl border border-line bg-canvas p-4 transition-colors hover:border-line-strong"
-              >
-                <div className="font-mono text-[12.5px] text-ink">{form.title}</div>
-                <p className="mt-1 text-[12.5px] text-ink-2">{form.answers}</p>
-                <p className="mt-1.5 text-[12px] text-ink-3">{form.lede}</p>
-              </a>
-            ))}
-          </div>
-        </Section>
-
-        <Section
-          id="when-to-use"
-          title="When to use"
-          sub="Pick the form by the question the reader is asking."
-        >
-          <p className="mb-5 max-w-[62ch] text-[13.5px] text-ink-2">
-            Start from the question the reader is asking, then check the calls below — they are the
-            ones people get wrong.
-          </p>
-          <div className="overflow-x-auto rounded-xl border border-line bg-canvas">
-            <table className="w-full min-w-[420px] border-collapse text-left text-[13px]">
-              <thead>
-                <tr className="border-b border-line">
-                  <th className="px-4 py-2.5 font-medium text-ink-3">The reader asks</th>
-                  <th className="px-4 py-2.5 font-medium text-ink-3">Reach for</th>
-                </tr>
-              </thead>
-              <tbody>
-                {chartChoices.map((choice) => (
-                  <tr key={choice.slug} className="border-b border-line/60 last:border-0">
-                    <td className="px-4 py-2.5 text-ink-2">{choice.question}</td>
-                    <td className="px-4 py-2.5">
-                      <a href={`/docs/components/${choice.slug}`} className="text-ink underline-offset-4 hover:underline">
-                        {choice.form}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <ul className="mt-6 space-y-3 text-[13.5px] leading-relaxed text-ink-2">
-            {chartPitfalls.map((item) => (
-              <li key={item.rule} className="flex gap-2.5">
-                <span aria-hidden className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-ink-3" />
-                <span>
-                  <strong className="font-medium text-ink">{item.rule}</strong>{' '}
-                  {item.body.replace(/`/g, '')}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section id="code" title="Code" sub="React Native, copy-paste and compose.">
-          <CodeBlock language="tsx">{`# The namespace — every form.
-npx arloui add chart
-
-# Or take one. Each form brings the shared core and nothing else.
-npx arloui add chart-bar
-npx arloui add chart-sparkline
-
-// The namespace is assembled in chart/index.ts, which only the full entry
-// installs. Took a single form? Import that form, and the shared helpers
-// from the core file they live in:
-//   import { BarChart } from "@/components/ui/chart/bar-chart";
-//   import { formatMoney } from "@/components/ui/chart/format";
-import { Chart, formatMoney } from "@/components/ui/chart";
-
-// No children renders the documented composition:
-// value, delta, plot, periods — in that order.
-<Chart
-  data={points}
-  format={formatMoney("USD")}
-  periods={["1D", "1W", "1M", "1Y"]}
-  period={p}
-  onPeriodChange={setP}
-/>
-
-// Name the parts to reorder or drop one. \`format\` flows down from the root.
-<Chart data={points} format={formatMoney("USD")}>
-  <Chart.Empty>No trades yet</Chart.Empty>
-  <Chart.Value />
-  <Chart.Periods />
-  <Chart.Plot height={200} fill>
-    <Chart.Reference value={1000} label="Target" />
-  </Chart.Plot>
-</Chart>
-
-<Chart.Sparkline data={points} height={44}>
-  <Chart.Sparkline.EndDot />
-</Chart.Sparkline>
-<Chart.Bar data={week} onSelect={setSelected}>
-  <Chart.Bar.Values />
-  <Chart.Bar.Categories />
-</Chart.Bar>
-<Chart.Donut data={breakdown}>
-  <Chart.Donut.Value />
-  <Chart.Donut.Label>Monthly spend</Chart.Donut.Label>
-</Chart.Donut>
-<Chart.Meter value={88} max={100} warnAt={0.75} dangerAt={0.9}>
-  <Chart.Meter.Value />
-  <Chart.Meter.Label>Budget used</Chart.Meter.Label>
-</Chart.Meter>
-<Chart.Heatmap data={days} onSelect={setDay} />
-
-// A second series and a likely range are props on Plot, not new forms.
-<Chart data={projected} format={formatMoney("GBP")}>
-  <Chart.Value />
-  <Chart.Plot
-    compare={baseline}
-    range={{ lower: pessimistic, upper: optimistic }}
-    tooltip
-  />
-  <Chart.Legend
-    items={[
-      { label: "Projected", color: "…" },
-      { label: "Baseline", color: "…" },
-      { label: "Likely range", color: "…", faded: true },
-    ]}
-  />
-</Chart>
-
-// Bars: each series is a child carrying its own name — no parallel arrays.
-<Chart.Bar variant="grouped">
-  <Chart.Bar.Series data={sleep} label="Sleep" />
-  <Chart.Bar.Series data={activity} label="Activity" />
-  <Chart.Bar.Categories />
-  <Chart.Bar.Legend />
-</Chart.Bar>
-<Chart.Bar variant="stacked">
-  <Chart.Bar.Series data={private_} label="Private" />
-  <Chart.Bar.Series data={state} label="State" />
-  <Chart.Bar.Categories />
-  <Chart.Bar.Legend />
-</Chart.Bar>
-
-// Layout is a prop, not a form — the same categories as ranked rows.
-<Chart.Bar data={spend} layout="horizontal" format={formatMoney("GBP")} />`}</CodeBlock>
-
-          <p className="mt-4 text-[13px] text-ink-3">
-            The data model is <code className="font-mono text-[11.5px]">number[]</code> or{' '}
-            <code className="font-mono text-[11.5px]">
-              {'{ value, at?, label?, meta? }[]'}
-            </code>
-            . Pass <code className="font-mono text-[11.5px]">formatAt</code> on the root and the
-            readout says <em>when</em> as well as what. Selection is
-            controlled-or-uncontrolled everywhere — the same{' '}
-            <code className="font-mono text-[11.5px]">activeIndex</code> /{' '}
-            <code className="font-mono text-[11.5px]">onScrub</code> /{' '}
-            <code className="font-mono text-[11.5px]">onSelect</code> contract on the root, Bar,
-            and Donut.
-          </p>
-        </Section>
-
-        <Section
-          id="axes"
-          title="Two axes"
-          sub="Closed sets, like Card. Everything else is data."
-        >
-          <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
-            <div className="mx-auto max-w-[520px] space-y-4 text-[13px]">
-              <div>
-                <code className="font-mono text-[11.5px] text-ink">density</code>
-                <span className="ml-2 text-ink-3">compact · default</span>
-                <p className="mt-1 text-ink-2">
-                  Stroke weight, dot and bar radius, and whether labels render at all.
-                  <code className="ml-1 font-mono text-[11.5px]">compact</code> is what makes a
-                  chart survive inside a table row.
-                </p>
-              </div>
-              <div>
-                <code className="font-mono text-[11.5px] text-ink">chrome</code>
-                <span className="ml-2 text-ink-3">none · baseline · reference</span>
-                <p className="mt-1 text-ink-2">
-                  Furniture around the data. There is no{' '}
-                  <code className="font-mono text-[11.5px]">axis</code> member and there will not
-                  be one — ticks and gridlines are how a chart this size stops being readable.
-                  <code className="ml-1 font-mono text-[11.5px]">reference</code> is one labelled
-                  line at a value you name, not a band system.
-                </p>
-              </div>
-              <div>
-                <code className="font-mono text-[11.5px] text-ink">tone</code>
-                <span className="ml-2 text-ink-3">
-                  auto · positive · negative · brand · series · neutral
-                </span>
-                <p className="mt-1 text-ink-2">
-                  One vocabulary across all six forms. Each form documents what it does with the
-                  members it cannot honour — a line has no categories to enumerate, a meter has no
-                  direction to infer, and neither invents one.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        <Section
-          id="props"
-          title="Props"
-          sub="Generated from the types, so it cannot drift from the code."
-        >
-          <p className="mb-5 max-w-[62ch] text-[13px] text-ink-2">
-            What each form accepts and what it does. Presence is not here — what a chart{' '}
-            <em>draws</em> is named in the tree (see Code above); these are the props that say how
-            it behaves.
-          </p>
-          <ChartReference />
-        </Section>
-
-        <Section
-          id="tokens"
-          title="Tokens used"
-          sub="One validated palette across every form."
-        >
-          <div className="max-h-[360px] overflow-y-auto rounded-lg border border-line">
-            {chartData.tokens.map((token) => (
-              <div key={token} className="border-b border-line px-4 py-3 last:border-0">
-                <code className="font-mono text-[11.5px] text-ink">{token}</code>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        <Section
-          id="accessibility"
-          title="Accessibility"
-          sub="Direction is never carried by colour alone."
-        >
-          <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
-            <li>
-              <code>Chart.Delta</code> always renders an explicit sign. The positive and negative
-              tones sit near the deuteranopia separation floor, so the sign is what keeps direction
-              readable — don&apos;t replace it with a bare coloured number.
-            </li>
-            <li>
-              Donuts always carry a legend, and categories past the palette&apos;s capacity fold into
-              one neutral Other slice rather than repeating a hue.
-            </li>
-            <li>
-              Each chart exposes a summary label to assistive tech. Sparklines are hidden by default,
-              since the number beside them is already announced — pass{' '}
-              <code>accessibilityLabel</code> when one stands alone.
-            </li>
-          </ul>
-        </Section>
-
-        <Section id="do-dont" title="Do · Don't" sub="Show the data, not the chart junk.">
-          <DoDont
-            pairs={[
-              {
-                do: 'Let the value readout be the label, and update it as you scrub.',
-                dont: 'Add gridlines, ticks, and axis labels to a chart this size.',
-              },
-              {
-                do: 'Keep segments straight between points.',
-                dont: 'Smooth the path — a spline invents peaks that were never in the data.',
-              },
-              {
-                do: 'Let bars cross-fade when the data changes.',
-                dont: 'Grow bars from zero — a bar’s height is its datum, so that animates the number.',
-              },
-            ]}
-          />
-        </Section>
-
-        <Section
-          id="not-in-the-kit"
-          title="Not in the kit"
-          sub="Six forms, drawn by Arlo. The rest is yours."
-        >
-          <p className="text-[15px] leading-relaxed text-ink-2">
-            Arlo owns the geometry and the render loop for the six forms above — there is no
-            charting library underneath, only{' '}
-            <code className="font-mono text-[11.5px]">react-native-svg</code>. That is what makes
-            the crosshair land on the line and the period morph possible, and it is also why the
-            list of forms is closed.
-          </p>
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
-            These are <strong>not</strong> coming: candlestick, radar, population pyramid, scatter,
-            and 3-D anything. If you need one of them, the scale and the path builders the six are
-            drawn with are exported from{' '}
-            <code className="font-mono text-[11.5px]">chart/core.ts</code> —{' '}
-            <code className="font-mono text-[11.5px]">makeScale</code>,{' '}
-            <code className="font-mono text-[11.5px]">linePath</code>,{' '}
-            <code className="font-mono text-[11.5px]">barPath</code>,{' '}
-            <code className="font-mono text-[11.5px]">bandPath</code>,{' '}
-            <code className="font-mono text-[11.5px]">annulusPath</code> — so a seventh form you
-            write measures the way these do.
-          </p>
-        </Section>
-
-        <Section
-          id="related"
-          title="Related primitives"
-          sub="What charts usually sit inside or beside."
-        >
-          <div className="flex flex-wrap gap-2">
-            {['Card', 'Badge', 'Skeleton', 'Spinner'].map((item) => (
-              <Chip key={item}>→ {item}</Chip>
-            ))}
-          </div>
-        </Section>
-      </main>
-      <RightRail headings={[...chartData.headings]} actions={[...chartData.actions]} />
-    </>
   );
 }

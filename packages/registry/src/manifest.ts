@@ -66,6 +66,23 @@ export const FOUNDATION: RegistryEntry[] = [
   },
 ];
 
+const LINE_CHART: RegistryEntry = {
+  name: 'chart-line',
+  kind: 'primitive',
+  title: 'Line chart',
+  description:
+    'A scrubbable line and area chart with a value readout, delta, and period selector. Import LineChart and compose LineChart.Value, LineChart.Plot, and LineChart.Periods. Supports comparison lines, stacked areas, and volume bars.',
+  dependencies: ['expo-haptics'],
+  registryDependencies: ['chart-core', 'animated-counter', 'haptics'],
+  files: [
+    { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
+    { source: 'components/chart/chart-context.ts', target: 'chart/chart-context.ts' },
+    { source: 'components/chart/readouts.tsx', target: 'chart/readouts.tsx' },
+    { source: 'components/chart/plot.tsx', target: 'chart/plot.tsx' },
+  ],
+  meta: { tags: ['chart', 'line', 'area', 'scrub', 'gesture', 'primitive'] },
+};
+
 export const COMPONENTS: RegistryEntry[] = [
   {
     name: 'animated-icons',
@@ -166,7 +183,8 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'The geometry, tone, and density every chart form measures with, plus the shared legend, empty slot, and loading skeleton. Installed by each form; install it directly only if you are writing a form of your own against the same scale.',
     /*
-     * Arlo draws every mark itself, on `react-native-svg` and nothing else.
+     * Arlo draws marks with react-native-svg. Reanimated drives reveal masks
+     * on the UI thread; it does not own chart geometry or interaction state.
      *
      * `react-native-gifted-charts` and `expo-linear-gradient` used to be here.
      * Both are gone: the first was paying a full integration cost for features
@@ -177,11 +195,12 @@ export const COMPONENTS: RegistryEntry[] = [
      * because gifted resolved a gradient package at import time — the area fill
      * is an SVG `<LinearGradient>` now.
      */
-    dependencies: ['react-native-svg'],
+    dependencies: ['react-native-svg', 'react-native-reanimated', 'react-native-worklets'],
     registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/chart/core.ts', target: 'chart/core.ts' },
       { source: 'components/chart/hooks.ts', target: 'chart/hooks.ts' },
+      { source: 'components/chart/motion.tsx', target: 'chart/motion.tsx' },
       { source: 'components/chart/format.ts', target: 'chart/format.ts' },
       { source: 'components/chart/legend.tsx', target: 'chart/legend.tsx' },
       { source: 'components/chart/empty.tsx', target: 'chart/empty.tsx' },
@@ -189,21 +208,12 @@ export const COMPONENTS: RegistryEntry[] = [
     ],
     meta: { tags: ['chart', 'data', 'foundation', 'primitive'] },
   },
+  LINE_CHART,
   {
+    ...LINE_CHART,
     name: 'chart-plot',
-    kind: 'primitive',
-    title: 'Chart plot',
-    description:
-      'The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`; add `Chart.Bars` inside the plot for a combo chart on one shared scale.',
-    dependencies: ['expo-haptics'],
-    registryDependencies: ['chart-core', 'animated-counter', 'haptics'],
-    files: [
-      { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
-      { source: 'components/chart/chart-context.ts', target: 'chart/chart-context.ts' },
-      { source: 'components/chart/readouts.tsx', target: 'chart/readouts.tsx' },
-      { source: 'components/chart/plot.tsx', target: 'chart/plot.tsx' },
-    ],
-    meta: { tags: ['chart', 'line', 'area', 'scrub', 'gesture', 'primitive'] },
+    title: 'Line chart (legacy alias)',
+    description: 'Backward-compatible alias for chart-line. Installs the same files and dependencies. Use chart-line for new installations; existing Chart imports remain supported.',
   },
   {
     name: 'chart-bar',
@@ -271,7 +281,7 @@ export const COMPONENTS: RegistryEntry[] = [
       'Every chart form and the `Chart` namespace that reaches them — the plot, sparkline, bar, donut, meter, and heatmap. Take this to get the namespace; take a single form (`chart-bar`, `chart-sparkline`, …) to get one chart and the shared core, and nothing else.',
     registryDependencies: [
       'chart-core',
-      'chart-plot',
+      'chart-line',
       'chart-bar',
       'chart-sparkline',
       'chart-donut',
@@ -467,6 +477,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.',
     registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
+    dependencies: ['@arloui/icons', 'react-native-svg'],
     files: [
       { source: 'components/carousel/carousel.tsx', target: 'carousel/carousel.tsx' },
       { source: 'components/carousel/index.ts', target: 'carousel/index.ts' },

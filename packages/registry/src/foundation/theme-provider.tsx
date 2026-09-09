@@ -22,7 +22,9 @@ export function ThemeProvider({
   defaultName?: ThemeName | 'system';
 }) {
   const [pref, setPref] = useState<ThemeName | 'system'>(defaultName);
-  const [system, setSystem] = useState<ColorSchemeName>(Appearance.getColorScheme());
+  const [system, setSystem] = useState<ColorSchemeName | null | undefined>(
+    Appearance.getColorScheme(),
+  );
 
   useEffect(() => {
     if (pref !== 'system') return;

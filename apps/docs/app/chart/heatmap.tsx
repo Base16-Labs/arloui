@@ -1,13 +1,18 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Chart, useTokens, type HeatmapDatum } from '@arloui/registry';
+import { ChartCanvas } from '@/components/playground/chart-canvas';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
+import {
+  ChartMotionControls,
+  useChartMotionControls,
+} from '@/components/playground/chart-motion-controls';
 
 /** The design's Heatmap family: the calendar streak grid. */
 type State = 'default' | 'loading' | 'empty';
@@ -18,7 +23,6 @@ const WEEKS = 8;
 const STREAK = 34;
 const LEVELS = [2, 3, 4];
 const STATES: State[] = ['default', 'loading', 'empty'];
-
 
 /**
  * Deterministic activity: an active run of `STREAK` days ending today, sparse
@@ -32,7 +36,7 @@ function sampleDays(): HeatmapDatum[] {
   for (let index = total - 1; index >= 0; index -= 1) {
     const day = new Date(end.getTime() - index * DAY_MS);
     const noise = (index * 37) % 11;
-    const active = index >= total - STREAK ? noise > 0 : noise > 7;
+    const active = index < STREAK || (index > STREAK && noise > 7);
     out.push({ date: day.toISOString(), value: active ? (noise % 4) + 1 : 0 });
   }
   return out;
@@ -43,15 +47,12 @@ export default function HeatmapCanvas() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const motion = useChartMotionControls();
   const [levels, setLevels] = useState(3);
   const [state, setState] = useState<State>('default');
   const [picked, setPicked] = useState<string | null>(null);
-  const [previewOffset] = useState(() => new Animated.Value(0));
 
-  const data = useMemo(
-    () => (state === 'empty' ? [] : sampleDays()),
-    [state],
-  );
+  const data = useMemo(() => (state === 'empty' ? [] : sampleDays()), [state]);
 
   const streak = useMemo(() => {
     let count = 0;
@@ -61,16 +62,6 @@ export default function HeatmapCanvas() {
     }
     return count;
   }, [data]);
-
-  useEffect(() => {
-    Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -120 : 0,
-      damping: 27,
-      stiffness: 300,
-      mass: 0.8,
-      useNativeDriver: true,
-    }).start();
-  }, [previewOffset, sheetOpen]);
 
   return (
     <>
@@ -93,15 +84,7 @@ export default function HeatmapCanvas() {
             <ThemeToggle />
           </View>
 
-          <Animated.View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              paddingHorizontal: 20,
-              gap: 14,
-              transform: [{ translateY: previewOffset }],
-            }}
-          >
+          <ChartCanvas sheetOpen={sheetOpen}>
             <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
               <Text
                 style={{
@@ -112,7 +95,7 @@ export default function HeatmapCanvas() {
                   fontWeight: '800',
                 }}
               >
-                {streak}
+                {state === 'default' ? streak : '--'}
               </Text>
               <Text
                 style={{
@@ -125,11 +108,17 @@ export default function HeatmapCanvas() {
                 day streak
               </Text>
               <Text style={{ color: t.colors.textTertiary, fontFamily: 'Manrope', fontSize: 12 }}>
-                · longest {STREAK + 27} · this month
+                {state === 'default'
+                  ? 'last 8 weeks'
+                  : state === 'loading'
+                    ? 'Loading'
+                    : 'No activity'}
               </Text>
             </View>
 
             <Chart.Heatmap
+              animated={motion.animated}
+              key={motion.replay}
               data={data}
               levels={levels}
               loading={state === 'loading'}
@@ -150,9 +139,9 @@ export default function HeatmapCanvas() {
                 textAlign: 'center',
               }}
             >
-              {picked ?? 'Tap an active day to select it'}
+              {state === 'default' ? picked : null}
             </Text>
-          </Animated.View>
+          </ChartCanvas>
 
           {!sheetOpen ? (
             <View
@@ -182,26 +171,34 @@ export default function HeatmapCanvas() {
             onNext={() => router.replace('/gallery')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Levels">
-                {LEVELS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={String(value)}
-                    active={levels === value}
-                    onPress={() => setLevels(value)}
-                  />
-                ))}
-              </VariantControlRow>
               <VariantControlRow label="State">
                 {STATES.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
                     active={state === value}
-                    onPress={() => setState(value)}
+                    onPress={() => {
+                      setState(value);
+                      setPicked(null);
+                    }}
                   />
                 ))}
               </VariantControlRow>
+              {state === 'default' ? (
+                <VariantControlRow label="Levels">
+                  {LEVELS.map((value) => (
+                    <VariantChip
+                      key={value}
+                      label={String(value)}
+                      active={levels === value}
+                      onPress={() => setLevels(value)}
+                    />
+                  ))}
+                </VariantControlRow>
+              ) : null}
+              {state !== 'empty' ? (
+                <ChartMotionControls {...motion} disabled={state !== 'default'} />
+              ) : null}
             </View>
           </VariantSheet>
         </View>

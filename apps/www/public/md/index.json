@@ -1,5 +1,5 @@
 {
-  "count": 51,
+  "count": 52,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -68,6 +68,10 @@
     {
       "path": "/docs/components/chart-heatmap",
       "md": "/md/docs/components/chart-heatmap.md"
+    },
+    {
+      "path": "/docs/components/chart-line",
+      "md": "/md/docs/components/chart-line.md"
     },
     {
       "path": "/docs/components/chart-meter",

@@ -160,7 +160,9 @@
         "reduce-motion"
       ],
       "dependencies": [
-        "react-native-svg"
+        "react-native-svg",
+        "react-native-reanimated",
+        "react-native-worklets"
       ],
       "tags": [
         "chart",
@@ -170,10 +172,32 @@
       ]
     },
     {
+      "name": "chart-line",
+      "kind": "primitive",
+      "title": "Line chart",
+      "description": "A scrubbable line and area chart with a value readout, delta, and period selector. Import LineChart and compose LineChart.Value, LineChart.Plot, and LineChart.Periods. Supports comparison lines, stacked areas, and volume bars.",
+      "registryDependencies": [
+        "chart-core",
+        "animated-counter",
+        "haptics"
+      ],
+      "dependencies": [
+        "expo-haptics"
+      ],
+      "tags": [
+        "chart",
+        "line",
+        "area",
+        "scrub",
+        "gesture",
+        "primitive"
+      ]
+    },
+    {
       "name": "chart-plot",
       "kind": "primitive",
-      "title": "Chart plot",
-      "description": "The scrubbable single-series line and area, with a rolling value readout, a signed delta, a period selector, and no axis furniture. Compose it as `Chart` + `Chart.Value` / `Chart.Delta` / `Chart.Plot` / `Chart.Periods`; add `Chart.Bars` inside the plot for a combo chart on one shared scale.",
+      "title": "Line chart (legacy alias)",
+      "description": "Backward-compatible alias for chart-line. Installs the same files and dependencies. Use chart-line for new installations; existing Chart imports remain supported.",
       "registryDependencies": [
         "chart-core",
         "animated-counter",
@@ -289,7 +313,7 @@
       "description": "Every chart form and the `Chart` namespace that reaches them — the plot, sparkline, bar, donut, meter, and heatmap. Take this to get the namespace; take a single form (`chart-bar`, `chart-sparkline`, …) to get one chart and the shared core, and nothing else.",
       "registryDependencies": [
         "chart-core",
-        "chart-plot",
+        "chart-line",
         "chart-bar",
         "chart-sparkline",
         "chart-donut",
@@ -511,7 +535,10 @@
         "theme-provider",
         "reduce-motion"
       ],
-      "dependencies": [],
+      "dependencies": [
+        "@arloui/icons",
+        "react-native-svg"
+      ],
       "tags": [
         "layout",
         "scroll",

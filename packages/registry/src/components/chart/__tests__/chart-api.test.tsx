@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
-import { Chart } from '../index';
+import { Chart, LineChart } from '../index';
+import { LineChart as StandaloneLineChart } from '../chart';
 import { BarChart } from '../bar-chart';
 import { DonutChart } from '../donut-chart';
 import { formatMoney } from '../format';
@@ -59,6 +60,15 @@ function barFills(): number[] {
 }
 
 describe('default composition', () => {
+  it('exposes LineChart without breaking the existing Chart API', () => {
+    expect(LineChart).toBe(Chart);
+    expect(StandaloneLineChart).toBe(LineChart);
+    expect(LineChart.Plot).toBe(Chart.Plot);
+    renderWithTheme(<LineChart data={SERIES} periods={['1D']} />);
+    expect(screen.getByRole('image')).toBeTruthy();
+    expect(screen.getByRole('tab', { name: '1D' })).toBeTruthy();
+  });
+
   it('renders value, delta, plot, and periods when given no children', () => {
     renderWithTheme(
       <Chart data={SERIES} periods={['1D', '1W']} period="1D" format={formatMoney('USD', { locale: 'en-US' })} />,

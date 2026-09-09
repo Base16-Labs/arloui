@@ -23,7 +23,6 @@ import {
 } from './core';
 import { type ChartEmptyProps } from './empty';
 import { useReduceMotion, useSkeletonPulse } from './hooks';
-import { SkeletonSheen, SkeletonSheenSvg } from './skeleton';
 
 /** A bar needs a name, so `label` is required here even though `ChartPoint`'s is not. */
 /**
@@ -93,6 +92,8 @@ export const SPACING_ROW_GAP: Record<BarChartSpacing, number> = {
 export type BarSeries = readonly (BarDatum | number)[];
 
 export type BarChartProps = {
+  /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
+  animated?: boolean;
   /**
    * The first series. Bars want labels, so a bare `number[]` gets index labels.
    *
@@ -151,6 +152,8 @@ export type BarChartProps = {
    * loading.
    */
   loading?: boolean;
+  /** Keep the last supplied data visible during a background fetch. Overrides loading. */
+  refreshing?: boolean;
   /** Overrides the summary read to assistive tech, which otherwise describes the series. */
   accessibilityLabel?: string;
   /** Style for the chart's outer container. */
@@ -190,11 +193,10 @@ export function normalizeBars(
  * The silhouette drawn while `loading`.
  *
  * Bars, not a spinner: the skeleton has to hold the same footprint the data will,
- * so the row does not reflow when it lands. The heights are a fixed, unremarkable
- * profile rather than random — a skeleton that reshapes on every render reads as
- * data arriving, and a reader will try to interpret it.
+ * so the row does not reflow when it lands. Equal heights avoid suggesting
+ * category rankings before their values are available.
  */
-export const SKELETON_HEIGHTS = [0.45, 0.7, 0.35, 0.85, 0.55, 0.4, 0.65];
+export const SKELETON_HEIGHTS = [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6];
 
 export function BarSkeleton({
   width,
@@ -247,9 +249,6 @@ export function BarSkeleton({
           />
         ))}
       </Svg>
-      {/* One clip across every bar, so the sweep crosses the marks and not the
-          gaps between them. */}
-      <SkeletonSheenSvg d={bars.join(' ')} width={width} height={height} />
     </Animated.View>
   );
 }

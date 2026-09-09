@@ -34,9 +34,9 @@ import { rgbaFromHex } from '@arloui/tokens';
 import { haptic } from '../../foundation/haptics';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useTokens } from '../../foundation/theme-provider';
+import { ChartLoading, ChartMotion, useChartFade } from './hooks';
 import type { ChartPoint } from './core';
 import { collectParts, hasPart, useSkeletonPulse } from './hooks';
-import { SkeletonSheen } from './skeleton';
 
 export type HeatmapDatum = ChartPoint & {
   /** A timestamp, an ISO string, or a `Date` — normalised to local midnight. */
@@ -44,6 +44,8 @@ export type HeatmapDatum = ChartPoint & {
 };
 
 export type HeatmapProps = {
+  /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
+  animated?: boolean;
   /** Dated values. A day with no entry renders empty, not absent. */
   data: readonly HeatmapDatum[];
   /** Filled intensity steps above "none". Default 3. */
@@ -72,6 +74,8 @@ export type HeatmapProps = {
   emptyLabel?: string;
   /** Pulses the empty grid instead of the data. */
   loading?: boolean;
+  /** Keep the last supplied data visible during a background fetch. Overrides loading. */
+  refreshing?: boolean;
   /** Overrides the summary read to assistive tech, which otherwise gives the range and its busiest day. */
   accessibilityLabel?: string;
   /** Style for the grid's outer container. */
@@ -128,11 +132,13 @@ function HeatmapInner({
   empty,
   emptyLabel = 'No activity yet',
   loading = false,
+  refreshing = false,
   accessibilityLabel,
   style,
 }: HeatmapResolved) {
   const t = useTokens();
-  const pulse = useSkeletonPulse(t.motion.duration.slow);
+  const entrance = useChartFade(!loading && data.length > 0);
+  const pulse = useSkeletonPulse(t.motion.duration.slow, loading);
   const [gridWidth, setGridWidth] = useState(0);
   const interactive = onSelect != null;
 
@@ -228,9 +234,10 @@ function HeatmapInner({
       <Animated.View
         accessible={!interactive}
         accessibilityRole={interactive ? undefined : 'image'}
+        accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={interactive ? undefined : summary}
         onLayout={(event) => setGridWidth(event.nativeEvent.layout.width)}
-        style={{ gap: 5, opacity: loading ? pulse : 1, overflow: 'hidden' }}
+        style={{ gap: 5, opacity: loading ? pulse : entrance, overflow: 'hidden' }}
       >
         {/*
           The grid is a field of squares rather than one shape, so the sweep runs
@@ -238,7 +245,6 @@ function HeatmapInner({
           no clip needed, and clipping to forty-two separate rects would cost
           more than it buys.
         */}
-        {loading ? <SkeletonSheen width={gridWidth} /> : null}
         {showDayLabels ? (
           <View style={{ flexDirection: 'row', gap: 5 }}>
             {DAY_INITIALS.map((initial, index) => (
@@ -358,7 +364,7 @@ function resolveComposition(props: HeatmapProps): HeatmapResolved {
 }
 
 function HeatmapRoot(props: HeatmapProps) {
-  return <HeatmapInner {...resolveComposition(props)} />;
+  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <HeatmapInner {...resolveComposition(props)} loading={loading} />}</ChartLoading></ChartMotion>;
 }
 
 /** The parts, for `Chart.Heatmap.Scale` and friends. */

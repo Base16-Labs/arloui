@@ -12,24 +12,24 @@ function PropRows({ props }: { props: ChartPropDoc[] }) {
   return (
     <>
       {props.map((prop) => (
-        <tr key={prop.name} className="border-b border-line/60 last:border-0">
-          <td className="whitespace-nowrap px-4 py-2.5 align-top">
-            <code className="font-mono text-[11.5px] text-ink">{prop.name}</code>
+        <tr key={prop.name} className="border-b border-line last:border-0">
+          <td className="px-3 py-3 align-top">
+            <code className="break-words font-mono text-[12px] leading-relaxed text-ink">{prop.name}</code>
             {prop.required ? (
               <span className="ml-1.5 text-[10px] uppercase tracking-wide text-ink-3">req</span>
             ) : null}
           </td>
-          <td className="px-4 py-2.5 align-top">
-            <code className="font-mono text-[11px] text-ink-2">{prop.type}</code>
+          <td className="px-3 py-3 align-top">
+            <code className="break-words font-mono text-[12px] leading-relaxed text-ink-2">{prop.type}</code>
           </td>
-          <td className="whitespace-nowrap px-4 py-2.5 align-top">
+          <td className="px-3 py-3 align-top">
             {prop.default ? (
-              <code className="font-mono text-[11px] text-ink-2">{prop.default}</code>
+              <code className="break-words font-mono text-[12px] leading-relaxed text-ink-2">{prop.default}</code>
             ) : (
               <span className="text-ink-3">—</span>
             )}
           </td>
-          <td className="px-4 py-2.5 align-top text-ink-2">{prop.description}</td>
+          <td className="px-3 py-3 align-top text-[13px] leading-relaxed text-ink-3">{prop.description}</td>
         </tr>
       ))}
     </>
@@ -38,12 +38,15 @@ function PropRows({ props }: { props: ChartPropDoc[] }) {
 
 function Table({ head, children }: { head: string[]; children: React.ReactNode }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-line bg-canvas">
-      <table className="w-full min-w-[560px] border-collapse text-left text-[12.5px]">
-        <thead>
+    <div className="overflow-x-auto rounded-md border border-line bg-surface">
+      <table className="w-full min-w-[560px] table-fixed border-collapse [overflow-wrap:anywhere] text-left text-[13px] leading-relaxed">
+        <colgroup>
+          {head.length === 4 ? <><col className="w-[19%]" /><col className="w-[27%]" /><col className="w-[14%]" /><col className="w-[40%]" /></> : <><col className="w-[32%]" /><col className="w-[68%]" /></>}
+        </colgroup>
+        <thead className="bg-canvas">
           <tr className="border-b border-line">
             {head.map((label) => (
-              <th key={label} className="px-4 py-2.5 font-medium text-ink-3">
+              <th scope="col" key={label} className="px-3 py-2.5 text-[11px] font-medium uppercase tracking-normal text-ink-3">
                 {label}
               </th>
             ))}
@@ -66,11 +69,11 @@ function PartRows({ parts }: { parts: ChartPartDoc[] }) {
   return (
     <>
       {parts.map((part) => (
-        <tr key={part.name} className="border-b border-line/60 last:border-0 align-top">
-          <td className="whitespace-nowrap px-4 py-3">
-            <code className="font-mono text-[11.5px] text-ink">{`<${part.name} />`}</code>
+        <tr key={part.name} className="border-b border-line last:border-0 align-top">
+          <td className="px-3 py-3">
+            <code className="break-words font-mono text-[12px] leading-relaxed text-ink">{`<${part.name} />`}</code>
           </td>
-          <td className="px-4 py-3 text-ink-2">
+          <td className="px-3 py-3 text-ink-3">
             <p>{part.description}</p>
             {part.props.length > 0 ? (
               <dl className="mt-2 space-y-1.5 border-l border-line pl-3">
@@ -90,7 +93,7 @@ function PartRows({ parts }: { parts: ChartPartDoc[] }) {
                 ))}
               </dl>
             ) : (
-              <p className="mt-1 text-[12px] text-ink-3">Takes no props — naming it is the switch.</p>
+              <p className="mt-1 text-[12px] text-ink-3">No additional props are listed for this part.</p>
             )}
           </td>
         </tr>
@@ -100,7 +103,7 @@ function PartRows({ parts }: { parts: ChartPartDoc[] }) {
 }
 
 /** Props and parts for one form, or for every form when `title` is omitted. */
-export function ChartReference({ title }: { title?: string }) {
+export function ChartReference({ title, exportName }: { title?: string; exportName?: string }) {
   const sections = title ? CHART_PROPS.filter((s) => s.title === title) : CHART_PROPS;
   return (
     <div className="space-y-8">
@@ -110,7 +113,7 @@ export function ChartReference({ title }: { title?: string }) {
             <h3 className="mb-3 text-[13px] text-ink">
               {section.displayTitle ?? section.title}
               {section.displayTitle ? (
-                <code className="ml-2 font-mono text-[11.5px] text-ink-3">{section.title}</code>
+                <code className="ml-2 break-words font-mono text-[12px] leading-relaxed text-ink-3">{section.title}</code>
               ) : (
                 null
               )}
@@ -126,11 +129,17 @@ export function ChartReference({ title }: { title?: string }) {
           {section.parts.length > 0 ? (
             <div className="mt-4">
               <p className="mb-2 text-[12.5px] text-ink-2">
-                <span className="text-ink">Parts.</span> Name one and it is drawn; name none and you
-                get the default composition. Some take props of their own.
+                <span className="text-ink">Child components.</span> Without children, the chart uses
+                its default layout. Add child components to choose which optional elements to include.
+                The table lists each component and its available props.
               </p>
               <Table head={['Part', 'What it draws, and what it takes']}>
-                <PartRows parts={section.parts} />
+                <PartRows parts={section.parts.map((part) => ({
+                  ...part,
+                  name: exportName && part.name.startsWith(`${section.title}.`)
+                    ? exportName + part.name.slice(section.title.length)
+                    : part.name,
+                }))} />
               </Table>
             </div>
           ) : null}

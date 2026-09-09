@@ -12,7 +12,7 @@
  */
 
 import { CHART_PROPS, CHART_PROPS_MD } from './generated/chart-props';
-import { chartChoices, chartForms, chartPitfalls } from './chart-forms';
+import { chartChoices, chartForms, chartPitfalls, chartQuickStart } from './chart-forms';
 import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
 import { archetypeDescriptions, archetypeItems } from './routes';
 
@@ -141,8 +141,7 @@ function chartWhenToUseMarkdown(): string {
   const rows = chartChoices.map((choice) => `| ${choice.question} | ${choice.form} |`);
   const bullets = chartPitfalls.map((item) => `- **${item.rule}** ${item.body}`);
   return [
-    'Start from the question the reader is asking, then check the exceptions below —',
-    `they are the ${['zero', 'one', 'two', 'three', 'four', 'five', 'six'][chartPitfalls.length] ?? chartPitfalls.length} calls people get wrong.`,
+    'Choose a chart based on the comparison or pattern users need to understand.',
     '',
     '| The reader asks | Reach for |',
     '| --- | --- |',
@@ -1106,303 +1105,83 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
 }
 
 /** The prose half of the Chart page — see `chartData.headings`. */
-const CHART_BODY = `## Forms
-
-Six, all reached through the \`Chart\` namespace. Pick by the question the reader
-is asking, not by the shape you want.
-
-| Form | Answers | Reach for it when |
-| --- | --- | --- |
-| Line chart (\`Chart\`) | "How has this moved?" | One series over time, scrubbable, with a big readout above it. The money screen. |
-| \`Chart.Sparkline\` | "Which way is this going?" | An inline mark in a list row or a stat card. No axes, no scrub, often no labels. |
-| \`Chart.Bar\` | "How do these compare?" | Categories side by side — grouped, stacked, or as ranked horizontal rows. |
-| \`Chart.Donut\` | "What is this made of?" | Parts of one whole. Four named slices, then everything else folds into \`Other\`. |
-| \`Chart.Meter\` | "How close am I?" | One value against a target, as a bar, a ring, or an arc gauge. |
-| \`Chart.Heatmap\` | "Did I show up?" | A month of days as filled and empty squares. Streaks and consistency. |
-
-\`Chart.Plot\`, \`Chart.Value\`, \`Chart.Delta\`, \`Chart.Periods\`, \`Chart.Legend\`, and
-\`Chart.Empty\` compose inside a \`Chart\` root, which owns the data and the scrub
-state. The other five are standalone and take their own \`data\`.
-
-## When to use
-
-__CHART_WHEN__
-
-## Reading the three axes
-
-Every form answers the same three props, so learning them once is enough.
-
-**\`tone\` — what the number means.** Not what colour to use. Up is not always
-good: savings rising is welcome, spending rising is not, and only you know
-which. \`auto\` infers direction, \`positive\`/\`negative\` assert it, \`brand\` is
-magnitude with no direction to report, \`series\` spends the categorical palette,
-\`neutral\` is context for something else.
-
-**\`density\` — how much mark there is.** \`compact\` thins strokes, shrinks dots and
-rings, tightens rows. It is for fitting a chart into a table row or a card
-without hand-tuning six numbers at each call site.
-
-**\`chrome\` — the furniture around the data.** \`none\` is the mark alone.
-\`baseline\` adds the zero rule, drawn only when the data actually crosses zero.
-\`reference\` adds one labelled dashed line at a value you name — a budget, an
-average. There is no \`axis\` member and there will not be one.
-
-## Install
-
-Take the namespace, or take one form:
-
-\`\`\`bash
-# every form, reached through the Chart namespace
-npx arloui add chart
-
-# or one, which brings the shared core and nothing else
-npx arloui add chart-bar
-npx arloui add chart-sparkline
-\`\`\`
-
-A single form gives you the component itself (\`BarChart\`, \`Sparkline\`, and so
-on) plus \`chart-core\` — the scale, the tones and densities, the legend, the
-empty slot, and the loading skeleton. Seven files for a sparkline, ten for a bar
-chart, against nineteen for the kit — and no \`expo-haptics\` unless the form you
-took responds to touch.
-
-### Which import
-
-\`Chart.Bar\` and \`BarChart\` are the same component. The namespace is assembled
-in \`chart/index.ts\`, and a single form doesn't bring that barrel — so reach for
-the form's own export instead:
-
-\`\`\`tsx
-// npx arloui add chart
-import { Chart } from '@/components/ui/chart';
-<Chart.Bar data={spend} />
-
-// npx arloui add chart-bar — same component, no barrel to reach it through
-import { BarChart } from '@/components/ui/chart/bar-chart';
-<BarChart data={spend} />
-\`\`\`
-
-| Entry | File | Export | Through the namespace |
-| --- | --- | --- | --- |
-| \`chart-plot\` | \`chart/chart\` | \`Chart\` | \`Chart\`, \`Chart.Plot\`, \`Chart.Value\`, \`Chart.Delta\`, \`Chart.Periods\` |
-| \`chart-bar\` | \`chart/bar-chart\` | \`BarChart\` | \`Chart.Bar\` |
-| \`chart-sparkline\` | \`chart/sparkline\` | \`Sparkline\` | \`Chart.Sparkline\` |
-| \`chart-donut\` | \`chart/donut-chart\` | \`DonutChart\` | \`Chart.Donut\` |
-| \`chart-meter\` | \`chart/meter\` | \`Meter\` | \`Chart.Meter\` |
-| \`chart-heatmap\` | \`chart/heatmap\` | \`Heatmap\` | \`Chart.Heatmap\` |
-
-Paths follow your \`aliases.components\` — \`components/ui\` by default. The props
-are identical either way, so every example below reads the same once the import
-is swapped.
-
-Every entry reads the same whether you took it alone or through \`chart\`. The
-plot's namespace is assembled in \`chart/chart\` itself, not in the barrel, so a
-standalone \`chart-plot\` gives you the same \`<Chart>\` the examples use — the
-barrel only adds the other five forms to that same object.
-
-## Two ways to call every form
-
-**Pass no children and you get the form's default composition** — the sensible
-chart, in one line:
-
-\`\`\`tsx
-<Chart data={points} format={money} periods={['1D', '1W', '1M']} period={p} onPeriodChange={setP} />
-\`\`\`
-
-**Name any child and you get exactly what you named** — nothing else is drawn:
-
-\`\`\`tsx
-<Chart data={points} format={money}>
-  <Chart.Value />
-  <Chart.Periods />
-  <Chart.Plot height={200} fill>
-    <Chart.Reference value={1000} label="Target" />
-  </Chart.Plot>
-</Chart>
-\`\`\`
-
-That inversion is the whole rule. There is no third way and no mixing: presence
-lives in the tree, so no form takes a \`showValues\`, a \`showLegend\`, or a
-\`chrome\` prop to decide what exists. For the bare mark — no zero rule, no
-labels — pass \`{null}\`, which says "I named nothing" rather than "give me the
-defaults".
-
-**Where a part goes** follows the same split: the root's children are
-information — \`Title\`, \`Value\`, \`Delta\`, \`Periods\`, \`Legend\`, \`Empty\` —
-and the plot's children are what is drawn inside the box — \`Line\`, \`Bars\`,
-\`Baseline\`, \`Reference\`, \`Crosshair\`.
-
-\`Crosshair\` is the scrub: name it and the plot answers a touch and draws the
-rule and dot that follow it; leave it out and the plot is a picture. There is no
-\`scrubbable\` prop, because a plot that tracks a finger and draws nothing is not
-a thing anyone wants.
-
-On naming: \`Value\` is the one big readout, \`Values\` is a number on every mark,
-and the category names are \`Categories\` rather than \`Labels\` — \`Label\` and
-\`Labels\` meaning different things one letter apart was a trap.
-
-The rule is presence against behaviour. A prop answering *does this element
-exist?* belongs in the tree; one answering *how does the whole chart behave?* —
-\`variant\`, \`layout\`, \`density\`, \`tone\`, \`spacing\` — stays a prop.
-
-| Form | Parts |
-| --- | --- |
-| \`Chart.Bar\` | \`Series\` \`Values\` \`Categories\` \`Baseline\` \`Reference\` \`Legend\` |
-| \`Chart.Donut\` | \`Value\` \`Label\` \`Legend\` |
-| \`Chart.Meter\` | \`Value\` \`Label\` \`Ring\` |
-| \`Chart.Sparkline\` | \`Fill\` \`EndDot\` \`Extremes\` |
-| \`Chart.Heatmap\` | \`DayLabels\` \`Scale\` |
-
-One thing this replaced outright: series and their names used to be two
-index-coupled arrays, \`series\` beside \`legend\`, where \`legend[1]\` named
-\`series[0]\` because \`data\` was series zero. A \`Series\` carries its own label.
-The meter's \`rings\` array went the same way.
-
-## Code
-
-A scrubbable series with a readout and a period selector:
-
-\`\`\`tsx
-<Chart data={points} format={money} periods={['1D', '1W', '1M']} period={period} onPeriodChange={setPeriod}>
-  <Chart.Value />
-  <Chart.Delta />
-  <Chart.Plot fill curve="smooth" />
-  <Chart.Periods />
-</Chart>
-\`\`\`
-
-An inline mark in a list row — compact by default, tinted by direction:
-
-\`\`\`tsx
-<Chart.Sparkline data={prices} width={80} />
-\`\`\`
-
-Categories, ranked as rows rather than bars:
-
-\`\`\`tsx
-<Chart.Bar data={spend} layout="horizontal" format={money}>
-  <Chart.Bar.Categories />
-</Chart.Bar>
-\`\`\`
-
-Two series stacked, with a legend:
-
-\`\`\`tsx
-<Chart.Bar variant="stacked">
-  <Chart.Bar.Series data={sleep} label="Sleep" />
-  <Chart.Bar.Series data={activity} label="Activity" />
-  <Chart.Bar.Categories />
-  <Chart.Bar.Legend />
-</Chart.Bar>
-\`\`\`
-
-One value against a target, as a gauge:
-
-\`\`\`tsx
-<Chart.Meter shape="arc" value={712} max={850} warnAt={0.75} dangerAt={0.85}>
-  <Chart.Meter.Value />
-  <Chart.Meter.Label>Credit score</Chart.Meter.Label>
-</Chart.Meter>
-\`\`\`
-
-Every form that can be empty takes the same slot, and it replaces the chart
-rather than sitting inside it. A meter is exempt — an empty meter is a zero —
-and a heatmap only counts as empty with no data *and* no date range, because a
-grid of empty squares is usually the data rather than the absence of it:
-
-\`\`\`tsx
-<Chart.Bar
-  data={[]}
-  empty={{
-    title: 'No spending yet',
-    description: 'Categories will appear here once you log a transaction.',
-    action: { label: 'Log a transaction', onPress: open },
-  }}
-/>
-\`\`\`
-
-A second quantity that shares the x-axis but wants a different shape — volume
-behind price, rainfall behind temperature:
-
-\`\`\`tsx
-<Chart data={price} format={money}>
-  <Chart.Value />
-  <Chart.Plot>
-    <Chart.Bars data={volume} />
-  </Chart.Plot>
-</Chart>
-\`\`\`
-
-\`Chart.Line\` is the same idea for a second, third, nth line — each with its own
-colour and name, all on the one scale:
-
-\`\`\`tsx
-<Chart data={actual} format={money}>
-  <Chart.Plot>
-    <Chart.Line data={forecast} label="Forecast" dashed />
-    <Chart.Line data={budget} label="Budget" />
-  </Chart.Plot>
-</Chart>
-\`\`\`
-
-The marks are measured into the plot's own domain, so they agree about
-what a height means — bars on a scale of their own would sit at plausible but
-wrong heights, and nothing about the picture would say so. Scrubbing stays with
-the root: one gesture for the plot, however many marks are in it.
-
-### Linking two charts
-
-\`activeIndex\` is an index into one chart's own series, so two charts sharing it
-line up only if their points do. \`activeAt\` is resolved against each chart's own
-\`at\` values instead, so linked charts agree about *when*:
-
-\`\`\`tsx
-const [at, setAt] = useState<ChartPoint['at']>(undefined);
-
-<Chart data={price}  activeAt={at} onScrub={(_, p) => setAt(p?.at)}>…</Chart>
-<Chart data={volume} activeAt={at} onScrub={(_, p) => setAt(p?.at)}>…</Chart>
-\`\`\`
-
-Each chart still owns its own gesture, so this is a synchronised crosshair —
-scrub either, both follow — rather than one drag travelling between them.
-
-## Props
-
-Every prop each form accepts, read out of the source at build time — so this
-cannot drift from the types. Presence is not here: what the chart *draws* is
-named in the tree (see above), and these are the props that say how it behaves.
-
-__CHART_PROPS__
-
-## Accessibility
-
-- A chart with no \`onSelect\` or \`onScrub\` is **one image** to a screen reader,
-  labelled with a summary of the series. It does not become forty-two tappable
-  squares unless you asked for selection.
-- Readouts never show a figure the chart does not have. While \`loading\`, the
-  value, the delta and the period pills are skeletons — a \`$0.00\` placeholder is
-  indistinguishable from a real zero balance.
-- Reduce Motion pins sweeps, morphs and counters to their final values, and
-  stops the loading sheen. Scrubbing is unaffected: it is direct manipulation,
-  tracked one to one, and has no duration to remove.
-- Status colour never travels alone. A meter past \`warnAt\` or \`dangerAt\` always
-  ships its value alongside the colour change.
-
-## Not in the kit
-
-Candlestick, radar, population pyramid, scatter, matrix heatmaps, and 3-D
-anything. They are consumer-owned on purpose.
-
-\`core.ts\` is exported for exactly this: \`makeScale\`, \`linePath\`, \`areaPath\`,
-\`bandPath\`, \`barPath\`, \`annulusPath\`, \`arcPath\`, and the tone and density
-helpers. A seventh form written against them measures the same way these do, so
-a crosshair lands on the line rather than near it.`;
+const CHART_BODY = [
+  '## Overview',
+  '',
+  'ArloUI provides six chart types. Each chart can be installed separately or accessed through the Chart namespace.',
+  '',
+  ...chartForms.map((form) => `- [${form.title}](/docs/components/${form.slug}): ${form.lede}`),
+  '',
+  '## When to use',
+  '',
+  '__CHART_WHEN__',
+  '',
+  '## Get started',
+  '',
+  chartQuickStart.intro,
+  '',
+  '```bash',
+  chartQuickStart.command,
+  '```',
+  '',
+  chartQuickStart.dependencies,
+  '',
+  '```bash',
+  chartQuickStart.expoCommand,
+  '```',
+  '',
+  chartQuickStart.exampleIntro,
+  '',
+  '```tsx',
+  chartQuickStart.example,
+  '```',
+  '',
+  chartQuickStart.family,
+  '',
+  'Install all chart types:',
+  '',
+  '\`\`\`bash',
+  'npx arloui add chart',
+  '\`\`\`',
+  '',
+  'To install only one chart, use its registry entry:',
+  '',
+  ...chartForms.map((form) => `- ${form.title}: \`npx arloui add ${form.entry}\``),
+  '',
+  'Each chart page includes its direct import path and examples. The full chart installation exposes the Chart namespace; standalone installations expose the component directly.',
+  '',
+  '## Composition',
+  '',
+  'Without children, a chart uses its default layout. Add child components to customize optional elements such as the value readout, legend, category labels, and reference lines.',
+  '',
+  'For Line chart, place Value, Delta, and Periods inside LineChart. Place reference lines and the crosshair inside LineChart.Plot. The Chart export remains available for existing code. Other chart types expose their own child components, listed in the API reference.',
+  '',
+  '## API reference',
+  '',
+  '__CHART_PROPS__',
+  '',
+  '## Loading and empty states',
+  '',
+  'Use loading for the initial fetch, when no data is available. Neutral placeholders use a subtle pulse and fade out before the chart enters. During later fetches, pass refreshing and keep supplying the last successful data; the chart stays visible and is marked busy for assistive technology. Charts hide data-dependent readouts only during initial loading. An empty dataset displays an empty state rather than a value of zero. Meter represents a value within a range and does not have an empty-dataset state.',
+  '',
+  'Sparkline supports a compact empty label. Heatmap can still display a calendar without data when an explicit date range is provided.',
+  '',
+  '## Accessibility',
+  '',
+  'Provide meaningful labels and value formatters. Keep important values available as text, and use a data table when users need access to every value.',
+  '',
+  'Use labels or numeric values alongside status colors. Chart animations respect the reduced-motion setting.',
+  '',
+  '## Limitations',
+  '',
+  'The supplied chart types do not include candlestick, radar, scatter, or arbitrary matrix heatmaps. Shared geometry helpers are available for custom chart implementations.',
+].join('\n');
 
 export const chartData = {
   slug: 'chart',
   category: 'Data',
   title: 'Chart',
-  lede: 'Six chart forms sharing one validated palette, all reached through the Chart namespace: a scrubbable single-series line, an inline sparkline, categorical bars (grouped, stacked, or horizontal), a part-to-whole donut, a meter against a target, and a calendar heatmap.',
+  lede: 'Charts for trends, category comparisons, proportions, progress toward a target, and daily activity. Install each chart separately or use the complete Chart namespace.',
   figma: '#',
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
@@ -1550,8 +1329,6 @@ function chartFormMarkdown(form: (typeof chartForms)[number]): string {
     '',
     form.lede,
     '',
-    `Answers ${form.answers}`,
-    '',
     '## When to use',
     '',
     ...form.whenToUse.map((line) => `- ${line}`),
@@ -1562,13 +1339,17 @@ function chartFormMarkdown(form: (typeof chartForms)[number]): string {
     `npx arloui add ${form.entry}`,
     '```',
     '',
-    'A single form does not bring the `Chart` barrel, so import the component itself:',
+    'Import the component directly when installing this chart on its own:',
     '',
     '```tsx',
     `import { ${form.exportName} } from '@/components/ui/${form.file}';`,
     '```',
     '',
-    '## Code',
+    '## Examples',
+    '',
+    form.slug === 'chart-line'
+      ? 'These examples use LineChart. The old `chart-plot` command and `Chart` export remain supported. Use `npx arloui add chart` to install the entire chart family.'
+      : `These examples use ${form.exportName}, the direct import shown above. Set up the theme provider before rendering them.`,
     '',
   ];
 
@@ -1591,7 +1372,7 @@ function chartFormMarkdown(form: (typeof chartForms)[number]): string {
     out.push(
       '## Parts',
       '',
-      'Name one and it is drawn; name none and you get the default composition.',
+      'Without children, the chart uses its default layout. Add child components to choose which optional elements to include. The table lists each component and its available props.',
       '',
       '| Part | Takes | What it draws |',
       '| --- | --- | --- |',
@@ -1601,17 +1382,29 @@ function chartFormMarkdown(form: (typeof chartForms)[number]): string {
         part.props.length > 0
           ? part.props.map((prop) => `\`${prop.name}: ${pipe(prop.type)}\``).join(' ')
           : '—';
-      out.push(`| \`<${part.name} />\` | ${takes} | ${pipe(part.description) || '—'} |`);
+      const name = part.name.startsWith(`${form.referenceKey}.`)
+        ? form.exportName + part.name.slice(form.referenceKey.length)
+        : part.name;
+      out.push(`| \`<${name} />\` | ${takes} | ${pipe(part.description) || '—'} |`);
     }
     out.push('');
   }
 
-  out.push('## What it will not do', '', form.notThis, '', '## Related', '', '- [Chart overview](/docs/components/chart)');
+  out.push('## Motion', '', form.motion, '',
+    'Motion is enabled by default. Set `animated={false}` to disable entrances, transitions, and loading pulse. Device Reduce Motion takes precedence. Loading shows a neutral pulsing placeholder that fades out before entry. For background fetches, pass `refreshing` and keep supplying the last successful data; the chart stays visible and exposes its busy state. Entry runs once when real data becomes available, including after loading or an empty state. It does not loop.', '',
+    'Use the playground Motion controls to switch animation on or off. Tap On again to replay the entrance.', '',
+    '```tsx', `<${form.exportName} ${form.slug === 'chart-meter' ? 'value={53} max={100}' : 'data={data}'} animated={false} />`, '```', '',
+    '## Limitations', '', form.notThis, '', '## Related', '', '- [Chart overview](/docs/components/chart)');
   return out.join('\n');
 }
 
 export function allMarkdownPages(): { path: string; markdown: string }[] {
   return [
+    // Keep existing raw Markdown links usable after the documentation rename.
+    ...chartForms.filter((form) => form.slug === 'chart-line').map((form) => ({
+      path: '/docs/components/chart-plot',
+      markdown: chartFormMarkdown(form),
+    })),
     ...Object.entries(PAGE_MARKDOWN).map(([path, markdown]) => ({ path, markdown })),
     ...chartForms.map((form) => ({
       path: `/docs/components/${form.slug}`,

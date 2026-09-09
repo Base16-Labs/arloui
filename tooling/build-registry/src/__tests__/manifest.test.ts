@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { REGISTRY } from '@arloui/registry/manifest';
 import { buildAll, buildIndex, validateManifest } from '../lib';
+import { chartForms } from '../../../../apps/www/lib/chart-forms';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../../..');
@@ -60,12 +61,13 @@ describe('the chart docs import table', () => {
   const DOC = join(ROOT, 'apps/www/public/md/docs/components/chart.md');
 
   it('names entries that exist, with the files they actually install', async () => {
-    const md = await readFile(DOC, 'utf8');
-    const rows = [...md.matchAll(/^\| `(chart-[a-z]+)` \| `([^`]+)` \|/gm)];
-    expect(rows.length).toBeGreaterThan(0);
+    expect(chartForms).toHaveLength(6);
 
     const wrong: string[] = [];
-    for (const [, name, file] of rows) {
+    for (const { entry: name, file, exportName, slug } of chartForms) {
+      const md = await readFile(join(dirname(DOC), `${slug}.md`), 'utf8');
+      expect(md).toContain(`npx arloui add ${name}`);
+      expect(md).toContain(`import { ${exportName} } from '@/components/ui/${file}'`);
       const entry = REGISTRY.items.find((i) => i.name === name);
       if (!entry) {
         wrong.push(`${name}: documented but not in the manifest`);
@@ -84,8 +86,8 @@ describe('the chart docs import table', () => {
     const md = await readFile(DOC, 'utf8');
     const shipped = REGISTRY.items
       .map((i) => i.name)
-      .filter((n) => n.startsWith('chart-') && n !== 'chart-core');
-    const undocumented = shipped.filter((n) => !md.includes(`\`${n}\``));
+      .filter((n) => n.startsWith('chart-') && n !== 'chart-core' && n !== 'chart-plot');
+    const undocumented = shipped.filter((n) => !md.includes(`npx arloui add ${n}`));
     expect(undocumented).toEqual([]);
   });
 });
@@ -101,9 +103,9 @@ describe('the chart props reference', () => {
 
   it('emits a table for every form, with real rows', async () => {
     const md = await readFile(DOC, 'utf8');
-    const section = md.slice(md.indexOf('## Props'), md.indexOf('## Accessibility'));
-    for (const form of ['Chart', 'Chart.Plot', 'Chart.Bar', 'Chart.Sparkline', 'Chart.Donut', 'Chart.Meter', 'Chart.Heatmap']) {
-      expect(section).toContain(`### ${form}`);
+    const section = md.slice(md.indexOf('## API reference'), md.indexOf('## Loading and empty states'));
+    for (const form of ['LineChart', 'LineChart.Plot', 'Chart.Bar', 'Chart.Sparkline', 'Chart.Donut', 'Chart.Meter', 'Chart.Heatmap']) {
+      expect(section).toContain(form === 'LineChart' ? '### Line chart (`LineChart`)' : `### ${form}`);
     }
     // Every row is `| \`name\` | \`type\` | default | description |`.
     const rows = [...section.matchAll(/^\| `\w+`/gm)];
@@ -112,7 +114,8 @@ describe('the chart props reference', () => {
 
   it('documents what every prop does', async () => {
     const md = await readFile(DOC, 'utf8');
-    const section = md.slice(md.indexOf('## Props'), md.indexOf('## Accessibility'));
+    const section = md.slice(md.indexOf('## API reference'), md.indexOf('## Loading and empty states'));
+    expect(section.length).toBeGreaterThan(0);
     // An em dash in the last cell is the generator saying "no JSDoc found".
     const undocumented = [...section.matchAll(/^\| (`\w+`[^|]*)\|[^|]*\|[^|]*\| — \|$/gm)].map(
       (m) => m[1].trim(),
@@ -131,7 +134,7 @@ describe('the chart parts reference', () => {
 
   it('documents every part of every form', async () => {
     const md = await readFile(DOC, 'utf8');
-    const section = md.slice(md.indexOf('## Props'), md.indexOf('## Accessibility'));
+    const section = md.slice(md.indexOf('## API reference'), md.indexOf('## Loading and empty states'));
     const rows = [...section.matchAll(/^\| `<([\w.]+) \/>` \|[^|]*\| ([^|]*)\|$/gm)];
     expect(rows.length).toBeGreaterThan(25);
 
@@ -139,7 +142,7 @@ describe('the chart parts reference', () => {
     expect(undocumented).toEqual([]);
 
     // The parts a reader is most likely to reach for, by name.
-    for (const part of ['Chart.Crosshair', 'Chart.Bar.Series', 'Chart.Meter.Ring', 'Chart.Sparkline.Fill']) {
+    for (const part of ['LineChart.Crosshair', 'Chart.Bar.Series', 'Chart.Meter.Ring', 'Chart.Sparkline.Fill']) {
       expect(section).toContain(`<${part} />`);
     }
   });
@@ -157,16 +160,20 @@ describe('the per-form chart pages', () => {
   it('gives every shipped form a page with its reference on it', async () => {
     const forms = REGISTRY.items
       .map((item) => item.name)
-      .filter((name) => name.startsWith('chart-') && name !== 'chart-core');
+      .filter((name) => name.startsWith('chart-') && name !== 'chart-core' && name !== 'chart-plot');
 
     for (const form of forms) {
       const page = await readFile(join(MD, `${form}.md`), 'utf8');
       expect(page).toContain('## Install');
       expect(page).toContain(`npx arloui add ${form}`);
-      expect(page).toContain('## Code');
+      expect(page).toContain('## Examples');
       expect(page).toContain('## When to use');
       // The reference is the half that cannot be hand-written, so assert it landed.
       expect(page).toMatch(/## (Props|Parts)/);
     }
+  });
+  it('keeps the legacy raw Markdown URL equivalent to the canonical page', async () => {
+    expect(await readFile(join(MD, 'chart-plot.md'), 'utf8'))
+      .toBe(await readFile(join(MD, 'chart-line.md'), 'utf8'));
   });
 });

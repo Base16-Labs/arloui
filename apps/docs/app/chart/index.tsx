@@ -1,36 +1,42 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { paletteSecondary } from '@arloui/tokens';
 import {
   Chart,
-  seriesColorAt,
   useTokens,
   type ChartChrome,
   type ChartCurve,
   type ChartDensity,
   type ChartTone,
 } from '@arloui/registry';
+import { ChartCanvas as ChartPreviewCanvas } from '@/components/playground/chart-canvas';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
+import {
+  ChartMotionControls,
+  useChartMotionControls,
+} from '@/components/playground/chart-motion-controls';
 
 type Shape = 'rising' | 'falling' | 'volatile' | 'flat';
 type FillMode = 'area' | 'line';
 type State = 'default' | 'loading' | 'empty';
-/** The props-on-Plot extras: the scrub readout, a second series with a band, min/max references. */
-type Extra = 'off' | 'tooltip' | 'compare' | 'minmax' | 'stacked';
+/** Series arrangements stay independent of guides and the scrub tooltip. */
+type Extra = 'single' | 'compare' | 'stacked';
+type Guide = ChartChrome | 'minmax';
 
 const TONES: ChartTone[] = ['auto', 'positive', 'negative', 'brand', 'neutral'];
 const SHAPES: Shape[] = ['rising', 'falling', 'volatile', 'flat'];
 const FILLS: FillMode[] = ['area', 'line'];
 const CURVES: ChartCurve[] = ['steep', 'smooth'];
 const DENSITIES: ChartDensity[] = ['default', 'compact'];
-const CHROMES: ChartChrome[] = ['baseline', 'reference', 'none'];
+const CHROMES: Guide[] = ['none', 'baseline', 'reference', 'minmax'];
 const STATES: State[] = ['default', 'loading', 'empty'];
-const EXTRAS: Extra[] = ['off', 'tooltip', 'compare', 'minmax', 'stacked'];
+const EXTRAS: Extra[] = ['single', 'compare', 'stacked'];
 const PERIODS = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
 /**
@@ -66,7 +72,7 @@ function series(shape: Shape, period: string): number[] {
           : shape === 'flat'
             ? 1100
             : 1100 + Math.sin(t * Math.PI * 2.2 + seed) * 160;
-    points.push(Number((base + jitter(i)).toFixed(2)));
+    points.push(Number((base + (shape === 'flat' ? 0 : jitter(i))).toFixed(2)));
   }
   return points;
 }
@@ -79,17 +85,18 @@ export default function ChartCanvas() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const motion = useChartMotionControls();
   const [tone, setTone] = useState<ChartTone>('auto');
   const [shape, setShape] = useState<Shape>('rising');
   const [fillMode, setFillMode] = useState<FillMode>('area');
   const [curve, setCurve] = useState<ChartCurve>('steep');
   const [period, setPeriod] = useState('1D');
   const [density, setDensity] = useState<ChartDensity>('default');
-  const [chrome, setChrome] = useState<ChartChrome>('baseline');
+  const [chrome, setChrome] = useState<Guide>('baseline');
   const [state, setState] = useState<State>('default');
-  const [extra, setExtra] = useState<Extra>('off');
+  const [extra, setExtra] = useState<Extra>('single');
+  const [tooltip, setTooltip] = useState(false);
   const [scrubbed, setScrubbed] = useState<number | null>(null);
-  const [previewOffset] = useState(() => new Animated.Value(0));
 
   const full = useMemo(() => series(shape, period), [shape, period]);
   const data = useMemo(() => (state === 'empty' ? [] : full), [full, state]);
@@ -110,6 +117,7 @@ export default function ChartCanvas() {
     if (full.length === 0) return undefined;
     const hi = Math.max(...full);
     const lo = Math.min(...full);
+    if (hi === lo) return [{ value: hi, label: money(hi) }];
     return [
       { value: hi, label: money(hi) },
       { value: lo, label: money(lo) },
@@ -138,9 +146,16 @@ export default function ChartCanvas() {
     [full],
   );
 
-  // `minmax` owns the chrome: the pair needs `reference`, whatever the chrome row says.
-  const effectiveChrome: ChartChrome = extra === 'minmax' ? 'reference' : chrome;
-  const effectiveReference = extra === 'minmax' ? minMax : reference;
+  const effectiveChrome: ChartChrome = chrome === 'minmax' ? 'reference' : chrome;
+  const stackColors = useMemo(
+    () => [
+      t.colors.chartSeries1,
+      paletteSecondary.teal[t.name === 'dark' ? 400 : 500],
+      paletteSecondary.yellow[t.name === 'dark' ? 300 : 400],
+    ],
+    [t],
+  );
+  const effectiveReference = chrome === 'minmax' ? minMax : reference;
 
   const seriesColor =
     tone === 'positive'
@@ -151,17 +166,9 @@ export default function ChartCanvas() {
           ? t.colors.textSecondary
           : tone === 'brand'
             ? t.colors.interactivePrimary
-            : t.colors.chartPositive;
-
-  useEffect(() => {
-    Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -120 : 0,
-      damping: 27,
-      stiffness: 300,
-      mass: 0.8,
-      useNativeDriver: true,
-    }).start();
-  }, [previewOffset, sheetOpen]);
+            : full[full.length - 1]! >= full[0]!
+              ? t.colors.chartPositive
+              : t.colors.chartNegative;
 
   return (
     <>
@@ -186,15 +193,10 @@ export default function ChartCanvas() {
             <ThemeToggle />
           </View>
 
-          <Animated.View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              paddingHorizontal: 20,
-              transform: [{ translateY: previewOffset }],
-            }}
-          >
+          <ChartPreviewCanvas sheetOpen={sheetOpen}>
             <Chart
+              animated={motion.animated}
+              key={motion.replay}
               data={data}
               tone={tone}
               density={density}
@@ -213,13 +215,15 @@ export default function ChartCanvas() {
               <Chart.Delta format={money} />
               <Chart.Plot
                 height={200}
-                fill={fillMode === 'area'}
+                fill={extra === 'stacked' || fillMode === 'area'}
                 curve={curve}
-                tooltip={extra === 'tooltip'}
+                tooltip={tooltip}
                 compare={extra === 'compare' ? compareData : undefined}
                 range={extra === 'compare' ? range : undefined}
                 stack={extra === 'stacked' ? stack : undefined}
+                stackColors={extra === 'stacked' ? stackColors : undefined}
               >
+                <Chart.Crosshair />
                 {/*
                   Furniture is named inside the plot now, so the Chrome control
                   adds and removes elements rather than switching an enum.
@@ -229,22 +233,17 @@ export default function ChartCanvas() {
                   ? [effectiveReference]
                       .flat()
                       .flatMap((r) =>
-                        r == null ? [] : [<Chart.Reference key={r.value} value={r.value} label={r.label} />],
+                        r == null
+                          ? []
+                          : [<Chart.Reference key={r.value} value={r.value} label={r.label} />],
                       )
                   : null}
               </Chart.Plot>
               {extra === 'stacked' ? (
-                /*
-                 * Colours come from `seriesColorAt`, the same function the plot
-                 * draws with — never hand-picked tokens. Spelling them out here
-                 * is how the legend drifted: it claimed the first layer was
-                 * `chartSeries2` while the primary sat on the tone palette, and
-                 * both resolved to a green.
-                 */
                 <Chart.Legend
                   items={['Base', 'Bonus', 'Interest'].map((label, index) => ({
                     label,
-                    color: seriesColorAt(t, index),
+                    color: stackColors[index]!,
                   }))}
                 />
               ) : null}
@@ -270,7 +269,7 @@ export default function ChartCanvas() {
               and it is the one piece of that furniture the playground owns
               rather than the component.
             */}
-            {data.length > 0 ? (
+            {data.length > 0 && state === 'default' && scrubbed != null ? (
               <Text
                 style={{
                   color: t.colors.textTertiary,
@@ -280,12 +279,10 @@ export default function ChartCanvas() {
                   textAlign: 'center',
                 }}
               >
-                {scrubbed == null
-                  ? 'Drag across the chart to scrub'
-                  : `onScrub → index ${scrubbed} of ${data.length - 1}`}
+                {`Point ${scrubbed + 1} of ${data.length}`}
               </Text>
             ) : null}
-          </Animated.View>
+          </ChartPreviewCanvas>
 
           {!sheetOpen ? (
             <View
@@ -298,7 +295,7 @@ export default function ChartCanvas() {
               }}
             >
               <CanvasPill
-                componentName="Chart"
+                componentName="Line chart"
                 open={false}
                 onComponentPress={() => router.replace('/')}
                 onMenuPress={() => setSheetOpen(true)}
@@ -315,86 +312,118 @@ export default function ChartCanvas() {
             onNext={() => router.replace('/chart/bar')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Shape">
-                {SHAPES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={shape === value}
-                    onPress={() => setShape(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Tone">
-                {TONES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={tone === value}
-                    onPress={() => setTone(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Fill">
-                {FILLS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={fillMode === value}
-                    onPress={() => setFillMode(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Curve">
-                {CURVES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={curve === value}
-                    onPress={() => setCurve(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Density">
-                {DENSITIES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={density === value}
-                    onPress={() => setDensity(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Chrome">
-                {CHROMES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={chrome === value}
-                    onPress={() => setChrome(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Extras">
-                {EXTRAS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={extra === value}
-                    onPress={() => setExtra(value)}
-                  />
-                ))}
-              </VariantControlRow>
               <VariantControlRow label="State">
                 {STATES.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
                     active={state === value}
-                    onPress={() => setState(value)}
+                    onPress={() => {
+                      setState(value);
+                      setScrubbed(null);
+                    }}
                   />
                 ))}
               </VariantControlRow>
+              {state === 'default' ? (
+                <>
+                  <VariantControlRow label="Shape">
+                    {SHAPES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={shape === value}
+                        onPress={() => setShape(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  {extra !== 'stacked' ? (
+                    <VariantControlRow label="Tone">
+                      {TONES.map((value) => (
+                        <VariantChip
+                          key={value}
+                          label={value}
+                          active={tone === value}
+                          onPress={() => setTone(value)}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                  {extra !== 'stacked' ? (
+                    <VariantControlRow label="Fill">
+                      {FILLS.map((value) => (
+                        <VariantChip
+                          key={value}
+                          label={value}
+                          active={fillMode === value}
+                          onPress={() => setFillMode(value)}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                  {shape !== 'flat' ? (
+                    <VariantControlRow label="Curve">
+                      {CURVES.map((value) => (
+                        <VariantChip
+                          key={value}
+                          label={value}
+                          active={curve === value}
+                          onPress={() => setCurve(value)}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                  <VariantControlRow label="Density">
+                    {DENSITIES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={density === value}
+                        onPress={() => setDensity(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Guides">
+                    {CHROMES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={
+                          value === 'reference'
+                            ? 'average'
+                            : value === 'minmax'
+                              ? 'min / max'
+                              : value
+                        }
+                        active={chrome === value}
+                        onPress={() => setChrome(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Series">
+                    {EXTRAS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value === 'compare' ? 'comparison' : value}
+                        active={extra === value}
+                        onPress={() => setExtra(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Tooltip">
+                    {(['on', 'off'] as const).map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={tooltip === (value === 'on')}
+                        onPress={() => setTooltip(value === 'on')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                </>
+              ) : null}
+              {state !== 'empty' ? (
+                <ChartMotionControls {...motion} disabled={state !== 'default'} />
+              ) : null}
             </View>
           </VariantSheet>
         </View>

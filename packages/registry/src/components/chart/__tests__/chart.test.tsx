@@ -226,6 +226,27 @@ describe('Chart', () => {
     expect(screen.getByText(/\+\$40\.00/)).toBeTruthy();
   });
 
+  it('shows and dismisses a tooltip while dragging a plot with explicit children', () => {
+    renderWithTheme(
+      <Chart data={[10, 20, 30, 40, 50]} format={money}>
+        <Chart.Plot tooltip>
+          <Chart.Crosshair />
+          <Chart.Baseline />
+          <Chart.Reference value={25} label="Average" />
+        </Chart.Plot>
+      </Chart>,
+    );
+    layoutPlot(212);
+    const plot = screen.getByRole('image');
+    expect(screen.queryByText('$30.00')).toBeNull();
+    fireEvent(plot, 'responderGrant', touchEvent(106));
+    expect(screen.getByText('$30.00')).toBeTruthy();
+    fireEvent(plot, 'responderMove', touchEvent(6));
+    expect(screen.getByText('$10.00')).toBeTruthy();
+    fireEvent(plot, 'responderRelease', touchEvent(6));
+    expect(screen.queryByText('$10.00')).toBeNull();
+  });
+
   it('clamps a scrub that runs past either end of the plot', () => {
     renderWithTheme(
       <Chart data={[10, 20, 30]}>

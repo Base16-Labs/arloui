@@ -1,3 +1,4 @@
+import { PlotPlaceholder } from './skeleton';
 /**
  * Arlo UI — Sparkline
  *
@@ -23,8 +24,10 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient, Path, Stop, ClipPath, G } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import { ChartLoading, ChartMotion, useChartEntrance } from './hooks';
+import { ChartFill, ChartReveal } from './motion';
 import {
   areaPath,
   densityMetrics,
@@ -39,10 +42,12 @@ import {
   type ChartTone,
 } from './core';
 import { EmptyContent, type ChartEmptyProps } from './empty';
-import { collectParts, hasPart, useSkeletonPulse } from './hooks';
-import { SkeletonSheenSvg } from './skeleton';
+import { collectParts, hasPart } from './hooks';
+
 
 export type SparklineProps = {
+  /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
+  animated?: boolean;
   /** The series. Bare numbers are fine — a sparkline has no axis to label. */
   data: ChartData;
   /**
@@ -94,10 +99,12 @@ export type SparklineProps = {
   /** Overrides the density's stroke width. */
   strokeWidth?: number;
   /**
-   * Draws the silhouette as a pulsing line instead of the series. Holds the same
+   * Draws a neutral pulsing placeholder instead of the series. Holds the same
    * box, so the row it sits in does not reflow when the data lands.
    */
   loading?: boolean;
+  /** Keep the last supplied data visible during a background fetch. Overrides loading. */
+  refreshing?: boolean;
   /**
    * Sparklines are decorative next to a value that is already announced, so they
    * are hidden from assistive tech unless you pass a label.
@@ -134,6 +141,7 @@ function SparklineInner({
   curve = 'steep',
   strokeWidth,
   loading = false,
+  refreshing = false,
   accessibilityLabel,
   style,
 }: SparklineResolved) {
@@ -180,6 +188,8 @@ function SparklineInner({
   // to different colours but would share one document-global gradient id, so the
   // first definition would win and paint both fills the same.
   const gradientId = `arloSparkFill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const entrance = useChartEntrance(!loading && width > 0 && plotted.length > 0);
+  const revealId = `${gradientId}-reveal`;
 
   /*
    * The composed slot replaces the mark outright, exactly as it does on the
@@ -212,6 +222,7 @@ function SparklineInner({
       }
       accessible={accessibilityLabel != null}
       accessibilityRole={accessibilityLabel != null ? 'image' : undefined}
+        accessibilityState={{ busy: loading || refreshing }}
       accessibilityLabel={accessibilityLabel}
       accessibilityElementsHidden={accessibilityLabel == null}
       importantForAccessibility={accessibilityLabel == null ? 'no-hide-descendants' : 'auto'}
@@ -285,6 +296,8 @@ function SparklineInner({
 
       {!loading && width > 0 && plotted.length > 0 ? (
         <Svg width={width} height={height}>
+          <Defs><ClipPath id={revealId}><ChartReveal progress={entrance} width={width} height={height} /></ClipPath></Defs>
+          <G clipPath={`url(#${revealId})`}>
           {area ? (
             <>
               <Defs>
@@ -293,7 +306,7 @@ function SparklineInner({
                   <Stop offset="1" stopColor={color} stopOpacity={0} />
                 </LinearGradient>
               </Defs>
-              <Path d={area} fill={`url(#${gradientId})`} />
+              <ChartFill progress={entrance}><Path d={area} fill={`url(#${gradientId})`} /></ChartFill>
             </>
           ) : null}
           <Path
@@ -317,73 +330,15 @@ function SparklineInner({
               fill={color}
             />
           ) : null}
+          </G>
         </Svg>
       ) : null}
     </View>
   );
 }
 
-/**
- * The pulsing silhouette drawn while `loading`.
- *
- * A fixed rise-and-settle profile, not the real shape and not a random one: a
- * skeleton that reshapes on every render reads as data arriving and a reader will
- * try to interpret it.
- */
-/**
- * Height reserved above and below the mark for the high/low labels — the 10pt
- * mono line plus a little air.
- */
 const EXTREME_ROW = 13;
-
-const SKELETON_SHAPE = [0.35, 0.5, 0.42, 0.68, 0.58, 0.8, 0.72, 0.9];
-
-/*
- * `surfaceStrong`, the skeleton material the rest of the chart family uses. It
- * was `borderSecondary` — the same value in both themes, so this changes
- * nothing on screen, but a skeleton naming itself after a border is the kind of
- * drift that becomes a real mismatch the moment either token moves.
- */
-function SparklineSkeleton({
-  width,
-  height,
-  inset,
-}: {
-  width: number;
-  height: number;
-  inset: number;
-}) {
-  const t = useTokens();
-  const pulse = useSkeletonPulse(t.motion.duration.slow);
-  if (width === 0) return null;
-
-  const scale = makeScale({
-    count: SKELETON_SHAPE.length,
-    min: 0,
-    span: 1,
-    width,
-    height,
-    inset,
-  });
-  const shape = SKELETON_SHAPE.map((value, index) => ({ x: scale.x(index), y: scale.y(value) }));
-
-  const silhouette = areaPath(shape, height - inset, 'smooth');
-  return (
-    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: pulse }]}>
-      <Svg width={width} height={height}>
-        {/*
-          Filled, not stroked. This was the only skeleton in the chart family
-          drawn as a line — the plot, the bars, and the donut all fill their
-          silhouettes — and at a 1.5pt stroke in a 28pt box it read as a faint
-          scratch rather than as something arriving. A filled shape carries the
-          weight of the mark it stands in for.
-        */}
-        <Path d={silhouette} fill={t.colors.surfaceStrong} />
-      </Svg>
-      <SkeletonSheenSvg d={silhouette} width={width} height={height} />
-    </Animated.View>
-  );
-}
+const SparklineSkeleton = PlotPlaceholder;
 
 /**
  * One extreme, pinned to the margin its value lives in: the high above the mark,
@@ -450,7 +405,7 @@ function resolveComposition(props: SparklineProps): SparklineResolved {
 }
 
 function SparklineRoot(props: SparklineProps) {
-  return <SparklineInner {...resolveComposition(props)} />;
+  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <SparklineInner {...resolveComposition(props)} loading={loading} />}</ChartLoading></ChartMotion>;
 }
 
 /** The parts, for `Chart.Sparkline.EndDot` and friends. */

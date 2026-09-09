@@ -10,7 +10,8 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { OutlineCaretLeft } from '@arloui/icons/OutlineCaretLeft';
+import { OutlineCaretRight } from '@arloui/icons/OutlineCaretRight';
 import { useTokens } from '../../foundation/theme-provider';
 import { useReduceMotion } from '../../foundation/reduce-motion';
 
@@ -319,6 +320,7 @@ function CarouselArrow({
 }) {
   const t = useTokens();
   const isLeft = direction === 'left';
+  const ArrowIcon = isLeft ? OutlineCaretLeft : OutlineCaretRight;
 
   return (
     <Pressable
@@ -338,19 +340,7 @@ function CarouselArrow({
         opacity: disabled ? 0.35 : 1,
       })}
     >
-      <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
-        <Path
-          d={
-            isLeft
-              ? 'M10 3L5 8L10 13'
-              : 'M6 3L11 8L6 13'
-          }
-          stroke={t.colors.textPrimary}
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </Svg>
+      <ArrowIcon width={16} height={16} color={t.colors.textPrimary} accessible={false} />
     </Pressable>
   );
 }

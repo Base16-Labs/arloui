@@ -166,8 +166,8 @@ export const CHART_PROP_TABLES: {
   /** The form's `*Parts` object, when it has one. */
   parts?: { file: string; object: string };
 }[] = [
-  { title: 'Chart', displayTitle: 'Line chart', file: 'chart.tsx', type: 'ChartProps' , parts: { file: 'chart.tsx', object: 'ChartPlotParts' } },
-  { title: 'Chart.Plot', file: 'plot.tsx', type: 'ChartPlotProps' },
+  { title: 'LineChart', displayTitle: 'Line chart', file: 'chart.tsx', type: 'ChartProps' , parts: { file: 'chart.tsx', object: 'ChartPlotParts' } },
+  { title: 'LineChart.Plot', file: 'plot.tsx', type: 'ChartPlotProps' },
   { title: 'Chart.Bar', file: 'bar-shared.tsx', type: 'BarChartProps', defaultsFile: 'bar-vertical.tsx' , parts: { file: 'bar-chart.tsx', object: 'BarChartParts' } },
   { title: 'Chart.Sparkline', file: 'sparkline.tsx', type: 'SparklineProps' , parts: { file: 'sparkline.tsx', object: 'SparklineParts' } },
   { title: 'Chart.Donut', file: 'donut-chart.tsx', type: 'DonutChartProps' , parts: { file: 'donut-chart.tsx', object: 'DonutChartParts' } },

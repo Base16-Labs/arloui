@@ -36,6 +36,7 @@ export {
 } from './components/card';
 export {
   Chart,
+  LineChart,
   formatMoney,
   formatNumber,
   formatPercent,

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Chip } from '@/components/ui/Chip';
+import { Icon } from '@/components/ui/Icon';
 import { PhoneFrame, PreviewCard } from '@/components/ui/PhoneFrame';
 
 type Snap = 'item' | 'page';
@@ -257,15 +258,7 @@ function ArrowBtn({
       className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-raised transition-opacity hover:bg-line disabled:opacity-35"
       aria-label={direction === 'left' ? 'Previous' : 'Next'}
     >
-      <svg width={16} height={16} viewBox="0 0 16 16" fill="none">
-        <path
-          d={direction === 'left' ? 'M10 3L5 8L10 13' : 'M6 3L11 8L6 13'}
-          stroke="currentColor"
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      <Icon name="caret-right" size={16} className={direction === 'left' ? 'rotate-180' : undefined} />
     </button>
   );
 }

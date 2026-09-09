@@ -61,9 +61,9 @@ export const motion = {
     /** Period control answering a tap. Instant, then a spring settle. */
     control: { duration: 130, spring: { stiffness: 400, damping: 30, mass: 1 } },
     /** Series morphing between periods: resample to equal length, then interpolate. */
-    data: { duration: 280, easing: [0.77, 0, 0.175, 1] as const },
+    data: { duration: 280, easing: [0.4, 0, 0.2, 1] as const },
     /** First paint of a plot: the path draws in rather than popping. */
-    enter: { duration: 400, easing: [0.23, 1, 0.32, 1] as const },
+    enter: { duration: 400, easing: [0.33, 1, 0.68, 1] as const },
     /** Bars re-anchoring on a data change. A cross-fade — never a height sweep. */
     barSwap: { duration: 200, easing: [0.23, 1, 0.32, 1] as const },
   },

@@ -1,3 +1,5 @@
+import { SkeletonBlock } from '../skeleton';
+import { waitFor } from '@testing-library/react-native';
 /**
  * Loading and empty, across all five forms.
  *
@@ -50,7 +52,7 @@ describe('loading', () => {
     expect(screen.queryByText('Rent')).toBeNull();
   });
 
-  it('leaves the donut hole empty while loading', () => {
+  it('leaves the donut hole empty while loading', async () => {
     // The centre used to hold a skeleton block standing in for the total. Inside
     // a ring that is itself pulsing it read as a line struck through the chart
     // rather than as a number arriving, so the hole is now simply empty and the
@@ -65,7 +67,7 @@ describe('loading', () => {
 
     // Still renders the total once it has one, so the hole is empty, not gone.
     rerender(<DonutChart data={spend} format={money} />);
-    expect(screen.getByText('$1680.00')).toBeTruthy();
+    await waitFor(() => expect(screen.getByText('$1680.00')).toBeTruthy());
   });
 
   it('keeps the meter label but drops its readout, and never sweeps the fill', () => {
@@ -135,7 +137,7 @@ describe('empty', () => {
  * value a money screen must never invent.
  */
 describe('loading — the readouts', () => {
-  it('shows no headline figure until there is one', () => {
+  it('shows no headline figure until there is one', async () => {
     const { rerender } = renderWithTheme(
       <Chart data={[10, 20, 30]} format={money} loading>
         <Chart.Value />
@@ -155,7 +157,7 @@ describe('loading — the readouts', () => {
         <Chart.Value />
       </Chart>,
     );
-    expect(glyph('$')).toBeTruthy();
+    await waitFor(() => expect(glyph('$')).toBeTruthy());
   });
 
   it('makes no claim about direction until there is one', () => {
@@ -172,7 +174,7 @@ describe('loading — the readouts', () => {
    * A pressable period row over a chart with no series lets the reader ask for
    * 1Y and get the same shimmer back, so the control reads as broken.
    */
-  it('does not offer a period selector while loading', () => {
+  it('does not offer a period selector while loading', async () => {
     const onPeriodChange = jest.fn();
     const { rerender } = renderWithTheme(
       <Chart data={[]} periods={['1D', '1W']} period="1D" onPeriodChange={onPeriodChange} loading>
@@ -186,7 +188,7 @@ describe('loading — the readouts', () => {
         <Chart.Periods />
       </Chart>,
     );
-    expect(screen.queryAllByRole('tab')).toHaveLength(2);
+    await waitFor(() => expect(screen.queryAllByRole('tab')).toHaveLength(2));
   });
 });
 
@@ -271,7 +273,7 @@ describe('BarChart — loading', () => {
    * bars underneath used the fixed skeleton profile, so the numbers floated at
    * heights nothing on screen agreed with.
    */
-  it('shows no value labels over the silhouette', () => {
+  it('shows no value labels over the silhouette', async () => {
     const { rerender } = renderWithTheme(
       <BarChart data={week} showValues format={money} loading />,
     );
@@ -281,7 +283,7 @@ describe('BarChart — loading', () => {
 
     rerender(<BarChart data={week} showValues format={money} />);
     layout();
-    expect(screen.getByText('$30.00')).toBeTruthy();
+    await waitFor(() => expect(screen.getByText('$30.00')).toBeTruthy());
   });
 
   it('shows no value labels for a selected category either', () => {
@@ -302,15 +304,10 @@ describe('Sparkline — loading and empty', () => {
       .map((n) => n.props as { d?: string; fill?: unknown; strokeDasharray?: unknown });
   }
 
-  /**
-   * Every other skeleton in the family fills its silhouette — the plot, the
-   * bars, the ring. A 1.5pt stroke in a 28pt box read as a scratch.
-   */
-  it('fills the loading silhouette rather than stroking it', () => {
+  it('reserves the plot without drawing an invented trend', () => {
     renderWithTheme(<Sparkline data={[1, 4, 2, 8]} width={120} loading accessibilityLabel="t" />);
-    const closed = paths().filter((p) => (p.d ?? '').endsWith('Z'));
-    expect(closed.length).toBeGreaterThan(0);
-    expect(closed.every((p) => p.fill != null)).toBe(true);
+    expect(paths()).toHaveLength(0);
+    expect(screen.UNSAFE_getByType(SkeletonBlock).props.width).toBeGreaterThan(0);
   });
 
   /**

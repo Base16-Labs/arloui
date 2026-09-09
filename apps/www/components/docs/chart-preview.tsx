@@ -1,12 +1,12 @@
 /**
- * Static previews for the five chart forms.
+ * Static previews for the six chart forms.
  *
  * The site has no `react-native` dependency, so these are hand-built SVG/CSS
  * rather than the real components — same geometry and the same palette tokens,
  * but they don't scrub. The live, interactive version is the playground route
  * (`/chart`, `/chart/bar`, …), reached through `DevicePreview`.
  */
-import { CHART_SERIES, chartNegative, chartPositive } from './chart-preview-palette';
+import { CHART_SERIES, chartPositive } from './chart-preview-palette';
 
 const SERIES = [
   912, 918, 927, 921, 934, 946, 941, 958, 972, 966, 981, 995, 989, 1004, 1018,
@@ -39,10 +39,9 @@ function linePath(values: number[], w: number, h: number, inset = 3) {
 
 function Frame({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-line bg-canvas p-5">
-      <p className="mb-3 font-mono text-[11px] tracking-wide text-ink-3 uppercase">{label}</p>
+    <figure aria-label={label} className="m-0 min-w-0">
       {children}
-    </div>
+    </figure>
   );
 }
 
@@ -91,41 +90,16 @@ export function ChartLinePreview() {
 
 /** Inline line with everything else removed. */
 export function ChartSparklinePreview() {
-  const w = 320;
-  const h = 44;
-  const rows = [
-    { label: 'Rising', points: linePoints(SERIES, w, h), color: chartPositive },
-    { label: 'Falling', points: linePoints([...SERIES].reverse(), w, h), color: chartNegative },
-  ];
-
   return (
-    <Frame label="Chart.Sparkline">
-      <div className="space-y-4">
-        {rows.map(({ label, points, color }) => {
-          const end = points[points.length - 1]!;
-          return (
-            <div key={label}>
-              <p className="mb-1 font-mono text-[10px] tracking-wide text-ink-3 uppercase">
-                {label}
-              </p>
-              <svg
-                viewBox={`0 0 ${w} ${h}`}
-                className="w-full"
-                role="img"
-                aria-label={`${label} trend`}
-              >
-                <path
-                  d={toPath(points)}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <circle cx={end.x} cy={end.y} r="3" fill={color} />
-              </svg>
-            </div>
-          );
-        })}
+    <Frame label="Portfolio sparkline">
+      <div className="flex items-center gap-4">
+        <div className="min-w-0 flex-1">
+          <p className="text-[12px] text-ink-2">Portfolio</p>
+          <p className="mt-1 text-[20px] font-medium text-ink tabular-nums">$1,156.00</p>
+        </div>
+        <svg viewBox="0 0 140 28" className="w-[42%] shrink-0" role="img" aria-label="Rising portfolio trend">
+          <path d={linePath(SERIES, 140, 28)} fill="none" stroke={chartPositive} strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
       </div>
     </Frame>
   );
@@ -183,7 +157,7 @@ export function ChartDonutPreview() {
 
   return (
     <Frame label="Chart.Donut">
-      <div className="flex items-center gap-6">
+      <div className="flex flex-col items-center gap-6">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label="Spend by category">
           <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
             {slices.map((s, i) => {
@@ -219,7 +193,7 @@ export function ChartDonutPreview() {
             Monthly spend
           </text>
         </svg>
-        <ul className="flex-1 space-y-1.5">
+        <ul className="w-full space-y-1.5">
           {slices.map((s, i) => (
             <li key={s.label} className="flex items-center gap-2 text-[12.5px]">
               <span
@@ -241,9 +215,7 @@ export function ChartDonutPreview() {
 /** One value against a target, as a bar or a ring. */
 export function ChartMeterPreview() {
   const rows = [
-    { label: 'Goal', value: 42, color: CHART_SERIES[0]! },
-    { label: 'Storage', value: 72, color: CHART_SERIES[0]! },
-    { label: 'Budget used', value: 88, color: chartNegative },
+    { label: 'Storage', value: 53, color: CHART_SERIES[0]! },
   ];
 
   return (
@@ -313,15 +285,11 @@ export function ChartHeatmapPreview() {
   );
 }
 
-export function ChartFormsPreview() {
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <ChartLinePreview />
-      <ChartSparklinePreview />
-      <ChartBarPreview />
-      <ChartMeterPreview />
-      <ChartDonutPreview />
-      <ChartHeatmapPreview />
-    </div>
-  );
-}
+export const chartPreviews = {
+  'chart-line': ChartLinePreview,
+  'chart-bar': ChartBarPreview,
+  'chart-sparkline': ChartSparklinePreview,
+  'chart-donut': ChartDonutPreview,
+  'chart-meter': ChartMeterPreview,
+  'chart-heatmap': ChartHeatmapPreview,
+};

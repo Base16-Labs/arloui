@@ -29,7 +29,7 @@
  * - **The legend carries selection.** Arcs are poor tap targets, and the legend
  *   has to be on screen anyway.
  */
-import { useMemo } from 'react';
+import { useId, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import {
   Animated,
@@ -39,10 +39,12 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Defs, G, Mask, Path } from 'react-native-svg';
 import { rgbaFromHex } from '@arloui/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
+import { ChartLoading, ChartMotion, useChartEntrance } from './hooks';
+import { ChartSweep } from './motion';
 import {
   annulusPath,
   densityMetrics,
@@ -52,7 +54,7 @@ import {
 } from './core';
 import { allParts, collectParts, hasPart, partProps, useControllableIndex, useSkeletonPulse } from './hooks';
 import { EmptyContent, type ChartEmptyProps } from './empty';
-import { SkeletonSheenSvg } from './skeleton';
+
 
 export type DonutSlice = ChartPoint & {
   label: string;
@@ -60,6 +62,8 @@ export type DonutSlice = ChartPoint & {
 };
 
 export type DonutChartProps = {
+  /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
+  animated?: boolean;
   /**
    * Slices of a whole. Non-positive values are dropped, not clamped: a negative
    * share of a total is not a thing a ring can express, and a zero slice has no
@@ -117,6 +121,8 @@ export type DonutChartProps = {
    * lands.
    */
   loading?: boolean;
+  /** Keep the last supplied data visible during a background fetch. Overrides loading. */
+  refreshing?: boolean;
   /** Overrides the summary read to assistive tech, which otherwise names every slice and its share. */
   accessibilityLabel?: string;
   /** Style for the chart's outer container. */
@@ -170,6 +176,7 @@ function DonutChartInner({
   emptyLabel = 'No data',
   empty,
   loading = false,
+  refreshing = false,
   accessibilityLabel,
   style,
 }: DonutChartResolved) {
@@ -208,9 +215,12 @@ function DonutChartInner({
   }, [data, maxSlices, t.colors.chartOther]);
 
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
+  const entrance = useChartEntrance(!loading && total > 0);
+  const sweepId = `arloDonutSweep-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
 
   const outerRadius = size / 2;
   const innerRadius = Math.max(0, outerRadius - ringThickness);
+  const sweepRadius = (outerRadius + innerRadius) / 2;
 
   const segments = useMemo(() => {
     if (total <= 0) return [];
@@ -273,6 +283,7 @@ function DonutChartInner({
       <View
         accessible
         accessibilityRole="image"
+        accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={summary}
         style={{
           width: size,
@@ -293,7 +304,15 @@ function DonutChartInner({
           pointerEvents="none"
         >
           {segments.length > 0 && !loading ? (
-            segments.map((segment) => {
+            <>
+            <Defs>
+              <Mask id={sweepId} x={0} y={0} width={size} height={size} maskUnits="userSpaceOnUse">
+                <ChartSweep progress={entrance} center={outerRadius} radius={sweepRadius}
+                  thickness={outerRadius - innerRadius + 2} />
+              </Mask>
+            </Defs>
+            <G mask={`url(#${sweepId})`}>
+            {segments.map((segment) => {
               const dimmed = selection != null && selection !== segment.index;
               return (
                 <Path
@@ -315,7 +334,9 @@ function DonutChartInner({
                   opacity={dimmed && !segment.color.startsWith('#') ? DIMMED_ALPHA : 1}
                 />
               );
-            })
+            })}
+            </G>
+            </>
           ) : loading ? null : (
             // An empty ring is still a ring — the track shows where the data goes.
             <Path
@@ -489,7 +510,6 @@ function DonutSkeleton({
       </Svg>
       {/* Clipped to the ring, or the sweep crosses the hole in the middle and
           reads as a highlight passing behind the chart. */}
-      <SkeletonSheenSvg d={ring} width={size} height={size} />
     </Animated.View>
   );
 }
@@ -551,7 +571,7 @@ function resolveComposition(props: DonutChartProps): DonutChartResolved {
 }
 
 function DonutChartRoot(props: DonutChartProps) {
-  return <DonutChartInner {...resolveComposition(props)} />;
+  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <DonutChartInner {...resolveComposition(props)} loading={loading} />}</ChartLoading></ChartMotion>;
 }
 
 /** The parts, for `Chart.Donut.Value` and friends. */

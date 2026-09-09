@@ -22,8 +22,8 @@ import { useTokens } from '../../foundation/theme-provider';
 import { barPath, densityMetrics, seriesColorAt, toneColor } from './core';
 import { EmptyContent } from './empty';
 import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
+import { useChartFade } from './hooks';
 import { ChartLegend } from './legend';
-import { SkeletonSheenSvg } from './skeleton';
 import {
   BarSkeleton,
   DIMMED_ALPHA,
@@ -58,6 +58,7 @@ export function VerticalBars({
   emptyLabel = 'No data',
   empty,
   loading = false,
+  refreshing = false,
   accessibilityLabel,
   style,
 }: BarChartResolved) {
@@ -73,6 +74,7 @@ export function VerticalBars({
     return [first, ...(series ?? []).map((extra) => normalizeBars(extra, labels))];
   }, [data, series]);
   const bars = allSeries[0] as BarDatum[];
+  const entrance = useChartFade(!loading && bars.length > 0);
   const seriesCount = allSeries.length;
   const stacked = seriesCount > 1 && variant === 'stacked';
   const grouped = seriesCount > 1 && !stacked;
@@ -399,11 +401,12 @@ export function VerticalBars({
   }
 
   return (
-    <View style={[{ gap: t.spacing[2] }, style]}>
+    <Animated.View style={[{ gap: t.spacing[2], opacity: entrance }, style]}>
       <View
         onLayout={handleLayout}
         accessible={!interactive}
         accessibilityRole={interactive ? undefined : 'image'}
+        accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={interactive ? undefined : summary}
         style={[{ height, width: '100%' }]}
       >
@@ -618,7 +621,7 @@ export function VerticalBars({
       </View>
 
       {legendItems ? <ChartLegend items={legendItems} /> : null}
-    </View>
+    </Animated.View>
   );
 }
 

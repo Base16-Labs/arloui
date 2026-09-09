@@ -18,7 +18,8 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "clean": "rm -rf .next .turbo",
-    "chart-props:generate": "tsx scripts/generate-chart-props.ts"
+    "chart-props:generate": "tsx scripts/generate-chart-props.ts",
+    "chart-examples:check": "tsx scripts/check-chart-examples.ts"
   },
   "dependencies": {
     "@arloui/tokens": "file:../../packages/tokens",
@@ -28,14 +29,14 @@
     "fuse.js": "^7.1.0",
     "next": "16.3.0",
     "qrcode.react": "^4.2.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "sugar-high": "^1.2.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
+    "@types/react": "~19.2.0",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",

@@ -13,14 +13,20 @@ export type ChartPartDoc = {
   props: ChartPropDoc[];
 };
 
-export const CHART_PROPS_MD = "### Line chart (`Chart`)\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `data` **·** required | `ChartData` | — | The series, oldest first. Bare numbers, or points carrying a time and a label. |\n| `tone` | `ChartTone` | `'auto'` | `'auto'` tones by whether the series ended above or below `baseline`. Force it when the series' own direction isn't the story — e.g. spending, where \"up\" is bad. |\n| `baseline` | `number` | — | Reference value for tone and for the dashed baseline. Defaults to the first point. |\n| `density` | `ChartDensity` | `'default'` | Stroke, dot, and label weight. `'compact'` drops labels for inline use. |\n| `format` | `(value: number) => string` | — | Formats every value in the subtree — readout, delta, reference label. |\n| `formatAt` | `(at: ChartPoint['at'], point: ChartPoint) => string` | — | Formats a point's `at` for `Chart.Value`, so the readout can say *when*. |\n| `periods` | `string[]` | `[]` | The period selector's options, e.g. `[\"1D\", \"1W\", \"1M\"]`. Passing them is what makes `Chart.Periods` render anything. |\n| `period` | `string` | — | The selected period. Controlled — pair it with `onPeriodChange`. |\n| `onPeriodChange` | `(period: string) => void` | — | Called with the period a tap selected. The chart does not refetch; you swap `data`. |\n| `activeIndex` | `number \\| null` | — | Controlled scrub position. Leave undefined to let the chart hold it. |\n| `activeAt` | `number \\| string \\| Date \\| null` | — | Scrub position as an x-*value* rather than an index. `activeIndex` is an index into this chart's own series, so two charts sharing one only line up if their points line up — same length, same order… |\n| `defaultActiveIndex` | `number \\| null` | `null` | Where the scrub starts when it is uncontrolled. `null` means \"show the last point\". |\n| `onScrub` | `(index: number \\| null, point: ChartPoint \\| null) => void` | — | Fires on every scrub change, controlled or not. `null` on release. |\n| `loading` | `boolean` | `false` | Renders the plot's silhouette as a shimmer instead of the series. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Bars />` | `data` `color` `opacity` | A bar mark inside a plot. The combo chart: volume behind price, rainfall behind temperature — a second quantity that shares the x-axis and wants a different shape. |\n| `<Chart.Line />` | `data` `color` `dashed` `label` | An *additional* line — a second, third, nth series on the same scale. |\n| `<Chart.Baseline />` | — | The zero rule, drawn across the plot at the baseline value. |\n| `<Chart.Reference />` | `value` `label` | A labelled dashed line at a value you name. Repeat it for several — a min and a max, say. |\n| `<Chart.Crosshair />` | — | The scrub crosshair — the vertical rule and the dot that follow a finger. |\n| `<Chart.Title />` | — | The chart's name, above the readout. |\n| `<Chart.Value />` | — | The headline number — the scrubbed point's value, or the last one when nothing is being scrubbed. Rolls between values rather than snapping. |\n| `<Chart.Delta />` | — | Change from the baseline to the shown point. Always renders an explicit sign — that sign is what keeps direction readable when the two tones are hard to tell apart, so don't strip it. |\n| `<Chart.Plot />` | `height` `fill` `curve` `compare` `range` `children` `stack` `tooltip` `emptyLabel` `notEnoughLabel` `accessibilityLabel` `style` | The mark itself — the line, and whatever else is named inside it. |\n| `<Chart.Periods />` | — | The range selector — `1D`, `1W`, `1M` and so on. |\n| `<Chart.Empty />` | — | What the plot draws when the series is empty. |\n| `<Chart.Legend />` | `items` `style` | A row of named swatches. Shared by every form that can show more than one series, so a legend reads the same under a plot as it does under a donut. |\n\n### Chart.Plot\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `height` | `number` | `180` | How tall the plot box is, in points. The width comes from the parent. |\n| `fill` | `boolean` | `true` | Fade a gradient under the line. |\n| `curve` | `ChartCurve` | `'steep'` | Straight segments (default) or a fitted spline. See `ChartCurve`. |\n| `compare` | `ChartData` | — | One reference line, or several — the min/max pair a dense series reads against. A second series, drawn dashed in the neutral hue — the baseline a projection is measured against. |\n| `range` | `ChartRange` | — | A shaded band between two bounds — the \"likely range\" behind a projection. A prop on `Chart.Plot` rather than a new form: the readout, the scrub, and the tone all still belong to the primary series. |\n| `stack` | `readonly ChartData[]` | — | Series stacked on top of the primary — part-to-total over time, the shape a bar chart draws with `variant=\"stacked\"` when the x-axis is continuous rather than categorical. |\n| `tooltip` | `boolean` | `false` | Floating readout pill above the crosshair while scrubbing, showing the formatted value of the point under the finger. |\n| `emptyLabel` | `string` | `'No data'` | Shown when the series is empty. `Chart.Empty` wins over this. |\n| `notEnoughLabel` | `string` | `'Not enough data'` | Shown for a one-point series, which has no shape to draw. |\n| `accessibilityLabel` | `string` | — | Announced by screen readers in place of the visual plot. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the plot box. |\n\n### Chart.Bar\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `data` | `readonly BarDatum[] \\| readonly number[]` | — | The first series. Bars want labels, so a bare `number[]` gets index labels. Optional because `<BarChart.Series>` can supply it instead — one or the other, and a `Series` child wins. |\n| `variant` | `BarChartVariant` | `'grouped'` | How the series share each category. Grouped by default. |\n| `layout` | `BarChartLayout` | — | Vertical bars, or the same categories as ranked horizontal rows. |\n| `spacing` | `BarChartSpacing` | `'default'` | How much air is between the marks. Vertical: how much of its slot each bar fills — the tap target stays the whole slot, so loosening the bars never shrinks what you can hit. |\n| `height` | `number` | `160` | How tall the bars box is. Ignored for `layout=\"horizontal\"`, which grows with its rows. |\n| `tone` | `ChartTone` | `'brand'` | Honours `brand` (default), `series`, `auto` (colour by sign), `positive`, `negative`, and `neutral` — for a single series. With `series`, every bar takes its own palette slot and this is ignored. |\n| `density` | `ChartDensity` | `'default'` | How much mark there is: stroke, corner radius, and the gap between bars. |\n| `activeIndex` | `number \\| null` | — | Selected category. Controlled when passed; `defaultActiveIndex` seeds the internal one. |\n| `defaultActiveIndex` | `number \\| null` | `null` | Which category starts selected when selection is uncontrolled. |\n| `onSelect` | `(index: number, datum: BarDatum) => void` | — | Called with the tapped category's index and datum. Passing it is what makes bars tappable. |\n| `format` | `(value: number) => string` | — | Formats every number the chart shows — value labels, the reference chip, the selected readout. |\n| `maxValue` | `number` | — | Force the top of the scale; otherwise it comes from the data. |\n| `emptyLabel` | `string` | `'No data'` | Rendered in place of the bars when `data` is empty. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one `Chart.Empty` draws. Wins over `emptyLabel`, which stays for the case where a bare string genuinely is the right answer. |\n| `loading` | `boolean` | `false` | Draws grey bars at a fixed profile instead of the data. |\n| `accessibilityLabel` | `string` | — | Overrides the summary read to assistive tech, which otherwise describes the series. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Bar.Series />` | `data` `label` | One series. The first declares the categories; the rest ride on them. |\n| `<Chart.Bar.Values />` | — | Prints each bar's value above it. Without it, only the selected bar shows a figure. |\n| `<Chart.Bar.Categories />` | — | The category names — under the bars, or beside the rows when `layout=\"horizontal\"`. |\n| `<Chart.Bar.Baseline />` | — | The zero rule. Drawn only when the data crosses zero — an all-positive chart has its zero at the axis already. |\n| `<Chart.Bar.Reference />` | `value` `label` | A labelled dashed line at a value you name — a target, a budget, an average. Adds to the zero rule rather than replacing it. |\n| `<Chart.Bar.Legend />` | — | The series legend. It names each series from its `<Chart.Bar.Series label>`, so it draws nothing if none are labelled. |\n\n### Chart.Sparkline\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `data` **·** required | `ChartData` | — | The series. Bare numbers are fine — a sparkline has no axis to label. |\n| `tone` | `ChartTone` | `'auto'` | Honours `auto` (default; tones by whether the series ended above where it started), `positive`, `negative`, `brand`, and `neutral`. One series has no categories, so `series` is treated as `brand`. |\n| `density` | `ChartDensity` | `'compact'` | Inline marks default to `compact`: a thinner stroke and a smaller dot. |\n| `width` | `number` | — | Fixed width in points. Omit it and the mark measures its parent instead. |\n| `height` | `number` | `28` | Fixed height in points. Small by default: this is an inline mark. |\n| `format` | `(value: number) => string` | — | Formats the extreme labels. Raw values when omitted. |\n| `emptyLabel` | `string` | — | Short text in place of the mark when there is no data — the same minimum every other chart form has. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one `Chart.Empty`, `Chart.Bar`, and `Chart.Donut` draw. |\n| `curve` | `ChartCurve` | `'steep'` | How points are joined — `steep` for straight segments, `smooth` for a spline. |\n| `strokeWidth` | `number` | — | Overrides the density's stroke width. |\n| `loading` | `boolean` | `false` | Draws the silhouette as a pulsing line instead of the series. Holds the same box, so the row it sits in does not reflow when the data lands. |\n| `accessibilityLabel` | `string` | — | Sparklines are decorative next to a value that is already announced, so they are hidden from assistive tech unless you pass a label. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the mark's container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Sparkline.EndDot />` | — | A dot on the final point, so the eye lands on where the series ended. |\n| `<Chart.Sparkline.Extremes />` | — | Dots on the highest and lowest points, with their values. |\n| `<Chart.Sparkline.Fill />` | — | A gradient wash under the line, fading to nothing at the bottom of the box. |\n\n### Chart.Donut\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `data` **·** required | `readonly DonutSlice[]` | — | Slices of a whole. Non-positive values are dropped, not clamped: a negative share of a total is not a thing a ring can express, and a zero slice has no arc to draw. |\n| `size` | `number` | `180` | The ring's outer diameter in points. |\n| `thickness` | `number` | — | Ring thickness. Defaults from `density` — 26 at default, 18 at compact. |\n| `density` | `ChartDensity` | `'default'` | How much mark there is: ring thickness and the hairline between slices. |\n| `activeIndex` | `number \\| null` | — | Emphasised slice. Controlled when passed; `defaultActiveIndex` seeds the internal one. |\n| `defaultActiveIndex` | `number \\| null` | `null` | Which slice starts selected when selection is uncontrolled. |\n| `onSelect` | `(index: number, slice: DonutSlice) => void` | — | Called with the tapped slice's index and datum. Passing it is what makes slices tappable. |\n| `format` | `(value: number) => string` | — | Formats the centre total and the legend's values. |\n| `maxSlices` | `number` | `MAX_ARCS` | How many arcs the ring draws, **\"Other\" included**. Categories past that fold into one neutral \"Other\" slice. |\n| `emptyLabel` | `string` | `'No data'` | Short text for the ring's centre when there is no data. Not the whole empty state — see `empty` for the composed one. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one `Chart.Empty` and `Chart.Bar` draw. |\n| `loading` | `boolean` | `false` | Draws the ring as a pulsing track and holds back the centre readout and the legend. Same footprint as the loaded chart, so nothing reflows when the data lands. |\n| `accessibilityLabel` | `string` | — | Overrides the summary read to assistive tech, which otherwise names every slice and its share. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Donut.Value />` | `value` | The total in the middle of the ring, formatted with the chart's `format`. |\n| `<Chart.Donut.Label />` | `children` | The line under the centre readout. Takes its text as children. |\n| `<Chart.Donut.Legend />` | — | The slice legend, beneath the ring — each slice's name, colour, and value. |\n\n### Chart.Meter\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `value` **·** required | `number` | — | What to show, in the same units as `min` and `max`. |\n| `max` | `number` | `100` | Top of the range. The fill is `value` as a share of `min`..`max`. |\n| `min` | `number` | `0` | Bottom of the range, for meters that do not start at zero. |\n| `shape` | `MeterShape` | `'bar'` | A `bar`, a full `ring`, or an `arc` gauge open at the bottom. |\n| `tone` | `ChartTone` | `'brand'` | Honours `brand` (default), `positive`, `negative`, and `neutral`. |\n| `density` | `ChartDensity` | `'default'` | How thick the track is, unless `thickness` overrides it. |\n| `warnAt` | `number` | — | Fraction (0-1) past which the meter turns warning. |\n| `dangerAt` | `number` | — | Fraction (0-1) past which the meter turns danger. |\n| `thickness` | `number` | — | Bar thickness, or ring stroke width. |\n| `size` | `number` | — | Ring or arc diameter. Ignored by the bar shape. |\n| `loading` | `boolean` | `false` | Additional concentric rings, drawn inside the primary one. `value` is always the outermost; these stack inwards in order, exactly as `series` extends `data` on a bar chart. |\n| `accessibilityLabel` | `string` | — | Overrides the label read to assistive tech, which otherwise uses the meter's name. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the meter's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Meter.Value />` | `value` | The value, as a figure. On a ring or arc it sits in the hole; on a bar it sits above the track. |\n| `<Chart.Meter.Label />` | `children` | The name under the readout. Takes its text as children. |\n| `<Chart.Meter.Ring />` | `value` `max` `min` `color` `label` | One concentric ring. Replaces an entry in the `rings` array. |\n\n### Chart.Heatmap\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `data` **·** required | `readonly HeatmapDatum[]` | — | Dated values. A day with no entry renders empty, not absent. |\n| `levels` | `number` | `3` | Filled intensity steps above \"none\". Default 3. |\n| `from` | `string \\| number \\| Date` | — | Grid start; defaults to the earliest datum, wound back to Monday. |\n| `to` | `string \\| number \\| Date` | — | Grid end; defaults to the latest datum, run on to Sunday. |\n| `onSelect` | `(datum: HeatmapDatum \\| null, date: Date) => void` | — | Tapping a day. Without this the grid is one image, not forty-two buttons. |\n| `format` | `(value: number) => string` | — | Formats a day's value in its accessibility label. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one every other form draws. |\n| `emptyLabel` | `string` | `'No activity yet'` | Rendered in place of the grid when there is no range to draw. |\n| `loading` | `boolean` | `false` | Pulses the empty grid instead of the data. |\n| `accessibilityLabel` | `string` | — | Overrides the summary read to assistive tech, which otherwise gives the range and its busiest day. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the grid's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Heatmap.DayLabels />` | — | The weekday initials down the left edge of the grid. |\n| `<Chart.Heatmap.Scale />` | — | The Less-to-More key under the grid, showing what each level of fill means. |";
+export const CHART_PROPS_MD = "### Line chart (`LineChart`)\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |\n| `data` **·** required | `ChartData` | — | The series, oldest first. Bare numbers, or points carrying a time and a label. |\n| `tone` | `ChartTone` | `'auto'` | `'auto'` tones by whether the series ended above or below `baseline`. Force it when the series' own direction isn't the story — e.g. spending, where \"up\" is bad. |\n| `baseline` | `number` | — | Reference value for tone and for the dashed baseline. Defaults to the first point. |\n| `density` | `ChartDensity` | `'default'` | Stroke, dot, and label weight. `'compact'` drops labels for inline use. |\n| `format` | `(value: number) => string` | — | Formats every value in the subtree — readout, delta, reference label. |\n| `formatAt` | `(at: ChartPoint['at'], point: ChartPoint) => string` | — | Formats a point's `at` for `Chart.Value`, so the readout can say *when*. |\n| `periods` | `string[]` | `[]` | The period selector's options, e.g. `[\"1D\", \"1W\", \"1M\"]`. Passing them is what makes `Chart.Periods` render anything. |\n| `period` | `string` | — | The selected period. Controlled — pair it with `onPeriodChange`. |\n| `onPeriodChange` | `(period: string) => void` | — | Called with the period a tap selected. The chart does not refetch; you swap `data`. |\n| `activeIndex` | `number \\| null` | — | Controlled scrub position. Leave undefined to let the chart hold it. |\n| `activeAt` | `number \\| string \\| Date \\| null` | — | Scrub position as an x-*value* rather than an index. `activeIndex` is an index into this chart's own series, so two charts sharing one only line up if their points line up — same length, same order… |\n| `defaultActiveIndex` | `number \\| null` | `null` | Where the scrub starts when it is uncontrolled. `null` means \"show the last point\". |\n| `onScrub` | `(index: number \\| null, point: ChartPoint \\| null) => void` | — | Fires on every scrub change, controlled or not. `null` on release. |\n| `loading` | `boolean` | `false` | Reserves the plot with a neutral pulsing placeholder until data is ready. |\n| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<LineChart.Bars />` | `data` `color` `opacity` | A bar mark inside a plot. The combo chart: volume behind price, rainfall behind temperature — a second quantity that shares the x-axis and wants a different shape. |\n| `<LineChart.Line />` | `data` `color` `dashed` `label` | An *additional* line — a second, third, nth series on the same scale. |\n| `<LineChart.Baseline />` | — | The zero rule, drawn across the plot at the baseline value. |\n| `<LineChart.Reference />` | `value` `label` | A labelled dashed line at a value you name. Repeat it for several — a min and a max, say. |\n| `<LineChart.Crosshair />` | — | The scrub crosshair — the vertical rule and the dot that follow a finger. |\n| `<LineChart.Title />` | — | The chart's name, above the readout. |\n| `<LineChart.Value />` | — | The headline number — the scrubbed point's value, or the last one when nothing is being scrubbed. Rolls between values rather than snapping. |\n| `<LineChart.Delta />` | — | Change from the baseline to the shown point. Always renders an explicit sign — that sign is what keeps direction readable when the two tones are hard to tell apart, so don't strip it. |\n| `<LineChart.Plot />` | `height` `fill` `curve` `compare` `range` `children` `stack` `stackColors` `tooltip` `emptyLabel` `notEnoughLabel` `accessibilityLabel` `style` | The mark itself — the line, and whatever else is named inside it. |\n| `<LineChart.Periods />` | — | The range selector — `1D`, `1W`, `1M` and so on. |\n| `<LineChart.Empty />` | — | What the plot draws when the series is empty. |\n| `<LineChart.Legend />` | `items` `style` | A row of named swatches. Shared by every form that can show more than one series, so a legend reads the same under a plot as it does under a donut. |\n\n### LineChart.Plot\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `height` | `number` | `180` | How tall the plot box is, in points. The width comes from the parent. |\n| `fill` | `boolean` | `true` | Fade a gradient under the line. |\n| `curve` | `ChartCurve` | `'steep'` | Straight segments (default) or a fitted spline. See `ChartCurve`. |\n| `compare` | `ChartData` | — | One reference line, or several — the min/max pair a dense series reads against. A second series, drawn dashed in the neutral hue — the baseline a projection is measured against. |\n| `range` | `ChartRange` | — | A shaded band between two bounds — the \"likely range\" behind a projection. A prop on `Chart.Plot` rather than a new form: the readout, the scrub, and the tone all still belong to the primary series. |\n| `stack` | `readonly ChartData[]` | — | Series stacked on top of the primary — part-to-total over time, the shape a bar chart draws with `variant=\"stacked\"` when the x-axis is continuous rather than categorical. |\n| `stackColors` | `readonly string[]` | — | Stacked-series colors, primary first. Missing slots use the theme palette. |\n| `tooltip` | `boolean` | `false` | Floating readout pill above the crosshair while scrubbing, showing the formatted value of the point under the finger. |\n| `emptyLabel` | `string` | `'No data'` | Shown when the series is empty. `Chart.Empty` wins over this. |\n| `notEnoughLabel` | `string` | `'Not enough data'` | Shown for a one-point series, which has no shape to draw. |\n| `accessibilityLabel` | `string` | — | Announced by screen readers in place of the visual plot. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the plot box. |\n\n### Chart.Bar\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |\n| `data` | `readonly BarDatum[] \\| readonly number[]` | — | The first series. Bars want labels, so a bare `number[]` gets index labels. Optional because `<BarChart.Series>` can supply it instead — one or the other, and a `Series` child wins. |\n| `variant` | `BarChartVariant` | `'grouped'` | How the series share each category. Grouped by default. |\n| `layout` | `BarChartLayout` | — | Vertical bars, or the same categories as ranked horizontal rows. |\n| `spacing` | `BarChartSpacing` | `'default'` | How much air is between the marks. Vertical: how much of its slot each bar fills — the tap target stays the whole slot, so loosening the bars never shrinks what you can hit. |\n| `height` | `number` | `160` | How tall the bars box is. Ignored for `layout=\"horizontal\"`, which grows with its rows. |\n| `tone` | `ChartTone` | `'brand'` | Honours `brand` (default), `series`, `auto` (colour by sign), `positive`, `negative`, and `neutral` — for a single series. With `series`, every bar takes its own palette slot and this is ignored. |\n| `density` | `ChartDensity` | `'default'` | How much mark there is: stroke, corner radius, and the gap between bars. |\n| `activeIndex` | `number \\| null` | — | Selected category. Controlled when passed; `defaultActiveIndex` seeds the internal one. |\n| `defaultActiveIndex` | `number \\| null` | `null` | Which category starts selected when selection is uncontrolled. |\n| `onSelect` | `(index: number, datum: BarDatum) => void` | — | Called with the tapped category's index and datum. Passing it is what makes bars tappable. |\n| `format` | `(value: number) => string` | — | Formats every number the chart shows — value labels, the reference chip, the selected readout. |\n| `maxValue` | `number` | — | Force the top of the scale; otherwise it comes from the data. |\n| `emptyLabel` | `string` | `'No data'` | Rendered in place of the bars when `data` is empty. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one `Chart.Empty` draws. Wins over `emptyLabel`, which stays for the case where a bare string genuinely is the right answer. |\n| `loading` | `boolean` | `false` | Draws grey bars at a fixed profile instead of the data. |\n| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |\n| `accessibilityLabel` | `string` | — | Overrides the summary read to assistive tech, which otherwise describes the series. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Bar.Series />` | `data` `label` | One series. The first declares the categories; the rest ride on them. |\n| `<Chart.Bar.Values />` | — | Prints each bar's value above it. Without it, only the selected bar shows a figure. |\n| `<Chart.Bar.Categories />` | — | The category names — under the bars, or beside the rows when `layout=\"horizontal\"`. |\n| `<Chart.Bar.Baseline />` | — | The zero rule. Drawn only when the data crosses zero — an all-positive chart has its zero at the axis already. |\n| `<Chart.Bar.Reference />` | `value` `label` | A labelled dashed line at a value you name — a target, a budget, an average. Adds to the zero rule rather than replacing it. |\n| `<Chart.Bar.Legend />` | — | The series legend. Unnamed series use their position, such as Series 1. |\n\n### Chart.Sparkline\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |\n| `data` **·** required | `ChartData` | — | The series. Bare numbers are fine — a sparkline has no axis to label. |\n| `tone` | `ChartTone` | `'auto'` | Honours `auto` (default; tones by whether the series ended above where it started), `positive`, `negative`, `brand`, and `neutral`. One series has no categories, so `series` is treated as `brand`. |\n| `density` | `ChartDensity` | `'compact'` | Inline marks default to `compact`: a thinner stroke and a smaller dot. |\n| `width` | `number` | — | Fixed width in points. Omit it and the mark measures its parent instead. |\n| `height` | `number` | `28` | Fixed height in points. Small by default: this is an inline mark. |\n| `format` | `(value: number) => string` | — | Formats the extreme labels. Raw values when omitted. |\n| `emptyLabel` | `string` | — | Short text in place of the mark when there is no data — the same minimum every other chart form has. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one `Chart.Empty`, `Chart.Bar`, and `Chart.Donut` draw. |\n| `curve` | `ChartCurve` | `'steep'` | How points are joined — `steep` for straight segments, `smooth` for a spline. |\n| `strokeWidth` | `number` | — | Overrides the density's stroke width. |\n| `loading` | `boolean` | `false` | Draws a neutral pulsing placeholder instead of the series. Holds the same box, so the row it sits in does not reflow when the data lands. |\n| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |\n| `accessibilityLabel` | `string` | — | Sparklines are decorative next to a value that is already announced, so they are hidden from assistive tech unless you pass a label. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the mark's container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Sparkline.EndDot />` | — | A dot on the final point, so the eye lands on where the series ended. |\n| `<Chart.Sparkline.Extremes />` | — | Dots on the highest and lowest points, with their values. |\n| `<Chart.Sparkline.Fill />` | — | A gradient wash under the line, fading to nothing at the bottom of the box. |\n\n### Chart.Donut\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |\n| `data` **·** required | `readonly DonutSlice[]` | — | Slices of a whole. Non-positive values are dropped, not clamped: a negative share of a total is not a thing a ring can express, and a zero slice has no arc to draw. |\n| `size` | `number` | `180` | The ring's outer diameter in points. |\n| `thickness` | `number` | — | Ring thickness. Defaults from `density` — 26 at default, 18 at compact. |\n| `density` | `ChartDensity` | `'default'` | How much mark there is: ring thickness and the hairline between slices. |\n| `activeIndex` | `number \\| null` | — | Emphasised slice. Controlled when passed; `defaultActiveIndex` seeds the internal one. |\n| `defaultActiveIndex` | `number \\| null` | `null` | Which slice starts selected when selection is uncontrolled. |\n| `onSelect` | `(index: number, slice: DonutSlice) => void` | — | Called with the tapped slice's index and datum. Passing it is what makes slices tappable. |\n| `format` | `(value: number) => string` | — | Formats the centre total and the legend's values. |\n| `maxSlices` | `number` | `MAX_ARCS` | How many arcs the ring draws, **\"Other\" included**. Categories past that fold into one neutral \"Other\" slice. |\n| `emptyLabel` | `string` | `'No data'` | Short text for the ring's centre when there is no data. Not the whole empty state — see `empty` for the composed one. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one `Chart.Empty` and `Chart.Bar` draw. |\n| `loading` | `boolean` | `false` | Draws the ring as a pulsing track and holds back the centre readout and the legend. Same footprint as the loaded chart, so nothing reflows when the data lands. |\n| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |\n| `accessibilityLabel` | `string` | — | Overrides the summary read to assistive tech, which otherwise names every slice and its share. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Donut.Value />` | `value` | The total in the middle of the ring, formatted with the chart's `format`. |\n| `<Chart.Donut.Label />` | `children` | The line under the centre readout. Takes its text as children. |\n| `<Chart.Donut.Legend />` | — | The slice legend, beneath the ring — each slice's name, colour, and value. |\n\n### Chart.Meter\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |\n| `value` **·** required | `number` | — | What to show, in the same units as `min` and `max`. |\n| `max` | `number` | `100` | Top of the range. The fill is `value` as a share of `min`..`max`. |\n| `min` | `number` | `0` | Bottom of the range, for meters that do not start at zero. |\n| `shape` | `MeterShape` | `'bar'` | A `bar`, a full `ring`, or an `arc` gauge open at the bottom. |\n| `tone` | `ChartTone` | `'brand'` | Honours `brand` (default), `positive`, `negative`, and `neutral`. |\n| `density` | `ChartDensity` | `'default'` | How thick the track is, unless `thickness` overrides it. |\n| `warnAt` | `number` | — | Fraction (0-1) past which the meter turns warning. |\n| `dangerAt` | `number` | — | Fraction (0-1) past which the meter turns danger. |\n| `thickness` | `number` | — | Bar thickness, or ring stroke width. |\n| `size` | `number` | — | Ring or arc diameter. Ignored by the bar shape. |\n| `loading` | `boolean` | `false` | Additional concentric rings, drawn inside the primary one. `value` is always the outermost; these stack inwards in order, exactly as `series` extends `data` on a bar chart. |\n| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |\n| `accessibilityLabel` | `string` | — | Overrides the label read to assistive tech, which otherwise uses the meter's name. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the meter's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Meter.Value />` | `value` | The value, as a figure. On a ring or arc it sits in the hole; on a bar it sits above the track. |\n| `<Chart.Meter.Label />` | `children` | The name under the readout. Takes its text as children. |\n| `<Chart.Meter.Ring />` | `value` `max` `min` `color` `label` | One concentric ring. Replaces an entry in the `rings` array. |\n\n### Chart.Heatmap\n| Prop | Type | Default | What it does |\n| --- | --- | --- | --- |\n| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |\n| `data` **·** required | `readonly HeatmapDatum[]` | — | Dated values. A day with no entry renders empty, not absent. |\n| `levels` | `number` | `3` | Filled intensity steps above \"none\". Default 3. |\n| `from` | `string \\| number \\| Date` | — | Grid start; defaults to the earliest datum, wound back to Monday. |\n| `to` | `string \\| number \\| Date` | — | Grid end; defaults to the latest datum, run on to Sunday. |\n| `onSelect` | `(datum: HeatmapDatum \\| null, date: Date) => void` | — | Tapping a day. Without this the grid is one image, not forty-two buttons. |\n| `format` | `(value: number) => string` | — | Formats a day's value in its accessibility label. |\n| `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one every other form draws. |\n| `emptyLabel` | `string` | `'No activity yet'` | Rendered in place of the grid when there is no range to draw. |\n| `loading` | `boolean` | `false` | Pulses the empty grid instead of the data. |\n| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |\n| `accessibilityLabel` | `string` | — | Overrides the summary read to assistive tech, which otherwise gives the range and its busiest day. |\n| `style` | `StyleProp<ViewStyle>` | — | Style for the grid's outer container. |\n**Parts** — name one and it is drawn; name none and you get the default composition.\n| Part | Takes | What it draws |\n| --- | --- | --- |\n| `<Chart.Heatmap.DayLabels />` | — | The weekday initials down the left edge of the grid. |\n| `<Chart.Heatmap.Scale />` | — | The Less-to-More key under the grid, showing what each level of fill means. |";
 
 /** The same reference as data — the rendered page is JSX, not markdown. */
 export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPropDoc[]; parts: ChartPartDoc[] }[] = [
   {
-    "title": "Chart",
+    "title": "LineChart",
     "displayTitle": "Line chart",
     "props": [
+      {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "description": "Animate entry and updates. Device Reduce Motion always takes precedence. Default: true."
+      },
       {
         "name": "data",
         "type": "ChartData",
@@ -108,7 +114,14 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         "type": "boolean",
         "required": false,
         "default": "false",
-        "description": "Renders the plot's silhouette as a shimmer instead of the series."
+        "description": "Reserves the plot with a neutral pulsing placeholder until data is ready."
+      },
+      {
+        "name": "refreshing",
+        "type": "boolean",
+        "required": false,
+        "default": "false",
+        "description": "Keep the last supplied data visible during a background fetch. Overrides loading."
       },
       {
         "name": "style",
@@ -119,7 +132,7 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
     ],
     "parts": [
       {
-        "name": "Chart.Bars",
+        "name": "LineChart.Bars",
         "description": "A bar mark inside a plot. The combo chart: volume behind price, rainfall behind temperature — a second quantity that shares the x-axis and wants a different shape.",
         "props": [
           {
@@ -143,7 +156,7 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         ]
       },
       {
-        "name": "Chart.Line",
+        "name": "LineChart.Line",
         "description": "An *additional* line — a second, third, nth series on the same scale.",
         "props": [
           {
@@ -173,12 +186,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         ]
       },
       {
-        "name": "Chart.Baseline",
+        "name": "LineChart.Baseline",
         "description": "The zero rule, drawn across the plot at the baseline value.",
         "props": []
       },
       {
-        "name": "Chart.Reference",
+        "name": "LineChart.Reference",
         "description": "A labelled dashed line at a value you name. Repeat it for several — a min and a max, say.",
         "props": [
           {
@@ -196,27 +209,27 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         ]
       },
       {
-        "name": "Chart.Crosshair",
+        "name": "LineChart.Crosshair",
         "description": "The scrub crosshair — the vertical rule and the dot that follow a finger.",
         "props": []
       },
       {
-        "name": "Chart.Title",
+        "name": "LineChart.Title",
         "description": "The chart's name, above the readout.",
         "props": []
       },
       {
-        "name": "Chart.Value",
+        "name": "LineChart.Value",
         "description": "The headline number — the scrubbed point's value, or the last one when nothing is being scrubbed. Rolls between values rather than snapping.",
         "props": []
       },
       {
-        "name": "Chart.Delta",
+        "name": "LineChart.Delta",
         "description": "Change from the baseline to the shown point. Always renders an explicit sign — that sign is what keeps direction readable when the two tones are hard to tell apart, so don't strip it.",
         "props": []
       },
       {
-        "name": "Chart.Plot",
+        "name": "LineChart.Plot",
         "description": "The mark itself — the line, and whatever else is named inside it.",
         "props": [
           {
@@ -265,6 +278,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
             "description": "Series stacked on top of the primary — part-to-total over time, the shape a bar chart draws with `variant=\"stacked\"` when the x-axis is continuous rather than categorical."
           },
           {
+            "name": "stackColors",
+            "type": "readonly string[]",
+            "required": false,
+            "description": "Stacked-series colors, primary first. Missing slots use the theme palette."
+          },
+          {
             "name": "tooltip",
             "type": "boolean",
             "required": false,
@@ -300,17 +319,17 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         ]
       },
       {
-        "name": "Chart.Periods",
+        "name": "LineChart.Periods",
         "description": "The range selector — `1D`, `1W`, `1M` and so on.",
         "props": []
       },
       {
-        "name": "Chart.Empty",
+        "name": "LineChart.Empty",
         "description": "What the plot draws when the series is empty.",
         "props": []
       },
       {
-        "name": "Chart.Legend",
+        "name": "LineChart.Legend",
         "description": "A row of named swatches. Shared by every form that can show more than one series, so a legend reads the same under a plot as it does under a donut.",
         "props": [
           {
@@ -330,7 +349,7 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
     ]
   },
   {
-    "title": "Chart.Plot",
+    "title": "LineChart.Plot",
     "props": [
       {
         "name": "height",
@@ -372,6 +391,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         "description": "Series stacked on top of the primary — part-to-total over time, the shape a bar chart draws with `variant=\"stacked\"` when the x-axis is continuous rather than categorical."
       },
       {
+        "name": "stackColors",
+        "type": "readonly string[]",
+        "required": false,
+        "description": "Stacked-series colors, primary first. Missing slots use the theme palette."
+      },
+      {
         "name": "tooltip",
         "type": "boolean",
         "required": false,
@@ -410,6 +435,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
   {
     "title": "Chart.Bar",
     "props": [
+      {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "description": "Animate entry and updates. Device Reduce Motion always takes precedence. Default: true."
+      },
       {
         "name": "data",
         "type": "readonly BarDatum[] | readonly number[]",
@@ -509,6 +540,13 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         "description": "Draws grey bars at a fixed profile instead of the data."
       },
       {
+        "name": "refreshing",
+        "type": "boolean",
+        "required": false,
+        "default": "false",
+        "description": "Keep the last supplied data visible during a background fetch. Overrides loading."
+      },
+      {
         "name": "accessibilityLabel",
         "type": "string",
         "required": false,
@@ -536,7 +574,7 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
             "name": "label",
             "type": "string",
             "required": false,
-            "description": "Names the series in the legend and to screen readers."
+            "description": "Names the series in the legend and to screen readers. Defaults to Series 1, Series 2, etc."
           }
         ]
       },
@@ -575,7 +613,7 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
       },
       {
         "name": "Chart.Bar.Legend",
-        "description": "The series legend. It names each series from its `<Chart.Bar.Series label>`, so it draws nothing if none are labelled.",
+        "description": "The series legend. Unnamed series use their position, such as Series 1.",
         "props": []
       }
     ]
@@ -583,6 +621,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
   {
     "title": "Chart.Sparkline",
     "props": [
+      {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "description": "Animate entry and updates. Device Reduce Motion always takes precedence. Default: true."
+      },
       {
         "name": "data",
         "type": "ChartData",
@@ -652,7 +696,14 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         "type": "boolean",
         "required": false,
         "default": "false",
-        "description": "Draws the silhouette as a pulsing line instead of the series. Holds the same box, so the row it sits in does not reflow when the data lands."
+        "description": "Draws a neutral pulsing placeholder instead of the series. Holds the same box, so the row it sits in does not reflow when the data lands."
+      },
+      {
+        "name": "refreshing",
+        "type": "boolean",
+        "required": false,
+        "default": "false",
+        "description": "Keep the last supplied data visible during a background fetch. Overrides loading."
       },
       {
         "name": "accessibilityLabel",
@@ -688,6 +739,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
   {
     "title": "Chart.Donut",
     "props": [
+      {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "description": "Animate entry and updates. Device Reduce Motion always takes precedence. Default: true."
+      },
       {
         "name": "data",
         "type": "readonly DonutSlice[]",
@@ -767,6 +824,13 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         "description": "Draws the ring as a pulsing track and holds back the centre readout and the legend. Same footprint as the loaded chart, so nothing reflows when the data lands."
       },
       {
+        "name": "refreshing",
+        "type": "boolean",
+        "required": false,
+        "default": "false",
+        "description": "Keep the last supplied data visible during a background fetch. Overrides loading."
+      },
+      {
         "name": "accessibilityLabel",
         "type": "string",
         "required": false,
@@ -814,6 +878,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
   {
     "title": "Chart.Meter",
     "props": [
+      {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "description": "Animate entry and updates. Device Reduce Motion always takes precedence. Default: true."
+      },
       {
         "name": "value",
         "type": "number",
@@ -885,6 +955,13 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         "required": false,
         "default": "false",
         "description": "Additional concentric rings, drawn inside the primary one. `value` is always the outermost; these stack inwards in order, exactly as `series` extends `data` on a bar chart."
+      },
+      {
+        "name": "refreshing",
+        "type": "boolean",
+        "required": false,
+        "default": "false",
+        "description": "Keep the last supplied data visible during a background fetch. Overrides loading."
       },
       {
         "name": "accessibilityLabel",
@@ -968,6 +1045,12 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
     "title": "Chart.Heatmap",
     "props": [
       {
+        "name": "animated",
+        "type": "boolean",
+        "required": false,
+        "description": "Animate entry and updates. Device Reduce Motion always takes precedence. Default: true."
+      },
+      {
         "name": "data",
         "type": "readonly HeatmapDatum[]",
         "required": true,
@@ -1023,6 +1106,13 @@ export const CHART_PROPS: { title: string; displayTitle?: string; props: ChartPr
         "required": false,
         "default": "false",
         "description": "Pulses the empty grid instead of the data."
+      },
+      {
+        "name": "refreshing",
+        "type": "boolean",
+        "required": false,
+        "default": "false",
+        "description": "Keep the last supplied data visible during a background fetch. Overrides loading."
       },
       {
         "name": "accessibilityLabel",

@@ -1,16 +1,14 @@
-# Chart.Meter
+# Meter
 
 `Chart.Meter`
 
-One value against a target, as a bar, a ring, or an arc gauge.
-
-Answers “How close am I?”
+Display a value within a defined range using a bar, ring, or arc. Optional thresholds change the color at warning and danger levels.
 
 ## When to use
 
-- There is a single number and a ceiling it is measured against — storage, budget, a goal.
-- Crossing a threshold should change how it reads, which is what `warnAt` and `dangerAt` are for.
-- Several related quantities share one ceiling: give each a Ring.
+- Show a measurement relative to a limit, such as storage used or a budget spent.
+- Use warnAt and dangerAt to change the color when the value crosses a threshold.
+- Add Ring children to compare related measurements as concentric rings.
 
 ## Install
 
@@ -18,43 +16,64 @@ Answers “How close am I?”
 npx arloui add chart-meter
 ```
 
-A single form does not bring the `Chart` barrel, so import the component itself:
+Import the component directly when installing this chart on its own:
 
 ```tsx
 import { Meter } from '@/components/ui/chart/meter';
 ```
 
-## Code
+## Examples
 
-The default composition: the track and its readout.
+These examples use Meter, the direct import shown above. Set up the theme provider before rendering them.
+
+Display a value with warning and danger thresholds, expressed as fractions of the range.
 
 ```tsx
-<Chart.Meter value={88} max={100} warnAt={0.75} dangerAt={0.9} />
+import { Meter } from '@/components/ui/chart/meter';
+
+export default function ChartExample() {
+  return (
+    <Meter value={88} max={100} warnAt={0.75} dangerAt={0.9} />
+  );
+}
 ```
 
-An arc gauge, captioned.
+Display a credit score within a custom range using an arc and label.
 
 ```tsx
-<Chart.Meter shape="arc" value={712} min={300} max={850}>
-  <Chart.Meter.Value />
-  <Chart.Meter.Label>Credit score</Chart.Meter.Label>
-</Chart.Meter>
+import { Meter } from '@/components/ui/chart/meter';
+
+export default function ChartExample() {
+  return (
+    <Meter shape="arc" value={712} min={300} max={850}>
+      <Meter.Value />
+      <Meter.Label>Credit score</Meter.Label>
+    </Meter>
+  );
+}
 ```
 
-Concentric rings — one ceiling, several quantities.
+Display related measurements as concentric rings.
 
 ```tsx
-<Chart.Meter shape="ring" value={70} max={100}>
-  <Chart.Meter.Label>Storage</Chart.Meter.Label>
-  <Chart.Meter.Ring value={70} label="Used" />
-  <Chart.Meter.Ring value={40} label="Backups" />
-</Chart.Meter>
+import { Meter } from '@/components/ui/chart/meter';
+
+export default function ChartExample() {
+  return (
+    <Meter shape="ring" value={70} max={100}>
+      <Meter.Label>Storage</Meter.Label>
+      <Meter.Ring value={70} label="Used" />
+      <Meter.Ring value={40} label="Backups" />
+    </Meter>
+  );
+}
 ```
 
 ## Props
 
 | Prop | Type | Default | What it does |
 | --- | --- | --- | --- |
+| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |
 | `value` **·** required | `number` | — | What to show, in the same units as `min` and `max`. |
 | `max` | `number` | `100` | Top of the range. The fill is `value` as a share of `min`..`max`. |
 | `min` | `number` | `0` | Bottom of the range, for meters that do not start at zero. |
@@ -66,22 +85,35 @@ Concentric rings — one ceiling, several quantities.
 | `thickness` | `number` | — | Bar thickness, or ring stroke width. |
 | `size` | `number` | — | Ring or arc diameter. Ignored by the bar shape. |
 | `loading` | `boolean` | `false` | Additional concentric rings, drawn inside the primary one. `value` is always the outermost; these stack inwards in order, exactly as `series` extends `data` on a bar chart. |
+| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |
 | `accessibilityLabel` | `string` | — | Overrides the label read to assistive tech, which otherwise uses the meter's name. |
 | `style` | `StyleProp<ViewStyle>` | — | Style for the meter's outer container. |
 
 ## Parts
 
-Name one and it is drawn; name none and you get the default composition.
+Without children, the chart uses its default layout. Add child components to choose which optional elements to include. The table lists each component and its available props.
 
 | Part | Takes | What it draws |
 | --- | --- | --- |
-| `<Chart.Meter.Value />` | `value: string` | The value, as a figure. On a ring or arc it sits in the hole; on a bar it sits above the track. |
-| `<Chart.Meter.Label />` | `children: ReactNode` | The name under the readout. Takes its text as children. |
-| `<Chart.Meter.Ring />` | `value: number` `max: number` `min: number` `color: string` `label: string` | One concentric ring. Replaces an entry in the `rings` array. |
+| `<Meter.Value />` | `value: string` | The value, as a figure. On a ring or arc it sits in the hole; on a bar it sits above the track. |
+| `<Meter.Label />` | `children: ReactNode` | The name under the readout. Takes its text as children. |
+| `<Meter.Ring />` | `value: number` `max: number` `min: number` `color: string` `label: string` | One concentric ring. Replaces an entry in the `rings` array. |
 
-## What it will not do
+## Motion
 
-It is not a progress bar for an operation in flight — that is a Progress component’s job. A meter is a standing quantity you could read at any moment, not something that finishes.
+The fill animates from zero to the supplied value on mount, then moves to each new value using the slow duration token. The percentage readout follows the fill. Additional rings animate to their own values.
+
+Motion is enabled by default. Set `animated={false}` to disable entrances, transitions, and loading pulse. Device Reduce Motion takes precedence. Loading shows a neutral pulsing placeholder that fades out before entry. For background fetches, pass `refreshing` and keep supplying the last successful data; the chart stays visible and exposes its busy state. Entry runs once when real data becomes available, including after loading or an empty state. It does not loop.
+
+Use the playground Motion controls to switch animation on or off. Tap On again to replay the entrance.
+
+```tsx
+<Meter value={53} max={100} animated={false} />
+```
+
+## Limitations
+
+Meter displays a known value within a range. It does not represent an operation with an unknown duration; use a loading indicator for that state.
 
 ## Related
 

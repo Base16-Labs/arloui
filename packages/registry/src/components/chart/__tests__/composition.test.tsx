@@ -6,6 +6,8 @@
  * second implementation rather than a second spelling of the first.
  */
 import { Chart } from '../index';
+import { Fragment } from 'react';
+import { allParts, collectParts } from '../hooks';
 // Imported the way a standalone `chart-plot` install would: from the file the
 // entry installs, with no barrel present.
 import { Chart as StandalonePlot } from '../chart';
@@ -53,6 +55,67 @@ function layout(width = 300, height = 160) {
 }
 
 describe('the composed form', () => {
+  it.each(['vertical', 'horizontal'] as const)('keeps partially named series aligned in %s bars', (direction) => {
+    renderWithTheme(
+      <BarChart layout={direction} variant="grouped" onSelect={() => {}}>
+        <BarChart.Series data={SLEEP} />
+        <BarChart.Series data={ACTIVITY} label="Activity" />
+        <BarChart.Series data={SLEEP} />
+        <BarChart.Legend />
+      </BarChart>,
+    );
+    layout();
+    const labels = textOf().filter((text) => ['Series 1', 'Activity', 'Series 3'].includes(text));
+    expect(labels).toEqual(['Series 1', 'Activity', 'Series 3']);
+    if (direction === 'vertical') {
+      expect(screen.getByRole('button', { name: 'M, Series 1 7, Activity 3, Series 3 7' })).toBeTruthy();
+    }
+  });
+
+  it('renders default legend names when every series is unnamed', () => {
+    renderWithTheme(<BarChart>
+      <BarChart.Series data={SLEEP} />
+      <BarChart.Series data={ACTIVITY} />
+      <BarChart.Legend />
+    </BarChart>);
+    expect(screen.getByText('Series 1')).toBeTruthy();
+    expect(screen.getByText('Series 2')).toBeTruthy();
+  });
+
+  it('renders nested fragment parts without dropping series or labels', () => {
+    renderWithTheme(<BarChart variant="stacked">
+      <>
+        <BarChart.Series data={SLEEP} label="Sleep" />
+        <Fragment key="nested">
+          <BarChart.Series data={ACTIVITY} label="Activity" />
+          <BarChart.Categories />
+          <BarChart.Legend />
+        </Fragment>
+      </>
+    </BarChart>);
+    layout();
+    expect(textOf()).toEqual(expect.arrayContaining(['Sleep', 'Activity', 'M']));
+  });
+
+  it('collects arrays and nested fragments in order without entering other components', () => {
+    const parts = collectParts(<>
+      {null}{false}
+      <BarChart.Series data={SLEEP} label="First" />
+      <Fragment key="group">{[<BarChart.Series key="second" data={ACTIVITY} label="Second" />]}</Fragment>
+      <DonutChart data={[]}><BarChart.Series data={SLEEP} label="Not a sibling" /></DonutChart>
+    </>);
+    expect(allParts<{ label: string }>(parts, BarChart.Series).map((part) => part.label)).toEqual(['First', 'Second']);
+    expect(collectParts(<></>).size).toBe(0);
+  });
+
+  it('finds a line chart custom empty state inside nested fragments', () => {
+    renderWithTheme(<StandalonePlot data={[]}>
+      <><Fragment><StandalonePlot.Empty>No trades yet</StandalonePlot.Empty></Fragment><StandalonePlot.Plot /></>
+    </StandalonePlot>);
+    expect(screen.getByText('No trades yet')).toBeTruthy();
+    expect(screen.queryByText('No data')).toBeNull();
+  });
+
   it('matches the prop form for values, labels and the zero rule', () => {
     const propForm = renderWithTheme(
       <BarChart data={SPEND} format={money} showValues showLabels chrome="baseline" />,

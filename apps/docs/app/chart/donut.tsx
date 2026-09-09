@@ -1,13 +1,18 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Animated, View } from 'react-native';
+import { useState } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens, type ChartDensity } from '@arloui/registry';
+import { Chart, useTokens } from '@arloui/registry';
+import { ChartCanvas } from '@/components/playground/chart-canvas';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
+import {
+  ChartMotionControls,
+  useChartMotionControls,
+} from '@/components/playground/chart-motion-controls';
 
 type State = 'default' | 'loading' | 'empty';
 
@@ -27,8 +32,7 @@ const CATEGORIES = [
   { label: 'Repairs', value: 45 },
 ];
 
-const COUNTS = [1, 2, 3, 4, 5, 6, 7] as const;
-const DENSITIES: ChartDensity[] = ['default', 'compact'];
+const COUNTS = [1, 3, 4, 5] as const;
 const STATES: State[] = ['default', 'loading', 'empty'];
 /**
  * Ring weights, not arbitrary numbers: `thin` is the inline-beside-a-legend look,
@@ -48,26 +52,15 @@ export default function DonutChartCanvas() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const motion = useChartMotionControls();
   const [count, setCount] = useState<number>(4);
   const [showLegend, setShowLegend] = useState(true);
-  const [density, setDensity] = useState<ChartDensity>('default');
   const [thickness, setThickness] = useState<number>(26);
   const [showValue, setShowValue] = useState(true);
   const [state, setState] = useState<State>('default');
   const [selected, setSelected] = useState<number | null>(null);
-  const [previewOffset] = useState(() => new Animated.Value(0));
 
   const data = state === 'empty' ? [] : CATEGORIES.slice(0, count);
-
-  useEffect(() => {
-    Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -120 : 0,
-      damping: 27,
-      stiffness: 300,
-      mass: 0.8,
-      useNativeDriver: true,
-    }).start();
-  }, [previewOffset, sheetOpen]);
 
   return (
     <>
@@ -90,18 +83,12 @@ export default function DonutChartCanvas() {
             <ThemeToggle />
           </View>
 
-          <Animated.View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              paddingHorizontal: 20,
-              transform: [{ translateY: previewOffset }],
-            }}
-          >
+          <ChartCanvas sheetOpen={sheetOpen}>
             <Chart.Donut
+              animated={motion.animated}
+              key={motion.replay}
               data={data}
               format={money}
-              density={density}
               thickness={thickness}
               loading={state === 'loading'}
               empty={{
@@ -116,7 +103,7 @@ export default function DonutChartCanvas() {
               {showValue ? <Chart.Donut.Label>Monthly spend</Chart.Donut.Label> : null}
               {showLegend ? <Chart.Donut.Legend /> : null}
             </Chart.Donut>
-          </Animated.View>
+          </ChartCanvas>
 
           {!sheetOpen ? (
             <View
@@ -146,69 +133,72 @@ export default function DonutChartCanvas() {
             onNext={() => router.replace('/chart/meter')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Categories">
-                {COUNTS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={String(value)}
-                    active={count === value}
-                    onPress={() => {
-                      setCount(value);
-                      setSelected(null);
-                    }}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Thickness">
-                {THICKNESSES.map((option) => (
-                  <VariantChip
-                    key={option.label}
-                    label={option.label}
-                    active={thickness === option.value}
-                    onPress={() => setThickness(option.value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Density">
-                {DENSITIES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={density === value}
-                    onPress={() => setDensity(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Center">
-                {(['value', 'hidden'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={showValue === (option === 'value')}
-                    onPress={() => setShowValue(option === 'value')}
-                  />
-                ))}
-              </VariantControlRow>
               <VariantControlRow label="State">
                 {STATES.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
                     active={state === value}
-                    onPress={() => setState(value)}
+                    onPress={() => {
+                      setState(value);
+                      setSelected(null);
+                    }}
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Legend">
-                {(['show', 'hide'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={showLegend === (option === 'show')}
-                    onPress={() => setShowLegend(option === 'show')}
-                  />
-                ))}
-              </VariantControlRow>
+              {state === 'default' ? (
+                <>
+                  <VariantControlRow label="Data">
+                    {COUNTS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={`${value} ${value === 1 ? 'category' : 'categories'}`}
+                        active={count === value}
+                        onPress={() => {
+                          setCount(value);
+                          setSelected(null);
+                        }}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Stroke">
+                    {THICKNESSES.map((option) => (
+                      <VariantChip
+                        key={option.label}
+                        label={option.label}
+                        active={thickness === option.value}
+                        onPress={() => setThickness(option.value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Center">
+                    {(['value', 'hidden'] as const).map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option}
+                        active={showValue === (option === 'value')}
+                        onPress={() => setShowValue(option === 'value')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Legend">
+                    {(['show', 'hide'] as const).map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option}
+                        active={showLegend === (option === 'show')}
+                        onPress={() => {
+                          setShowLegend(option === 'show');
+                          setSelected(null);
+                        }}
+                      />
+                    ))}
+                  </VariantControlRow>
+                </>
+              ) : null}
+              {state !== 'empty' ? (
+                <ChartMotionControls {...motion} disabled={state !== 'default'} />
+              ) : null}
             </View>
           </VariantSheet>
         </View>

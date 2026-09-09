@@ -1,6 +1,6 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Animated, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Chart,
@@ -12,11 +12,16 @@ import {
   type ChartDensity,
   type ChartTone,
 } from '@arloui/registry';
+import { ChartCanvas } from '@/components/playground/chart-canvas';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
+import {
+  ChartMotionControls,
+  useChartMotionControls,
+} from '@/components/playground/chart-motion-controls';
 
 type Dataset = 'week' | 'signed';
 type State = 'default' | 'loading' | 'empty';
@@ -105,6 +110,7 @@ export default function BarChartCanvas() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const motion = useChartMotionControls();
   const [dataset, setDataset] = useState<Dataset>('week');
   const [tone, setTone] = useState<ChartTone>('brand');
   // Off by default: tapping a bar is how you read one exact figure.
@@ -117,7 +123,6 @@ export default function BarChartCanvas() {
   const [layout, setLayout] = useState<BarChartLayout>('vertical');
   const [spacing, setSpacing] = useState<BarChartSpacing>('default');
   const [chrome, setChrome] = useState<ChartChrome>('baseline');
-  const [previewOffset] = useState(() => new Animated.Value(0));
 
   const multi = mode !== 'single';
   const singleData = useMemo(
@@ -135,16 +140,6 @@ export default function BarChartCanvas() {
     if (list.length === 0) return 0;
     return list.reduce((sum, bar) => sum + bar.value, 0) / list.length;
   }, [multi, multiPrimary, singleData]);
-
-  useEffect(() => {
-    Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -120 : 0,
-      damping: 27,
-      stiffness: 300,
-      mass: 0.8,
-      useNativeDriver: true,
-    }).start();
-  }, [previewOffset, sheetOpen]);
 
   return (
     <>
@@ -167,15 +162,10 @@ export default function BarChartCanvas() {
             <ThemeToggle />
           </View>
 
-          <Animated.View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              paddingHorizontal: 20,
-              transform: [{ translateY: previewOffset }],
-            }}
-          >
+          <ChartCanvas sheetOpen={sheetOpen}>
             <Chart.Bar
+              animated={motion.animated}
+              key={motion.replay}
               variant={mode === 'stacked' ? 'stacked' : 'grouped'}
               layout={layout}
               spacing={spacing}
@@ -203,7 +193,7 @@ export default function BarChartCanvas() {
               />
               {multi ? (
                 <Chart.Bar.Series
-                  data={multiSecond}
+                  data={state === 'empty' ? [] : multiSecond}
                   label={dataset === 'signed' ? 'Fees' : 'Activity'}
                 />
               ) : null}
@@ -215,7 +205,7 @@ export default function BarChartCanvas() {
               ) : null}
               {multi ? <Chart.Bar.Legend /> : null}
             </Chart.Bar>
-          </Animated.View>
+          </ChartCanvas>
 
           {!sheetOpen ? (
             <View
@@ -238,131 +228,146 @@ export default function BarChartCanvas() {
 
           <VariantSheet
             visible={sheetOpen}
-            previous="Chart"
+            previous="Line chart"
             next="Donut"
             onClose={() => setSheetOpen(false)}
             onPrevious={() => router.replace('/chart')}
             onNext={() => router.replace('/chart/donut')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Series">
-                {MODES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={mode === value}
-                    onPress={() => {
-                      setMode(value);
-                      setSelected(null);
-                    }}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Spacing">
-                {SPACINGS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={spacing === value}
-                    onPress={() => setSpacing(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Layout">
-                {LAYOUTS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={layout === value}
-                    onPress={() => setLayout(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              {/*
-                A real three-way chrome control, not a Reference on/off toggle.
-                `none` was unreachable, which meant the rail behind horizontal
-                rows could not be turned off from here at all.
-              */}
-              <VariantControlRow label="Chrome">
-                {CHROMES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={chrome === value}
-                    onPress={() => setChrome(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Data">
-                {DATASETS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value === 'week' ? 'positive' : 'with negatives'}
-                    active={dataset === value}
-                    onPress={() => {
-                      setDataset(value);
-                      setSelected(null);
-                    }}
-                  />
-                ))}
-              </VariantControlRow>
-              {/*
-                Tone is a single-series decision. With `series`, every bar takes
-                its own palette slot and `tone` is documented as ignored — so
-                under grouped or stacked the row is disabled rather than left
-                looking live and doing nothing.
-              */}
-              <VariantControlRow label="Tone">
-                {TONES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={tone === value}
-                    disabled={multi}
-                    onPress={() => setTone(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Values">
-                {(['show', 'hide'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={showValues === (option === 'show')}
-                    onPress={() => setShowValues(option === 'show')}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Density">
-                {DENSITIES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={density === value}
-                    onPress={() => setDensity(value)}
-                  />
-                ))}
-              </VariantControlRow>
               <VariantControlRow label="State">
                 {STATES.map((value) => (
                   <VariantChip
                     key={value}
                     label={value}
                     active={state === value}
-                    onPress={() => setState(value)}
+                    onPress={() => {
+                      setState(value);
+                      setSelected(null);
+                    }}
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Labels">
-                {(['show', 'hide'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={showLabels === (option === 'show')}
-                    onPress={() => setShowLabels(option === 'show')}
-                  />
-                ))}
-              </VariantControlRow>
+              {state === 'default' ? (
+                <>
+                  <VariantControlRow label="Series">
+                    {MODES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={mode === value}
+                        onPress={() => {
+                          setMode(value);
+                          if (value === 'stacked') setDataset('week');
+                          setSelected(null);
+                        }}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Spacing">
+                    {SPACINGS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={spacing === value}
+                        onPress={() => setSpacing(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Layout">
+                    {LAYOUTS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={layout === value}
+                        onPress={() => setLayout(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  {/*
+                A real three-way chrome control, not a Reference on/off toggle.
+                `none` was unreachable, which meant the rail behind horizontal
+                rows could not be turned off from here at all.
+              */}
+                  <VariantControlRow label="Guides">
+                    {CHROMES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value === 'reference' ? 'average' : value}
+                        active={chrome === value}
+                        onPress={() => setChrome(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Data">
+                    {DATASETS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value === 'week' ? 'positive' : 'with negatives'}
+                        active={dataset === value}
+                        onPress={() => {
+                          setDataset(value);
+                          if (value === 'signed' && mode === 'stacked') setMode('grouped');
+                          setSelected(null);
+                        }}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  {/*
+                Tone is a single-series decision. With `series`, every bar takes
+                its own palette slot and `tone` is documented as ignored — so
+                under grouped or stacked the row is hidden rather than left
+                looking live and doing nothing.
+              */}
+                  {!multi ? (
+                    <VariantControlRow label="Tone">
+                      {TONES.map((value) => (
+                        <VariantChip
+                          key={value}
+                          label={value}
+                          active={tone === value}
+                          onPress={() => setTone(value)}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                  <VariantControlRow label="Values">
+                    {(['show', 'hide'] as const).map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option === 'show' ? 'always' : 'on tap'}
+                        active={showValues === (option === 'show')}
+                        onPress={() => setShowValues(option === 'show')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Density">
+                    {DENSITIES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={density === value}
+                        onPress={() => setDensity(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  {!(layout === 'vertical' && density === 'compact') ? (
+                    <VariantControlRow label="Labels">
+                      {(['show', 'hide'] as const).map((option) => (
+                        <VariantChip
+                          key={option}
+                          label={option}
+                          active={showLabels === (option === 'show')}
+                          onPress={() => setShowLabels(option === 'show')}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                </>
+              ) : null}
+              {state !== 'empty' ? (
+                <ChartMotionControls {...motion} disabled={state !== 'default'} />
+              ) : null}
             </View>
           </VariantSheet>
         </View>

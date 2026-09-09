@@ -1,16 +1,14 @@
-# Chart.Bar
+# Bar
 
 `Chart.Bar`
 
-Categories side by side — grouped, stacked, or ranked as horizontal rows.
-
-Answers “How do these compare?”
+Compare values across categories using vertical or horizontal bars. Group series side by side or stack them to show a combined total.
 
 ## When to use
 
-- A handful of named categories the reader will compare against each other.
-- Ranking matters more than trend — spend by category, hours by day.
-- Values can be negative: bars grow below the zero rule rather than vanishing.
+- Compare values across named categories, such as spending by category.
+- Use horizontal bars when category names are long. Sort the data before passing it in to display a ranking.
+- Show positive and negative values on opposite sides of the zero baseline.
 
 ## Install
 
@@ -18,45 +16,85 @@ Answers “How do these compare?”
 npx arloui add chart-bar
 ```
 
-A single form does not bring the `Chart` barrel, so import the component itself:
+Import the component directly when installing this chart on its own:
 
 ```tsx
 import { BarChart } from '@/components/ui/chart/bar-chart';
 ```
 
-## Code
+## Examples
 
-The default composition: bars, their category names, and the zero rule.
+These examples use BarChart, the direct import shown above. Set up the theme provider before rendering them.
+
+Display a single series with category labels and a zero baseline when values cross zero.
 
 ```tsx
-<Chart.Bar data={spend} format={money} />
+import { BarChart } from '@/components/ui/chart/bar-chart';
+import { formatMoney } from '@/components/ui/chart/format';
+
+const spend = [
+  { label: 'Food', value: 480 },
+  { label: 'Travel', value: 320 },
+  { label: 'Utilities', value: 180 },
+];
+const money = formatMoney('USD');
+
+export default function ChartExample() {
+  return (
+    <BarChart data={spend} format={money} />
+  );
+}
 ```
 
-Two series, each carrying its own name.
+Stack two named series and display their category labels and legend.
 
 ```tsx
-<Chart.Bar variant="stacked">
-  <Chart.Bar.Series data={sleep} label="Sleep" />
-  <Chart.Bar.Series data={activity} label="Activity" />
-  <Chart.Bar.Categories />
-  <Chart.Bar.Legend />
-</Chart.Bar>
+import { BarChart } from '@/components/ui/chart/bar-chart';
+
+const sleep = [{ label: 'Mon', value: 7 }, { label: 'Tue', value: 8 }];
+const activity = [3, 5];
+
+export default function ChartExample() {
+  return (
+    <BarChart variant="stacked">
+      <BarChart.Series data={sleep} label="Sleep" />
+      <BarChart.Series data={activity} label="Activity" />
+      <BarChart.Categories />
+      <BarChart.Legend />
+    </BarChart>
+  );
+}
 ```
 
-The same categories as ranked rows, with a target line.
+Display horizontal bars with value labels and a budget reference line.
 
 ```tsx
-<Chart.Bar data={spend} layout="horizontal" format={money}>
-  <Chart.Bar.Categories />
-  <Chart.Bar.Values />
-  <Chart.Bar.Reference value={400} label="Budget" />
-</Chart.Bar>
+import { BarChart } from '@/components/ui/chart/bar-chart';
+import { formatMoney } from '@/components/ui/chart/format';
+
+const spend = [
+  { label: 'Food', value: 480 },
+  { label: 'Travel', value: 320 },
+  { label: 'Utilities', value: 180 },
+];
+const money = formatMoney('USD');
+
+export default function ChartExample() {
+  return (
+    <BarChart data={spend} layout="horizontal" format={money}>
+      <BarChart.Categories />
+      <BarChart.Values />
+      <BarChart.Reference value={400} label="Budget" />
+    </BarChart>
+  );
+}
 ```
 
 ## Props
 
 | Prop | Type | Default | What it does |
 | --- | --- | --- | --- |
+| `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |
 | `data` | `readonly BarDatum[] \| readonly number[]` | — | The first series. Bars want labels, so a bare `number[]` gets index labels. Optional because `<BarChart.Series>` can supply it instead — one or the other, and a `Series` child wins. |
 | `variant` | `BarChartVariant` | `'grouped'` | How the series share each category. Grouped by default. |
 | `layout` | `BarChartLayout` | — | Vertical bars, or the same categories as ranked horizontal rows. |
@@ -72,25 +110,38 @@ The same categories as ranked rows, with a target line.
 | `emptyLabel` | `string` | `'No data'` | Rendered in place of the bars when `data` is empty. |
 | `empty` | `ChartEmptyProps` | — | The composed empty slot — headline, one line, one action — the same one `Chart.Empty` draws. Wins over `emptyLabel`, which stays for the case where a bare string genuinely is the right answer. |
 | `loading` | `boolean` | `false` | Draws grey bars at a fixed profile instead of the data. |
+| `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |
 | `accessibilityLabel` | `string` | — | Overrides the summary read to assistive tech, which otherwise describes the series. |
 | `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |
 
 ## Parts
 
-Name one and it is drawn; name none and you get the default composition.
+Without children, the chart uses its default layout. Add child components to choose which optional elements to include. The table lists each component and its available props.
 
 | Part | Takes | What it draws |
 | --- | --- | --- |
-| `<Chart.Bar.Series />` | `data: readonly BarDatum[] \| readonly number[]` `label: string` | One series. The first declares the categories; the rest ride on them. |
-| `<Chart.Bar.Values />` | — | Prints each bar's value above it. Without it, only the selected bar shows a figure. |
-| `<Chart.Bar.Categories />` | — | The category names — under the bars, or beside the rows when `layout="horizontal"`. |
-| `<Chart.Bar.Baseline />` | — | The zero rule. Drawn only when the data crosses zero — an all-positive chart has its zero at the axis already. |
-| `<Chart.Bar.Reference />` | `value: number` `label: string` | A labelled dashed line at a value you name — a target, a budget, an average. Adds to the zero rule rather than replacing it. |
-| `<Chart.Bar.Legend />` | — | The series legend. It names each series from its `<Chart.Bar.Series label>`, so it draws nothing if none are labelled. |
+| `<BarChart.Series />` | `data: readonly BarDatum[] \| readonly number[]` `label: string` | One series. The first declares the categories; the rest ride on them. |
+| `<BarChart.Values />` | — | Prints each bar's value above it. Without it, only the selected bar shows a figure. |
+| `<BarChart.Categories />` | — | The category names — under the bars, or beside the rows when `layout="horizontal"`. |
+| `<BarChart.Baseline />` | — | The zero rule. Drawn only when the data crosses zero — an all-positive chart has its zero at the axis already. |
+| `<BarChart.Reference />` | `value: number` `label: string` | A labelled dashed line at a value you name — a target, a budget, an average. Adds to the zero rule rather than replacing it. |
+| `<BarChart.Legend />` | — | The series legend. Unnamed series use their position, such as Series 1. |
 
-## What it will not do
+## Motion
 
-Stacking signed data is a category error — a part of a whole cannot be negative — so `variant="stacked"` drops negatives and warns in development. Use `variant="grouped"` for signed series.
+Bars fade into place over 200 ms when data first appears. Vertical bars also fade on dataset changes. Their lengths do not grow from zero, so the animation does not imply changing values.
+
+Motion is enabled by default. Set `animated={false}` to disable entrances, transitions, and loading pulse. Device Reduce Motion takes precedence. Loading shows a neutral pulsing placeholder that fades out before entry. For background fetches, pass `refreshing` and keep supplying the last successful data; the chart stays visible and exposes its busy state. Entry runs once when real data becomes available, including after loading or an empty state. It does not loop.
+
+Use the playground Motion controls to switch animation on or off. Tap On again to replay the entrance.
+
+```tsx
+<BarChart data={data} animated={false} />
+```
+
+## Limitations
+
+Stacked bars support non-negative values only. Negative values are excluded and produce a development warning. Use grouped bars for data containing negative values.
 
 ## Related
 

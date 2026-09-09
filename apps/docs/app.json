@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "scheme": "arloui",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "dev.arloui.playground",

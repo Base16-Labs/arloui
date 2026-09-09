@@ -46,8 +46,8 @@
  * `core.ts` and there is exactly one scale, which is what puts the crosshair on
  * the line rather than near it.
  */
-import { Children, isValidElement, useCallback, useMemo } from 'react';
-import type { ReactElement, ReactNode } from 'react';
+import { useCallback, useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
 import {
@@ -64,6 +64,7 @@ import {
   type ChartTone,
 } from './core';
 import { EmptyContent, type ChartEmptyProps } from './empty';
+import { allParts, collectParts, ChartLoading, ChartMotion } from './hooks';
 import { ChartContext, type ChartContextValue } from './chart-context';
 import { ChartValue, ChartDelta, ChartPeriods, ChartTitle } from './readouts';
 import {
@@ -83,6 +84,8 @@ export type { ChartRange, ChartPlotProps, ChartBarsProps, ChartLineProps } from 
 export { useChart } from './chart-context';
 
 export type ChartProps = {
+  /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
+  animated?: boolean;
   /** The series, oldest first. Bare numbers, or points carrying a time and a label. */
   data: ChartData;
   /**
@@ -139,8 +142,10 @@ export type ChartProps = {
   defaultActiveIndex?: number | null;
   /** Fires on every scrub change, controlled or not. `null` on release. */
   onScrub?: (index: number | null, point: ChartPoint | null) => void;
-  /** Renders the plot's silhouette as a shimmer instead of the series. */
+  /** Reserves the plot with a neutral pulsing placeholder until data is ready. */
   loading?: boolean;
+  /** Keep the last supplied data visible during a background fetch. Overrides loading. */
+  refreshing?: boolean;
   /** Style for the chart's outer container. */
   style?: StyleProp<ViewStyle>;
 };
@@ -161,7 +166,11 @@ function defaultComposition() {
   );
 }
 
-function ChartRoot({
+function ChartRoot(props: ChartProps) {
+  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <ChartInner {...props} loading={loading} />}</ChartLoading></ChartMotion>;
+}
+
+function ChartInner({
   data,
   children,
   tone = 'auto',
@@ -177,6 +186,7 @@ function ChartRoot({
   defaultActiveIndex = null,
   onScrub,
   loading = false,
+  refreshing = false,
   style,
 }: ChartProps) {
   const t = useTokens();
@@ -236,22 +246,17 @@ function ChartRoot({
   const { empty, rest } = useMemo(() => {
     if (children == null) return { empty: undefined, rest: null };
     let slot: ReactNode;
-    const kept: ReactNode[] = [];
-    Children.forEach(children, (child) => {
-      if (isValidElement(child) && child.type === ChartEmpty) {
-        const props = (child as ReactElement<ChartEmptyProps>).props;
-        // `children` is the escape hatch and wins outright; otherwise the slot
-        // is the standard headline / line / action arrangement.
-        slot =
-          props.children ??
-          (props.title || props.description || props.action ? (
-            <EmptyContent {...props} />
-          ) : undefined);
-        return;
-      }
-      kept.push(child);
-    });
-    return { empty: slot, rest: kept };
+    for (const props of allParts<ChartEmptyProps>(collectParts(children), ChartEmpty)) {
+      // `children` is the escape hatch and wins outright; otherwise the slot
+      // is the standard headline / line / action arrangement.
+      slot =
+        props.children ??
+        (props.title || props.description || props.action ? (
+          <EmptyContent {...props} />
+        ) : undefined);
+    }
+    // Empty parts render null; preserve the original tree and its React keys.
+    return { empty: slot, rest: children };
   }, [children]);
 
   /**
@@ -302,7 +307,7 @@ function ChartRoot({
 
   return (
     <ChartContext.Provider value={ctx}>
-      <View style={[{ gap: t.spacing[2] }, style]}>
+      <View accessibilityState={{ busy: loading || refreshing }} style={[{ gap: t.spacing[2] }, style]}>
         {/*
           An empty chart is the slot and nothing else.
           
@@ -405,3 +410,6 @@ export { ChartRoot };
  * other five forms is the same object — there is one `Chart`, not two.
  */
 export const Chart = Object.assign(ChartRoot, ChartPlotParts);
+
+/** Explicit name for the time-series chart; `Chart` remains compatible. */
+export const LineChart = Chart;

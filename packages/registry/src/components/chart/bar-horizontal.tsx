@@ -21,9 +21,9 @@ import { useTokens } from '../../foundation/theme-provider';
 import { densityMetrics, seriesColorAt, toneColor } from './core';
 import { EmptyContent } from './empty';
 import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
+import { useChartFade } from './hooks';
 import { ChartLegend } from './legend';
 import Svg, { Path } from 'react-native-svg';
-import { SkeletonSheen } from './skeleton';
 import {
   DIMMED_ALPHA,
   SKELETON_HEIGHTS,
@@ -91,15 +91,15 @@ export function HorizontalBars({
   emptyLabel = 'No data',
   empty,
   loading = false,
+  refreshing = false,
   accessibilityLabel,
   style,
 }: BarChartResolved) {
   const t = useTokens();
-  const pulse = useSkeletonPulse(t.motion.duration.slow);
+  const pulse = useSkeletonPulse(t.motion.duration.slow, loading);
   const [selection, setSelection] = useControllableIndex(activeIndexProp, defaultActiveIndex);
   const [size, setSize] = useState({ width: 0, height: 0 });
   // Skeleton rows are a percentage of the rail, so the sweep needs a measurement.
-  const [skeletonRowWidth, setSkeletonRowWidth] = useState(0);
   const width = size.width;
 
   const allSeries = useMemo(() => {
@@ -108,6 +108,7 @@ export function HorizontalBars({
     return [first, ...(series ?? []).map((extra) => normalizeBars(extra, labels))];
   }, [data, series]);
   const bars = allSeries[0] as BarDatum[];
+  const entrance = useChartFade(!loading && bars.length > 0);
   const seriesCount = allSeries.length;
   const stacked = seriesCount > 1 && variant === 'stacked';
   const grouped = seriesCount > 1 && !stacked;
@@ -252,6 +253,7 @@ export function HorizontalBars({
       <View
         accessible
         accessibilityRole="image"
+        accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={summary}
         style={[{ minHeight: row.height, alignItems: 'center', justifyContent: 'center' }, style]}
       >
@@ -302,11 +304,12 @@ export function HorizontalBars({
   };
 
   return (
-    <View style={[{ gap: t.spacing[2] }, style]}>
+    <Animated.View style={[{ gap: t.spacing[2], opacity: entrance }, style]}>
       <View
         onLayout={handleLayout}
         accessible={!interactive}
         accessibilityRole={interactive ? undefined : 'image'}
+        accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={interactive ? undefined : summary}
         style={{ gap: rowGap }}
       >
@@ -333,7 +336,6 @@ export function HorizontalBars({
                     {/* `Animated.View`, not `View`: the pulse is an Animated.Value, and a
                         plain view hands the native side an object, not a number. */}
                     <Animated.View
-                      onLayout={(event) => setSkeletonRowWidth(event.nativeEvent.layout.width)}
                       style={{
                         width: `${Math.round(fraction * 100)}%`,
                         height: '100%',
@@ -343,7 +345,6 @@ export function HorizontalBars({
                         overflow: 'hidden',
                       }}
                     >
-                      <SkeletonSheen width={skeletonRowWidth} radius={ROW_RADIUS} />
                     </Animated.View>
                   </View>
                   <View style={{ width: row.value }} />
@@ -582,6 +583,6 @@ export function HorizontalBars({
       </View>
 
       {legendItems ? <ChartLegend items={legendItems} /> : null}
-    </View>
+    </Animated.View>
   );
 }

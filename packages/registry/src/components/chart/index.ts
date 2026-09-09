@@ -20,6 +20,7 @@ import { Meter } from './meter';
 import { Sparkline } from './sparkline';
 
 export {
+  LineChart,
   type ChartEmptyProps,
   type ChartPlotProps,
   type ChartProps,

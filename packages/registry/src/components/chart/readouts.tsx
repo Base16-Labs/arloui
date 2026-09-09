@@ -15,6 +15,7 @@ import { useTokens } from '../../foundation/theme-provider';
 import { toneColor } from './core';
 import { useChart } from './chart-context';
 import { SkeletonBlock } from './skeleton';
+import { useReduceMotion } from './hooks';
 
 /**
  * The headline number — the scrubbed point's value, or the last one when
@@ -32,6 +33,7 @@ export function ChartValue({
   style?: StyleProp<ViewStyle>;
 }) {
   const t = useTokens();
+  const reduceMotion = useReduceMotion();
   const { points, displayIndex, format: contextFormat, formatAt, loading } = useChart();
   const format = formatProp ?? contextFormat;
   const point = points[displayIndex];
@@ -54,6 +56,7 @@ export function ChartValue({
   return (
     <View style={[{ alignItems: 'flex-start' }, style]}>
       <AnimatedCounter
+        reduceMotion={reduceMotion}
         text={text}
         fontSize={t.typography.displayMedium.fontSize}
         lineHeight={t.typography.displayMedium.lineHeight}

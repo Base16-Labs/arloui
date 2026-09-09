@@ -8,6 +8,7 @@ export const docsSections = [
   { label: 'Facets', href: '/docs/foundations' },
   { label: 'Foundations', href: '/docs/primitives' },
   { label: 'Components', href: '/docs/components' },
+  { label: 'Chart', href: '/docs/components/chart' },
   { label: 'Archetypes', href: '/docs/archetypes' },
   { label: 'Agents', href: '/docs/agents' },
   { label: 'Changelog', href: '/docs/changelog' },
@@ -107,28 +108,27 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Tabs', slug: 'tabs' },
     ],
   },
-  {
-    label: 'Data',
-    items: [{ label: 'Chart', slug: 'chart' }],
-  },
 ];
 
 /**
  * The per-form Chart pages.
  *
- * Deliberately not in `componentGroups`: that list is what `componentCount`
- * counts, and Chart is one component with six forms — folding the forms in
- * would advertise six more components than the kit has. They are routed and
- * listed in the sidebar under Chart instead.
+ * Chart has its own docs section. Keep these forms outside the Components
+ * listing while preserving their existing URLs.
  */
 export const chartFormRoutes: { label: string; slug: string }[] = [
-  { label: 'Line chart', slug: 'chart-plot' },
+  { label: 'Line chart', slug: 'chart-line' },
   { label: 'Bar', slug: 'chart-bar' },
   { label: 'Sparkline', slug: 'chart-sparkline' },
   { label: 'Donut', slug: 'chart-donut' },
   { label: 'Meter', slug: 'chart-meter' },
   { label: 'Heatmap', slug: 'chart-heatmap' },
 ];
+
+export function isChartPath(pathname: string): boolean {
+  return pathname === '/docs/components/chart' ||
+    chartFormRoutes.some((form) => pathname === `/docs/components/${form.slug}`);
+}
 
 /** Documented component count — keep copy in sync with `componentGroups`. */
 export const componentCount = componentGroups.reduce(

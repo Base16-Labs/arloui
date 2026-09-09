@@ -1,7 +1,7 @@
 /**
  * Shared Jest configuration for Arlo UI's React Native packages.
  *
- * Built on the `react-native` preset (lighter than `jest-expo` — our components
+ * Built on the `@react-native/jest-preset` preset (lighter than `jest-expo` — our components
  * only touch `expo-haptics` via a mockable dynamic import, not the Expo app
  * runtime). It wires up the RN babel transform, the RN module mocks, and the
  * node test environment. Each RN package extends this with its own
@@ -12,7 +12,7 @@ const path = require('node:path');
 
 /** @type {import('jest').Config} */
 module.exports = {
-  preset: 'react-native',
+  preset: '@react-native/jest-preset',
   setupFilesAfterEnv: [path.join(__dirname, 'setup.cjs')],
   clearMocks: true,
   // jest-expo ignores node_modules by default; widen the allow-list so the

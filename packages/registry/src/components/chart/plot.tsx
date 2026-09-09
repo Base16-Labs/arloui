@@ -19,7 +19,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Defs, LinearGradient, Path, Stop, Circle, Line, Rect } from 'react-native-svg';
+import Svg, { Defs, LinearGradient, Path, Stop, Circle, Line, ClipPath, G } from 'react-native-svg';
 import { rgbaFromHex } from '@arloui/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
@@ -43,9 +43,11 @@ import {
 } from './core';
 import { EmptyContent } from './empty';
 import { useChart } from './chart-context';
-import { allParts, collectParts, useReduceMotion, useSkeletonPulse } from './hooks';
+import { allParts, collectParts, useReduceMotion } from './hooks';
+import { useChartEntrance } from './hooks';
+import { ChartFill, ChartReveal } from './motion';
 import { ChartLegend } from './legend';
-import { SkeletonSheenSvg } from './skeleton';
+import { PlotPlaceholder } from './skeleton';
 
 export type ChartRange = { lower: ChartData; upper: ChartData };
 
@@ -100,6 +102,8 @@ export type ChartPlotProps = {
    * a thing the shape can express.
    */
   stack?: readonly ChartData[];
+  /** Stacked-series colors, primary first. Missing slots use the theme palette. */
+  stackColors?: readonly string[];
   /**
    * Floating readout pill above the crosshair while scrubbing, showing the
    * formatted value of the point under the finger. The big `Chart.Value` stays
@@ -117,8 +121,6 @@ export type ChartPlotProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** A generic rise-and-settle silhouette, drawn while `loading`. */
-const SHIMMER_SHAPE = [0.35, 0.5, 0.42, 0.68, 0.55, 0.78, 0.7, 0.92];
 
 /**
  * The mark itself — the line, and whatever else is named inside it.
@@ -133,6 +135,7 @@ export function ChartPlot({
   curve = 'steep',
   compare,
   stack,
+  stackColors,
   range,
   children,
   tooltip = false,
@@ -274,12 +277,12 @@ export function ChartPlot({
   useEffect(() => {
     const from = previousValues.current;
     const to = values;
-    previousValues.current = to;
 
     const unchanged = from.length === to.length && from.every((v, i) => v === to[i]);
     // A first paint has nothing to morph from, and a scrub in flight must not be
     // interrupted by the line moving under the finger.
     if (unchanged || from.length === 0 || to.length === 0 || reduceMotion) {
+      previousValues.current = to;
       setMorphValues(null);
       return;
     }
@@ -289,7 +292,12 @@ export function ChartPlot({
     const b = resample(to, frames);
 
     progress.setValue(0);
-    const id = progress.addListener(({ value: p }) => setMorphValues(interpolateSeries(a, b, p)));
+    setMorphValues(a);
+    const id = progress.addListener(({ value: p }) => {
+      const next = interpolateSeries(a, b, p);
+      previousValues.current = next;
+      setMorphValues(next);
+    });
     const animation = Animated.timing(progress, {
       toValue: 1,
       duration: t.motion.chart.data.duration,
@@ -299,12 +307,14 @@ export function ChartPlot({
     });
     animation.start(({ finished }) => {
       // Land on the real series, not on the last interpolated frame.
-      if (finished) setMorphValues(null);
+      if (finished) {
+        previousValues.current = to;
+        setMorphValues(null);
+      }
     });
     return () => {
       animation.stop();
       progress.removeListener(id);
-      setMorphValues(null);
     };
   }, [values, progress, reduceMotion, t.motion.chart.data.duration, t.motion.chart.data.easing]);
 
@@ -329,7 +339,8 @@ export function ChartPlot({
         if (value > hi) hi = value;
       }
     }
-    return lo === Number.POSITIVE_INFINITY ? null : { min: lo, max: hi };
+    // A stacked area measures parts of a total, so its filled base starts at zero.
+    return lo === Number.POSITIVE_INFINITY ? null : { min: stackLayers.length ? Math.min(0, lo) : lo, max: hi };
   }, [compareValues, upperValues, lowerValues, stackLayers, barMarks, lineMarks]);
 
   const drawnRange = useMemo(() => {
@@ -453,10 +464,10 @@ export function ChartPlot({
         d: bandPath(toPts(layer), toPts(stackLayers[index - 1] ?? values), curve),
         // Slot 0 belongs to the primary, which takes a palette slot too once it
         // is stacked — see `lineColor`.
-        color: seriesColorAt(t, index + 1),
+        color: stackColors?.[index + 1] ?? seriesColorAt(t, index + 1),
       }))
       .reverse();
-  }, [stackLayers, values, width, extraScale, curve, t]);
+  }, [stackLayers, values, width, extraScale, curve, t, stackColors]);
 
   /*
    * Once a plot is stacked, the primary takes a palette slot and `tone` stops
@@ -472,7 +483,7 @@ export function ChartPlot({
    * with a legend claiming they were different things.
    */
   const stacked = stackLayers.length > 0;
-  const lineColor = stacked ? seriesColorAt(t, 0) : color;
+  const lineColor = stacked ? (stackColors?.[0] ?? seriesColorAt(t, 0)) : color;
 
   const linePaths = useMemo(() => {
     if (width === 0) return [];
@@ -582,6 +593,8 @@ export function ChartPlot({
   const message =
     count === 0 ? (empty ?? emptyLabel) : count === 1 ? notEnoughLabel : null;
   const drawable = !loading && count > 1 && width > 0;
+  const entrance = useChartEntrance(drawable);
+  const revealId = `${gradientId}-reveal`;
 
   return (
     <View
@@ -598,6 +611,8 @@ export function ChartPlot({
 
       {drawable ? (
         <Svg width={width} height={height} style={{ position: 'absolute' }} pointerEvents="none">
+          <Defs><ClipPath id={revealId}><ChartReveal progress={entrance} width={width} height={height} immediate={activeIndex != null} /></ClipPath></Defs>
+          <G clipPath={`url(#${revealId})`}>
           {/* Behind everything: a bar is context for the line, not a rival to it. */}
           {barShapes.map((mark, index) => (
             <Path
@@ -620,11 +635,14 @@ export function ChartPlot({
             Under the primary, which keeps the line that answers the scrub on top
             of everything it is stacked with.
           */}
+          <ChartFill progress={entrance} immediate={activeIndex != null}>
           {stackBands.map((layer, index) => (
             <Path key={`stack-${index}`} d={layer.d} fill={layer.color} stroke="none" />
           ))}
 
-          {area ? (
+          {area && stacked ? (
+            <Path d={area} fill={lineColor} stroke="none" />
+          ) : area ? (
             <>
               <Defs>
                 <LinearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -636,6 +654,8 @@ export function ChartPlot({
             </>
           ) : null}
 
+          </ChartFill>
+          </G>
           {showBaseline ? (
             <Path
               d={`M${inset},${baselineY.toFixed(2)} L${(width - inset).toFixed(2)},${baselineY.toFixed(2)}`}
@@ -659,6 +679,7 @@ export function ChartPlot({
               ))
             : null}
 
+          <G clipPath={`url(#${revealId})`}>
           {linePaths.map((mark, index) => (
             <Path
               key={`line-${index}`}
@@ -709,6 +730,7 @@ export function ChartPlot({
               />
             </>
           ) : null}
+          </G>
         </Svg>
       ) : null}
 
@@ -806,49 +828,7 @@ export function ChartPlot({
  * where a chart goes tells you the layout; a line where the line goes tells you
  * what is arriving.
  */
-export function PlotShimmer({
-  width,
-  height,
-  inset,
-}: {
-  width: number;
-  height: number;
-  inset: number;
-}) {
-  const t = useTokens();
-  const pulse = useSkeletonPulse(t.motion.duration.slow);
-
-  if (width === 0) return null;
-
-  const scale = makeScale({
-    count: SHIMMER_SHAPE.length,
-    min: 0,
-    span: 1,
-    width,
-    height,
-    inset,
-  });
-  const shape = SHIMMER_SHAPE.map((value, index) => ({ x: scale.x(index), y: scale.y(value) }));
-
-  /*
-   * A filled silhouette, not a stroked line.
-   *
-   * The skeleton has to hold the same visual weight the plot will, and a hairline
-   * over an empty box reads as a drawn chart with no data rather than as one
-   * still arriving. Filling the silhouette gives the loading state the mass of
-   * the area it stands in for, so nothing re-weights when the series lands.
-   */
-  const silhouette = areaPath(shape, height - inset, 'smooth');
-  return (
-    <Animated.View style={[StyleSheet.absoluteFill, { opacity: pulse }]}>
-      <Svg width={width} height={height} pointerEvents="none">
-        <Path d={silhouette} fill={t.colors.surfaceStrong} />
-      </Svg>
-      {/* On the silhouette, not across its box — see `SkeletonSheenSvg`. */}
-      <SkeletonSheenSvg d={silhouette} width={width} height={height} />
-    </Animated.View>
-  );
-}
+export const PlotShimmer = PlotPlaceholder;
 
 /** Time-range selector. Renders nothing when the chart was given no `periods`. */
 

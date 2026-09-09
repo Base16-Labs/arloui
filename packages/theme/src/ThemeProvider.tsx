@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Appearance, type ColorSchemeName } from 'react-native';
+import { Appearance } from 'react-native';
 import { themes, type Theme, type ThemeName } from '@arloui/tokens';
 
 type ThemeContextValue = {
@@ -31,14 +31,14 @@ export function ThemeProvider({
   forceName,
 }: ThemeProviderProps) {
   const [preference, setPreference] = useState<ThemeName | 'system'>(defaultName);
-  const [systemScheme, setSystemScheme] = useState<ColorSchemeName>(
-    Appearance.getColorScheme(),
+  const [systemScheme, setSystemScheme] = useState<'light' | 'dark'>(
+    Appearance.getColorScheme() === 'light' ? 'light' : 'dark',
   );
 
   useEffect(() => {
     if (preference !== 'system') return;
     const sub = Appearance.addChangeListener(({ colorScheme }) => {
-      setSystemScheme(colorScheme);
+      setSystemScheme(colorScheme === 'light' ? 'light' : 'dark');
     });
     return () => sub.remove();
   }, [preference]);
@@ -47,9 +47,7 @@ export function ThemeProvider({
     const resolved: ThemeName = forceName
       ? forceName
       : preference === 'system'
-        ? systemScheme === 'light'
-          ? 'light'
-          : 'dark'
+        ? systemScheme
         : preference;
     return {
       theme: themes[resolved],

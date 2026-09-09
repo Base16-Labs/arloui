@@ -1,6 +1,6 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Animated, View } from 'react-native';
+import { useState } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Chart,
@@ -9,11 +9,16 @@ import {
   type ChartTone,
   type MeterShape,
 } from '@arloui/registry';
+import { ChartCanvas } from '@/components/playground/chart-canvas';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
+import {
+  ChartMotionControls,
+  useChartMotionControls,
+} from '@/components/playground/chart-motion-controls';
 
 type State = 'default' | 'loading';
 
@@ -41,13 +46,14 @@ const DANGER_AT = 0.85;
  * ends; `53`, `79`, and `90` land in the brand, warning, and danger bands, so
  * turning thresholds on walks all three colours.
  */
-const LEVELS = [12, 53, 79, 90, 100] as const;
+const LEVELS = [0, 12, 53, 79, 90, 100] as const;
 
 export default function MeterCanvas() {
   const t = useTokens();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const motion = useChartMotionControls();
   const [shape, setShape] = useState<MeterShape>('bar');
   const [level, setLevel] = useState<number>(53);
   const [tone, setTone] = useState<ChartTone>('brand');
@@ -55,17 +61,6 @@ export default function MeterCanvas() {
   const [concentric, setConcentric] = useState(false);
   const [density, setDensity] = useState<ChartDensity>('default');
   const [state, setState] = useState<State>('default');
-  const [previewOffset] = useState(() => new Animated.Value(0));
-
-  useEffect(() => {
-    Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -120 : 0,
-      damping: 27,
-      stiffness: 300,
-      mass: 0.8,
-      useNativeDriver: true,
-    }).start();
-  }, [previewOffset, sheetOpen]);
 
   const threshold = thresholds ? { warnAt: WARN_AT, dangerAt: DANGER_AT } : {};
   /** Both round shapes take the same levels, the concentric rings, and the sizing. */
@@ -74,7 +69,13 @@ export default function MeterCanvas() {
    * Two inner rings against the primary — the Apple-Watch arrangement, and the
    * one thing three separate meters cannot produce.
    */
-  const extraRings = concentric ? [{ value: 64, max: 100 }, { value: 38, max: 100 }] : undefined;
+  const extraRings =
+    concentric && round
+      ? [
+          { value: 64, max: 100 },
+          { value: 38, max: 100 },
+        ]
+      : undefined;
 
   return (
     <>
@@ -97,16 +98,11 @@ export default function MeterCanvas() {
             <ThemeToggle />
           </View>
 
-          <Animated.View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              paddingHorizontal: 20,
-              transform: [{ translateY: previewOffset }],
-            }}
-          >
+          <ChartCanvas sheetOpen={sheetOpen}>
             <View style={round ? { alignItems: 'center' } : undefined}>
               <Chart.Meter
+                animated={motion.animated}
+                key={motion.replay}
                 shape={shape}
                 tone={tone}
                 value={level}
@@ -122,7 +118,7 @@ export default function MeterCanvas() {
                 ))}
               </Chart.Meter>
             </View>
-          </Animated.View>
+          </ChartCanvas>
 
           {!sheetOpen ? (
             <View
@@ -152,68 +148,6 @@ export default function MeterCanvas() {
             onNext={() => router.replace('/chart/sparkline')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Level">
-                {LEVELS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={`${value}%`}
-                    active={level === value}
-                    onPress={() => setLevel(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Shape">
-                {SHAPES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={shape === value}
-                    onPress={() => setShape(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Tone">
-                {TONES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={tone === value}
-                    onPress={() => setTone(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              {/* Concentric rings are a round-shape arrangement; a bar has no inside. */}
-              <VariantControlRow label="Rings">
-                {(['single', 'concentric'] as const).map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={concentric === (value === 'concentric')}
-                    disabled={!round}
-                    onPress={() => setConcentric(value === 'concentric')}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Thresholds">
-                {(['on', 'off'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={thresholds === (option === 'on')}
-                    onPress={() => setThresholds(option === 'on')}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Density">
-                {DENSITIES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={density === value}
-                    onPress={() => setDensity(value)}
-                  />
-                ))}
-              </VariantControlRow>
               <VariantControlRow label="State">
                 {STATES.map((value) => (
                   <VariantChip
@@ -224,6 +158,76 @@ export default function MeterCanvas() {
                   />
                 ))}
               </VariantControlRow>
+              {state === 'default' ? (
+                <>
+                  <VariantControlRow label="Level">
+                    {LEVELS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={`${value}%`}
+                        active={level === value}
+                        onPress={() => setLevel(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Shape">
+                    {SHAPES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={shape === value}
+                        onPress={() => setShape(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  {!(thresholds && level >= WARN_AT * 100) ? (
+                    <VariantControlRow label="Tone">
+                      {TONES.map((value) => (
+                        <VariantChip
+                          key={value}
+                          label={value}
+                          active={tone === value}
+                          onPress={() => setTone(value)}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                  {/* Concentric rings are a round-shape arrangement; a bar has no inside. */}
+                  {round ? (
+                    <VariantControlRow label="Rings">
+                      {(['single', 'concentric'] as const).map((value) => (
+                        <VariantChip
+                          key={value}
+                          label={value}
+                          active={(concentric && round) === (value === 'concentric')}
+                          onPress={() => setConcentric(value === 'concentric')}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                  <VariantControlRow label="Colour">
+                    {(['on', 'off'] as const).map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option === 'on' ? 'thresholds' : 'tone'}
+                        active={thresholds === (option === 'on')}
+                        onPress={() => setThresholds(option === 'on')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Density">
+                    {DENSITIES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={density === value}
+                        onPress={() => setDensity(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                </>
+              ) : null}
+              <ChartMotionControls {...motion} disabled={state !== 'default'} />
             </View>
           </VariantSheet>
         </View>

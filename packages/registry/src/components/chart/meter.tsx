@@ -43,6 +43,7 @@ import {
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import { ChartLoading, ChartMotion } from './hooks';
 import {
   arcLength,
   arcPath,
@@ -51,7 +52,7 @@ import {
   type ChartTone,
 } from './core';
 import { allParts, collectParts, hasPart, partProps, useSkeletonPulse } from './hooks';
-import { useReduceMotion } from '../../foundation/reduce-motion';
+import { useReduceMotion } from './hooks';
 
 /**
  * Created once at module scope. Building it inside render returns a new component
@@ -112,6 +113,8 @@ export type MeterRing = {
 };
 
 export type MeterProps = {
+  /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
+  animated?: boolean;
   /** What to show, in the same units as `min` and `max`. */
   value: number;
   /** Top of the range. The fill is `value` as a share of `min`..`max`. */
@@ -166,6 +169,8 @@ export type MeterProps = {
    * so it is either loading or it has a value. An empty meter is a zero.
    */
   loading?: boolean;
+  /** Keep the last supplied data visible during a background fetch. Overrides loading. */
+  refreshing?: boolean;
   /** Overrides the label read to assistive tech, which otherwise uses the meter's name. */
   accessibilityLabel?: string;
   /** Style for the meter's outer container. */
@@ -203,7 +208,7 @@ function Sweep({
   thickness: number;
   color: string;
   trackColor: string;
-  trackOpacity: Animated.Value | number;
+  trackOpacity: Animated.Value | Animated.AnimatedMultiplication<number> | number;
   progress: Animated.Value;
   /** `false` draws the full circle; `true` draws the gauge's 240-degree arc. */
   partial: boolean;
@@ -295,7 +300,7 @@ function ExtraRing({
   radius: number;
   thickness: number;
   trackColor: string;
-  trackOpacity: Animated.Value | number;
+  trackOpacity: Animated.Value | Animated.AnimatedMultiplication<number> | number;
   fallbackMin: number;
   fallbackMax: number;
   partial: boolean;
@@ -316,7 +321,6 @@ function ExtraRing({
       progress.setValue(fraction);
       return;
     }
-    progress.setValue(0);
     const animation = Animated.timing(progress, {
       toValue: fraction,
       duration,
@@ -367,6 +371,7 @@ function MeterInner({
   size,
   rings,
   loading = false,
+  refreshing = false,
   accessibilityLabel,
   style,
 }: MeterResolved) {
@@ -384,7 +389,7 @@ function MeterInner({
   // before the number is known has already told the reader something false.
   const fraction =
     loading || range === 0 ? 0 : Math.min(1, Math.max(0, (value - min) / range));
-  const pulse = useSkeletonPulse(t.motion.duration.slow);
+  const pulse = useSkeletonPulse(t.motion.duration.slow, loading);
   const trackOpacity = loading ? pulse : 1;
 
   /**
@@ -404,10 +409,8 @@ function MeterInner({
     }
     // The readout is driven off the same value as the fill, so the number and the
     // shape can never disagree part-way through the sweep.
-    const id = progress.addListener(({ value }) => setShownFraction(value));
-    // Every presentation begins empty, including when the consumer switches
-    // between bar and ring. The listener above resets the painted readout too.
-    progress.setValue(0);
+    const id = progress.addListener(({ value }) => setShownFraction(Math.round(value * 100) / 100));
+    // Retarget from the current fill instead of restarting at zero on every update.
     const animation = Animated.timing(progress, {
       toValue: fraction,
       duration: t.motion.duration.slow,
@@ -505,8 +508,9 @@ function MeterInner({
       <View
         accessible
         accessibilityRole="progressbar"
+        accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={a11y}
-        accessibilityValue={{ min, max, now: value, text: readout }}
+        accessibilityValue={loading ? undefined : { min, max, now: value, text: readout }}
         style={[
           { width: meterSize, height: boxHeight, alignItems: 'center', justifyContent: 'center' },
           style,
@@ -617,8 +621,9 @@ function MeterInner({
     <View
       accessible
       accessibilityRole="progressbar"
+        accessibilityState={{ busy: loading || refreshing }}
       accessibilityLabel={a11y}
-      accessibilityValue={{ min, max, now: value, text: readout }}
+      accessibilityValue={loading ? undefined : { min, max, now: value, text: readout }}
       style={[
         {
           gap: t.spacing[1],
@@ -751,7 +756,7 @@ function resolveComposition(props: MeterProps): MeterResolved {
 }
 
 function MeterRoot(props: MeterProps) {
-  return <MeterInner {...resolveComposition(props)} />;
+  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <MeterInner {...resolveComposition(props)} loading={loading} />}</ChartLoading></ChartMotion>;
 }
 
 /** The parts, for `Chart.Meter.Value` and friends. */

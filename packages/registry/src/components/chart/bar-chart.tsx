@@ -45,6 +45,7 @@
 import type { ReactNode } from 'react';
 import { type ChartReference } from './core';
 import { allParts, collectParts, hasPart, partProps } from './hooks';
+import { ChartLoading, ChartMotion } from './hooks';
 import { HorizontalBars } from './bar-horizontal';
 import { VerticalBars } from './bar-vertical';
 import type { BarChartProps, BarChartResolved, BarDatum, BarSeries } from './bar-shared';
@@ -61,7 +62,7 @@ export type {
 /** One series. The first declares the categories; the rest ride on them. */
 export type BarSeriesProps = {
   data: readonly BarDatum[] | readonly number[];
-  /** Names the series in the legend and to screen readers. */
+  /** Names the series in the legend and to screen readers. Defaults to Series 1, Series 2, etc. */
   label?: string;
 };
 function BarSeriesPart(_: BarSeriesProps): ReactNode {
@@ -89,7 +90,7 @@ function BarBaselinePart(): ReactNode {
   return null;
 }
 
-/** The series legend. It names each series from its `<Chart.Bar.Series label>`, so it draws nothing if none are labelled. */
+/** The series legend. Unnamed series use their position, such as Series 1. */
 function BarLegendPart(): ReactNode {
   return null;
 }
@@ -131,7 +132,7 @@ function resolveComposition(props: BarChartProps): BarChartResolved {
   // express.
   const data = declared[0]?.data ?? rest.data ?? [];
   const series = declared.slice(1).map((d) => d.data as BarSeries);
-  const names = declared.map((d) => d.label).filter((l): l is string => l != null);
+  const names = declared.map((d, index) => d.label ?? `Series ${index + 1}`);
 
   return {
     ...rest,
@@ -152,7 +153,11 @@ function BarChartRoot(props: BarChartProps) {
   // exists — they keep taking the same props they always took.
   const resolved = resolveComposition(props);
   const { layout = 'vertical' } = resolved;
-  return layout === 'horizontal' ? <HorizontalBars {...resolved} /> : <VerticalBars {...resolved} />;
+  return <ChartMotion animated={props.animated}>
+    <ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) =>
+      layout === 'horizontal' ? <HorizontalBars {...resolved} loading={loading} /> : <VerticalBars {...resolved} loading={loading} />
+    }</ChartLoading>
+  </ChartMotion>;
 }
 
 /** The parts, for `Chart.Bar.Values` and friends. */

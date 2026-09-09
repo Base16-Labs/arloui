@@ -1,31 +1,24 @@
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Animated, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  Chart,
-  useTokens,
-  type ChartCurve,
-  type ChartTone,
-  type ChartDensity,
-} from '@arloui/registry';
+import { Chart, useTokens, type ChartCurve, type ChartTone } from '@arloui/registry';
+import { ChartCanvas } from '@/components/playground/chart-canvas';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
 import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
+import {
+  ChartMotionControls,
+  useChartMotionControls,
+} from '@/components/playground/chart-motion-controls';
 
 type Height = 'inline' | 'standalone';
 type State = 'default' | 'loading' | 'empty';
 
 const HEIGHTS: Height[] = ['inline', 'standalone'];
-/**
- * Its own row, not folded into height. `density` is what actually thins the stroke
- * and shrinks the end dot; height only changes the box. The two were conflated
- * under a single "Size" chip, so `default` density never rendered on a sparkline
- * at all — the form defaults to `compact`.
- */
-const DENSITIES: ChartDensity[] = ['compact', 'default'];
+// Size presets set both the canvas height and the appropriate stroke density.
 const CURVES: ChartCurve[] = ['steep', 'smooth'];
 const STATES: State[] = ['default', 'loading', 'empty'];
 /**
@@ -75,30 +68,21 @@ export default function SparklineCanvas() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [size, setSize] = useState<Height>('standalone');
-  const [density, setDensity] = useState<ChartDensity>('compact');
+  const motion = useChartMotionControls();
+  const [size, setSize] = useState<Height>('inline');
   const [curve, setCurve] = useState<ChartCurve>('steep');
   const [state, setState] = useState<State>('default');
-  const [fill, setFill] = useState(true);
-  const [showEndDot, setShowEndDot] = useState(true);
+  const [fill, setFill] = useState(false);
+  const [showEndDot, setShowEndDot] = useState(false);
   const [tone, setTone] = useState<ChartTone>('auto');
   const [direction, setDirection] = useState<(typeof DIRECTIONS)[number]>('rising');
   const [showExtremes, setShowExtremes] = useState(false);
-  const [previewOffset] = useState(() => new Animated.Value(0));
 
   const rising = useMemo(() => series('up'), []);
   const falling = useMemo(() => series('down'), []);
-  const height = size === 'inline' ? 28 : 56;
-
-  useEffect(() => {
-    Animated.spring(previewOffset, {
-      toValue: sheetOpen ? -120 : 0,
-      damping: 27,
-      stiffness: 300,
-      mass: 0.8,
-      useNativeDriver: true,
-    }).start();
-  }, [previewOffset, sheetOpen]);
+  const height = size === 'inline' ? 28 : 88;
+  const density = size === 'inline' ? 'compact' : 'default';
+  const trend = direction === 'rising' ? rising : falling;
 
   return (
     <>
@@ -121,35 +105,57 @@ export default function SparklineCanvas() {
             <ThemeToggle />
           </View>
 
-          <Animated.View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              paddingHorizontal: 20,
-              transform: [{ translateY: previewOffset }],
-            }}
-          >
-            <Chart.Sparkline
-              data={state === 'empty' ? [] : direction === 'rising' ? rising : falling}
-              tone={tone}
-              density={density}
-              curve={curve}
-              height={height}
-              format={money}
-              emptyLabel="No trades yet"
-              empty={{
-                title: 'No trades yet',
-                description: 'Your price history will appear here after your first trade.',
-                action: { label: 'Make a trade', onPress: () => setState('default') },
-              }}
-              loading={state === 'loading'}
-              accessibilityLabel={`${direction} trend`}
-            >
-              {fill ? <Chart.Sparkline.Fill /> : null}
-              {showEndDot ? <Chart.Sparkline.EndDot /> : null}
-              {showExtremes ? <Chart.Sparkline.Extremes /> : null}
-            </Chart.Sparkline>
-          </Animated.View>
+          <ChartCanvas sheetOpen={sheetOpen}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+              <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+                <Text
+                  style={{
+                    color: t.colors.textSecondary,
+                    fontFamily: t.fontFamilies.sans,
+                    fontSize: t.typography.bodySm.fontSize,
+                  }}
+                >
+                  Portfolio
+                </Text>
+                <Text
+                  style={{
+                    color: t.colors.textPrimary,
+                    fontFamily: t.fontFamilies.sans,
+                    fontSize: t.typography.headingLarge.fontSize,
+                  }}
+                >
+                  {state === 'default'
+                    ? money(trend[trend.length - 1]!)
+                    : state === 'loading'
+                      ? 'Loading'
+                      : 'No activity'}
+                </Text>
+              </View>
+              <View style={{ width: '42%', maxWidth: 180 }}>
+                <Chart.Sparkline
+                  animated={motion.animated}
+                  key={motion.replay}
+                  data={state === 'empty' ? [] : trend}
+                  tone={tone}
+                  density={density}
+                  curve={curve}
+                  height={height}
+                  format={money}
+                  emptyLabel="No data"
+                  loading={state === 'loading'}
+                  accessibilityLabel={
+                    state === 'default'
+                      ? `${direction} portfolio trend`
+                      : `${state} portfolio trend`
+                  }
+                >
+                  {fill ? <Chart.Sparkline.Fill /> : null}
+                  {showEndDot ? <Chart.Sparkline.EndDot /> : null}
+                  {showExtremes && size !== 'inline' ? <Chart.Sparkline.Extremes /> : null}
+                </Chart.Sparkline>
+              </View>
+            </View>
+          </ChartCanvas>
 
           {!sheetOpen ? (
             <View
@@ -179,67 +185,6 @@ export default function SparklineCanvas() {
             onNext={() => router.replace('/chart/heatmap')}
           >
             <View style={{ gap: 14 }}>
-              <VariantControlRow label="Height">
-                {HEIGHTS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={size === value}
-                    onPress={() => setSize(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Tone">
-                {TONES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={tone === value}
-                    onPress={() => setTone(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              {/* `auto` infers its hue from direction, so the two need to move separately. */}
-              <VariantControlRow label="Direction">
-                {DIRECTIONS.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={direction === value}
-                    onPress={() => setDirection(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Extremes">
-                {(['off', 'on'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={showExtremes === (option === 'on')}
-                    onPress={() => setShowExtremes(option === 'on')}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Density">
-                {DENSITIES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={density === value}
-                    onPress={() => setDensity(value)}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="Curve">
-                {CURVES.map((value) => (
-                  <VariantChip
-                    key={value}
-                    label={value}
-                    active={curve === value}
-                    onPress={() => setCurve(value)}
-                  />
-                ))}
-              </VariantControlRow>
               <VariantControlRow label="State">
                 {STATES.map((value) => (
                   <VariantChip
@@ -250,26 +195,86 @@ export default function SparklineCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Fill">
-                {(['on', 'off'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={fill === (option === 'on')}
-                    onPress={() => setFill(option === 'on')}
-                  />
-                ))}
-              </VariantControlRow>
-              <VariantControlRow label="End dot">
-                {(['on', 'off'] as const).map((option) => (
-                  <VariantChip
-                    key={option}
-                    label={option}
-                    active={showEndDot === (option === 'on')}
-                    onPress={() => setShowEndDot(option === 'on')}
-                  />
-                ))}
-              </VariantControlRow>
+              {state === 'default' ? (
+                <>
+                  <VariantControlRow label="Size">
+                    {HEIGHTS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value === 'inline' ? 'compact' : 'expanded'}
+                        active={size === value}
+                        onPress={() => setSize(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Tone">
+                    {TONES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={tone === value}
+                        onPress={() => setTone(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  {/* `auto` infers its hue from direction, so the two need to move separately. */}
+                  <VariantControlRow label="Direction">
+                    {DIRECTIONS.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={direction === value}
+                        onPress={() => setDirection(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  {size !== 'inline' ? (
+                    <VariantControlRow label="Min/max">
+                      {(['off', 'on'] as const).map((option) => (
+                        <VariantChip
+                          key={option}
+                          label={option}
+                          active={showExtremes === (option === 'on')}
+                          onPress={() => setShowExtremes(option === 'on')}
+                        />
+                      ))}
+                    </VariantControlRow>
+                  ) : null}
+                  <VariantControlRow label="Curve">
+                    {CURVES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={curve === value}
+                        onPress={() => setCurve(value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Fill">
+                    {(['on', 'off'] as const).map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option}
+                        active={fill === (option === 'on')}
+                        onPress={() => setFill(option === 'on')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="End dot">
+                    {(['on', 'off'] as const).map((option) => (
+                      <VariantChip
+                        key={option}
+                        label={option}
+                        active={showEndDot === (option === 'on')}
+                        onPress={() => setShowEndDot(option === 'on')}
+                      />
+                    ))}
+                  </VariantControlRow>
+                </>
+              ) : null}
+              {state !== 'empty' ? (
+                <ChartMotionControls {...motion} disabled={state !== 'default'} />
+              ) : null}
             </View>
           </VariantSheet>
         </View>

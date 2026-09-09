@@ -18,6 +18,8 @@ import { useTokens } from '@arloui/registry';
 
 const DRAWER_EASING = Easing.bezier(0.32, 0.72, 0, 1);
 
+export const variantSheetHeight = (windowHeight: number) => Math.max(420, Math.round(windowHeight * 0.57));
+
 export function VariantSheet({
   visible,
   children,
@@ -39,7 +41,7 @@ export function VariantSheet({
   const dark = t.name === 'dark';
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
-  const sheetHeight = Math.max(420, Math.round(windowHeight * 0.57));
+  const sheetHeight = variantSheetHeight(windowHeight);
   const bottomBleed = Math.max(insets.bottom, 24) + 32;
   const closedY = sheetHeight + bottomBleed;
   const [translateY] = useState(() => new Animated.Value(closedY));

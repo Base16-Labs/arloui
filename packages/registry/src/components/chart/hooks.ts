@@ -5,19 +5,163 @@
  * because `Chart` imports the other four forms to build its namespace — a form
  * reaching back into `chart.tsx` for a hook would close that loop.
  */
-import { Children, isValidElement, useCallback, useEffect, useState } from 'react';
+import {
+  Children,
+  Fragment,
+  createContext,
+  createElement,
+  isValidElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import type { ReactNode } from 'react';
 import { Animated, Easing } from 'react-native';
+import {
+  cancelAnimation,
+  Easing as WorkletEasing,
+  useSharedValue,
+  withTiming,
+  type SharedValue,
+} from 'react-native-reanimated';
 
 /**
  * Re-exported, not re-implemented. Reduce Motion is one answer for the whole
  * app and lives in `foundation/reduce-motion`; this keeps the import path the
  * chart files (and anyone who copied them) already use.
  */
-export { useReduceMotion } from '../../foundation/reduce-motion';
 
 // Imported as well as re-exported: `useSkeletonPulse` below reads it directly.
-import { useReduceMotion } from '../../foundation/reduce-motion';
+import { useReduceMotion as useSystemReduceMotion } from '../../foundation/reduce-motion';
+import { useTokens } from '../../foundation/theme-provider';
+
+const MotionEnabled = createContext(true);
+
+/** A local opt-out never overrides the device's accessibility preference. */
+export function useReduceMotion(): boolean {
+  const system = useSystemReduceMotion();
+  const enabled = useContext(MotionEnabled);
+  return system || !enabled;
+}
+
+export function ChartMotion({
+  animated = true,
+  children,
+}: {
+  animated?: boolean;
+  children: ReactNode;
+}) {
+  const parentEnabled = useContext(MotionEnabled);
+  return createElement(MotionEnabled.Provider, { value: parentEnabled && animated }, children);
+}
+
+const SkeletonExit = createContext<Animated.Value | number>(1);
+
+/**
+ * Finish the placeholder exit before starting the chart entrance.
+ * Refreshing retains the supplied data; callers should keep their last result.
+ * No wrapper view is added, so chart sizing and flex layouts stay unchanged.
+ */
+export function ChartLoading({
+  loading = false,
+  refreshing = false,
+  children,
+}: {
+  loading?: boolean;
+  refreshing?: boolean;
+  children: (loading: boolean) => ReactNode;
+}) {
+  const reduced = useReduceMotion();
+  const t = useTokens();
+  const requested = loading && !refreshing;
+  const [visible, setVisible] = useState(requested);
+  const [opacity] = useState(() => new Animated.Value(1));
+  const duration = t.motion.chart.control.duration;
+  useEffect(() => {
+    opacity.stopAnimation();
+    if (requested || reduced || refreshing) {
+      opacity.setValue(1);
+      setVisible(requested);
+      return;
+    }
+    if (!visible) return;
+    let active = true;
+    const animation = Animated.timing(opacity, {
+      toValue: 0,
+      duration,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    });
+    animation.start(({ finished }) => {
+      if (active && finished) {
+        setVisible(false);
+        opacity.setValue(1);
+      }
+    });
+    return () => {
+      active = false;
+      animation.stop();
+    };
+  }, [requested, reduced, refreshing, visible, opacity, duration]);
+  return createElement(
+    SkeletonExit.Provider,
+    { value: opacity },
+    children(reduced || refreshing ? requested : requested || visible),
+  );
+}
+
+/** Run once when real, measured data becomes available, not on every selection. */
+export function useChartEntrance(ready: boolean): SharedValue<number> {
+  const t = useTokens();
+  const reduced = useReduceMotion();
+  const progress = useSharedValue(reduced ? 1 : 0);
+  const recipe = t.motion.chart.enter;
+  const [x1, y1, x2, y2] = recipe.easing;
+  useEffect(() => {
+    cancelAnimation(progress);
+    if (reduced || !ready) {
+      progress.value = reduced ? 1 : 0;
+      return;
+    }
+    progress.value = 0;
+    progress.value = withTiming(1, {
+      duration: recipe.duration,
+      easing: WorkletEasing.bezier(x1, y1, x2, y2),
+    });
+    return () => cancelAnimation(progress);
+  }, [ready, reduced, progress, recipe.duration, x1, y1, x2, y2]);
+  return progress;
+}
+
+/** Opacity-only entrances stay off the React render loop. */
+export function useChartFade(ready: boolean): Animated.Value | number {
+  const t = useTokens();
+  const reduced = useReduceMotion();
+  const [opacity] = useState(() => new Animated.Value(0));
+  const {
+    duration,
+    easing: [x1, y1, x2, y2],
+  } = t.motion.chart.barSwap;
+  useEffect(() => {
+    opacity.stopAnimation();
+    if (reduced || !ready) {
+      opacity.setValue(1);
+      return;
+    }
+    opacity.setValue(0);
+    const animation = Animated.timing(opacity, {
+      toValue: 1,
+      duration,
+      easing: Easing.bezier(x1, y1, x2, y2),
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [ready, reduced, opacity, duration, x1, y1, x2, y2]);
+  return reduced || !ready ? 1 : opacity;
+}
 
 /**
  * Controlled-or-uncontrolled, one contract for the root's scrub and for `Bar` and
@@ -49,35 +193,29 @@ export function useControllableIndex(
  * that stopped following the finger would read as broken rather than as calm.
  */
 
-/**
- * The skeleton pulse every form loads with.
- *
- * One hook rather than a copy per form so all five breathe on the same clock —
- * a StatCard sparkline and the Bar chart under it loading out of phase reads as
- * two unrelated things failing, not as one screen filling in.
- *
- * Charts skeleton rather than spin: the silhouette holds the space the marks
- * will occupy, so nothing reflows when the data lands. Under Reduce Motion the
- * pulse resolves to a flat resting opacity — still visibly "not the data", with
- * no animation.
- */
-export function useSkeletonPulse(durationMs: number): Animated.Value | number {
+/** One restrained opacity pulse; reduced motion uses a static placeholder. */
+export function useSkeletonPulse(
+  durationMs: number,
+  active = true,
+): Animated.AnimatedMultiplication<number> | number {
+  const exit = useContext(SkeletonExit);
   const reduceMotion = useReduceMotion();
   const [pulse] = useState(() => new Animated.Value(SKELETON_MIN_OPACITY));
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || !active) return;
+    pulse.setValue(SKELETON_MIN_OPACITY);
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, {
           toValue: SKELETON_MAX_OPACITY,
-          duration: durationMs,
+          duration: durationMs * 2,
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
         Animated.timing(pulse, {
           toValue: SKELETON_MIN_OPACITY,
-          duration: durationMs,
+          duration: durationMs * 2,
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
@@ -85,56 +223,16 @@ export function useSkeletonPulse(durationMs: number): Animated.Value | number {
     );
     loop.start();
     return () => loop.stop();
-  }, [pulse, reduceMotion, durationMs]);
+  }, [pulse, reduceMotion, durationMs, active]);
 
-  return reduceMotion ? SKELETON_REST_OPACITY : pulse;
+  const opacity = useMemo(() => Animated.multiply(pulse, exit), [pulse, exit]);
+  return reduceMotion ? SKELETON_REST_OPACITY : opacity;
 }
 
-const SKELETON_MIN_OPACITY = 0.35;
-const SKELETON_MAX_OPACITY = 0.75;
+const SKELETON_MIN_OPACITY = 0.5;
+const SKELETON_MAX_OPACITY = 0.65;
 /** Reduce Motion resting value — the midpoint, so it reads the same weight. */
-const SKELETON_REST_OPACITY = 0.55;
-
-/**
- * The sweep that rides on top of the pulse.
- *
- * Two things are happening in a chart skeleton and they say different things:
- * the pulse is the surface breathing — "this is a placeholder" — and the sheen
- * travelling across it is "something is on its way". Systems that use only the
- * pulse read as inert; only the sheen and the shape stops reading as a
- * placeholder at all. Running both is what the `Skeleton` component already
- * does, so the charts match rather than inventing a second treatment.
- *
- * Returns `null` under Reduce Motion. The pulse resolves to a flat resting
- * opacity there and the sheen simply does not run — a highlight crossing the
- * screen on a loop is the exact thing that setting is asking to stop.
- */
-export function useSkeletonSheen(durationMs: number): Animated.Value | null {
-  const reduceMotion = useReduceMotion();
-  const [sweep] = useState(() => new Animated.Value(0));
-
-  useEffect(() => {
-    if (reduceMotion) return;
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(sweep, {
-          toValue: 1,
-          duration: durationMs,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        // A beat at the far edge, so the sweep reads as repeating passes rather
-        // than a band spinning on a belt.
-        Animated.delay(durationMs * 0.4),
-      ]),
-    );
-    sweep.setValue(0);
-    loop.start();
-    return () => loop.stop();
-  }, [sweep, reduceMotion, durationMs]);
-
-  return reduceMotion ? null : sweep;
-}
+const SKELETON_REST_OPACITY = 0.575;
 
 /* ------------------------------------------------------------------------- *
  * Composition
@@ -157,12 +255,17 @@ export type PartMap = Map<unknown, unknown[]>;
 /** Read a form's children into a map. Non-elements and unknown parts are ignored. */
 export function collectParts(children: ReactNode): PartMap {
   const found: PartMap = new Map();
-  Children.forEach(children, (child) => {
+  const visit = (nodes: ReactNode) => Children.forEach(nodes, (child) => {
     if (!isValidElement(child)) return;
+    if (child.type === Fragment) {
+      visit((child.props as { children?: ReactNode }).children);
+      return;
+    }
     const seen = found.get(child.type);
     if (seen) seen.push(child.props);
     else found.set(child.type, [child.props]);
   });
+  visit(children);
   return found;
 }
 

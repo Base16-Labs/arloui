@@ -1,5 +1,7 @@
+import { waitFor } from '@testing-library/react-native';
 import { jest } from '@jest/globals';
 import { StyleSheet, View } from 'react-native';
+import { Path } from 'react-native-svg';
 import { BarChart } from '../bar-chart';
 import { Chart } from '../index';
 import { DonutChart } from '../donut-chart';
@@ -718,6 +720,21 @@ describe('Meter — arc and concentric rings', () => {
 describe('Chart.Plot — stack', () => {
   const base = [10, 12, 11, 14];
 
+  it('uses custom stacked colors and falls back for unspecified slots', () => {
+    const chart = (colors?: readonly string[]) => <Chart data={base} animated={false}>
+      <Chart.Plot stack={[[4, 5, 4, 6], [2, 2, 3, 2]]} stackColors={colors}>{null}</Chart.Plot>
+    </Chart>;
+    const view = renderWithTheme(chart());
+    layout();
+    const fills = () => screen.UNSAFE_getAllByType(Path).map((node) => node.props.fill).filter((fill) => fill && fill !== 'none');
+    const original = fills();
+    view.rerender(chart(['#155DFC', '#14B8A6', '#FACC15']));
+    expect(new Set(fills())).toEqual(new Set(['#155DFC', '#14B8A6', '#FACC15']));
+    view.rerender(chart(['#123456']));
+    expect(fills()).toContain('#123456');
+    expect(fills()).toEqual(expect.arrayContaining(original.slice(0, 2)));
+  });
+
   /** The plot only draws once measured, so specs hand the root a layout first. */
   function layout(width = 320) {
     const node = screen.UNSAFE_root
@@ -776,6 +793,23 @@ describe('Chart.Plot — stack', () => {
    * *are* different, and the bug was that they read the same. What is pinned is
    * the rule that fixes it — once stacked, the primary is a category too.
    */
+  it.each(['light', 'dark'] as const)('uses solid, distinct fills for every stacked area in %s mode', (theme) => {
+    renderWithTheme(
+      <Chart data={base}>
+        <Chart.Plot stack={[[4, 5, 4, 6], [2, 2, 3, 2]]} height={120} fill>
+          {null}
+        </Chart.Plot>
+      </Chart>,
+      { theme },
+    );
+    layout();
+    const stacked = paints();
+    expect(stacked.fills).toHaveLength(3);
+    expect(new Set(stacked.fills).size).toBe(3);
+    expect(stacked.fills).toContain(stacked.line);
+    expect(screen.UNSAFE_root.findAllByType('RNSVGLinearGradient' as never)).toHaveLength(0);
+  });
+
   it('moves the primary onto the categorical palette once it is stacked', () => {
     const plain = renderWithTheme(
       <Chart data={base}>
@@ -973,10 +1007,7 @@ describe('BarChart — spacing, density, and empty', () => {
       const r = renderWithTheme(
         <BarChart data={week} layout="horizontal" spacing={spacing} />,
       );
-      const rows = screen.UNSAFE_root
-        .findAllByType('View' as never)
-        .map((node) => (node.props as { style?: { gap?: number } }).style)
-        .find((style) => style && typeof style.gap === 'number' && style.gap > 0);
+      const rows = StyleSheet.flatten(screen.getByRole('image').props.style);
       r.unmount();
       return rows?.gap ?? 0;
     };
@@ -1126,11 +1157,11 @@ describe('DonutChart', () => {
       return Math.min(...radii);
     };
 
-    const wide = renderWithTheme(<DonutChart data={spend} density="default" />);
+    const wide = renderWithTheme(<DonutChart animated={false} data={spend} density="default" />);
     const defaultHole = innerRadius();
     wide.unmount();
 
-    renderWithTheme(<DonutChart data={spend} density="compact" />);
+    renderWithTheme(<DonutChart animated={false} data={spend} density="compact" />);
     // A thinner ring leaves a bigger hole at the same outer radius.
     expect(innerRadius()).toBeGreaterThan(defaultHole);
   });
@@ -1141,14 +1172,14 @@ describe('DonutChart', () => {
   });
 
   /** The centre value is a figure the chart does not have yet. */
-  it('shows no centre figure while loading', () => {
+  it('shows no centre figure while loading', async () => {
     const { rerender } = renderWithTheme(
       <DonutChart data={spend} format={(v) => `$${v}`} loading />,
     );
     expect(screen.queryByText('$1680')).toBeNull();
 
     rerender(<DonutChart data={spend} format={(v) => `$${v}`} />);
-    expect(screen.getByText('$1680')).toBeTruthy();
+    await waitFor(() => expect(screen.getByText('$1680')).toBeTruthy());
   });
 
   it('keeps the short label in the ring when empty', () => {
@@ -1201,7 +1232,7 @@ describe('DonutChart', () => {
       [3, 3],
       [4, 4],
     ])('draws exactly %i arcs when asked for %i', (asked, expected) => {
-      const r = renderWithTheme(<DonutChart data={four} maxSlices={asked} />);
+      const r = renderWithTheme(<DonutChart animated={false} data={four} maxSlices={asked} />);
       expect(arcs()).toBe(expected);
       r.unmount();
     });
@@ -1216,7 +1247,7 @@ describe('DonutChart', () => {
 
     it('folds past four categories however high the cap goes', () => {
       const seven = Array.from({ length: 7 }, (_, i) => ({ label: `C${i}`, value: 10 + i }));
-      renderWithTheme(<DonutChart data={seven} maxSlices={99} showLegend />);
+      renderWithTheme(<DonutChart animated={false} data={seven} maxSlices={99} showLegend />);
       // Four named plus Other: the palette's ceiling, not the caller's number.
       expect(arcs()).toBe(5);
       expect(screen.getByText('Other')).toBeTruthy();
