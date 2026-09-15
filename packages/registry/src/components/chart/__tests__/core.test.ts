@@ -1,6 +1,7 @@
 import {
   annulusPath,
   areaPath,
+  bandPath,
   barPath,
   densityMetrics,
   interpolateSeries,
@@ -265,5 +266,48 @@ describe('formatters', () => {
 
   it('groups a plain number', () => {
     expect(formatNumber({ locale: 'en-US' })(1240500)).toBe('1,240,500');
+  });
+});
+
+/**
+ * The band is part of the same plot as the line it wraps, so it has to answer to
+ * the same `curve`. It used to be straight-segment only, which drew a fitted
+ * spline over a hard-cornered band — two readings of one set of points, stacked.
+ */
+describe('bandPath', () => {
+  const upper = [
+    { x: 0, y: 10 },
+    { x: 10, y: 4 },
+    { x: 20, y: 8 },
+    { x: 30, y: 2 },
+  ];
+  const lower = upper.map((p) => ({ x: p.x, y: p.y + 20 }));
+
+  it('is straight segments by default', () => {
+    const d = bandPath(upper, lower);
+    expect(d).not.toContain('C');
+    expect(d.endsWith('Z')).toBe(true);
+  });
+
+  it('curves both edges when asked to', () => {
+    const d = bandPath(upper, lower, 'smooth');
+    expect(d).toContain('C');
+    expect(d.endsWith('Z')).toBe(true);
+  });
+
+  /**
+   * One subpath, or the fill leaks: the return leg has to continue the shape
+   * rather than start a new one, so its leading `M` becomes an `L`.
+   */
+  it('keeps the whole band in a single subpath', () => {
+    for (const curve of ['steep', 'smooth'] as const) {
+      const d = bandPath(upper, lower, curve);
+      expect(d.match(/M/g)).toHaveLength(1);
+    }
+  });
+
+  it('is empty when either edge is', () => {
+    expect(bandPath([], lower, 'smooth')).toBe('');
+    expect(bandPath(upper, [], 'smooth')).toBe('');
   });
 });

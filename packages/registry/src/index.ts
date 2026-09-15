@@ -33,7 +33,57 @@ export {
   type ListRowProps,
   type ListRowValueTone,
 } from './components/list';
-export { Sparkline, type SparklineProps } from './components/chart/sparkline';
+export {
+  Chart,
+  LineChart,
+  formatMoney,
+  formatNumber,
+  formatPercent,
+  // The geometry the five forms are drawn with. Public because the "no" list is
+  // real: a sixth form is yours to write, and it should measure the way these do.
+  annulusPath,
+  areaPath,
+  barPath,
+  densityMetrics,
+  interpolateSeries,
+  linePath,
+  makeScale,
+  resample,
+  seriesColorAt,
+  seriesPalette,
+  seriesStats,
+  toPoints,
+  toneColor,
+  useControllableIndex,
+  valuesOf,
+  type BarChartProps,
+  type BarDatum,
+  type BarChartLayout,
+  type BarChartSpacing,
+  type BarChartVariant,
+  type BarSeries,
+  type ChartChrome,
+  type ChartCurve,
+  type ChartData,
+  type ChartDensity,
+  type ChartLegendItem,
+  type ChartPlotProps,
+  type ChartPoint,
+  type ChartProps,
+  type ChartRange,
+  type ChartReference,
+  type ChartTone,
+  type DensityMetrics,
+  type DonutChartProps,
+  type DonutSlice,
+  type HeatmapDatum,
+  type HeatmapProps,
+  type MeterProps,
+  type MeterShape,
+  type Scale,
+  type SeriesStats,
+  type SparklineProps,
+} from './components/chart';
 export {
   Carousel,
   type CarouselIndicator,
@@ -147,6 +197,7 @@ export {
   type TextAreaState,
 } from './components/text-area';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
+export { useReduceMotion } from './foundation/reduce-motion';
 export {
   GlassBackdrop,
   isNativeGlassAvailable,

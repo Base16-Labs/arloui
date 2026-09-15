@@ -16,6 +16,7 @@
 - Motion
 - Social auth
 - Code
+- Props
 - Tokens
 - Accessibility
 - Do · Don't

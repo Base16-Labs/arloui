@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, Children, isValidElement, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   I18nManager,
   PanResponder,
@@ -11,8 +10,10 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { OutlineCaretLeft } from '@arloui/icons/OutlineCaretLeft';
+import { OutlineCaretRight } from '@arloui/icons/OutlineCaretRight';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type CarouselSnap = 'item' | 'page';
 export type CarouselIndicator = 'dots' | 'none';
@@ -70,7 +71,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
   const count = items.length;
 
   const [containerWidth, setContainerWidth] = useState(windowWidth);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   const [translateX] = useState(() => new Animated.Value(0));
@@ -89,15 +90,6 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
           containerWidth;
   const totalWidth = count * itemWidth + (count - 1) * resolvedGap;
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((v) => active && setReduceMotion(v));
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      sub.remove();
-    };
-  }, []);
 
   const inset = snap === 'page' ? 0 : peek ? peekAmount : 0;
 
@@ -331,6 +323,7 @@ function CarouselArrow({
 }) {
   const t = useTokens();
   const isLeft = direction === 'left';
+  const ArrowIcon = isLeft ? OutlineCaretLeft : OutlineCaretRight;
 
   return (
     <Pressable
@@ -350,19 +343,7 @@ function CarouselArrow({
         opacity: disabled ? 0.35 : 1,
       })}
     >
-      <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
-        <Path
-          d={
-            isLeft
-              ? 'M10 3L5 8L10 13'
-              : 'M6 3L11 8L6 13'
-          }
-          stroke={t.colors.textPrimary}
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </Svg>
+      <ArrowIcon width={16} height={16} color={t.colors.textPrimary} accessible={false} />
     </Pressable>
   );
 }

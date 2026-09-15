@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { AccessibilityInfo, Text } from 'react-native';
 import { Toast } from '../toast';
 import { renderWithTheme, screen, fireEvent, act, waitFor } from '../../../../test/render';
+import { __setReduceMotionForTests } from '../../../foundation/reduce-motion';
 
 describe('Toast', () => {
   afterEach(() => {
@@ -66,6 +67,7 @@ describe('Toast', () => {
     act(() => { jest.runAllTimers(); });
     expect(onDismiss).toHaveBeenCalled();
     jest.useRealTimers();
+    __setReduceMotionForTests(false);
   });
 
   it('auto-dismisses after the default duration', async () => {
@@ -131,8 +133,9 @@ describe('Toast', () => {
   });
 
   it('works with reduce-motion enabled', async () => {
-    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
-    jest.spyOn(AccessibilityInfo, 'addEventListener').mockReturnValue({ remove: jest.fn() } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    // The seam, not a mock: Reduce Motion is one process-wide store, so it
+    // probes the OS once for the whole suite and a later mock is never read.
+    __setReduceMotionForTests(true);
     jest.useFakeTimers();
     const onDismiss = jest.fn();
     renderWithTheme(

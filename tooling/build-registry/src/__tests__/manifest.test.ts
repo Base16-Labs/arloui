@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { REGISTRY } from '@arloui/registry/manifest';
 import { buildAll, buildIndex, validateManifest } from '../lib';
+import { chartForms } from '../../../../apps/www/lib/chart-forms';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../../..');
@@ -146,5 +147,133 @@ describe('the Snack map', () => {
     }
     // What must never happen: a slug in the map that nothing generates.
     expect(Object.keys(snackMap).filter((slug) => !mapped.includes(slug))).toEqual([]);
+  });
+});
+
+/**
+ * The Chart page hand-writes a table mapping each split entry to the file it
+ * lands in and the symbol it exports. Nothing regenerates that table, so it
+ * drifts silently the moment an entry is renamed or a form moves file — which
+ * is how the page came to promise six forms while rendering five. Read it back
+ * and hold it against the manifest.
+ */
+describe('the chart docs import table', () => {
+  const DOC = join(ROOT, 'apps/www/public/md/docs/components/chart.md');
+
+  it('names entries that exist, with the files they actually install', async () => {
+    expect(chartForms).toHaveLength(6);
+
+    const wrong: string[] = [];
+    for (const { entry: name, file, exportName, slug } of chartForms) {
+      const md = await readFile(join(dirname(DOC), `${slug}.md`), 'utf8');
+      expect(md).toContain(`npx arloui add ${name}`);
+      expect(md).toContain(`import { ${exportName} } from '@/components/ui/${file}'`);
+      const entry = REGISTRY.items.find((i) => i.name === name);
+      if (!entry) {
+        wrong.push(`${name}: documented but not in the manifest`);
+        continue;
+      }
+      // The table drops the extension, so compare against the stripped target.
+      const targets = entry.files.map((f) => f.target.replace(/\.(tsx|ts)$/, ''));
+      if (!targets.includes(file)) {
+        wrong.push(`${name}: docs say ${file}, entry installs ${targets.join(', ')}`);
+      }
+    }
+    expect(wrong).toEqual([]);
+  });
+
+  it('documents every split form the manifest ships', async () => {
+    const md = await readFile(DOC, 'utf8');
+    const shipped = REGISTRY.items
+      .map((i) => i.name)
+      .filter((n) => n.startsWith('chart-') && n !== 'chart-core' && n !== 'chart-plot');
+    const undocumented = shipped.filter((n) => !md.includes(`npx arloui add ${n}`));
+    expect(undocumented).toEqual([]);
+  });
+});
+
+/**
+ * The Chart page's props tables are generated from the registry types, so the
+ * failure mode is not staleness but silence: a parser that stops matching emits
+ * an empty table and the page still builds. Assert the tables are there and
+ * that they carry the props the source actually declares.
+ */
+describe('the chart props reference', () => {
+  const DOC = join(ROOT, 'apps/www/public/md/docs/components/chart.md');
+
+  it('emits a table for every form, with real rows', async () => {
+    const md = await readFile(DOC, 'utf8');
+    const section = md.slice(md.indexOf('## API reference'), md.indexOf('## Loading and empty states'));
+    for (const form of ['LineChart', 'LineChart.Plot', 'Chart.Bar', 'Chart.Sparkline', 'Chart.Donut', 'Chart.Meter', 'Chart.Heatmap']) {
+      expect(section).toContain(form === 'LineChart' ? '### Line chart (`LineChart`)' : `### ${form}`);
+    }
+    // Every row is `| \`name\` | \`type\` | default | description |`.
+    const rows = [...section.matchAll(/^\| `\w+`/gm)];
+    expect(rows.length).toBeGreaterThan(80);
+  });
+
+  it('documents what every prop does', async () => {
+    const md = await readFile(DOC, 'utf8');
+    const section = md.slice(md.indexOf('## API reference'), md.indexOf('## Loading and empty states'));
+    expect(section.length).toBeGreaterThan(0);
+    // An em dash in the last cell is the generator saying "no JSDoc found".
+    const undocumented = [...section.matchAll(/^\| (`\w+`[^|]*)\|[^|]*\|[^|]*\| — \|$/gm)].map(
+      (m) => m[1].trim(),
+    );
+    expect(undocumented).toEqual([]);
+  });
+});
+
+/**
+ * Parts are half the reference now: props say how a chart behaves, parts say
+ * what it draws. An undocumented part is the gap that sent readers into the
+ * source to find out that a bar chart needs `<Categories />` to show names.
+ */
+describe('the chart parts reference', () => {
+  const DOC = join(ROOT, 'apps/www/public/md/docs/components/chart.md');
+
+  it('documents every part of every form', async () => {
+    const md = await readFile(DOC, 'utf8');
+    const section = md.slice(md.indexOf('## API reference'), md.indexOf('## Loading and empty states'));
+    const rows = [...section.matchAll(/^\| `<([\w.]+) \/>` \|[^|]*\| ([^|]*)\|$/gm)];
+    expect(rows.length).toBeGreaterThan(25);
+
+    const undocumented = rows.filter((m) => m[2]!.trim() === '—').map((m) => m[1]);
+    expect(undocumented).toEqual([]);
+
+    // The parts a reader is most likely to reach for, by name.
+    for (const part of ['LineChart.Crosshair', 'Chart.Bar.Series', 'Chart.Meter.Ring', 'Chart.Sparkline.Fill']) {
+      expect(section).toContain(`<${part} />`);
+    }
+  });
+});
+
+/**
+ * Each chart form has a page of its own, generated from one data source shared
+ * with the rendered site. The failure worth catching is a form that exists in
+ * the registry but never got a page — the reader's route into it just is not
+ * there, and nothing else notices.
+ */
+describe('the per-form chart pages', () => {
+  const MD = join(ROOT, 'apps/www/public/md/docs/components');
+
+  it('gives every shipped form a page with its reference on it', async () => {
+    const forms = REGISTRY.items
+      .map((item) => item.name)
+      .filter((name) => name.startsWith('chart-') && name !== 'chart-core' && name !== 'chart-plot');
+
+    for (const form of forms) {
+      const page = await readFile(join(MD, `${form}.md`), 'utf8');
+      expect(page).toContain('## Install');
+      expect(page).toContain(`npx arloui add ${form}`);
+      expect(page).toContain('## Examples');
+      expect(page).toContain('## When to use');
+      // The reference is the half that cannot be hand-written, so assert it landed.
+      expect(page).toMatch(/## (Props|Parts)/);
+    }
+  });
+  it('keeps the legacy raw Markdown URL equivalent to the canonical page', async () => {
+    expect(await readFile(join(MD, 'chart-plot.md'), 'utf8'))
+      .toBe(await readFile(join(MD, 'chart-line.md'), 'utf8'));
   });
 });

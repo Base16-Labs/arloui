@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import Link from 'next/link';
 import { RightRail } from '@/components/nav/RightRail';
 import { Eyebrow } from '@/components/mdx/Eyebrow';
 import { Lede } from '@/components/mdx/Lede';
@@ -24,10 +25,13 @@ import { CarouselDocPlayground } from '@/components/docs/carousel-preview';
 import { GalleryDocPlayground } from '@/components/docs/gallery-preview';
 import { BadgeDocPlayground } from '@/components/docs/badge-doc-playground';
 import { ChipDocPlayground } from '@/components/docs/chip-doc-playground';
+import { ChartFormPage } from '@/components/docs/chart-form-page';
+import { ChartOverviewPage } from '@/components/docs/chart-overview-page';
+import { chartFormBySlug } from '@/lib/chart-forms';
 import { DevicePreview } from '@/components/ui/DevicePreview';
 import { GithubMark } from '@/components/ui/GithubMark';
 import { DocIconArrowRight, DocIconLock } from '@/components/docs/button-preview-icons';
-import { componentGroups } from '@/lib/routes';
+import { chartFormRoutes, componentGroups } from '@/lib/routes';
 import {
   buttonData,
   cardData,
@@ -53,13 +57,22 @@ import {
 } from '@/lib/docs-markdown';
 
 export function generateStaticParams() {
-  return componentGroups.flatMap((g) => g.items.map((item) => ({ slug: item.slug })));
+  return [
+    { slug: 'chart' },
+    { slug: 'chart-plot' },
+    ...componentGroups.flatMap((g) => g.items.map((item) => ({ slug: item.slug }))),
+    ...chartFormRoutes.map((form) => ({ slug: form.slug })),
+  ];
 }
 
 export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (slug === 'chart-plot') permanentRedirect('/docs/components/chart-line');
 
-  const exists = componentGroups.some((g) => g.items.some((item) => item.slug === slug));
+  const chartForm = chartFormBySlug.get(slug);
+  if (chartForm) return <ChartFormPage form={chartForm} />;
+
+  const exists = slug === 'chart' || componentGroups.some((g) => g.items.some((item) => item.slug === slug));
   if (!exists) notFound();
 
   if (slug === 'button') {
@@ -140,6 +153,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   if (slug === 'stepper') {
     return <StepperDocPage />;
+  }
+
+  if (slug === 'chart') {
+    return <ChartOverviewPage />;
   }
 
   return (

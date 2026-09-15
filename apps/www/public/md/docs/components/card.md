@@ -13,6 +13,7 @@
 - Recipes
 - When to use
 - Code
+- Props
 - Tokens
 - Accessibility
 - Do · Don't

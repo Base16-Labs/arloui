@@ -1,3 +1,4 @@
+import { PlotPlaceholder } from './skeleton';
 /**
  * Arlo UI — Sparkline
  *
@@ -13,9 +14,20 @@
  * so a sparkline and a plot of the same series have the same shape.
  */
 import { useId, useMemo, useState } from 'react';
-import { View, type LayoutChangeEvent, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Defs, LinearGradient, Path, Stop } from 'react-native-svg';
+import type { ReactNode } from 'react';
+import {
+  Text,
+  Animated,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
+import Svg, { Circle, Defs, LinearGradient, Path, Stop, ClipPath, G } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
+import { ChartLoading, ChartMotion, useChartEntrance } from './hooks';
+import { ChartFill, ChartReveal } from './motion';
 import {
   areaPath,
   densityMetrics,
@@ -29,8 +41,14 @@ import {
   type ChartDensity,
   type ChartTone,
 } from './core';
+import { EmptyContent, type ChartEmptyProps } from './empty';
+import { collectParts, hasPart } from './hooks';
+
 
 export type SparklineProps = {
+  /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
+  animated?: boolean;
+  /** The series. Bare numbers are fine — a sparkline has no axis to label. */
   data: ChartData;
   /**
    * Honours `auto` (default; tones by whether the series ended above where it
@@ -40,24 +58,75 @@ export type SparklineProps = {
   tone?: ChartTone;
   /** Inline marks default to `compact`: a thinner stroke and a smaller dot. */
   density?: ChartDensity;
+  /** Fixed width in points. Omit it and the mark measures its parent instead. */
   width?: number;
+  /** Fixed height in points. Small by default: this is an inline mark. */
   height?: number;
   /** Fade a gradient under the line. Off by default — inline marks stay light. */
-  fill?: boolean;
   /** Dot on the final point, for "where it ended up". */
-  showEndDot?: boolean;
+  /**
+   * Label the series' own high and low in the margins above and below the mark.
+   *
+   * These are the *data's* extremes, not an axis: two numbers the series
+   * actually reached, which is the same thing `chrome="reference"` draws as a
+   * min/max pair on `Chart.Plot`. There is still no scale, no ticks, and no
+   * gridlines — the rule the chart core sets out holds.
+   *
+   * Reserves a row top and bottom, so the mark shrinks rather than running under
+   * the text.
+   */
+  /** Formats the extreme labels. Raw values when omitted. */
+  format?: (value: number) => string;
+  /**
+   * Short text in place of the mark when there is no data — the same minimum
+   * every other chart form has.
+   *
+   * No default, because the inline case genuinely has none: a 28pt row in a list
+   * has no room for words, and the hairline dash is the honest answer there.
+   * Give a label wherever the sparkline is big enough to read one.
+   */
+  emptyLabel?: string;
+  /**
+   * The composed empty slot — headline, one line, one action — the same one
+   * `Chart.Empty`, `Chart.Bar`, and `Chart.Donut` draw. Replaces the mark, so it
+   * needs a sparkline given real height; an inline one cannot hold it.
+   *
+   * Wins over `emptyLabel`.
+   */
+  empty?: ChartEmptyProps;
+  /** How points are joined — `steep` for straight segments, `smooth` for a spline. */
   curve?: ChartCurve;
   /** Overrides the density's stroke width. */
   strokeWidth?: number;
+  /**
+   * Draws a neutral pulsing placeholder instead of the series. Holds the same
+   * box, so the row it sits in does not reflow when the data lands.
+   */
+  loading?: boolean;
+  /** Keep the last supplied data visible during a background fetch. Overrides loading. */
+  refreshing?: boolean;
   /**
    * Sparklines are decorative next to a value that is already announced, so they
    * are hidden from assistive tech unless you pass a label.
    */
   accessibilityLabel?: string;
+  /** Style for the mark's container. */
   style?: StyleProp<ViewStyle>;
+  /**
+   * The composed form: `<Sparkline.EndDot />` rather than `showEndDot`,
+   * `<Sparkline.Fill />` rather than `fill`. Omit it and the mark renders
+   * exactly as it always has.
+   */
+  children?: ReactNode;
 };
 
-export function Sparkline({
+type SparklineResolved = SparklineProps & {
+  fill?: boolean;
+  showEndDot?: boolean;
+  showExtremes?: boolean;
+};
+
+function SparklineInner({
   data,
   tone = 'auto',
   density = 'compact',
@@ -65,11 +134,17 @@ export function Sparkline({
   height = 28,
   fill = false,
   showEndDot = false,
+  showExtremes = false,
+  format,
+  emptyLabel,
+  empty,
   curve = 'steep',
   strokeWidth,
+  loading = false,
+  refreshing = false,
   accessibilityLabel,
   style,
-}: SparklineProps) {
+}: SparklineResolved) {
   const t = useTokens();
   const [measured, setMeasured] = useState(0);
   const width = widthProp ?? measured;
@@ -77,6 +152,13 @@ export function Sparkline({
   const stroke = strokeWidth ?? metrics.stroke;
   // Half a stroke plus the end dot, so neither clips against the edge of the box.
   const inset = showEndDot ? Math.max(metrics.inset, stroke + 1.5) : Math.ceil(stroke / 2) + 1;
+  /*
+   * Room for the extreme labels, taken out of the mark rather than added around
+   * it — a sparkline sits in a fixed slot (a list row, a card header), so it has
+   * to keep the height it was given and shrink the line instead.
+   */
+  const extremeRow = showExtremes ? EXTREME_ROW : 0;
+  const plotHeight = Math.max(1, height - extremeRow * 2);
 
   const points = useMemo(() => toPoints(data), [data]);
   const stats = useMemo(() => seriesStats(points), [points]);
@@ -89,20 +171,47 @@ export function Sparkline({
       min: stats.min,
       span: stats.span,
       width,
-      height,
+      height: plotHeight,
       inset,
     });
-    return points.map((point, index) => ({ x: scale.x(index), y: scale.y(point.value) }));
-  }, [points, width, height, inset, stats.min, stats.span]);
+    return points.map((point, index) => ({
+      x: scale.x(index),
+      y: scale.y(point.value) + extremeRow,
+    }));
+  }, [points, width, plotHeight, extremeRow, inset, stats.min, stats.span]);
 
   const line = linePath(plotted, curve);
-  const area = fill ? areaPath(plotted, height - inset, curve) : '';
+  const area = fill ? areaPath(plotted, height - inset - extremeRow, curve) : '';
   const end = plotted[plotted.length - 1];
 
   // Per instance, not per tone: two `tone="auto"` sparklines on one screen resolve
   // to different colours but would share one document-global gradient id, so the
   // first definition would win and paint both fills the same.
   const gradientId = `arloSparkFill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const entrance = useChartEntrance(!loading && width > 0 && plotted.length > 0);
+  const revealId = `${gradientId}-reveal`;
+
+  /*
+   * The composed slot replaces the mark outright, exactly as it does on the
+   * donut — it cannot live inside the sparkline's box.
+   *
+   * A sparkline is 28pt tall inline and 56pt standalone; the slot's icon tile
+   * alone is 52pt. Rendering it into an `absoluteFill` inside that fixed height
+   * crushed it, which is why it did not look like the empty state on any other
+   * form. Returning early lets the content set its own height, the way every
+   * other chart's slot does.
+   *
+   * Keyed off the data rather than the plotted points: `plotted` is also empty
+   * before the first measurement, and a chart that flashes its empty state on
+   * mount is worse than one that waits a frame.
+   */
+  if (empty && !loading && points.length === 0) {
+    return (
+      <View style={[{ width: widthProp, justifyContent: 'center' }, style]}>
+        <EmptyContent {...empty} />
+      </View>
+    );
+  }
 
   return (
     <View
@@ -113,13 +222,82 @@ export function Sparkline({
       }
       accessible={accessibilityLabel != null}
       accessibilityRole={accessibilityLabel != null ? 'image' : undefined}
+        accessibilityState={{ busy: loading || refreshing }}
       accessibilityLabel={accessibilityLabel}
       accessibilityElementsHidden={accessibilityLabel == null}
       importantForAccessibility={accessibilityLabel == null ? 'no-hide-descendants' : 'auto'}
       style={[{ width: widthProp, height }, style]}
     >
-      {width > 0 && plotted.length > 0 ? (
+      {/*
+        Outside the SVG, so they take the app's type ramp rather than SVG's own
+        text metrics — the same reason the bar chart draws its value labels this
+        way. Mono, because two stacked figures have to align digit for digit.
+      */}
+      {showExtremes && !loading && plotted.length > 0 ? (
+        <>
+          <ExtremeLabel top text={`H ${format ? format(stats.max) : stats.max}`} />
+          <ExtremeLabel top={false} text={`L ${format ? format(stats.min) : stats.min}`} />
+        </>
+      ) : null}
+
+      {loading ? (
+        <SparklineSkeleton width={width} height={height} inset={inset} />
+      ) : null}
+
+      {/*
+        Empty is a flat rule at the baseline, never a "No data" caption: a
+        sparkline is inline beside a number that already carries the label, and a
+        28px box has no room for text. The rule holds the height so the row keeps
+        its rhythm.
+      */}
+      {/*
+        Words when there is room for them, the dash when there is not.
+        
+        The mark alone said nothing about *why* it was blank, which is the one
+        thing the other forms all manage — they each fall back to a short label.
+        A sparkline cannot always afford one, so this is opt-in rather than a
+        default, and the dash stays the answer for a 28pt list row.
+      */}
+      {!loading && plotted.length === 0 && emptyLabel ? (
+        <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center' }]}>
+          <Text
+            numberOfLines={1}
+            style={{
+              color: t.colors.textTertiary,
+              fontFamily: t.fontFamilies.sans,
+              fontSize: t.typography.bodySm.fontSize,
+              lineHeight: t.typography.bodySm.lineHeight,
+            }}
+          >
+            {emptyLabel}
+          </Text>
+        </View>
+      ) : null}
+
+      {!loading && width > 0 && plotted.length === 0 && !emptyLabel ? (
         <Svg width={width} height={height}>
+          {/*
+            Dashed and hairline, not a solid rule at the data's own weight.
+            
+            A solid line across the middle is exactly what a real series with no
+            change looks like, so an empty sparkline was indistinguishable from a
+            flat one — the chart said "zero" when it meant "nothing". A dash at a
+            lighter weight reads as an absence.
+          */}
+          <Path
+            d={`M ${inset} ${height / 2} L ${width - inset} ${height / 2}`}
+            stroke={t.colors.borderSecondary}
+            strokeWidth={1}
+            strokeDasharray="3 4"
+            strokeLinecap="round"
+          />
+        </Svg>
+      ) : null}
+
+      {!loading && width > 0 && plotted.length > 0 ? (
+        <Svg width={width} height={height}>
+          <Defs><ClipPath id={revealId}><ChartReveal progress={entrance} width={width} height={height} /></ClipPath></Defs>
+          <G clipPath={`url(#${revealId})`}>
           {area ? (
             <>
               <Defs>
@@ -128,7 +306,7 @@ export function Sparkline({
                   <Stop offset="1" stopColor={color} stopOpacity={0} />
                 </LinearGradient>
               </Defs>
-              <Path d={area} fill={`url(#${gradientId})`} />
+              <ChartFill progress={entrance}><Path d={area} fill={`url(#${gradientId})`} /></ChartFill>
             </>
           ) : null}
           <Path
@@ -140,10 +318,101 @@ export function Sparkline({
             fill="none"
           />
           {showEndDot && end ? (
-            <Circle cx={end.x} cy={end.y} r={stroke + 0.5} fill={color} />
+            <Circle
+              cx={end.x}
+              cy={end.y}
+              // `stroke + 1.5` — 3.5pt at the default 2pt stroke, which is what
+              // the design draws and, more tellingly, exactly what the `inset`
+              // above already reserves room for. The dot was drawn at
+              // `stroke + 0.5` while the box was measured for a bigger one, so
+              // the two halves of the same decision disagreed.
+              r={stroke + 1.5}
+              fill={color}
+            />
           ) : null}
+          </G>
         </Svg>
       ) : null}
     </View>
   );
 }
+
+const EXTREME_ROW = 13;
+const SparklineSkeleton = PlotPlaceholder;
+
+/**
+ * One extreme, pinned to the margin its value lives in: the high above the mark,
+ * the low below it. Left-aligned rather than tracking the point's own x — a
+ * label chasing the peak collides with the line the moment the peak is near an
+ * edge, and the number is what matters, not where along the series it happened.
+ */
+function ExtremeLabel({ top, text }: { top: boolean; text: string }) {
+  const t = useTokens();
+  return (
+    <Text
+      numberOfLines={1}
+      style={{
+        position: 'absolute',
+        left: 0,
+        ...(top ? { top: 0 } : { bottom: 0 }),
+        color: t.colors.textTertiary,
+        fontFamily: t.fontFamilies.mono,
+        fontSize: 10,
+        lineHeight: EXTREME_ROW,
+      }}
+    >
+      {text}
+    </Text>
+  );
+}
+
+/* ------------------------------------------------------------------------- *
+ * The composed form — see `collectParts` in `hooks.ts`.
+ * ------------------------------------------------------------------------- */
+
+/** A dot on the final point, so the eye lands on where the series ended. */
+function SparklineEndDotPart(): ReactNode {
+  return null;
+}
+
+/** Dots on the highest and lowest points, with their values. */
+function SparklineExtremesPart(): ReactNode {
+  return null;
+}
+
+/** A gradient wash under the line, fading to nothing at the bottom of the box. */
+function SparklineFillPart(): ReactNode {
+  return null;
+}
+
+function resolveComposition(props: SparklineProps): SparklineResolved {
+  const { children, ...rest } = props;
+  // The one-liner: the bare line. An inline mark earns nothing else by default.
+  /*
+   * `undefined`, not `== null`: an absent `children` is "give me the defaults",
+   * while an explicit `{null}` is "I named nothing, draw nothing". Without the
+   * distinction there is no way to ask for a bare mark — no zero rule, no
+   * labels — short of an empty fragment, which reads like a mistake.
+   */
+  if (children === undefined) return rest;
+  const parts = collectParts(children);
+  return {
+    ...rest,
+    showEndDot: hasPart(parts, SparklineEndDotPart),
+    showExtremes: hasPart(parts, SparklineExtremesPart),
+    fill: hasPart(parts, SparklineFillPart),
+  };
+}
+
+function SparklineRoot(props: SparklineProps) {
+  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <SparklineInner {...resolveComposition(props)} loading={loading} />}</ChartLoading></ChartMotion>;
+}
+
+/** The parts, for `Chart.Sparkline.EndDot` and friends. */
+export const SparklineParts = {
+  EndDot: SparklineEndDotPart,
+  Extremes: SparklineExtremesPart,
+  Fill: SparklineFillPart,
+};
+
+export const Sparkline = Object.assign(SparklineRoot, SparklineParts);

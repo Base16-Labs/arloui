@@ -60,6 +60,15 @@ export const FOUNDATION: RegistryEntry[] = [
     meta: { tags: ['foundation', 'material', 'glass', 'blur', 'ios26'] },
   },
   {
+    name: 'reduce-motion',
+    kind: 'foundation',
+    title: 'Reduce Motion',
+    description:
+      "The user's reduce-motion setting, as one answer for the whole app: a single module-level store with one OS subscription, rather than a `useState` and a probe per animated component. Pulled in by every component that animates.",
+    files: [{ source: 'foundation/reduce-motion.ts', target: 'reduce-motion.ts', type: 'utility' }],
+    meta: { tags: ['foundation', 'motion', 'accessibility'] },
+  },
+  {
     name: 'haptics',
     kind: 'foundation',
     title: 'Haptics',
@@ -70,6 +79,23 @@ export const FOUNDATION: RegistryEntry[] = [
   },
 ];
 
+const LINE_CHART: RegistryEntry = {
+  name: 'chart-line',
+  kind: 'primitive',
+  title: 'Line chart',
+  description:
+    'A scrubbable line and area chart with a value readout, delta, and period selector. Import LineChart and compose LineChart.Value, LineChart.Plot, and LineChart.Periods. Supports comparison lines, stacked areas, and volume bars.',
+  dependencies: ['expo-haptics'],
+  registryDependencies: ['chart-core', 'animated-counter', 'haptics'],
+  files: [
+    { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
+    { source: 'components/chart/chart-context.ts', target: 'chart/chart-context.ts' },
+    { source: 'components/chart/readouts.tsx', target: 'chart/readouts.tsx' },
+    { source: 'components/chart/plot.tsx', target: 'chart/plot.tsx' },
+  ],
+  meta: { tags: ['chart', 'line', 'area', 'scrub', 'gesture', 'primitive'] },
+};
+
 export const COMPONENTS: RegistryEntry[] = [
   {
     name: 'animated-icons',
@@ -78,7 +104,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.',
     dependencies: ['react-native-svg', 'react-native-reanimated'],
-    registryDependencies: ['tokens'],
+    registryDependencies: ['tokens', 'reduce-motion'],
     files: [
       {
         source: 'components/animated-icon/animated-icon.tsx',
@@ -97,7 +123,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'glass'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'glass', 'reduce-motion'],
     files: [
       { source: 'components/button/button.tsx', target: 'button/button.tsx' },
       { source: 'components/button/ghost-button.tsx', target: 'button/ghost-button.tsx' },
@@ -176,21 +202,125 @@ export const COMPONENTS: RegistryEntry[] = [
     },
   },
   {
+    name: 'chart-core',
+    kind: 'primitive',
+    title: 'Chart core',
+    description:
+      'The geometry, tone, and density every chart form measures with, plus the shared legend, empty slot, and loading skeleton. Installed by each form; install it directly only if you are writing a form of your own against the same scale.',
+    /*
+     * Arlo draws marks with react-native-svg. Reanimated drives reveal masks
+     * on the UI thread; it does not own chart geometry or interaction state.
+     *
+     * `react-native-gifted-charts` and `expo-linear-gradient` used to be here.
+     * Both are gone: the first was paying a full integration cost for features
+     * none of the forms used (an unconditional 10px pad we cancelled, a painted
+     * donut hole that leaked `centerColor` into the public API, bars with no
+     * accessibility under a synthetic press layer, and plot geometry computed
+     * twice and kept in agreement by hand), and the second only ever existed
+     * because gifted resolved a gradient package at import time — the area fill
+     * is an SVG `<LinearGradient>` now.
+     */
+    dependencies: ['react-native-svg', 'react-native-reanimated', 'react-native-worklets'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
+    files: [
+      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
+      { source: 'components/chart/hooks.ts', target: 'chart/hooks.ts' },
+      { source: 'components/chart/motion.tsx', target: 'chart/motion.tsx' },
+      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
+      { source: 'components/chart/legend.tsx', target: 'chart/legend.tsx' },
+      { source: 'components/chart/empty.tsx', target: 'chart/empty.tsx' },
+      { source: 'components/chart/skeleton.tsx', target: 'chart/skeleton.tsx' },
+    ],
+    meta: { tags: ['chart', 'data', 'foundation', 'primitive'] },
+  },
+  LINE_CHART,
+  {
+    ...LINE_CHART,
+    name: 'chart-plot',
+    title: 'Line chart (legacy alias)',
+    description: 'Backward-compatible alias for chart-line. Installs the same files and dependencies. Use chart-line for new installations; existing Chart imports remain supported.',
+  },
+  {
+    name: 'chart-bar',
+    kind: 'primitive',
+    title: 'Bar chart',
+    description:
+      'Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection and signed values below the zero rule. Composed: `<Chart.Bar>` with `Series`, `Values`, `Labels`, `Baseline`, `Reference`, and `Legend` parts, each drawn because it is named.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [
+      { source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' },
+      { source: 'components/chart/bar-shared.tsx', target: 'chart/bar-shared.tsx' },
+      { source: 'components/chart/bar-vertical.tsx', target: 'chart/bar-vertical.tsx' },
+      { source: 'components/chart/bar-horizontal.tsx', target: 'chart/bar-horizontal.tsx' },
+    ],
+    meta: { tags: ['chart', 'bar', 'categorical', 'primitive'] },
+  },
+  {
+    name: 'chart-sparkline',
+    kind: 'primitive',
+    title: 'Sparkline',
+    description:
+      'A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction. Composed: `Fill`, `EndDot`, and `Extremes` parts.',
+    registryDependencies: ['chart-core'],
+    files: [{ source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' }],
+    meta: { tags: ['chart', 'sparkline', 'inline', 'primitive'] },
+  },
+  {
+    name: 'chart-donut',
+    kind: 'primitive',
+    title: 'Donut chart',
+    description:
+      'Part-to-whole. Four validated slices, then everything past them folds into one neutral Other. Composed: `Value`, `Label`, and `Legend` parts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [{ source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' }],
+    meta: { tags: ['chart', 'donut', 'part-to-whole', 'primitive'] },
+  },
+  {
+    name: 'chart-meter',
+    kind: 'primitive',
+    title: 'Meter',
+    description:
+      'One value against a target, as a bar, a ring, or an arc gauge, with warning/danger thresholds. Composed: `Value`, `Label`, and one `Ring` part per concentric ring.',
+    registryDependencies: ['chart-core'],
+    files: [{ source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' }],
+    meta: { tags: ['chart', 'meter', 'gauge', 'progress', 'primitive'] },
+  },
+  {
+    name: 'chart-heatmap',
+    kind: 'primitive',
+    title: 'Heatmap',
+    description:
+      'A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it. Composed: `DayLabels` and `Scale` parts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [{ source: 'components/chart/heatmap.tsx', target: 'chart/heatmap.tsx' }],
+    meta: { tags: ['chart', 'heatmap', 'calendar', 'streak', 'primitive'] },
+  },
+  {
     name: 'chart',
     kind: 'primitive',
     title: 'Chart',
     description:
-      'Inline sparkline for pairing with a metric value. The other chart forms live on a separate branch.',
-    dependencies: ['react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider'],
-    files: [
-      { source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' },
-      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
-      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
-      { source: 'components/chart/index.ts', target: 'chart/index.ts' },
+      'Every chart form and the `Chart` namespace that reaches them — the plot, sparkline, bar, donut, meter, and heatmap. Take this to get the namespace; take a single form (`chart-bar`, `chart-sparkline`, …) to get one chart and the shared core, and nothing else.',
+    registryDependencies: [
+      'chart-core',
+      'chart-line',
+      'chart-bar',
+      'chart-sparkline',
+      'chart-donut',
+      'chart-meter',
+      'chart-heatmap',
     ],
+    /*
+     * Only the barrel. Every file belongs to one of the entries above, and this
+     * is the one place that legitimately depends on all of them: it assembles
+     * `Chart.Bar`, `Chart.Donut`, and the rest into the namespace.
+     */
+    files: [{ source: 'components/chart/index.ts', target: 'chart/index.ts' }],
     meta: {
-      tags: ['chart', 'data', 'visualization', 'primitive'],
+      tags: ['chart', 'data', 'visualization', 'gesture', 'motion', 'primitive'],
     },
   },
   {
@@ -199,7 +329,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Skeleton',
     description:
       'A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/skeleton/skeleton.tsx', target: 'skeleton/skeleton.tsx' },
       { source: 'components/skeleton/index.ts', target: 'skeleton/index.ts' },
@@ -214,7 +344,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Spinner',
     description:
       'A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/spinner/spinner.tsx', target: 'spinner/spinner.tsx' },
       { source: 'components/spinner/index.ts', target: 'spinner/index.ts' },
@@ -229,7 +359,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Tabs',
     description:
       'Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/tabs/tabs.tsx', target: 'tabs/tabs.tsx' },
       { source: 'components/tabs/index.ts', target: 'tabs/index.ts' },
@@ -244,7 +374,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Sheet',
     description:
       'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
@@ -366,7 +496,8 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Carousel',
     description:
       'A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
+    dependencies: ['@arloui/icons', 'react-native-svg'],
     files: [
       { source: 'components/carousel/carousel.tsx', target: 'carousel/carousel.tsx' },
       { source: 'components/carousel/index.ts', target: 'carousel/index.ts' },
@@ -428,7 +559,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.',
     dependencies: ['react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/toast/toast.tsx', target: 'toast/toast.tsx' },
       { source: 'components/toast/toaster.tsx', target: 'toast/toaster.tsx' },

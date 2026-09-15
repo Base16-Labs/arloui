@@ -7,7 +7,9 @@ function sourceFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) {
-      return entry.name === '__tests__' ? [] : sourceFiles(path);
+      // Chart marks pack against a density scale (see `chart/core.ts`), not the
+      // app type/spacing tokens. The literals there are the scale.
+      return entry.name === '__tests__' || entry.name === 'chart' ? [] : sourceFiles(path);
     }
     return ['.ts', '.tsx'].includes(extname(entry.name)) ? [path] : [];
   });

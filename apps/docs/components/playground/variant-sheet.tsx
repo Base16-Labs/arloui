@@ -16,6 +16,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTokens } from '@arloui/registry';
 
+export const variantSheetHeight = (windowHeight: number) => Math.max(420, Math.round(windowHeight * 0.57));
+
 export function VariantSheet({
   visible,
   children,
@@ -38,7 +40,7 @@ export function VariantSheet({
   const drawerEasing = Easing.bezier(...t.motion.easing.easeSheet);
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
-  const sheetHeight = Math.max(420, Math.round(windowHeight * 0.57));
+  const sheetHeight = variantSheetHeight(windowHeight);
   const bottomBleed = Math.max(insets.bottom, t.spacing[6]) + t.spacing[8];
   const closedY = sheetHeight + bottomBleed;
   const [translateY] = useState(() => new Animated.Value(closedY));

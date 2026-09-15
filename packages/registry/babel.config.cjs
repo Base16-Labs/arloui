@@ -5,7 +5,8 @@ module.exports = function (api) {
   const isTest = api.env('test');
   api.cache.using(() => process.env.NODE_ENV);
   return {
-    presets: ['babel-preset-expo'],
+    // Jest uses the Reanimated mock, not a native worklet runtime.
+    presets: [['babel-preset-expo', { reanimated: !isTest, worklets: !isTest }]],
     plugins: isTest ? ['babel-plugin-dynamic-import-node'] : [],
   };
 };

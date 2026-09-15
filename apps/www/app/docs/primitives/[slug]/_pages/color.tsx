@@ -43,12 +43,24 @@ const { theme } = useTheme();
 
 const colorPaletteCode = `import { paletteMain } from '@arloui/tokens';
 
-// Raw palette is for data visualization only
-const chartColors = [
-  paletteMain.primary[500],
-  paletteMain.success[500],
-  paletteMain.warning[500],
-];`;
+// Raw palette is an escape hatch, not a chart palette.
+// Reach for it only when no semantic role fits.
+const brandWash = paletteMain.primary[100];`;
+
+const colorChartCode = `import { useTokens } from '@/components/ui/theme-provider';
+
+const t = useTokens();
+
+// Direction. Never colour-alone — always ship a sign or a label beside it.
+t.colors.chartPositive;
+t.colors.chartNegative;
+
+// Identity. Exactly four validated slots, then everything folds into one neutral.
+t.colors.chartSeries1;
+t.colors.chartSeries2;
+t.colors.chartSeries3;
+t.colors.chartSeries4;
+t.colors.chartOther;`;
 
 function ColorThreeLayer() {
   const layers = [
@@ -101,6 +113,7 @@ export function ColorPage() {
     { id: 'secondary-palette', label: 'Secondary palette' },
     { id: 'alpha-ramps', label: 'Alpha ramps' },
     { id: 'contrast', label: 'Contrast checker' },
+    { id: 'chart-colors', label: 'Chart colors' },
     { id: 'code', label: 'Code' },
     { id: 'tokens', label: 'Tokens used' },
     { id: 'rules', label: 'Rules' },
@@ -176,6 +189,32 @@ export function ColorPage() {
 
         <Section id="contrast" title="Contrast checker">
           <ContrastChecker />
+        </Section>
+
+        <Section id="chart-colors" title="Chart colors">
+          <p className="mb-3 text-[15px] leading-relaxed text-ink-2">
+            Data visualization has its own semantic roles. Don&apos;t assemble a chart palette out
+            of the raw palette — these were validated as a set, and that validation is the point.
+          </p>
+          <ul className="mb-4 list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
+            <li>
+              <strong>Direction</strong> —{' '}
+              <code className="font-mono text-[11.5px]">chartPositive</code> and{' '}
+              <code className="font-mono text-[11.5px]">chartNegative</code> sit near the
+              deuteranopia separation floor, so they are never allowed to carry meaning alone. Ship
+              a sign or a label beside them.
+            </li>
+            <li>
+              <strong>Identity</strong> —{' '}
+              <code className="font-mono text-[11.5px]">chartSeries1</code>–
+              <code className="font-mono text-[11.5px]">4</code> were checked on{' '}
+              <em>all pairs</em>, not just neighbours, because in a donut every slice is on screen
+              at once. There is no fifth slot: anything past the fourth folds into{' '}
+              <code className="font-mono text-[11.5px]">chartOther</code> rather than getting an
+              invented hue that reads as a new identity but was never validated.
+            </li>
+          </ul>
+          <CodeBlock>{colorChartCode}</CodeBlock>
         </Section>
 
         <Section id="code" title="Code">

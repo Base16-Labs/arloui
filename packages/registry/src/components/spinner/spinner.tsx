@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   Easing,
   View,
@@ -8,6 +7,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type SpinnerAppearance = 'spokes' | 'arc' | 'dots' | 'bars' | 'pulse';
 export type SpinnerSize = 'sm' | 'md' | 'lg';
@@ -49,19 +49,10 @@ export function Spinner({
   testID,
 }: SpinnerProps) {
   const t = useTokens();
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const px = typeof size === 'number' ? size : SIZES[size];
   const resolvedColor = color ?? (tone === 'accent' ? t.colors.accent : t.colors.textSecondary);
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => active && setReduceMotion(enabled));
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      subscription.remove();
-    };
-  }, []);
 
   const shared = { px, color: resolvedColor, still: reduceMotion };
 

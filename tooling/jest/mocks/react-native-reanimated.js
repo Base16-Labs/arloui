@@ -10,10 +10,12 @@
  */
 const React = require('react');
 
-const createAnimatedComponent = (Component) => Component;
+const createAnimatedComponent = (Component) => React.forwardRef(function AnimatedMock({ animatedProps, ...props }, ref) {
+  return React.createElement(Component, { ...props, ...animatedProps, ref });
+});
 
 const identity = (v) => v;
-const useSharedValue = (initial) => ({ value: initial });
+const useSharedValue = (initial) => React.useRef({ value: initial }).current;
 const runWorklet = (fn) => {
   try {
     return typeof fn === 'function' ? fn() : {};
