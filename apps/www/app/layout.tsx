@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import '@fontsource-variable/manrope';
+import 'dialkit/styles.css';
 import './globals.css';
 import { ThemeProvider } from '@/lib/theme';
 import { SearchProvider } from '@/components/search/search-provider';

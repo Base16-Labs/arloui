@@ -12,6 +12,7 @@ import { radii } from './radii';
 import { darkShadowsMeta, shadowsMeta } from './shadowSpec';
 import { sizing } from './sizing';
 import { spacing } from './spacing';
+import { arloOklchRampSpecs, arloOklchTheme, arloOklchThemeRecipe } from './oklchTheme';
 
 export const raw = {
   $schema: 'https://arloui.com/schemas/tokens-v1.json',
@@ -23,6 +24,11 @@ export const raw = {
     semantic: { light: lightSemanticColors, dark: darkSemanticColors },
     light: lightColors,
     dark: darkColors,
+    oklch: {
+      rampSpecs: arloOklchRampSpecs,
+      recipe: arloOklchThemeRecipe,
+      generated: arloOklchTheme,
+    },
   },
   typography: {
     fontFamilies,

@@ -15,6 +15,11 @@ export {
   type SocialAuthButtonProps,
   type SocialAuthProvider,
 } from './components/button';
+export {
+  AnimatedIcon,
+  type AnimatedIconName,
+  type AnimatedIconProps,
+} from './components/animated-icon/animated-icon';
 export { AnimatedCounter, type AnimatedCounterProps } from './components/animated-counter';
 export {
   Card,
@@ -147,6 +152,7 @@ export {
   type TextAreaState,
 } from './components/text-area';
 export { ThemeProvider, useTheme, useTokens } from './foundation/theme-provider';
+export { themes, type Theme, type ThemeName } from './foundation/tokens';
 export {
   GlassBackdrop,
   isNativeGlassAvailable,

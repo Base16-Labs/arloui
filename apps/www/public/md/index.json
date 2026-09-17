@@ -1,5 +1,5 @@
 {
-  "count": 46,
+  "count": 47,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -164,6 +164,10 @@
     {
       "path": "/skills/references/components.md",
       "md": "/md/skills/references/components.md"
+    },
+    {
+      "path": "/skills/references/oklch.md",
+      "md": "/md/skills/references/oklch.md"
     },
     {
       "path": "/skills/references/platform-mapping.md",

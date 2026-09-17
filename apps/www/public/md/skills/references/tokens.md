@@ -36,6 +36,13 @@ Rules:
 
 Canonical values live in **`packages/tokens`** (main palette, secondary palette, semantic + legacy flat maps). Run `npm run skill:sync` after token changes to refresh `references/tokens.json`.
 
+Arlo colors have two layers:
+
+- **Authoring:** OKLCH ramp recipes in `@arloui/tokens/oklch-theme`.
+- **Runtime:** generated `#RRGGBB`, `rgba(...)`, or `transparent` strings that React Native, Expo, and copied registry components can consume.
+
+Do not rewrite a token table by converting today's hex values to OKLCH one by one. Use the OKLCH recipe to generate ramps, map semantic roles, and run the audits. See `references/oklch.md`.
+
 ### Main palette (Figma)
 
 - **Base:** White `#FFFFFF`, Black `#000000`
@@ -46,21 +53,21 @@ Canonical values live in **`packages/tokens`** (main palette, secondary palette,
 
 Examples (camelCase in TS: `surfaceBackground`, `textPrimary`, …):
 
-| Semantic | Light value (reference) |
-| --- | --- |
-| `surface-background` | Grey-50 — app background |
-| `surface-input` | Grey-100 |
-| `surface-elevated` | White — cards, sheets |
-| `surface-overlay` | Grey-900 @ 40% — scrims |
-| `text-primary` | Grey-900 |
-| `text-secondary` | Grey-600 |
-| `text-tertiary` | Grey-400 |
-| `interactive-primary` | Primary-600 |
-| `interactive-primary-pressed` | Primary-700 |
-| `border-primary` | Grey-300 |
-| `border-secondary` | Grey-200 |
-| `feedback-*` | Success / Warning / Error scales (50 + 500/600 as in Figma) |
-| `nav-*` | White + Grey borders + Primary accents |
+| Semantic                      | Light value (reference)                                     |
+| ----------------------------- | ----------------------------------------------------------- |
+| `surface-background`          | Grey-50 — app background                                    |
+| `surface-input`               | Grey-100                                                    |
+| `surface-elevated`            | White — cards, sheets                                       |
+| `surface-overlay`             | Grey-900 @ 40% — scrims                                     |
+| `text-primary`                | Grey-900                                                    |
+| `text-secondary`              | Grey-600                                                    |
+| `text-tertiary`               | Grey-400                                                    |
+| `interactive-primary`         | Primary-600                                                 |
+| `interactive-primary-pressed` | Primary-700                                                 |
+| `border-primary`              | Grey-300                                                    |
+| `border-secondary`            | Grey-200                                                    |
+| `feedback-*`                  | Success / Warning / Error scales (50 + 500/600 as in Figma) |
+| `nav-*`                       | White + Grey borders + Primary accents                      |
 
 Dark mode uses the **same palette scales** with inverted surface/text mapping (see `darkSemanticColors` in `packages/tokens/src/colors.ts`).
 
@@ -77,27 +84,28 @@ For older primitives: `bg`, `surface`, `accent`, `danger`, … alias semantic to
 - Use one accent family per screen. Do not mix competing primaries casually on the same surface.
 - Status colors are for data, alerts, and validation — not full-surface fills unless using `feedback-*-bg`.
 - Neutral grey should carry most UI chrome.
+- New color work starts from an OKLCH ramp recipe, then emits React Native-safe runtime strings. A component should never receive `oklch(...)` directly.
 
 ## Spacing (layout scale)
 
 **Source:** Figma `space-*`; TS maps suffix → px (`spacing[n]`). Based on **4px / 0.25rem** steps (@ **16px** root).
 
-| Token name | TS key | Px | Rem (16 base) |
-| --- | --- | --- | --- |
-| space-0 | `spacing[0]` | 0 | 0 |
-| space-1 | `spacing[1]` | 4 | 0.25 |
-| space-2 | `spacing[2]` | 8 | 0.5 |
-| space-3 | `spacing[3]` | 12 | 0.75 |
-| space-4 | `spacing[4]` | 16 | 1 |
-| space-5 | `spacing[5]` | 20 | 1.25 |
-| space-6 | `spacing[6]` | 24 | 1.5 |
-| space-8 | `spacing[8]` | 32 | 2 |
-| space-10 | `spacing[10]` | 40 | 2.5 |
-| space-12 | `spacing[12]` | 48 | 3 |
-| space-14 | `spacing[14]` | 56 | 3.5 |
-| space-16 | `spacing[16]` | 64 | 4 |
-| space-20 | `spacing[20]` | 80 | 5 |
-| space-24 | `spacing[24]` | 96 | 6 |
+| Token name | TS key        | Px  | Rem (16 base) |
+| ---------- | ------------- | --- | ------------- |
+| space-0    | `spacing[0]`  | 0   | 0             |
+| space-1    | `spacing[1]`  | 4   | 0.25          |
+| space-2    | `spacing[2]`  | 8   | 0.5           |
+| space-3    | `spacing[3]`  | 12  | 0.75          |
+| space-4    | `spacing[4]`  | 16  | 1             |
+| space-5    | `spacing[5]`  | 20  | 1.25          |
+| space-6    | `spacing[6]`  | 24  | 1.5           |
+| space-8    | `spacing[8]`  | 32  | 2             |
+| space-10   | `spacing[10]` | 40  | 2.5           |
+| space-12   | `spacing[12]` | 48  | 3             |
+| space-14   | `spacing[14]` | 56  | 3.5           |
+| space-16   | `spacing[16]` | 64  | 4             |
+| space-20   | `spacing[20]` | 80  | 5             |
+| space-24   | `spacing[24]` | 96  | 6             |
 
 Heuristics:
 
@@ -113,15 +121,15 @@ Prefer horizontal gutters **`spacing[4]`–`spacing[5]`** unless the layout expl
 
 **Source:** Figma `radius-*`; TS `radii.<name>` (px).
 
-| Token name | TS | Px | Rem (16 base) |
-| --- | --- | --- | --- |
-| radius-none | `radii.none` | 0 | 0 |
-| radius-sm | `radii.sm` | 4 | 0.25 |
-| radius-md | `radii.md` | 8 | 0.5 |
-| radius-lg | `radii.lg` | 12 | 0.75 |
-| radius-xl | `radii.xl` | 16 | 1 |
-| radius-2xl | `radii['2xl']` | 24 | 1.5 |
-| radius-full | `radii.full` | 9999 | — (pill) |
+| Token name  | TS             | Px   | Rem (16 base) |
+| ----------- | -------------- | ---- | ------------- |
+| radius-none | `radii.none`   | 0    | 0             |
+| radius-sm   | `radii.sm`     | 4    | 0.25          |
+| radius-md   | `radii.md`     | 8    | 0.5           |
+| radius-lg   | `radii.lg`     | 12   | 0.75          |
+| radius-xl   | `radii.xl`     | 16   | 1             |
+| radius-2xl  | `radii['2xl']` | 24   | 1.5           |
+| radius-full | `radii.full`   | 9999 | — (pill)      |
 
 Rules:
 
@@ -136,30 +144,30 @@ Rules:
 
 ### Icons (square)
 
-| Token | TS | Px |
-| --- | --- | --- |
-| icon-xs | `sizing.icon.xs` | 16 |
-| icon-sm | `sizing.icon.sm` | 20 |
-| icon-md | `sizing.icon.md` | 24 |
-| icon-lg | `sizing.icon.lg` | 32 |
+| Token   | TS               | Px  |
+| ------- | ---------------- | --- |
+| icon-xs | `sizing.icon.xs` | 16  |
+| icon-sm | `sizing.icon.sm` | 20  |
+| icon-md | `sizing.icon.md` | 24  |
+| icon-lg | `sizing.icon.lg` | 32  |
 
 ### Avatars (square)
 
-| Token | TS | Px |
-| --- | --- | --- |
-| avatar-xs | `sizing.avatar.xs` | 16 |
-| avatar-sm | `sizing.avatar.sm` | 24 |
-| avatar-md | `sizing.avatar.md` | 32 |
-| avatar-lg | `sizing.avatar.lg` | 40 |
+| Token     | TS                 | Px  |
+| --------- | ------------------ | --- |
+| avatar-xs | `sizing.avatar.xs` | 16  |
+| avatar-sm | `sizing.avatar.sm` | 24  |
+| avatar-md | `sizing.avatar.md` | 32  |
+| avatar-lg | `sizing.avatar.lg` | 40  |
 
 ### Button heights (min height; width from padding + label)
 
-| Token | TS | Px |
-| --- | --- | --- |
-| button-sm | `sizing.buttonHeight.sm` | 36 |
-| button-md | `sizing.buttonHeight.md` | 40 |
-| button-lg | `sizing.buttonHeight.lg` | 48 |
-| button-xl | `sizing.buttonHeight.xl` | 52 |
+| Token     | TS                       | Px  |
+| --------- | ------------------------ | --- |
+| button-sm | `sizing.buttonHeight.sm` | 36  |
+| button-md | `sizing.buttonHeight.md` | 40  |
+| button-lg | `sizing.buttonHeight.lg` | 48  |
+| button-xl | `sizing.buttonHeight.xl` | 52  |
 
 Registry `Button` maps **`sm` | `md` | `lg` | `xl`** to these heights and uses **`radii.full`** for the pill outline.
 
@@ -173,13 +181,13 @@ Registry `Button` maps **`sm` | `md` | `lg` | `xl`** to these heights and uses *
 
 All use **`#101828`** (grey-900). Canonical **`css`** strings match CSS `box-shadow` (see `shadowsMeta` in `@arloui/tokens`, synced into `references/tokens.json`).
 
-| Token | Offset Y | Blur | Opacity | Typical use |
-| --- | --- | --- | --- | --- |
-| `shadow-none` | 0 | 0 | 0 | flat surfaces |
-| `shadow-sm` | 0 | 2px | 6% | tight lift, chips |
-| `shadow-md` | 1px | 6px | 8% | cards, controls |
-| `shadow-lg` | 2px | 12px | 10% | elevated surfaces |
-| `shadow-xl` | 4px | 28px | 12% | modals, menus |
+| Token         | Offset Y | Blur | Opacity | Typical use       |
+| ------------- | -------- | ---- | ------- | ----------------- |
+| `shadow-none` | 0        | 0    | 0       | flat surfaces     |
+| `shadow-sm`   | 0        | 2px  | 6%      | tight lift, chips |
+| `shadow-md`   | 1px      | 6px  | 8%      | cards, controls   |
+| `shadow-lg`   | 2px      | 12px | 10%     | elevated surfaces |
+| `shadow-xl`   | 4px      | 28px | 12%     | modals, menus     |
 
 **React Native:** `theme.shadows.*` bundles `shadowColor`, `shadowOpacity`, `shadowOffset`, `shadowRadius`, and `elevation`. Opacity matches Figma on iOS; Android uses `elevation` as an approximation (Material shadow tint differs from `#101828`).
 
@@ -192,7 +200,6 @@ Two **spread-only** layers (blur `0`): **`surface-background`** `2px`, then **`f
 **CSS:** `theme.focusRing.main` and `theme.focusRing.error` are ready-made **`box-shadow`** strings for web (`:focus-visible`). Values resolve per light/dark from semantic colors.
 
 **React Native:** prefer `borderWidth` / outline equivalents — RN does not compose CSS-like stacked spreads on a single `View`.
-
 
 ## Motion
 

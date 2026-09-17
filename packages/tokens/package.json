@@ -15,6 +15,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./raw": "./src/raw.ts",
+    "./oklch": "./src/oklch.ts",
+    "./oklch-theme": "./src/oklchTheme.ts",
     "./typography": "./src/typography.ts",
     "./paletteMain": "./src/paletteMain.ts",
     "./paletteSecondary": "./src/paletteSecondary.ts",

@@ -9,10 +9,12 @@ version: 0.1.0
 Arlo UI is an AI-first, mobile-first component library by Base16 Labs. Components are copy-paste primitives — you own the source, not an installed dependency — designed to be readable by agents and shippable by humans. Output should feel like an Arlo UI app, not a re-skinned reference.
 
 When invoked, work in this order:
+
 1. Read this file to load the design language.
 2. Pull tokens from `references/tokens.md`.
-3. Pull primitives and screen recipes from `references/components.md`.
-4. Translate to platform with `references/platform-mapping.md`.
+3. For color-system work, pull `references/oklch.md`.
+4. Pull primitives and screen recipes from `references/components.md`.
+5. Translate to platform with `references/platform-mapping.md`.
 
 ## The Five Facets
 
@@ -53,12 +55,12 @@ Squint test: if more than one element competes for hero, you have not made a hie
 
 Spacing is the primary tool for showing relationships. Reach for a divider only after spacing has failed.
 
-| Spacing | Meaning |
-| --- | --- |
-| 4–8pt | Belongs together (icon + label, value + unit) |
-| 12–16pt | Same group, sibling items |
-| 24–32pt | New group |
-| 48–80pt | New context (hero → body, section break) |
+| Spacing | Meaning                                       |
+| ------- | --------------------------------------------- |
+| 4–8pt   | Belongs together (icon + label, value + unit) |
+| 12–16pt | Same group, sibling items                     |
+| 24–32pt | New group                                     |
+| 48–80pt | New context (hero → body, section break)      |
 
 If you find yourself adding a divider line, the surrounding spacing is probably wrong. Dividers are reserved for structurally identical rows in dense lists.
 
@@ -100,17 +102,17 @@ Before drawing, answer all six. If any answer is "I don't know," stop and decide
 
 Most mobile screens are one of nine recognizable patterns. Name the pattern before drawing — it sets hierarchy, alignment, and where the CTA lives.
 
-| Archetype | Hero | Composition | Examples |
-| --- | --- | --- | --- |
-| **Question** | The question itself, set as a display title at top-left | Title → optional helper → single input/selector → CTA pinned bottom | An onboarding step, a single-field signup |
-| **Result / Success** | A confirmation glyph + one-line affirmation, vertically centered | Center stack, no chrome | A "You're all set" screen, a payment-sent toast |
-| **Stat / Hero number** | An oversized number with a one-line label | Top-aligned or centered hero, supporting list below, optional CTA | A "$0.00" balance, a "13 MIN" delay, a "0530" wake time |
-| **List** | The first row | Inset-grouped (iOS) or edge-to-edge (Android), 44pt min row, optional sticky search/header | A holdings list, an offers list, a friends list |
-| **Detail** | The named subject (avatar + name, hero card, or hero number) | Hero block → action row → metadata → secondary content | A wallet detail, an event detail |
-| **Sheet over content** | The sheet's title | Translucent or opaque sheet at a natural detent over a dimmed parent | An "Add flight" sheet, an event sheet over a dimmed backdrop |
-| **Composer** | The empty input | Input expands to fill, tools dock to bottom edge, send is the one accent | An ask box, a chat composer, a broadcast composer |
-| **Paywall** | One value claim + one price | Hero claim → 3–4 supporting bullets → primary CTA → tertiary "maybe later" | A Pro upsell |
-| **Dashboard** | Asymmetric — the most actionable card sits top-left | Top: status. Middle: 2–4 modules. Bottom: tab bar. **Never centered.** | A money dashboard, a wallets home |
+| Archetype              | Hero                                                             | Composition                                                                                | Examples                                                     |
+| ---------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Question**           | The question itself, set as a display title at top-left          | Title → optional helper → single input/selector → CTA pinned bottom                        | An onboarding step, a single-field signup                    |
+| **Result / Success**   | A confirmation glyph + one-line affirmation, vertically centered | Center stack, no chrome                                                                    | A "You're all set" screen, a payment-sent toast              |
+| **Stat / Hero number** | An oversized number with a one-line label                        | Top-aligned or centered hero, supporting list below, optional CTA                          | A "$0.00" balance, a "13 MIN" delay, a "0530" wake time      |
+| **List**               | The first row                                                    | Inset-grouped (iOS) or edge-to-edge (Android), 44pt min row, optional sticky search/header | A holdings list, an offers list, a friends list              |
+| **Detail**             | The named subject (avatar + name, hero card, or hero number)     | Hero block → action row → metadata → secondary content                                     | A wallet detail, an event detail                             |
+| **Sheet over content** | The sheet's title                                                | Translucent or opaque sheet at a natural detent over a dimmed parent                       | An "Add flight" sheet, an event sheet over a dimmed backdrop |
+| **Composer**           | The empty input                                                  | Input expands to fill, tools dock to bottom edge, send is the one accent                   | An ask box, a chat composer, a broadcast composer            |
+| **Paywall**            | One value claim + one price                                      | Hero claim → 3–4 supporting bullets → primary CTA → tertiary "maybe later"                 | A Pro upsell                                                 |
+| **Dashboard**          | Asymmetric — the most actionable card sits top-left              | Top: status. Middle: 2–4 modules. Bottom: tab bar. **Never centered.**                     | A money dashboard, a wallets home                            |
 
 For each archetype, the hero/supporting/metadata layers from §1.1 are pre-decided. Use them.
 
@@ -124,7 +126,7 @@ Refuse these unless the user explicitly asks for them:
 - Filled multi-color icons or emoji used as UI elements.
 - Skeleton screens longer than 1s — prefer instant content with progressive detail. (See §4.1 for the loading rule.)
 - Border radius that fights the platform: phones are rounded — match them. Use **`radii.full`** for pills and primary buttons; **`radii.lg`–`radii.xl`** for cards and fields; **`radii['2xl']`** for sheets (canonical px in `references/tokens.md`).
-- Cartoon mascots and decorative stock art. A *single* purposeful illustration in an empty state, hero, or paywall is welcome — it is the screen's one expressive move (§1.6).
+- Cartoon mascots and decorative stock art. A _single_ purposeful illustration in an empty state, hero, or paywall is welcome — it is the screen's one expressive move (§1.6).
 
 ---
 
@@ -148,9 +150,9 @@ Every animation must do at least one of these. If none, remove it.
 Never use `ease-in` for UI. Use stronger curves than the CSS defaults.
 
 ```css
---arlo-ease-out:    cubic-bezier(0.23, 1,    0.32, 1);
---arlo-ease-in-out: cubic-bezier(0.77, 0,    0.175, 1);
---arlo-ease-sheet:  cubic-bezier(0.32, 0.72, 0,    1); /* iOS drawer */
+--arlo-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+--arlo-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+--arlo-ease-sheet: cubic-bezier(0.32, 0.72, 0, 1); /* iOS drawer */
 ```
 
 Picking a curve:
@@ -162,17 +164,16 @@ Picking a curve:
 - Sheet/drawer drag → `ease-sheet`
 - Default → `ease-out`
 
-
 ### 2.3 Duration
 
-| Element | Duration |
-| --- | --- |
-| Press feedback, micro-interactions | 100–160ms |
-| Tooltips, small popovers | 125–200ms |
-| Dropdowns, selects, chips | 150–250ms |
-| Sheets, drawers, modals | 220–360ms |
-| Shared-element transitions | 320–480ms |
-| Marketing / explanatory | unrestricted |
+| Element                            | Duration     |
+| ---------------------------------- | ------------ |
+| Press feedback, micro-interactions | 100–160ms    |
+| Tooltips, small popovers           | 125–200ms    |
+| Dropdowns, selects, chips          | 150–250ms    |
+| Sheets, drawers, modals            | 220–360ms    |
+| Shared-element transitions         | 320–480ms    |
+| Marketing / explanatory            | unrestricted |
 
 Rules: stay under 300ms for any frequent interaction. Exits are ~20% faster than entrances. Larger surfaces animate slower than smaller ones.
 
@@ -196,6 +197,7 @@ These are non-negotiable. They are how Arlo apps feel like Arlo apps.
 For the one or two interactions a user performs most (the checkbox in a habit app, the send button in a wallet, the like button in a feed), invest disproportionately in feel. Combine animation, haptic, and (where appropriate) sound. Industrial designers call this "fidgetability" — Arlo UI calls it "earning the tap."
 
 A pattern:
+
 - Press: `scale(0.97)`, 120ms ease-out, light haptic on touch-down.
 - Hold: progressive fill or charge animation, medium haptic at threshold.
 - Release: snap-back at 200ms ease-out, success haptic + state morph.
@@ -241,7 +243,7 @@ Arlo prefers calm, content-forward density. A screen reads top-to-bottom in thre
 
 ### 3.3 Brand affordances
 
-Arlo is mode-agnostic but tonally consistent: confident, quiet, technical. **Neither mode is the default — the brand picks.** Most consumer-grade Arlo apps will land on a light near-white grey canvas; data-dense and "premium" verticals (flight, finance pro, AI) often land in dark. Whichever mode is chosen, the *other* mode must be engineered, not derived: design both in parallel, and run the hierarchy and contrast test against each. A dark mode that is "the light mode with inverted colors" is a bug.
+Arlo is mode-agnostic but tonally consistent: confident, quiet, technical. **Neither mode is the default — the brand picks.** Most consumer-grade Arlo apps will land on a light near-white grey canvas; data-dense and "premium" verticals (flight, finance pro, AI) often land in dark. Whichever mode is chosen, the _other_ mode must be engineered, not derived: design both in parallel, and run the hierarchy and contrast test against each. A dark mode that is "the light mode with inverted colors" is a bug.
 
 ### 3.4 The principles of an inevitable component
 
@@ -254,7 +256,7 @@ Every component Arlo ships should feel inevitable — as though it could not hav
 
 ### 3.5 Primitive vocabulary
 
-Arlo primitives have stable names. Reach for what already ships before inventing a component, and never emit a primitive that is only *planned*. (Full specs for shipped primitives live in `references/components.md`.)
+Arlo primitives have stable names. Reach for what already ships before inventing a component, and never emit a primitive that is only _planned_. (Full specs for shipped primitives live in `references/components.md`.)
 
 **Shipped today:**
 
@@ -338,17 +340,11 @@ A component with more than five props is probably two components. Prefer:
   <Card.Footer />
 </Card>
 ```
+
 over
 
 ```tsx
-<Card
-  title="…"
-  subtitle="…"
-  image="…"
-  badge="…"
-  cta="…"
-  footer="…"
-/>
+<Card title="…" subtitle="…" image="…" badge="…" cta="…" footer="…" />
 ```
 
 Slots are tokens for layout: they let consumers extend without the library forecasting every use.
@@ -396,12 +392,12 @@ When the user asks for an Arlo UI screen, component, or block:
 7. **Translate to platform.** Per `references/platform-mapping.md`.
 8. **If exploring, generate three named directions** before committing to one. Naming forces opinion.
 
-
 ## Review mode
 
 When polishing existing UI, return a markdown table with `Area | Status | Before | After | Why`, where Status is one of `Keep`, `Improve`, `Fix`. Always lead with at least one `Keep` row — anchor in what is already strong.
 
 ## Reference files
+
 - `references/tokens.md` — type, color, spacing, radius, motion curves, haptic mapping.
 - `references/components.md` — primitives, variants, states, screen recipes.
 - `references/platform-mapping.md` — Figma, SwiftUI, React Native conventions.

@@ -13,6 +13,52 @@ export {
   type SemanticColorTokens,
 } from './colors';
 export {
+  arloOklchTheme,
+  arloOklchThemeRecipe,
+  arloOklchRampSpecs,
+  generateArloOklchTheme,
+  type ChartAudit,
+  type ConditionalColorRef,
+  type ContrastAudit,
+  type GamutAudit,
+  type GeneratedOklchTheme,
+  type GeneratedSemanticColor,
+  type GeneratedSemanticColors,
+  type ColorRef,
+  type RampName,
+  type SemanticRecipe,
+  type SemanticRef,
+  type StaticColorRef,
+  type SurfaceAudit,
+} from './oklchTheme';
+export {
+  compositeRgb,
+  contrastRatio,
+  createOklchRamp,
+  createRuntimeRamp,
+  fitOklchToSrgb,
+  formatOklch,
+  isInSrgbGamut,
+  maxChromaForLightnessHue,
+  normalizeHue,
+  oklchToHex,
+  oklchToRgb,
+  oklchToRgba,
+  parseHex,
+  parseRuntimeColor,
+  relativeLuminance,
+  rgbToOklch,
+  shadeSteps,
+  type ChromaRampSpec,
+  type OklchColor,
+  type OklchRamp,
+  type OklchRampSpec,
+  type RgbColor,
+  type RuntimeColor,
+  type RuntimeRamp,
+  type Shade,
+} from './oklch';
+export {
   fontFamilies,
   fontWeights,
   typography,
@@ -24,13 +70,7 @@ export { radii, type RadiusTokens, type RadiusScale } from './radii';
 export { sizing, type SizingTokens } from './sizing';
 export { motion, type MotionTokens } from './motion';
 export { darkShadows, shadows, type ShadowTokens, type ShadowScale } from './shadows';
-export {
-  blur,
-  blurs,
-  materials,
-  type BlurTokens,
-  type MaterialTokens,
-} from './effects';
+export { blur, blurs, materials, type BlurTokens, type MaterialTokens } from './effects';
 export {
   darkShadowBaseColor,
   darkShadowLevels,
@@ -40,11 +80,7 @@ export {
   shadowsMeta,
   type ShadowsMeta,
 } from './shadowSpec';
-export {
-  focusRingBoxShadow,
-  focusRingByScheme,
-  type FocusRingScheme,
-} from './focusRing';
+export { focusRingBoxShadow, focusRingByScheme, type FocusRingScheme } from './focusRing';
 
 import { darkColors, lightColors } from './colors';
 import { focusRingByScheme } from './focusRing';
@@ -92,4 +128,11 @@ export const themes = {
 };
 
 export type ThemeName = keyof typeof themes;
-export type Theme = (typeof themes)[ThemeName];
+type StaticTheme = (typeof themes)[ThemeName];
+export type ThemeColors = Record<keyof typeof lightColors, string> & Record<string, string>;
+export type ThemeFontFamilies = Record<keyof typeof fontFamilies, string>;
+export type Theme = Omit<StaticTheme, 'name' | 'colors' | 'fontFamilies'> & {
+  name: ThemeName;
+  colors: ThemeColors;
+  fontFamilies: ThemeFontFamilies;
+};

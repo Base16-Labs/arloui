@@ -17,9 +17,12 @@ const ThemeContext = createContext<Ctx | null>(null);
 export function ThemeProvider({
   children,
   defaultName = 'system',
+  theme,
 }: {
   children: ReactNode;
   defaultName?: ThemeName | 'system';
+  /** Override the resolved theme object. Useful for live token editors and previews. */
+  theme?: Theme;
 }) {
   const [pref, setPref] = useState<ThemeName | 'system'>(defaultName);
   const [system, setSystem] = useState<ColorSchemeName>(Appearance.getColorScheme());
@@ -32,8 +35,8 @@ export function ThemeProvider({
 
   const value = useMemo<Ctx>(() => {
     const resolved: ThemeName = pref === 'system' ? (system === 'light' ? 'light' : 'dark') : pref;
-    return { theme: themes[resolved], name: resolved, setName: setPref };
-  }, [pref, system]);
+    return { theme: theme ?? themes[resolved], name: theme?.name ?? resolved, setName: setPref };
+  }, [pref, system, theme]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

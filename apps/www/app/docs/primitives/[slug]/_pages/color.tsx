@@ -1,5 +1,8 @@
 import { ContrastChecker } from '@/components/docs/contrast-checker';
-import { DoDont as PrimitiveDoDont, RuleCard as PrimitiveRuleCard } from '@/components/docs/doc-cards';
+import {
+  DoDont as PrimitiveDoDont,
+  RuleCard as PrimitiveRuleCard,
+} from '@/components/docs/doc-cards';
 import { TailwindAlphaRamp, TailwindPaletteGrid } from '@/components/docs/tailwind-palette';
 import { Eyebrow } from '@/components/mdx/Eyebrow';
 import { Lede } from '@/components/mdx/Lede';
@@ -257,8 +260,6 @@ export function ColorPage() {
     </>
   );
 }
-
-
 
 type UtilitySemanticRow = {
   token: string;
@@ -669,50 +670,50 @@ function SemanticTokenTable() {
       description="Semantic roles mapped from the main palette. Swatches read from @arloui/tokens lightSemanticColors and darkSemanticColors; components consume these through theme.colors in camelCase."
     >
       <div className="overflow-hidden rounded-md border border-line">
-          <div className="hidden border-b border-line bg-canvas px-3 py-2.5 md:grid md:grid-cols-[minmax(0,1.15fr)_minmax(112px,0.7fr)_minmax(112px,0.7fr)_minmax(0,1.2fr)] md:gap-4">
-            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
-              Token
-            </div>
-            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
-              Color (light)
-            </div>
-            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
-              Color (dark)
-            </div>
-            <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
-              Usage
-            </div>
+        <div className="hidden border-b border-line bg-canvas px-3 py-2.5 md:grid md:grid-cols-[minmax(0,1.15fr)_minmax(112px,0.7fr)_minmax(112px,0.7fr)_minmax(0,1.2fr)] md:gap-4">
+          <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+            Token
           </div>
-          {utilitySemanticPalette.map((group) => (
-            <div key={group.section}>
-              <div className="border-b border-line bg-canvas px-3 py-2.5">
-                <div className="text-[12px] font-medium text-ink">{group.section}</div>
-              </div>
-              {group.rows.map((row) => (
-                <div
-                  key={row.token}
-                  className="grid gap-2 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[minmax(0,1.15fr)_minmax(112px,0.7fr)_minmax(112px,0.7fr)_minmax(0,1.2fr)] md:items-center md:gap-4"
-                >
-                  <div className="min-w-0 break-words font-mono text-[12px] leading-relaxed text-ink">
-                    {row.token}
-                  </div>
-                  <PaletteRef
-                    label="Light"
-                    palette={row.palette}
-                    swatch={lightSemanticColors[row.semanticKey]}
-                  />
-                  <PaletteRef
-                    label="Dark"
-                    palette={row.darkPalette}
-                    swatch={darkSemanticColors[row.semanticKey]}
-                  />
-                  <div className="text-[13px] leading-relaxed text-ink-3">{row.usage}</div>
-                </div>
-              ))}
-            </div>
-          ))}
+          <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+            Color (light)
+          </div>
+          <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+            Color (dark)
+          </div>
+          <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-3">
+            Usage
+          </div>
         </div>
-      </PaletteBlock>
+        {utilitySemanticPalette.map((group) => (
+          <div key={group.section}>
+            <div className="border-b border-line bg-canvas px-3 py-2.5">
+              <div className="text-[12px] font-medium text-ink">{group.section}</div>
+            </div>
+            {group.rows.map((row) => (
+              <div
+                key={row.token}
+                className="grid gap-2 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[minmax(0,1.15fr)_minmax(112px,0.7fr)_minmax(112px,0.7fr)_minmax(0,1.2fr)] md:items-center md:gap-4"
+              >
+                <div className="min-w-0 break-words font-mono text-[12px] leading-relaxed text-ink">
+                  {row.token}
+                </div>
+                <PaletteRef
+                  label="Light"
+                  palette={row.palette}
+                  swatch={lightSemanticColors[row.semanticKey]}
+                />
+                <PaletteRef
+                  label="Dark"
+                  palette={row.darkPalette}
+                  swatch={darkSemanticColors[row.semanticKey]}
+                />
+                <div className="text-[13px] leading-relaxed text-ink-3">{row.usage}</div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </PaletteBlock>
   );
 }
 
@@ -771,4 +772,3 @@ function PaletteRef({
     </div>
   );
 }
-

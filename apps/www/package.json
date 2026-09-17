@@ -20,15 +20,20 @@
     "clean": "rm -rf .next .turbo"
   },
   "dependencies": {
+    "@arloui/icons": "file:../../packages/icons",
+    "@arloui/registry": "file:../../packages/registry",
     "@arloui/tokens": "file:../../packages/tokens",
     "@fontsource-variable/manrope": "^5.2.8",
     "@opennextjs/cloudflare": "^1.20.1",
+    "dialkit": "^2.0.0",
     "esbuild": "^0.27.7",
     "fuse.js": "^7.1.0",
+    "motion": "^13.2.0",
     "next": "16.3.0",
     "qrcode.react": "^4.2.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-native-web": "^0.21.2",
     "sugar-high": "^1.2.1"
   },
   "devDependencies": {

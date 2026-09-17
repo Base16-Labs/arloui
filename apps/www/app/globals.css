@@ -279,6 +279,21 @@ html:has([data-pill-transition='closing']) ::view-transition-new(bottom-pill) {
   transform: none;
 }
 
+.theme-lab-dial .dialkit-panel-wrapper,
+.theme-lab-dial .dialkit-panel-inline {
+  width: 100%;
+}
+
+.theme-lab-dial .dialkit-panel-inner {
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

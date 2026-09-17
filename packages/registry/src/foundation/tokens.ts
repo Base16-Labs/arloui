@@ -35,13 +35,13 @@ export const lightSemanticColors = {
   interactiveSecondary: 'rgba(229,231,235,0.7)',
   interactiveSecondaryPressed: '#E5E7EB',
   interactiveTertiary: 'transparent',
-  interactiveTertiaryPressed: 'rgba(243,244,246,0.4)',
+  interactiveTertiaryPressed: 'rgba(243,243,243,0.4)',
   interactiveDisabled: '#F3F4F6',
   interactiveError: '#FB2C36',
   focusRingMain: '#51A2FF',
   focusRingError: '#FFA2A2',
   touchFeedbackMain: 'rgba(16,24,40,0.1)',
-  touchFeedbackLight: 'rgba(243,244,246,0.4)',
+  touchFeedbackLight: 'rgba(243,243,243,0.4)',
   borderPrimary: '#D1D5DC',
   borderSecondary: '#E5E7EB',
   borderFocus: '#2B7FFF',
@@ -560,4 +560,11 @@ export const themes = {
 };
 
 export type ThemeName = keyof typeof themes;
-export type Theme = (typeof themes)[ThemeName];
+type StaticTheme = (typeof themes)[ThemeName];
+export type ThemeColors = Record<keyof typeof lightColors, string> & Record<string, string>;
+export type ThemeFontFamilies = Record<keyof typeof fontFamilies, string>;
+export type Theme = Omit<StaticTheme, 'name' | 'colors' | 'fontFamilies'> & {
+  name: ThemeName;
+  colors: ThemeColors;
+  fontFamilies: ThemeFontFamilies;
+};
