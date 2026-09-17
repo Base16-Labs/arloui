@@ -1403,61 +1403,61 @@
     {
       "type": "color",
       "name": "--color-alpha-white-0",
-      "value": "rgba(243, 244, 246, 0)",
+      "value": "rgba(243, 243, 243, 0)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-10",
-      "value": "rgba(243, 244, 246, 0.1)",
+      "value": "rgba(243, 243, 243, 0.1)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-20",
-      "value": "rgba(243, 244, 246, 0.2)",
+      "value": "rgba(243, 243, 243, 0.2)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-30",
-      "value": "rgba(243, 244, 246, 0.3)",
+      "value": "rgba(243, 243, 243, 0.3)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-40",
-      "value": "rgba(243, 244, 246, 0.4)",
+      "value": "rgba(243, 243, 243, 0.4)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-50",
-      "value": "rgba(243, 244, 246, 0.5)",
+      "value": "rgba(243, 243, 243, 0.5)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-60",
-      "value": "rgba(243, 244, 246, 0.6)",
+      "value": "rgba(243, 243, 243, 0.6)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-70",
-      "value": "rgba(243, 244, 246, 0.7)",
+      "value": "rgba(243, 243, 243, 0.7)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-80",
-      "value": "rgba(243, 244, 246, 0.8)",
+      "value": "rgba(243, 243, 243, 0.8)",
       "description": "Palette · alpha white"
     },
     {
       "type": "color",
       "name": "--color-alpha-white-90",
-      "value": "rgba(243, 244, 246, 0.9)",
+      "value": "rgba(243, 243, 243, 0.9)",
       "description": "Palette · alpha white"
     },
     {
