@@ -15,6 +15,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import type { ReactNode } from 'react';
@@ -36,6 +37,7 @@ import {
 // Imported as well as re-exported: `useSkeletonPulse` below reads it directly.
 import { useReduceMotion as useSystemReduceMotion } from '../../foundation/reduce-motion';
 import { useTokens } from '../../foundation/theme-provider';
+import { BAR_ENTER_STAGGER } from './motion';
 
 const MotionEnabled = createContext(true);
 
@@ -132,6 +134,37 @@ export function useChartEntrance(ready: boolean): SharedValue<number> {
     });
     return () => cancelAnimation(progress);
   }, [ready, reduced, progress, recipe.duration, x1, y1, x2, y2]);
+  return progress;
+}
+
+/**
+ * First paint of a bar chart: one linear clock, then each category eases in
+ * on its own offset. Count is read when `ready` flips so a later data change
+ * does not replay the grow — that is `barSwap`'s job.
+ */
+export function useStaggeredEntrance(ready: boolean, count: number): SharedValue<number> {
+  const t = useTokens();
+  const reduced = useReduceMotion();
+  const progress = useSharedValue(reduced ? 1 : 0);
+  const countRef = useRef(count);
+  const duration = t.motion.chart.enter.duration;
+  useEffect(() => {
+    countRef.current = count;
+  }, [count]);
+  useEffect(() => {
+    cancelAnimation(progress);
+    if (reduced || !ready) {
+      progress.value = reduced ? 1 : 0;
+      return;
+    }
+    const total = duration + BAR_ENTER_STAGGER * Math.max(0, countRef.current - 1);
+    progress.value = 0;
+    progress.value = withTiming(1, {
+      duration: total,
+      easing: WorkletEasing.linear,
+    });
+    return () => cancelAnimation(progress);
+  }, [ready, reduced, progress, duration]);
   return progress;
 }
 

@@ -10,8 +10,10 @@
  */
 import { type ReactNode } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { OutlineChartLine } from '@arloui/icons/OutlineChartLine';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { useTokens } from '../../foundation/theme-provider';
+import { useChartEntrance } from './hooks';
 
 export type ChartEmptyProps = {
   /** The headline. One short statement of what is not here yet. */
@@ -20,28 +22,40 @@ export type ChartEmptyProps = {
   description?: string;
   /** The one thing to do about it. Omit where there is nothing the reader can do. */
   action?: { label: string; onPress: () => void };
-  /** Replaces the default glyph in the tile. */
+  /** Replaces the default chart icon. */
   icon?: ReactNode;
-  /** Drops the tile entirely, for a slot that is mostly words. */
+  /** Drops the icon entirely, for a slot that is mostly words. */
   showIcon?: boolean;
   /** A fully custom slot. Wins over every prop above. */
   children?: ReactNode;
 };
 
-/** The default glyph: a series that has not happened yet. */
-export function EmptyGlyph({ color }: { color: string }) {
+/**
+ * The default empty glyph. It draws in once — 0 to 100 of the series, left to
+ * right, the same reveal a plot uses — then sits. Empty is a first-run, not a
+ * loader, so it does not loop.
+ */
+function EmptyChartIcon() {
+  const t = useTokens();
+  const size = t.sizing.icon.lg;
+  const progress = useChartEntrance(true);
+  const clip = useAnimatedStyle(() => {
+    const p = Math.max(progress.value, 0.001);
+    return { transform: [{ scaleX: p }] };
+  });
+  const unclip = useAnimatedStyle(() => {
+    const p = Math.max(progress.value, 0.001);
+    return { transform: [{ scaleX: 1 / p }] };
+  });
+
   return (
-    <Svg width={26} height={26} viewBox="0 0 26 26">
-      <Path
-        d="M2,17 L8,11 L13,14 L21,5"
-        fill="none"
-        stroke={color}
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <Circle cx={21} cy={5} r={2} fill={color} />
-    </Svg>
+    <View style={{ width: size, height: size, overflow: 'hidden' }}>
+      <Animated.View style={[{ width: size, height: size, transformOrigin: 'left center' }, clip]}>
+        <Animated.View style={[{ width: size, height: size, transformOrigin: 'left center' }, unclip]}>
+          <OutlineChartLine width={size} height={size} color={t.colors.textTertiary} />
+        </Animated.View>
+      </Animated.View>
+    </View>
   );
 }
 
@@ -53,20 +67,7 @@ export function EmptyContent({ title, description, action, icon, showIcon = true
   const t = useTokens();
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: t.spacing[4], gap: t.spacing[3] }}>
-      {showIcon ? (
-        <View
-          style={{
-            width: 52,
-            height: 52,
-            borderRadius: 14,
-            backgroundColor: t.colors.surfaceRaised,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {icon ?? <EmptyGlyph color={t.colors.borderStrong} />}
-        </View>
-      ) : null}
+      {showIcon ? (icon ?? <EmptyChartIcon />) : null}
       {title ? (
         <Text
           style={{

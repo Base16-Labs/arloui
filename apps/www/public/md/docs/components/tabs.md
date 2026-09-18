@@ -1,6 +1,6 @@
 # Tabs
 
-> Secondary navigation for categorising content or switching views within the current screen, with plain, underlined, and separate filled presentations.
+> Secondary navigation for categorising content or switching views within the current screen, with plain, underline, filled, and segmented presentations, plus a filled or Liquid Glass surface on the segmented track.
 
 **Type:** Component  
 **Category:** Navigation  
@@ -20,7 +20,7 @@
 
 ## States
 
-`default` · `selected` · `pressed` · `disabled` · `overflow`
+`default` · `selected` · `pressed` · `disabled` · `overflow` · `glass`
 
 ## Tokens used
 
@@ -28,6 +28,7 @@
 - `colors.textSecondary`
 - `colors.accent`
 - `colors.surfaceStrong`
+- `materials.glassSmall`
 - `radii.full`
 - `motion.duration.fast`
 - `motion.pressed`

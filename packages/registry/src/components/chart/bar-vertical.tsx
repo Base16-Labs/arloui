@@ -21,15 +21,15 @@ import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import { barPath, densityMetrics, seriesColorAt, toneColor } from './core';
 import { EmptyContent } from './empty';
-import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
-import { useChartFade } from './hooks';
+import { useControllableIndex, useReduceMotion, useSkeletonPulse, useStaggeredEntrance } from './hooks';
+import { ChartBarGrow } from './motion';
 import { ChartLegend } from './legend';
 import {
   BarSkeleton,
   DIMMED_ALPHA,
   LABEL_HEIGHT,
   ReferenceLine,
-  SKELETON_HEIGHTS,
+  SKELETON_COUNT,
   SPACING_FILL,
   VALUE_HEIGHT,
   normalizeBars,
@@ -74,7 +74,7 @@ export function VerticalBars({
     return [first, ...(series ?? []).map((extra) => normalizeBars(extra, labels))];
   }, [data, series]);
   const bars = allSeries[0] as BarDatum[];
-  const entrance = useChartFade(!loading && bars.length > 0);
+  const grow = useStaggeredEntrance(!loading && bars.length > 0 && width > 0, bars.length);
   const seriesCount = allSeries.length;
   const stacked = seriesCount > 1 && variant === 'stacked';
   const grouped = seriesCount > 1 && !stacked;
@@ -205,9 +205,9 @@ export function VerticalBars({
   );
 
   /*
-   * Bars cross-fade on a data change rather than sweeping up from zero. Fading
-   * the whole mark layer is the honest version of "the numbers changed"; growing
-   * each bar would animate the datum itself.
+   * Bars grow from the baseline on first paint. A later data change still
+   * cross-fades the whole mark layer — growing on a period change would
+   * animate the datum itself, which is what `barSwap` exists to avoid.
    */
   const [swap] = useState(() => new Animated.Value(1));
   const signature = allSeries
@@ -265,7 +265,7 @@ export function VerticalBars({
   /** Left edge of the mark within its slot. */
   const markInset = Math.max(0, (slot - groupWidth) / 2);
 
-  type Mark = { key: string; d: string; fill: string; opacity: number };
+  type Mark = { key: string; d: string; fill: string; opacity: number; category: number };
 
   const marks = useMemo(() => {
     if (width === 0 || bars.length === 0 || loading) return [];
@@ -313,6 +313,7 @@ export function VerticalBars({
             }),
             fill: tint(color, categoryDimmed),
             opacity: fade(color, categoryDimmed),
+            category: index,
           });
         });
       } else {
@@ -333,6 +334,7 @@ export function VerticalBars({
             }),
             fill: tint(seriesColor(s, datum, index), categoryDimmed),
             opacity: fade(seriesColor(s, datum, index), categoryDimmed),
+            category: index,
           });
         }
       }
@@ -355,6 +357,16 @@ export function VerticalBars({
     metrics.barRadius,
     seriesColor,
   ]);
+
+  const marksByCategory = useMemo(() => {
+    const groupedMarks = new Map<number, Mark[]>();
+    for (const mark of marks) {
+      const list = groupedMarks.get(mark.category) ?? [];
+      list.push(mark);
+      groupedMarks.set(mark.category, list);
+    }
+    return groupedMarks;
+  }, [marks]);
 
   /** Where the value label for a category sits: over the tallest mark in it. */
   const labelTopFor = useCallback(
@@ -401,7 +413,7 @@ export function VerticalBars({
   }
 
   return (
-    <Animated.View style={[{ gap: t.spacing[2], opacity: entrance }, style]}>
+    <View style={[{ gap: t.spacing[2] }, style]}>
       <View
         onLayout={handleLayout}
         accessible={!interactive}
@@ -439,8 +451,21 @@ export function VerticalBars({
                   fill="none"
                 />
               ) : null}
-              {marks.map((mark) => (
-                <Path key={mark.key} d={mark.d} fill={mark.fill} opacity={mark.opacity} />
+              {[...marksByCategory.entries()].map(([index, categoryMarks]) => (
+                <ChartBarGrow
+                  key={index}
+                  progress={grow}
+                  index={index}
+                  count={bars.length}
+                  originX={index * slot + slot / 2}
+                  originY={zeroY}
+                  duration={t.motion.chart.enter.duration}
+                  easing={t.motion.chart.enter.easing}
+                >
+                  {categoryMarks.map((mark) => (
+                    <Path key={mark.key} d={mark.d} fill={mark.fill} opacity={mark.opacity} />
+                  ))}
+                </ChartBarGrow>
               ))}
             </Svg>
           </Animated.View>
@@ -586,7 +611,7 @@ export function VerticalBars({
           <BarSkeleton
             width={width}
             height={plotHeight}
-            count={bars.length > 0 ? bars.length : SKELETON_HEIGHTS.length}
+            count={bars.length > 0 ? bars.length : SKELETON_COUNT}
             spacing={spacing}
             radius={metrics.barRadius}
           />
@@ -621,7 +646,7 @@ export function VerticalBars({
       </View>
 
       {legendItems ? <ChartLegend items={legendItems} /> : null}
-    </Animated.View>
+    </View>
   );
 }
 

@@ -11,6 +11,7 @@ import { waitFor } from '@testing-library/react-native';
  */
 import { StyleSheet } from 'react-native';
 import { BarChart } from '../bar-chart';
+import { skeletonFraction } from '../bar-shared';
 import { Chart } from '../index';
 import { DonutChart } from '../donut-chart';
 import { Meter } from '../meter';
@@ -86,6 +87,12 @@ describe('loading', () => {
   it('does not fall back to the empty label', () => {
     renderWithTheme(<BarChart data={[]} emptyLabel="No data" loading />);
     expect(screen.queryByText('No data')).toBeNull();
+  });
+
+  it('steps the bar silhouette from shortest to tallest', () => {
+    expect(skeletonFraction(0, 7)).toBeCloseTo(0.28);
+    expect(skeletonFraction(6, 7)).toBeCloseTo(0.88);
+    expect(skeletonFraction(3, 7)).toBeGreaterThan(skeletonFraction(2, 7));
   });
 
   it('leaves a labelled sparkline addressable', () => {
@@ -322,7 +329,7 @@ describe('Sparkline — loading and empty', () => {
 
   /**
    * The slot sets its own height. Nested inside the sparkline's fixed box it was
-   * crushed — the icon tile alone is 52pt against a 28pt inline mark — which is
+   * crushed — the icon and headline cannot live in a 28pt inline mark — which is
    * why it did not look like the empty state on any other form.
    */
   it('lets the composed slot size itself instead of crushing it into the mark', () => {

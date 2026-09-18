@@ -195,8 +195,8 @@ function SparklineInner({
    * The composed slot replaces the mark outright, exactly as it does on the
    * donut — it cannot live inside the sparkline's box.
    *
-   * A sparkline is 28pt tall inline and 56pt standalone; the slot's icon tile
-   * alone is 52pt. Rendering it into an `absoluteFill` inside that fixed height
+   * A sparkline is 28pt tall inline and 56pt standalone; the slot's icon and
+   * headline cannot live in that box. Rendering it into an `absoluteFill`
    * crushed it, which is why it did not look like the empty state on any other
    * form. Returning early lets the content set its own height, the way every
    * other chart's slot does.

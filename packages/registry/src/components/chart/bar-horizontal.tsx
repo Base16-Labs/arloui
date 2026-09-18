@@ -26,7 +26,7 @@ import { ChartLegend } from './legend';
 import Svg, { Path } from 'react-native-svg';
 import {
   DIMMED_ALPHA,
-  SKELETON_HEIGHTS,
+  skeletonFraction,
   SPACING_ROW_GAP,
   normalizeBars,
   type BarChartResolved,
@@ -316,7 +316,7 @@ export function HorizontalBars({
         {(loading ? Array.from({ length: skeletonCount }, () => null) : bars).map(
           (bar, index) => {
             if (loading) {
-              const fraction = SKELETON_HEIGHTS[index % SKELETON_HEIGHTS.length] ?? 0.5;
+              const fraction = skeletonFraction(index, skeletonCount);
               return (
                 <View key={`skeleton-${index}`} style={{ flexDirection: 'row', alignItems: 'center', gap: COLUMN_GAP }}>
                   {withLabels ? (

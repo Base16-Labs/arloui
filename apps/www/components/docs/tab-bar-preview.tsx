@@ -6,8 +6,9 @@ import { Chip } from '@/components/ui/Chip';
 import { cn } from '@/lib/cn';
 
 type Width = 'full' | 'floating';
-type Surface = 'transparent' | 'filled';
-type Behavior = 'fixed' | 'on scroll';
+type Surface = 'filled' | 'glass';
+type Behavior = 'hide' | 'shrink' | 'fixed';
+type Selection = 'snap' | 'jelly';
 
 const TABS = [
   { label: 'Home', icon: 'monitor' as const },
@@ -19,14 +20,16 @@ const TABS = [
 export function TabBarDocPlayground() {
   const [width, setWidth] = useState<Width>('floating');
   const [surface, setSurface] = useState<Surface>('filled');
-  const [behavior, setBehavior] = useState<Behavior>('on scroll');
+  const [behavior, setBehavior] = useState<Behavior>('shrink');
+  const [selection, setSelection] = useState<Selection>('snap');
   const [labels, setLabels] = useState(false);
 
   return (
     <section id="variants" className="border-t border-line py-9">
       <h2 className="text-[26px] font-semibold tracking-tight">Variants &amp; behavior</h2>
       <p className="mt-1.5 mb-6 text-[13px] text-ink-3">
-        Width and surface are independent. Select tabs or scroll the preview to exercise the motion.
+        Width, surface, scroll, and selection are independent. Select tabs or scroll the preview to
+        exercise the motion.
       </p>
 
       <div className="grid gap-6 md:grid-cols-[1fr_minmax(280px,330px)] md:items-start">
@@ -39,7 +42,7 @@ export function TabBarDocPlayground() {
             ))}
           </ControlRow>
           <ControlRow label="Surface">
-            {(['transparent', 'filled'] as const).map((item) => (
+            {(['filled', 'glass'] as const).map((item) => (
               <Chip key={item} active={surface === item} onClick={() => setSurface(item)}>
                 {item}
               </Chip>
@@ -53,9 +56,16 @@ export function TabBarDocPlayground() {
               Show
             </Chip>
           </ControlRow>
-          <ControlRow label="Behavior">
-            {(['fixed', 'on scroll'] as const).map((item) => (
+          <ControlRow label="On scroll">
+            {(['hide', 'shrink', 'fixed'] as const).map((item) => (
               <Chip key={item} active={behavior === item} onClick={() => setBehavior(item)}>
+                {item}
+              </Chip>
+            ))}
+          </ControlRow>
+          <ControlRow label="Selection">
+            {(['snap', 'jelly'] as const).map((item) => (
+              <Chip key={item} active={selection === item} onClick={() => setSelection(item)}>
                 {item}
               </Chip>
             ))}
@@ -68,6 +78,7 @@ export function TabBarDocPlayground() {
               width={width}
               surface={surface}
               behavior={behavior}
+              selection={selection}
               labels={labels}
               compact
             />
@@ -82,18 +93,21 @@ function TabBarScreen({
   width,
   surface,
   behavior,
+  selection,
   labels = false,
   compact = false,
 }: {
   width: Width;
   surface: Surface;
   behavior: Behavior;
+  selection: Selection;
   labels?: boolean;
   compact?: boolean;
 }) {
   const [active, setActive] = useState(0);
   const [hidden, setHidden] = useState(false);
   const lastScroll = useRef(0);
+  const floating = width === 'floating' || (hidden && behavior === 'shrink' && width === 'full');
 
   return (
     <div
@@ -133,28 +147,40 @@ function TabBarScreen({
 
       <div
         className={cn(
-          'absolute inset-x-0 bottom-3 z-10 transition-all duration-200 ease-out',
-          hidden && 'translate-y-20 opacity-20',
+          'absolute inset-x-0 bottom-3 z-10',
+          hidden && behavior === 'hide' && 'translate-y-20 opacity-20',
+          hidden && behavior === 'shrink' && width === 'floating' && 'translate-y-3 scale-[0.84]',
+          'transition-all duration-200 ease-out',
         )}
       >
         <div
           className={cn(
-            'relative mx-auto flex h-14 overflow-hidden border-line text-ink-3 transition-[width,background-color,border-radius] duration-200',
-            width === 'floating' ? 'w-[92%] rounded-full border p-1 shadow-lg' : 'w-full border-t',
-            surface === 'filled' ? 'bg-canvas/95 backdrop-blur-xl' : 'bg-transparent',
+            'relative mx-auto flex overflow-hidden border-line text-ink-3',
+            labels ? 'h-16' : 'h-14',
+            floating ? 'w-[92%] rounded-full border p-1 shadow-lg' : 'w-full border-t',
+            surface === 'glass'
+              ? 'border-white/60 bg-white/70 backdrop-blur-xl dark:border-white/15 dark:bg-zinc-900/70'
+              : 'bg-canvas/95',
           )}
         >
           <span
             className={cn(
-              'pointer-events-none absolute transition-transform duration-300 ease-out',
-              width === 'floating'
-                ? 'top-1 bottom-1 rounded-full bg-surface-strong'
-                : 'top-0 h-0.5 bg-[#155DFC]',
+              'pointer-events-none absolute',
+              width === 'floating' || floating
+                ? cn(
+                    'top-1 bottom-1 rounded-full bg-surface-strong',
+                    selection === 'jelly'
+                      ? 'transition-transform duration-300 ease-[cubic-bezier(0.34,1.4,0.64,1)]'
+                      : 'transition-transform duration-100 ease-out',
+                  )
+                : 'top-0 h-0.5 bg-[#155DFC] transition-all duration-100 ease-out',
             )}
             style={{
-              width: width === 'floating' ? 'calc((100% - 8px) / 4)' : '11.5%',
-              left: width === 'floating' ? 4 : `${active * 25 + 6.75}%`,
-              transform: width === 'floating' ? `translateX(${active * 100}%)` : undefined,
+              width:
+                width === 'floating' || floating ? 'calc((100% - 8px) / 4)' : '11.5%',
+              left: width === 'floating' || floating ? 4 : `${active * 25 + 6.75}%`,
+              transform:
+                width === 'floating' || floating ? `translateX(${active * 100}%)` : undefined,
             }}
           />
           {TABS.map((tab, index) => (

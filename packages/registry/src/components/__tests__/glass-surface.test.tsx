@@ -9,6 +9,7 @@
 import { Platform, StyleSheet } from 'react-native';
 import { Button } from '../button/button';
 import { TabBar } from '../tab-bar/tab-bar';
+import { Tabs } from '../tabs/tabs';
 import { __resetGlassCacheForTests, withAlpha } from '../../foundation/glass';
 import { materials, themes } from '../../foundation/tokens';
 import { fireEvent, renderWithTheme, screen } from '../../../test/render';
@@ -245,6 +246,60 @@ describe('TabBar surface="glass"', () => {
   it('takes no tint, because it has no colour of its own to keep', () => {
     glassEffect.__setLiquidGlassAvailable(true);
     renderWithTheme(bar('glass'));
+    expect(screen.getByTestId('native-glass-view').props.tintColor).toBeUndefined();
+  });
+});
+
+describe('Tabs surface="glass"', () => {
+  function control(surface: 'glass' | 'filled', appearance: 'segmented' | 'underline' = 'segmented') {
+    return (
+      <Tabs value="one" onValueChange={() => {}} appearance={appearance} surface={surface}>
+        <Tabs.Item value="one" label="One" />
+        <Tabs.Item value="two" label="Two" />
+      </Tabs>
+    );
+  }
+
+  it('uses the system material on a segmented track when it is there', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(control('glass'));
+    expect(screen.getByTestId('native-glass-view')).toBeTruthy();
+  });
+
+  it('falls back without it, and still renders its items', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    renderWithTheme(control('glass'));
+    expect(screen.queryByTestId('native-glass-view')).toBeNull();
+    expect(screen.getByRole('tab', { name: 'One' })).toBeTruthy();
+  });
+
+  it('leaves a filled track alone', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(control('filled'));
+    expect(screen.queryByTestId('native-glass-view')).toBeNull();
+  });
+
+  it('is a no-op on appearances that have no track', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(control('glass', 'underline'));
+    expect(screen.queryByTestId('native-glass-view')).toBeNull();
+  });
+
+  it('paints the material exactly once', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    const { toJSON } = renderWithTheme(control('glass'), { theme: 'light' });
+
+    const overlay = materials.glassSmall.lightOverlay;
+    expect(fills(toJSON()).filter((fill) => fill === overlay)).toHaveLength(1);
+  });
+
+  /**
+   * Same as the bar: the track has no tone of its own to keep. `surfaceStrong`
+   * is the well we are replacing, not a colour that should survive as a tint.
+   */
+  it('takes no tint, because the track has no colour of its own to keep', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(control('glass'));
     expect(screen.getByTestId('native-glass-view').props.tintColor).toBeUndefined();
   });
 });

@@ -3,7 +3,7 @@
  *
  * One place that decides what a glass surface is actually made of, and turns a
  * material token into the fill, border, and blur strength a component paints.
- * Every glass-capable component (Button, Card, Sheet, TabBar) resolves through
+ * Every glass-capable component (Button, Card, Sheet, TabBar, Tabs) resolves through
  * `useGlassSurface` and mounts `GlassBackdrop`, so the material reads identically
  * across the system and only has to be retuned once.
  *

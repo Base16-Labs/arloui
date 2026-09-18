@@ -2,7 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Chart, useTokens } from '@arloui/registry';
+import { Chart, useTokens, type DonutEdges } from '@arloui/registry';
 import { ChartCanvas } from '@/components/playground/chart-canvas';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
@@ -34,14 +34,15 @@ const CATEGORIES = [
 
 const COUNTS = [1, 3, 4, 5] as const;
 const STATES: State[] = ['default', 'loading', 'empty'];
+const EDGES: DonutEdges[] = ['straight', 'curve'];
 /**
- * Ring weights, not arbitrary numbers: `thin` is the inline-beside-a-legend look,
- * `default` the standalone one, and `thick` is where the centre readout starts to
- * crowd — worth being able to see before someone ships it.
+ * Ring weights, not arbitrary numbers: `thin` is the default stroke,
+ * `medium` the heavier standalone ring, and `thick` is where the centre
+ * readout starts to crowd — worth being able to see before someone ships it.
  */
 const THICKNESSES = [
   { label: 'thin', value: 16 },
-  { label: 'default', value: 26 },
+  { label: 'medium', value: 26 },
   { label: 'thick', value: 38 },
 ] as const;
 
@@ -55,7 +56,8 @@ export default function DonutChartCanvas() {
   const motion = useChartMotionControls();
   const [count, setCount] = useState<number>(4);
   const [showLegend, setShowLegend] = useState(true);
-  const [thickness, setThickness] = useState<number>(26);
+  const [thickness, setThickness] = useState<number>(16);
+  const [edges, setEdges] = useState<DonutEdges>('straight');
   const [showValue, setShowValue] = useState(true);
   const [state, setState] = useState<State>('default');
   const [selected, setSelected] = useState<number | null>(null);
@@ -90,6 +92,7 @@ export default function DonutChartCanvas() {
               data={data}
               format={money}
               thickness={thickness}
+              edges={edges}
               loading={state === 'loading'}
               empty={{
                 title: 'No spending yet',
@@ -168,6 +171,16 @@ export default function DonutChartCanvas() {
                         label={option.label}
                         active={thickness === option.value}
                         onPress={() => setThickness(option.value)}
+                      />
+                    ))}
+                  </VariantControlRow>
+                  <VariantControlRow label="Edges">
+                    {EDGES.map((value) => (
+                      <VariantChip
+                        key={value}
+                        label={value}
+                        active={edges === value}
+                        onPress={() => setEdges(value)}
                       />
                     ))}
                   </VariantControlRow>

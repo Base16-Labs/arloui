@@ -129,7 +129,7 @@ Without children, the chart uses its default layout. Add child components to cho
 
 ## Motion
 
-Bars fade into place over 200 ms when data first appears. Vertical bars also fade on dataset changes. Their lengths do not grow from zero, so the animation does not imply changing values.
+Vertical bars grow from the baseline on first paint, staggered by category. Dataset changes still cross-fade in place so a period swap does not animate the numbers.
 
 Motion is enabled by default. Set `animated={false}` to disable entrances, transitions, and loading pulse. Device Reduce Motion takes precedence. Loading shows a neutral pulsing placeholder that fades out before entry. For background fetches, pass `refreshing` and keep supplying the last successful data; the chart stays visible and exposes its busy state. Entry runs once when real data becomes available, including after loading or an empty state. It does not loop.
 

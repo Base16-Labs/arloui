@@ -310,9 +310,10 @@ it('donut exposes category count and thickness without an overridden density con
     choose('Data', `${n} ${n === 1 ? 'category' : 'categories'}`);
     expect(prop('Donut', 'data')).toHaveLength(n);
   }
+  expect(prop('Donut', 'thickness')).toBe(16);
   for (const [name, value] of [
     ['thin', 16],
-    ['default', 26],
+    ['medium', 26],
     ['thick', 38],
   ] as const) {
     choose('Stroke', name);
@@ -322,6 +323,11 @@ it('donut exposes category count and thickness without an overridden density con
   expect(screen.queryByTestId('Donut.Value')).toBeNull();
   choose('Legend', 'hide');
   expect(screen.queryByTestId('Donut.Legend')).toBeNull();
+  expect(prop('Donut', 'edges')).toBe('straight');
+  choose('Edges', 'curve');
+  expect(prop('Donut', 'edges')).toBe('curve');
+  choose('Edges', 'straight');
+  expect(prop('Donut', 'edges')).toBe('straight');
 });
 
 it('meter shows rings only for round shapes and tone only when thresholds do not override it', () => {

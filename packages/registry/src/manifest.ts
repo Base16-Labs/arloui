@@ -220,7 +220,7 @@ export const COMPONENTS: RegistryEntry[] = [
      * because gifted resolved a gradient package at import time — the area fill
      * is an SVG `<LinearGradient>` now.
      */
-    dependencies: ['react-native-svg', 'react-native-reanimated', 'react-native-worklets'],
+    dependencies: ['@arloui/icons', 'react-native-svg', 'react-native-reanimated', 'react-native-worklets'],
     registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/chart/core.ts', target: 'chart/core.ts' },
@@ -358,8 +358,8 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tabs',
     description:
-      'Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.',
-    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
+      'Secondary navigation for categorising content or switching views, with plain, underline, filled, and segmented appearances, plus a filled or Liquid Glass surface on the segmented track.',
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion', 'glass'],
     files: [
       { source: 'components/tabs/tabs.tsx', target: 'tabs/tabs.tsx' },
       { source: 'components/tabs/index.ts', target: 'tabs/index.ts' },

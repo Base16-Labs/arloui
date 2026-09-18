@@ -1171,6 +1171,24 @@ describe('DonutChart', () => {
     expect(screen.getByRole('image')).toBeTruthy();
   });
 
+  it('rounds slice ends when edges are curve', () => {
+    renderWithTheme(<DonutChart animated={false} data={spend} edges="curve" />);
+    const caps = screen.UNSAFE_getAllByType(Path).filter(
+      (n) =>
+        (n.props as { strokeLinecap?: string; strokeLineCap?: string }).strokeLinecap === 'round' ||
+        (n.props as { strokeLineCap?: string }).strokeLineCap === 'round',
+    );
+    expect(caps).toHaveLength(spend.length);
+  });
+
+  it('cuts slices radially by default', () => {
+    renderWithTheme(<DonutChart animated={false} data={spend} />);
+    const paths = screen.UNSAFE_root
+      .findAllByType('RNSVGPath' as never)
+      .map((n) => n.props as { strokeLinecap?: string });
+    expect(paths.every((p) => p.strokeLinecap == null)).toBe(true);
+  });
+
   /** The centre value is a figure the chart does not have yet. */
   it('shows no centre figure while loading', async () => {
     const { rerender } = renderWithTheme(

@@ -93,7 +93,7 @@ Without children, the chart uses its default layout. Add child components to cho
 
 ## Motion
 
-The calendar fades in as one layer over 200 ms when data first appears. Cells do not animate individually: their colours represent activity, not progress. Selection and data changes are immediate.
+Weeks enter from the top over 400 ms, staggered by 40 ms, when data first appears. Day labels and the Less–More key stay still. Cell colours do not tween: they represent activity, not progress. Selection and data changes are immediate.
 
 Motion is enabled by default. Set `animated={false}` to disable entrances, transitions, and loading pulse. Device Reduce Motion takes precedence. Loading shows a neutral pulsing placeholder that fades out before entry. For background fetches, pass `refreshing` and keep supplying the last successful data; the chart stays visible and exposes its busy state. Entry runs once when real data becomes available, including after loading or an empty state. It does not loop.
 

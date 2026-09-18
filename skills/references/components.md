@@ -12,7 +12,7 @@ Use these patterns as the system baseline. They should be easy to express in Fig
 
 ### Button Family
 
-Registry **`Button`** uses **`tone`** (`primary` | `neutral` | `danger`) × **`appearance`** (`solid` | `soft` | `ghost` | `outline`), sizes **`sm`–`xl`**, optional **`leadingIcon`** / **`trailingIcon`**, **`iconOnly`** (circle), and **`loading`**. Legacy **`variant`** (`primary` | `secondary` | `ghost` | `danger`) still maps to tone + appearance.
+Registry **`Button`** uses **`tone`** (`primary` | `neutral` | `danger`) × **`appearance`** (`solid` | `soft` | `ghost` | `outline`), sizes **`sm`–`xl`**, optional **`leadingIcon`** / **`trailingIcon`**, **`iconOnly`** (circle), and **`loading`**. **`surface`**: **`default`** (the tone's opaque fill) or **`glass`** (Liquid Glass — the real system material on iOS 26 via `expo-glass-effect`, and a translucent overlay over a host **`blurComponent`** everywhere else). The tone's fill becomes the material's tint, so a glass primary button still reads as primary. Legacy **`variant`** (`primary` | `secondary` | `ghost` | `danger`) still maps to tone + appearance.
 
 **`SocialAuthButton`** — pill OAuth rows for **`facebook`** | **`x`** with **`appearance`**: `brandSolid`, `brandSoft`, `brandOutline`, `neutralSolid`, `neutralOutline`. Default leading marks are minimal Text glyphs; use **`renderLeading`** for official SVGs.
 
@@ -140,6 +140,15 @@ Guidelines:
 - Icons are primary; labels (`showLabels`) are secondary but aid clarity.
 - Keep the bar anchored to the safe-area bottom — never overlap content (pass `bottomInset`).
 - Avoid badge-heavy tabs; one notification count is fine, multiple is noise.
+
+### Tabs
+
+Registry **`Tabs`** — in-screen navigation for sibling content, not primary destinations (those belong on **`TabBar`**). **`appearance`**: **`plain`**, **`underline`**, **`filled`**, or **`segmented`**. **`tone`**: **`neutral`** or **`accent`**. **`layout`**: **`content`** or **`equal`**. A segmented control is a fixed equal-width track and ignores `scrollable` / `content`. **`surface`** (segmented only): **`filled`** (opaque `surfaceStrong`) or **`glass`** (Liquid Glass — the same contract as Button and TabBar; a no-op on the other appearances). Compose with **`Tabs.Item`** (`value`, `label`, optional `disabled`).
+
+Guidelines:
+
+- Keep labels short and peer; do not mix actions such as Add into the set.
+- Use glass when the control sits over content; filled when it sits on a solid surface.
 
 ## State Patterns
 

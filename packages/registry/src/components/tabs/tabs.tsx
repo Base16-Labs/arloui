@@ -8,12 +8,20 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import { GlassBackdrop, useGlassSurface } from '../../foundation/glass';
 import { useTokens } from '../../foundation/theme-provider';
 import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type TabsAppearance = 'plain' | 'underline' | 'filled' | 'segmented';
 export type TabsTone = 'neutral' | 'accent';
 export type TabsLayout = 'content' | 'equal';
+/**
+ * Only the segmented track has a surface. `'filled'` is the opaque well;
+ * `'glass'` is Liquid Glass — the real system material on iOS 26 and a
+ * translucent overlay over a host blur everywhere else. A no-op on the other
+ * appearances, which have no track to paint.
+ */
+export type TabsSurface = 'filled' | 'glass';
 
 export type TabsProps = {
   value: string;
@@ -22,6 +30,13 @@ export type TabsProps = {
   appearance?: TabsAppearance;
   tone?: TabsTone;
   layout?: TabsLayout;
+  surface?: TabsSurface;
+  /**
+   * Optional blur layer (e.g. `expo-blur`'s BlurView) behind a glass segmented
+   * track. Ignored on the native glass path, where the system material blurs
+   * for itself, and on every appearance that is not segmented.
+   */
+  blurComponent?: ReactNode;
   scrollable?: boolean;
   style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
@@ -50,15 +65,19 @@ function TabsRoot({
   appearance = 'plain',
   tone = 'neutral',
   layout = 'content',
+  surface = 'filled',
+  blurComponent,
   scrollable = false,
   style,
   accessibilityLabel = 'Content tabs',
 }: TabsProps) {
   const t = useTokens();
   const reduceMotion = useReduceMotion();
+  const glass = useGlassSurface('small');
   const [trackWidth, setTrackWidth] = useState(0);
   const items = Children.toArray(children).filter(isValidElement) as ReactElement<TabsItemProps>[];
   const segmented = appearance === 'segmented';
+  const isGlass = segmented && surface === 'glass';
   // A segmented control is a fixed, equal-width track — it ignores scrollable/content layout.
   const equal = segmented || (layout === 'equal' && !scrollable);
   const activeIndex = Math.max(
@@ -94,11 +113,20 @@ function TabsRoot({
             alignItems: 'stretch',
             padding: segPadding,
             borderRadius: t.radii.full,
-            backgroundColor: t.colors.surfaceStrong,
+            overflow: isGlass ? 'hidden' : undefined,
+            // GlassBackdrop paints the well. A fill here would stack under it.
+            backgroundColor: isGlass ? 'transparent' : t.colors.surfaceStrong,
+            borderWidth: isGlass ? glass.borderWidth : 0,
+            borderColor: isGlass ? glass.borderColor : undefined,
           },
           style,
         ]}
       >
+        {isGlass ? (
+          <GlassBackdrop material="small" borderRadius={t.radii.full}>
+            {blurComponent}
+          </GlassBackdrop>
+        ) : null}
         {trackWidth > 0 && thumbWidth > 0 ? (
           <Animated.View
             pointerEvents="none"

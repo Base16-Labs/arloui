@@ -72,6 +72,7 @@ const CASES: [string, () => React.ReactElement, () => React.ReactElement][] = [
   ['BarChart loading', () => <BarChart data={SERIES} />, () => <BarChart data={SERIES} loading />],
 
   ['Donut thickness', () => <DonutChart data={SLICES} />, () => <DonutChart data={SLICES} thickness={40} />],
+  ['Donut edges', () => <DonutChart data={SLICES} />, () => <DonutChart data={SLICES} edges="curve" />],
   ['Donut size', () => <DonutChart data={SLICES} />, () => <DonutChart data={SLICES} size={240} />],
   ['Donut density', () => <DonutChart data={SLICES} />, () => <DonutChart data={SLICES} density="compact" />],
   ['Donut maxSlices', () => <DonutChart data={SLICES} />, () => <DonutChart data={SLICES} maxSlices={2} />],

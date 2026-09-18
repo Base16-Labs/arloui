@@ -30,10 +30,10 @@
  *   value; there is no hover on a touch screen. The categories not selected fade
  *   to a light tint of their own colours rather than dropping out, so the shape
  *   of the whole series survives while one category is being read.
- * - **Bars never scale.** A bar's height *is* its datum, so a bar that grows from
- *   zero is animating the number. On a data change they cross-fade in place
- *   (`motion.chart.barSwap`) — the documented exception to the rule that things
- *   entering scale up.
+ * - **Bars grow from the baseline on first paint**, staggered by category. A
+ *   bar's height *is* its datum, so a later data change still cross-fades in
+ *   place (`motion.chart.barSwap`) — growing on a period change would animate
+ *   the number.
  * - **Layout is a prop, not a form.** `layout="horizontal"` draws the same
  *   categories as ranked rows — label, track, value — for any ranked breakdown.
  *   It renders the first series; ranking two series at once is a table's job.

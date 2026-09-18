@@ -1,13 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Tabs,
   useTokens,
   type TabsAppearance,
   type TabsLayout,
+  type TabsSurface,
   type TabsTone,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
@@ -21,6 +23,7 @@ type TabValue = 'for-you' | 'following' | 'saved';
 const APPEARANCES: TabsAppearance[] = ['plain', 'underline', 'filled', 'segmented'];
 const TONES: TabsTone[] = ['neutral', 'accent'];
 const LAYOUTS: TabsLayout[] = ['content', 'equal'];
+const SURFACES: TabsSurface[] = ['filled', 'glass'];
 
 export default function TabsCanvas() {
   const t = useTokens();
@@ -31,17 +34,20 @@ export default function TabsCanvas() {
   const [appearance, setAppearance] = useState<TabsAppearance>('underline');
   const [tone, setTone] = useState<TabsTone>('accent');
   const [layout, setLayout] = useState<TabsLayout>('equal');
+  const [surface, setSurface] = useState<TabsSurface>('filled');
   const [previewOffset] = useState(() => new Animated.Value(0));
+  const segmented = appearance === 'segmented';
+  const isGlass = segmented && surface === 'glass';
 
   useEffect(() => {
     Animated.spring(previewOffset, {
-      toValue: menuOpen ? -112 : 0,
+      toValue: menuOpen ? (segmented ? -148 : -112) : 0,
       damping: 27,
       stiffness: 300,
       mass: 0.8,
       useNativeDriver: true,
     }).start();
-  }, [menuOpen, previewOffset]);
+  }, [menuOpen, previewOffset, segmented]);
 
   return (
     <>
@@ -84,9 +90,31 @@ export default function TabsCanvas() {
                 borderRadius: t.radii['2xl'],
                 borderWidth: 1,
                 borderColor: t.colors.border,
-                backgroundColor: t.colors.surface,
+                backgroundColor: t.colors.bg,
               }}
             >
+              {isGlass ? (
+                <View
+                  pointerEvents="none"
+                  style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
+                >
+                  {['#BFDBFE', '#BBF7D0', '#FED7AA', '#E9D5FF'].map((color, index) => (
+                    <View
+                      key={color}
+                      style={{
+                        position: 'absolute',
+                        top: 48 + index * 86,
+                        left: index % 2 === 0 ? -24 : 48,
+                        width: 220,
+                        height: 180,
+                        borderRadius: 36,
+                        backgroundColor: color,
+                        opacity: 0.9,
+                      }}
+                    />
+                  ))}
+                </View>
+              ) : null}
               <View
                 style={{
                   height: 68,
@@ -115,7 +143,17 @@ export default function TabsCanvas() {
                   appearance={appearance}
                   tone={tone}
                   layout={layout}
-                  style={layout === 'content' ? { alignSelf: 'center' } : undefined}
+                  surface={surface}
+                  blurComponent={
+                    isGlass ? (
+                      <BlurView
+                        intensity={40}
+                        tint={t.name === 'dark' ? 'dark' : 'light'}
+                        style={StyleSheet.absoluteFill}
+                      />
+                    ) : undefined
+                  }
+                  style={layout === 'content' && !segmented ? { alignSelf: 'center' } : undefined}
                 >
                   <Tabs.Item value="for-you" label="For you" />
                   <Tabs.Item value="following" label="Following" />
@@ -185,6 +223,18 @@ export default function TabsCanvas() {
                   />
                 ))}
               </VariantControlRow>
+              {segmented ? (
+                <VariantControlRow label="Surface">
+                  {SURFACES.map((option) => (
+                    <VariantChip
+                      key={option}
+                      label={option}
+                      active={surface === option}
+                      onPress={() => setSurface(option)}
+                    />
+                  ))}
+                </VariantControlRow>
+              ) : null}
             </View>
           </VariantSheet>
         </View>

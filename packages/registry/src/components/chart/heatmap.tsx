@@ -27,14 +27,15 @@
  *   is one image to a screen reader — forty-two tappable squares is not a
  *   control surface, it is noise.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Animated, Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, Easing, Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { rgbaFromHex } from '@arloui/tokens';
 import { haptic } from '../../foundation/haptics';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useTokens } from '../../foundation/theme-provider';
-import { ChartLoading, ChartMotion, useChartFade } from './hooks';
+import { ChartLoading, ChartMotion, useReduceMotion } from './hooks';
+import { BAR_ENTER_STAGGER } from './motion';
 import type { ChartPoint } from './core';
 import { collectParts, hasPart, useSkeletonPulse } from './hooks';
 
@@ -90,6 +91,57 @@ export type HeatmapProps = {
 
 const DAY_INITIALS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
+/** How far a week sits before it settles on first paint. */
+const WEEK_TRAVEL = 6;
+
+/**
+ * One week of the first-paint stagger. Opacity and a short settle, not a colour
+ * tween: a cell's fill is its datum, and animating it would count the days.
+ */
+function HeatmapWeekEnter({ index, children }: { index: number; children: ReactNode }) {
+  const t = useTokens();
+  const reduced = useReduceMotion();
+  const [opacity] = useState(() => new Animated.Value(reduced ? 1 : 0));
+  const {
+    duration,
+    easing: [x1, y1, x2, y2],
+  } = t.motion.chart.enter;
+  useEffect(() => {
+    opacity.stopAnimation();
+    if (reduced) {
+      opacity.setValue(1);
+      return;
+    }
+    opacity.setValue(0);
+    // Delay via timeout, not `timing.delay`: stopping a delayed Animated.timing
+    // in React Strict Mode leaves the value at 0 and the second start is a no-op.
+    const timer = setTimeout(() => {
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration,
+        easing: Easing.bezier(x1, y1, x2, y2),
+        // JS driver: native driver never updates these views on web, so the
+        // weeks would stay at opacity 0 after first paint.
+        useNativeDriver: false,
+      }).start();
+    }, index * BAR_ENTER_STAGGER);
+    return () => {
+      clearTimeout(timer);
+      opacity.stopAnimation();
+    };
+  }, [reduced, opacity, duration, x1, y1, x2, y2, index]);
+  return (
+    <Animated.View
+      style={{
+        opacity,
+        transform: [{ translateY: opacity.interpolate({ inputRange: [0, 1], outputRange: [WEEK_TRAVEL, 0] }) }],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+
 /** Local midnight of a day, as the number every lookup keys on. */
 function dayKey(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
@@ -137,7 +189,6 @@ function HeatmapInner({
   style,
 }: HeatmapResolved) {
   const t = useTokens();
-  const entrance = useChartFade(!loading && data.length > 0);
   const pulse = useSkeletonPulse(t.motion.duration.slow, loading);
   const [gridWidth, setGridWidth] = useState(0);
   const interactive = onSelect != null;
@@ -237,13 +288,12 @@ function HeatmapInner({
         accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={interactive ? undefined : summary}
         onLayout={(event) => setGridWidth(event.nativeEvent.layout.width)}
-        style={{ gap: 5, opacity: loading ? pulse : entrance, overflow: 'hidden' }}
+        style={{ gap: 5, opacity: loading ? pulse : 1 }}
       >
         {/*
-          The grid is a field of squares rather than one shape, so the sweep runs
-          across the block and the gaps between cells break it up on their own —
-          no clip needed, and clipping to forty-two separate rects would cost
-          more than it buys.
+          Weeks enter top to bottom — time in this grid runs down the rows.
+          Day labels stay put, like axes on a plot. Cell colours never tween:
+          intensity is the datum, and animating it would count the days.
         */}
         {showDayLabels ? (
           <View style={{ flexDirection: 'row', gap: 5 }}>
@@ -266,38 +316,46 @@ function HeatmapInner({
           </View>
         ) : null}
 
-        {weeks.map((week, weekIndex) => (
-          <View key={`week-${weekIndex}`} style={{ flexDirection: 'row', gap: 5 }}>
-            {week.map((cell) => {
-              const datum = loading ? null : (byDay.get(cell.key) ?? null);
-              const level = datum ? levelFor(datum.value) : 0;
-              const backgroundColor = loading ? t.colors.surfaceInput : levelColor(level);
-              const square = {
-                flex: 1,
-                aspectRatio: 1,
-                borderRadius: 3,
-                backgroundColor,
-              } as const;
+        {weeks.map((week, weekIndex) => {
+          const row = (
+            <View style={{ flexDirection: 'row', gap: 5 }}>
+              {week.map((cell) => {
+                const datum = loading ? null : (byDay.get(cell.key) ?? null);
+                const level = datum ? levelFor(datum.value) : 0;
+                const backgroundColor = loading ? t.colors.surfaceInput : levelColor(level);
+                const square = {
+                  flex: 1,
+                  aspectRatio: 1,
+                  borderRadius: 3,
+                  backgroundColor,
+                } as const;
 
-              if (!interactive || loading || !datum) {
-                return <View key={cell.key} style={square} />;
-              }
+                if (!interactive || loading || !datum) {
+                  return <View key={cell.key} style={square} />;
+                }
 
-              return (
-                <Pressable
-                  key={cell.key}
-                  accessibilityRole="button"
-                  accessibilityLabel={cellLabel(datum, cell.date)}
-                  onPress={() => {
-                    void haptic('selection');
-                    onSelect(datum, cell.date);
-                  }}
-                  style={square}
-                />
-              );
-            })}
-          </View>
-        ))}
+                return (
+                  <Pressable
+                    key={cell.key}
+                    accessibilityRole="button"
+                    accessibilityLabel={cellLabel(datum, cell.date)}
+                    onPress={() => {
+                      void haptic('selection');
+                      onSelect(datum, cell.date);
+                    }}
+                    style={square}
+                  />
+                );
+              })}
+            </View>
+          );
+          if (loading) return <View key={`week-${weekIndex}`}>{row}</View>;
+          return (
+            <HeatmapWeekEnter key={`week-${weekIndex}`} index={weekIndex}>
+              {row}
+            </HeatmapWeekEnter>
+          );
+        })}
       </Animated.View>
 
       {showScale && !loading ? (

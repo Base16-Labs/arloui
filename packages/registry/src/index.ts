@@ -75,6 +75,7 @@ export {
   type ChartTone,
   type DensityMetrics,
   type DonutChartProps,
+  type DonutEdges,
   type DonutSlice,
   type HeatmapDatum,
   type HeatmapProps,
@@ -117,6 +118,7 @@ export {
   type TabsItemProps,
   type TabsLayout,
   type TabsProps,
+  type TabsSurface,
   type TabsTone,
 } from './components/tabs';
 export {

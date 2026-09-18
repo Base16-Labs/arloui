@@ -204,6 +204,7 @@
       "title": "Chart core",
       "description": "The geometry, tone, and density every chart form measures with, plus the shared legend, empty slot, and loading skeleton. Installed by each form; install it directly only if you are writing a form of your own against the same scale.",
       "dependencies": [
+        "@arloui/icons",
         "react-native-svg",
         "react-native-reanimated",
         "react-native-worklets"
@@ -438,11 +439,12 @@
       "name": "tabs",
       "kind": "primitive",
       "title": "Tabs",
-      "description": "Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.",
+      "description": "Secondary navigation for categorising content or switching views, with plain, underline, filled, and segmented appearances, plus a filled or Liquid Glass surface on the segmented track.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "reduce-motion"
+        "reduce-motion",
+        "glass"
       ],
       "meta": {
         "tags": [

@@ -51,7 +51,7 @@ npx arloui diff button
 - **chart** — Chart. Every chart form and the `Chart` namespace that reaches them — the plot, sparkline, bar, donut, meter, and heatmap. Take this to get the namespace; take a single form (`chart-bar`, `chart-sparkline`, …) to get one chart and the shared core, and nothing else.
 - **skeleton** — Skeleton. A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.
 - **spinner** — Spinner. A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.
-- **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.
+- **tabs** — Tabs. Secondary navigation for categorising content or switching views, with plain, underline, filled, and segmented appearances, plus a filled or Liquid Glass surface on the segmented track.
 - **sheet** — Sheet. A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.
 - **field** — Field. Composable text-field primitive (Label, Control, Icon, Action, Input, Toolbar, Helper) shared by Input and TextArea.
 - **input** — Input. A filled text input with labels, helper text, validation, icons, actions, password, and search patterns.

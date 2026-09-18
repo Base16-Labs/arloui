@@ -27,14 +27,38 @@ function linePoints(values: number[], w: number, h: number, inset = 3) {
   }));
 }
 
-function toPath(points: { x: number; y: number }[]) {
-  return points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`)
-    .join(' ');
+function fmt(n: number) {
+  return n.toFixed(2);
+}
+
+/** Straight segments — the registry's `curve="steep"`. */
+function steepPath(points: { x: number; y: number }[]) {
+  return points.map((p, i) => `${i === 0 ? 'M' : 'L'}${fmt(p.x)},${fmt(p.y)}`).join(' ');
+}
+
+/**
+ * Catmull-Rom through the samples, as cubic Béziers — the registry's
+ * `curve="smooth"`. Same conversion as `packages/registry/.../core.ts`.
+ */
+function smoothPath(points: { x: number; y: number }[]) {
+  const first = points[0];
+  if (!first) return '';
+  if (points.length < 3) return steepPath(points);
+  let d = `M${fmt(first.x)},${fmt(first.y)}`;
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const p0 = points[i - 1] ?? points[i]!;
+    const p1 = points[i]!;
+    const p2 = points[i + 1]!;
+    const p3 = points[i + 2] ?? p2;
+    const c1 = { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 };
+    const c2 = { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 };
+    d += ` C${fmt(c1.x)},${fmt(c1.y)} ${fmt(c2.x)},${fmt(c2.y)} ${fmt(p2.x)},${fmt(p2.y)}`;
+  }
+  return d;
 }
 
 function linePath(values: number[], w: number, h: number, inset = 3) {
-  return toPath(linePoints(values, w, h, inset));
+  return smoothPath(linePoints(values, w, h, inset));
 }
 
 function Frame({ label, children }: { label: string; children: React.ReactNode }) {
@@ -49,7 +73,10 @@ function Frame({ label, children }: { label: string; children: React.ReactNode }
 export function ChartLinePreview() {
   const w = 320;
   const h = 120;
-  const d = linePath(SERIES, w, h);
+  const points = linePoints(SERIES, w, h);
+  const d = smoothPath(points);
+  const start = points[0]!;
+  const end = points[points.length - 1]!;
   const last = SERIES[SERIES.length - 1]!;
   const first = SERIES[0]!;
   const delta = last - first;
@@ -69,8 +96,18 @@ export function ChartLinePreview() {
             <stop offset="1" stopColor={chartPositive} stopOpacity="0" />
           </linearGradient>
         </defs>
-        <path d={`${d} L${w},${h} L0,${h} Z`} fill="url(#docChartFill)" />
-        <path d={d} fill="none" stroke={chartPositive} strokeWidth="2" strokeLinecap="round" />
+        <path
+          d={`${d} L${fmt(end.x)},${h} L${fmt(start.x)},${h} Z`}
+          fill="url(#docChartFill)"
+        />
+        <path
+          d={d}
+          fill="none"
+          stroke={chartPositive}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
       <div className="mt-3 flex gap-1.5">
         {['1D', '1W', '1M', '1Y', 'ALL'].map((p, i) => (
@@ -98,7 +135,14 @@ export function ChartSparklinePreview() {
           <p className="mt-1 text-[20px] font-medium text-ink tabular-nums">$1,156.00</p>
         </div>
         <svg viewBox="0 0 140 28" className="w-[42%] shrink-0" role="img" aria-label="Rising portfolio trend">
-          <path d={linePath(SERIES, 140, 28)} fill="none" stroke={chartPositive} strokeWidth="1.5" strokeLinecap="round" />
+          <path
+            d={linePath(SERIES, 140, 28)}
+            fill="none"
+            stroke={chartPositive}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </div>
     </Frame>

@@ -206,7 +206,8 @@ function TabsDocPage() {
               {[
                 ['Container', 'content width or equal distribution'],
                 ['Item', 'label and 44px touch target'],
-                ['Selection', 'weight, underline, or filled surface'],
+                ['Selection', 'weight, underline, filled pill, or segmented thumb'],
+                ['Surface', 'filled or Liquid Glass, segmented only'],
                 ['Tone', 'neutral or accent'],
                 ['Content', 'the current in-screen view'],
               ].map(([name, detail]) => (
@@ -231,13 +232,18 @@ function TabsDocPage() {
             <li>Use plain tabs for quiet categorisation where hierarchy is already obvious.</li>
             <li>Use underline tabs for persistent sections with a strong current-location cue.</li>
             <li>Use filled tabs for compact view switching or mutually exclusive filters.</li>
+            <li>
+              Use segmented for a short, equal-width control — glass when it sits over content, filled
+              when it sits on a solid surface.
+            </li>
           </ul>
         </Section>
 
         <TabsDocPlayground />
 
         <Section id="code" title="Code" sub="React Native, copy-paste.">
-          <CodeBlock language="tsx">{`npx arloui add tabs
+          <div className="space-y-3">
+            <CodeBlock language="tsx">{`npx arloui add tabs
 
 import { Tabs } from "@/components/ui/tabs";
 
@@ -253,6 +259,23 @@ import { Tabs } from "@/components/ui/tabs";
   <Tabs.Item value="media" label="Media" />
   <Tabs.Item value="saved" label="Saved" />
 </Tabs>`}</CodeBlock>
+            <CodeBlock language="tsx">{`import { BlurView } from "expo-blur";
+import { StyleSheet } from "react-native";
+
+<Tabs
+  value={section}
+  onValueChange={setSection}
+  appearance="segmented"
+  surface="glass"
+  blurComponent={
+    <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
+  }
+>
+  <Tabs.Item value="posts" label="Posts" />
+  <Tabs.Item value="media" label="Media" />
+  <Tabs.Item value="saved" label="Saved" />
+</Tabs>`}</CodeBlock>
+          </div>
         </Section>
 
         <Section
@@ -1641,6 +1664,7 @@ function ButtonDocPage() {
                 ['Horizontal padding', 'spacing.3–6 by size'],
                 ['Icon ↔ label gap', 'spacing.1–3 by size'],
                 ['Pressed overlay', 'colors.touchFeedbackMain'],
+                ['Surface', 'default fill or Liquid Glass'],
                 ['Focus ring (web)', 'focusRing.main / error'],
               ].map(([name, token]) => (
                 <div
@@ -1734,7 +1758,11 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
 <Button trailingIcon={<ChevronRight />}>Next</Button>
 <Button iconOnly accessibilityLabel="Settings" leadingIcon={<Settings />} />
 <Button loading>Submit</Button>
-<Button fullWidth>Continue</Button>`}</CodeBlock>
+<Button fullWidth>Continue</Button>
+
+// Liquid Glass — the tone's fill becomes the material's tint
+<Button surface="glass">Continue</Button>
+<Button surface="glass" tone="danger">Delete</Button>`}</CodeBlock>
 
             <CodeBlock language="tsx">{`// Ghost - chromeless, low emphasis
 <GhostButton type="primary">Learn more</GhostButton>

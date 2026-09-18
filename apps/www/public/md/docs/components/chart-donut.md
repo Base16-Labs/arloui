@@ -76,7 +76,8 @@ export default function ChartExample() {
 | `animated` | `boolean` | — | Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. |
 | `data` **·** required | `readonly DonutSlice[]` | — | Slices of a whole. Non-positive values are dropped, not clamped: a negative share of a total is not a thing a ring can express, and a zero slice has no arc to draw. |
 | `size` | `number` | `180` | The ring's outer diameter in points. |
-| `thickness` | `number` | — | Ring thickness. Defaults from `density` — 26 at default, 18 at compact. |
+| `thickness` | `number` | — | Ring thickness. Defaults from `density` — 16 at default, 12 at compact. |
+| `edges` | `DonutEdges` | `'straight'` | How each slice ends. `'straight'` cuts radially. `'curve'` rounds the ends, the way a stroke with round caps would. |
 | `density` | `ChartDensity` | `'default'` | How much mark there is: ring thickness and the hairline between slices. |
 | `activeIndex` | `number \| null` | — | Emphasised slice. Controlled when passed; `defaultActiveIndex` seeds the internal one. |
 | `defaultActiveIndex` | `number \| null` | `null` | Which slice starts selected when selection is uncontrolled. |

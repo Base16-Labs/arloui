@@ -24,6 +24,8 @@
  *   a photo, or glass. There is nothing to match now, so the prop is gone.
  * - **A real gap between slices**, cut out of the arc rather than stroked over it,
  *   so touching arcs stay separable on any background for the same reason.
+ * - **Straight or curved ends.** Radial cuts by default; `edges="curve"` rounds
+ *   them the way a stroke with round caps would.
  * - **Center label, not slice labels.** Text inside thin arcs is unreadable; the
  *   middle holds the total.
  * - **The legend carries selection.** Arcs are poor tap targets, and the legend
@@ -39,7 +41,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Defs, G, Mask, Path } from 'react-native-svg';
+import Svg, { Circle, Defs, G, Mask, Path } from 'react-native-svg';
 import { rgbaFromHex } from '@arloui/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
@@ -47,6 +49,7 @@ import { ChartLoading, ChartMotion, useChartEntrance } from './hooks';
 import { ChartSweep } from './motion';
 import {
   annulusPath,
+  arcPath,
   densityMetrics,
   seriesColorAt,
   type ChartDensity,
@@ -61,6 +64,9 @@ export type DonutSlice = ChartPoint & {
   color?: string;
 };
 
+/** How each slice meets the next. Radial cuts, or rounded the way a stroke caps. */
+export type DonutEdges = 'straight' | 'curve';
+
 export type DonutChartProps = {
   /** Animate entry and updates. Device Reduce Motion always takes precedence. Default: true. */
   animated?: boolean;
@@ -72,8 +78,13 @@ export type DonutChartProps = {
   data: readonly DonutSlice[];
   /** The ring's outer diameter in points. */
   size?: number;
-  /** Ring thickness. Defaults from `density` — 26 at default, 18 at compact. */
+  /** Ring thickness. Defaults from `density` — 16 at default, 12 at compact. */
   thickness?: number;
+  /**
+   * How each slice ends. `'straight'` cuts radially. `'curve'` rounds the ends,
+   * the way a stroke with round caps would.
+   */
+  edges?: DonutEdges;
   /** How much mark there is: ring thickness and the hairline between slices. */
   density?: ChartDensity;
   /** Big text in the middle. Defaults to the summed total. */
@@ -145,6 +156,78 @@ const MAX_ARCS = NAMED_SLOTS + 1;
 
 const DIMMED_ALPHA = 0.35;
 
+/**
+ * One slice of the ring.
+ *
+ * Straight is a filled annulus — radial cuts, a real gap between neighbours.
+ * Curve is a stroke with round caps, inset by half the thickness so the rounded
+ * noses sit where the cuts were instead of overlapping the next slice.
+ */
+function DonutSliceMark({
+  cx,
+  cy,
+  outerRadius,
+  innerRadius,
+  startAngle,
+  endAngle,
+  thickness,
+  edges,
+  color,
+  opacity,
+}: {
+  cx: number;
+  cy: number;
+  outerRadius: number;
+  innerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  thickness: number;
+  edges: DonutEdges;
+  color: string;
+  opacity: number;
+}) {
+  const sweep = endAngle - startAngle;
+  // A full ring has no ends to round — rounding it would open a bite at 12 o'clock.
+  if (edges === 'straight' || sweep >= Math.PI * 2 - 1e-6) {
+    return (
+      <Path
+        d={annulusPath({ cx, cy, outerRadius, innerRadius, startAngle, endAngle })}
+        fill={color}
+        opacity={opacity}
+      />
+    );
+  }
+
+  const midRadius = (outerRadius + innerRadius) / 2;
+  const capAngle = thickness / 2 / Math.max(midRadius, 1);
+  const inset = Math.min(capAngle, sweep / 2);
+  const from = startAngle + inset;
+  const to = endAngle - inset;
+  if (to - from < 1e-3) {
+    const mid = (startAngle + endAngle) / 2;
+    return (
+      <Circle
+        cx={cx + midRadius * Math.sin(mid)}
+        cy={cy - midRadius * Math.cos(mid)}
+        r={thickness / 2}
+        fill={color}
+        opacity={opacity}
+      />
+    );
+  }
+
+  return (
+    <Path
+      d={arcPath({ cx, cy, radius: midRadius, startAngle: from, endAngle: to })}
+      fill="none"
+      stroke={color}
+      strokeWidth={thickness}
+      strokeLinecap="round"
+      opacity={opacity}
+    />
+  );
+}
+
 type DonutChartResolved = DonutChartProps & {
   showValue?: boolean;
   centerValue?: string;
@@ -164,6 +247,7 @@ function DonutChartInner({
    */
   thickness,
   density = 'default',
+  edges = 'straight',
   showValue = true,
   centerValue,
   centerLabel,
@@ -182,7 +266,7 @@ function DonutChartInner({
 }: DonutChartResolved) {
   const t = useTokens();
   const metrics = densityMetrics(density);
-  const ringThickness = thickness ?? (density === 'compact' ? 18 : 26);
+  const ringThickness = thickness ?? (density === 'compact' ? 12 : 16);
   const [selection, setSelection] = useControllableIndex(activeIndex, defaultActiveIndex);
 
   // Fold everything past the palette's validated capacity into one neutral slice
@@ -314,23 +398,22 @@ function DonutChartInner({
             <G mask={`url(#${sweepId})`}>
             {segments.map((segment) => {
               const dimmed = selection != null && selection !== segment.index;
+              const color =
+                dimmed && segment.color.startsWith('#')
+                  ? rgbaFromHex(segment.color, DIMMED_ALPHA)
+                  : segment.color;
               return (
-                <Path
+                <DonutSliceMark
                   key={`${segment.slice.label}-${segment.index}`}
-                  d={annulusPath({
-                    cx: outerRadius,
-                    cy: outerRadius,
-                    outerRadius,
-                    innerRadius,
-                    startAngle: segment.startAngle,
-                    endAngle: segment.endAngle,
-                  })}
-                  // Dimming goes in the colour so it never fades the hole back in.
-                  fill={
-                    dimmed && segment.color.startsWith('#')
-                      ? rgbaFromHex(segment.color, DIMMED_ALPHA)
-                      : segment.color
-                  }
+                  cx={outerRadius}
+                  cy={outerRadius}
+                  outerRadius={outerRadius}
+                  innerRadius={innerRadius}
+                  startAngle={segment.startAngle}
+                  endAngle={segment.endAngle}
+                  thickness={ringThickness}
+                  edges={edges}
+                  color={color}
                   opacity={dimmed && !segment.color.startsWith('#') ? DIMMED_ALPHA : 1}
                 />
               );

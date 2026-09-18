@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Chip } from '@/components/ui/Chip';
 import { cn } from '@/lib/cn';
 
-type Appearance = 'plain' | 'underline' | 'filled';
+type Appearance = 'plain' | 'underline' | 'filled' | 'segmented';
 type Tone = 'neutral' | 'accent';
 type Layout = 'content' | 'equal';
+type Surface = 'filled' | 'glass';
 
 const ITEMS = ['For you', 'Following', 'Saved'];
 
@@ -14,18 +15,21 @@ export function TabsDocPlayground() {
   const [appearance, setAppearance] = useState<Appearance>('underline');
   const [tone, setTone] = useState<Tone>('accent');
   const [layout, setLayout] = useState<Layout>('equal');
+  const [surface, setSurface] = useState<Surface>('filled');
+  const segmented = appearance === 'segmented';
 
   return (
     <section id="variants" className="border-t border-line py-9">
       <h2 className="text-[26px] font-semibold tracking-tight">Appearance &amp; selection</h2>
       <p className="mt-1.5 mb-6 text-[13px] text-ink-3">
-        Switch the presentation without changing the content-navigation contract.
+        Switch the presentation without changing the content-navigation contract. Surface only
+        applies to the segmented track.
       </p>
 
       <div className="grid gap-6 md:grid-cols-[1fr_minmax(280px,330px)] md:items-start">
         <div className="space-y-4">
           <ControlRow label="Appearance">
-            {(['plain', 'underline', 'filled'] as const).map((item) => (
+            {(['plain', 'underline', 'filled', 'segmented'] as const).map((item) => (
               <Chip key={item} active={appearance === item} onClick={() => setAppearance(item)}>
                 {item}
               </Chip>
@@ -45,11 +49,26 @@ export function TabsDocPlayground() {
               </Chip>
             ))}
           </ControlRow>
+          {segmented ? (
+            <ControlRow label="Surface">
+              {(['filled', 'glass'] as const).map((item) => (
+                <Chip key={item} active={surface === item} onClick={() => setSurface(item)}>
+                  {item}
+                </Chip>
+              ))}
+            </ControlRow>
+          ) : null}
         </div>
 
         <div className="flex justify-center rounded-xl border border-line bg-canvas p-4 md:sticky md:top-3">
           <div className="h-[430px] w-full max-w-[300px] overflow-hidden rounded-[24px] border border-line-strong">
-            <TabsScreen appearance={appearance} tone={tone} layout={layout} compact />
+            <TabsScreen
+              appearance={appearance}
+              tone={tone}
+              layout={layout}
+              surface={surface}
+              compact
+            />
           </div>
         </div>
       </div>
@@ -61,11 +80,13 @@ function TabsScreen({
   appearance,
   tone,
   layout,
+  surface,
   compact = false,
 }: {
   appearance: Appearance;
   tone: Tone;
   layout: Layout;
+  surface: Surface;
   compact?: boolean;
 }) {
   const [active, setActive] = useState(0);
@@ -74,10 +95,31 @@ function TabsScreen({
     ['#BBF7D0', '#BAE6FD', '#FBCFE8'],
     ['#FDE68A', '#E9D5FF', '#BFDBFE'],
   ][active];
+  const segmented = appearance === 'segmented';
+  const isGlass = segmented && surface === 'glass';
 
   return (
-    <div className="h-full bg-white text-[#101828] dark:bg-[#101014] dark:text-white">
-      <div className="flex h-16 items-center justify-between px-5">
+    <div
+      className={cn(
+        'relative h-full text-[#101828] dark:text-white',
+        isGlass ? 'bg-[#F4F4F5] dark:bg-[#09090B]' : 'bg-white dark:bg-[#101014]',
+      )}
+    >
+      {isGlass
+        ? ['#BFDBFE', '#BBF7D0', '#FED7AA', '#E9D5FF'].map((color, index) => (
+            <div
+              key={color}
+              className="pointer-events-none absolute h-44 w-56 rounded-[36px] opacity-90"
+              style={{
+                backgroundColor: color,
+                top: 40 + index * 78,
+                left: index % 2 === 0 ? -28 : 72,
+              }}
+            />
+          ))
+        : null}
+
+      <div className="relative flex h-16 items-center justify-between px-5">
         <strong className="text-[17px] font-semibold">Discover</strong>
         <span className="text-[17px] text-ink-3">☷</span>
       </div>
@@ -86,11 +128,28 @@ function TabsScreen({
         role="tablist"
         aria-label="Discover content"
         className={cn(
-          'flex items-center gap-1 px-3',
-          appearance === 'filled' && 'gap-2',
-          layout === 'content' && 'justify-center',
+          'relative mx-3 flex items-center',
+          segmented
+            ? cn(
+                'gap-0 rounded-full p-1',
+                isGlass
+                  ? 'border border-white/60 bg-white/55 backdrop-blur-md dark:border-white/15 dark:bg-zinc-900/55'
+                  : 'bg-[#E5E7EB] dark:bg-[#273244]',
+              )
+            : cn('gap-1 px-0', appearance === 'filled' && 'gap-2'),
+          !segmented && layout === 'content' && 'justify-center',
         )}
       >
+        {segmented ? (
+          <span
+            className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white shadow-sm transition-transform duration-200 ease-out dark:bg-[#3F3F46]"
+            style={{
+              width: `calc((100% - 8px) / ${ITEMS.length})`,
+              left: 4,
+              transform: `translateX(${active * 100}%)`,
+            }}
+          />
+        ) : null}
         {ITEMS.map((item, index) => {
           const selected = active === index;
           return (
@@ -101,10 +160,10 @@ function TabsScreen({
               aria-selected={selected}
               onClick={() => setActive(index)}
               className={cn(
-                'relative flex h-11 min-w-0 items-center justify-center whitespace-nowrap px-3 text-[12px] font-medium transition-all duration-200 active:scale-[0.97]',
-                layout === 'equal' && 'flex-1',
+                'relative z-10 flex h-11 min-w-0 items-center justify-center whitespace-nowrap px-3 text-[12px] font-medium transition-all duration-200 active:scale-[0.97]',
+                (layout === 'equal' || segmented) && 'flex-1',
                 selected ? 'font-semibold' : 'text-ink-3',
-                selected && tone === 'accent' && 'text-[#155DFC] dark:text-[#51A2FF]',
+                selected && tone === 'accent' && !segmented && 'text-[#155DFC] dark:text-[#51A2FF]',
                 appearance === 'filled' && 'rounded-full px-4',
                 appearance === 'filled' &&
                   selected &&
@@ -135,7 +194,10 @@ function TabsScreen({
 
       <div
         key={active}
-        className={cn('animate-[tabs-content_200ms_ease-out] space-y-3 p-4', compact && 'pt-4')}
+        className={cn(
+          'relative animate-[tabs-content_200ms_ease-out] space-y-3 p-4',
+          compact && 'pt-4',
+        )}
       >
         <div className="flex items-center gap-2.5">
           <div className="size-8 rounded-full" style={{ backgroundColor: colors[0] }} />

@@ -196,6 +196,7 @@
         "reduce-motion"
       ],
       "dependencies": [
+        "@arloui/icons",
         "react-native-svg",
         "react-native-reanimated",
         "react-native-worklets"
@@ -408,11 +409,12 @@
       "name": "tabs",
       "kind": "primitive",
       "title": "Tabs",
-      "description": "Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.",
+      "description": "Secondary navigation for categorising content or switching views, with plain, underline, filled, and segmented appearances, plus a filled or Liquid Glass surface on the segmented track.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
-        "reduce-motion"
+        "reduce-motion",
+        "glass"
       ],
       "dependencies": [],
       "tags": [

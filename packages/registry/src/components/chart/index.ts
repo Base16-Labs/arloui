@@ -83,7 +83,7 @@ export {
   type BarDatum,
   type BarSeries,
 } from './bar-chart';
-export { type DonutChartProps, type DonutSlice } from './donut-chart';
+export { type DonutChartProps, type DonutEdges, type DonutSlice } from './donut-chart';
 export { EmptyContent } from './empty';
 export { type MeterProps, type MeterRing, type MeterShape } from './meter';
 export { type HeatmapDatum, type HeatmapProps } from './heatmap';

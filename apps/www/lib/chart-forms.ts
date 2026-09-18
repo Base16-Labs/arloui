@@ -143,7 +143,7 @@ export default function ChartExample() {
   },
   {
     slug: 'chart-bar',
-    motion: 'Bars fade into place over 200 ms when data first appears. Vertical bars also fade on dataset changes. Their lengths do not grow from zero, so the animation does not imply changing values.',
+    motion: 'Vertical bars grow from the baseline on first paint, staggered by category. Dataset changes still cross-fade in place so a period swap does not animate the numbers.',
     label: 'Bar',
     title: 'Bar',
     referenceKey: 'Chart.Bar',
@@ -395,7 +395,7 @@ export default function ChartExample() {
   },
   {
     slug: 'chart-heatmap',
-    motion: 'The calendar fades in as one layer over 200 ms when data first appears. Cells do not animate individually: their colours represent activity, not progress. Selection and data changes are immediate.',
+    motion: 'Weeks enter from the top over 400 ms, staggered by 40 ms, when data first appears. Day labels and the Less–More key stay still. Cell colours do not tween: they represent activity, not progress. Selection and data changes are immediate.',
     label: 'Heatmap',
     title: 'Heatmap',
     referenceKey: 'Chart.Heatmap',

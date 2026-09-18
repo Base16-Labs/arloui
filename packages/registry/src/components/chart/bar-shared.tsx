@@ -193,10 +193,17 @@ export function normalizeBars(
  * The silhouette drawn while `loading`.
  *
  * Bars, not a spinner: the skeleton has to hold the same footprint the data will,
- * so the row does not reflow when it lands. Equal heights avoid suggesting
- * category rankings before their values are available.
+ * so the row does not reflow when it lands. Heights step from shortest to
+ * tallest so the placeholder reads as a bar chart, not a row of equal ticks.
  */
-export const SKELETON_HEIGHTS = [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6];
+export const SKELETON_COUNT = 7;
+const SKELETON_MIN = 0.28;
+const SKELETON_MAX = 0.88;
+
+export function skeletonFraction(index: number, count: number) {
+  if (count <= 1) return (SKELETON_MIN + SKELETON_MAX) / 2;
+  return SKELETON_MIN + (index / (count - 1)) * (SKELETON_MAX - SKELETON_MIN);
+}
 
 export function BarSkeleton({
   width,
@@ -221,7 +228,7 @@ export function BarSkeleton({
   const barWidth = Math.max(0, slot * SPACING_FILL[spacing]);
   const markInset = Math.max(0, (slot - barWidth) / 2);
   const bars = Array.from({ length: count }, (_, index) => {
-    const fraction = SKELETON_HEIGHTS[index % SKELETON_HEIGHTS.length] ?? 0.5;
+    const fraction = skeletonFraction(index, count);
     const barHeight = height * fraction;
     return barPath({
       x: index * slot + markInset,

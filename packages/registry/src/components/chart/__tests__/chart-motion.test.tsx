@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import { Circle, G, Path, Rect } from 'react-native-svg';
 import * as Reanimated from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
-import { ChartFill, ChartReveal, ChartSweep } from '../motion';
+import { ChartBarGrow, ChartFill, ChartReveal, ChartSweep, BAR_ENTER_STAGGER } from '../motion';
 import { Chart } from '../index';
 import { act, fireEvent, renderWithTheme, screen } from '../../../../test/render';
 import { __setReduceMotionForTests } from '../../../foundation/reduce-motion';
@@ -107,6 +107,61 @@ it.each(['line', 'sparkline'])('reveals %s only after measurement and renders fu
   view.rerender(chart(false));
   expect(screen.UNSAFE_getAllByType(Rect)[0].props.width).toBe(200);
   timing.mockRestore();
+});
+
+it('grows vertical bars from the baseline, staggered, after measurement', () => {
+  const timing = jest.spyOn(Reanimated, 'withTiming');
+  renderWithTheme(<Chart.Bar data={[1, 3, 2]} />);
+  expect(timing).not.toHaveBeenCalled();
+  fireEvent(screen.getByRole('image'), 'layout', {
+    nativeEvent: { layout: { width: 200, height: 160, x: 0, y: 0 } },
+  });
+  expect(timing).toHaveBeenCalledWith(
+    1,
+    expect.objectContaining({ duration: 400 + BAR_ENTER_STAGGER * 2 }),
+  );
+  timing.mockRestore();
+});
+
+it('staggers heatmap weeks on first paint', () => {
+  const timing = jest.spyOn(Animated, 'timing');
+  renderWithTheme(
+    <Chart.Heatmap
+      data={[
+        { date: '2026-03-02', value: 1 },
+        { date: '2026-03-09', value: 1 },
+      ]}
+      from="2026-03-02"
+      to="2026-03-15"
+    />,
+  );
+  act(() => { jest.advanceTimersByTime(BAR_ENTER_STAGGER); });
+  expect(timing).toHaveBeenCalledTimes(2);
+  expect(timing).toHaveBeenCalledWith(
+    expect.anything(),
+    expect.objectContaining({ duration: 400 }),
+  );
+  timing.mockRestore();
+});
+
+it.each([0, 1])('maps bar grow progress %s to a baseline scale', (value) => {
+  const progress = { value } as SharedValue<number>;
+  renderWithTheme(
+    <ChartBarGrow
+      progress={progress}
+      index={0}
+      count={1}
+      originX={10}
+      originY={20}
+      duration={400}
+      easing={[0.23, 1, 0.32, 1]}
+    >
+      <Path d="M0 0 H10 V20" />
+    </ChartBarGrow>,
+  );
+  const transform = screen.UNSAFE_getByType(G).props.transform as string;
+  const scaleY = Number(/scale\(1,\s*([0-9.]+)\)/.exec(transform)?.[1]);
+  expect(scaleY).toBeCloseTo(value === 0 ? 0.001 : 1);
 });
 
 it.each(['line', 'bar', 'donut', 'meter', 'sparkline', 'heatmap'].flatMap((kind) => [
