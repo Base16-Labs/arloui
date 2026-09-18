@@ -1,11 +1,12 @@
-import type { NativeStackNavigationProp } from 'expo-router';
-
-type Navigation = Pick<NativeStackNavigationProp<Record<string, undefined>>, 'addListener' | 'isFocused'>;
+export type ChartScreenNavigation = {
+  addListener: (event: 'focus' | 'blur' | 'transitionStart' | 'transitionEnd', callback: () => void) => () => void;
+  isFocused: () => boolean;
+};
 type Frames = { request: (callback: () => void) => number; cancel: (id: number) => void };
 
 /** Native screens mount before they appear. Only start the chart after arrival. */
 export function subscribeChartScreenEntrance(
-  navigation: Navigation,
+  navigation: ChartScreenNavigation,
   native: boolean,
   setReady: (ready: boolean) => void,
   frames: Frames,

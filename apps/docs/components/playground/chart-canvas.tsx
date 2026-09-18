@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { useNavigation, type NativeStackNavigationProp } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import { Animated, Platform, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { variantSheetHeight } from './variant-sheet';
-import { subscribeChartScreenEntrance } from './chart-screen-entrance';
+import { subscribeChartScreenEntrance, type ChartScreenNavigation } from './chart-screen-entrance';
 
 /**
  * Lift the stage when the variants sheet opens — same spring language as the
@@ -16,7 +16,7 @@ function sheetLift(windowHeight: number) {
 }
 
 export function ChartCanvas({ sheetOpen, children }: { sheetOpen: boolean; children: ReactNode }) {
-  const navigation = useNavigation<NativeStackNavigationProp<Record<string, undefined>>>();
+  const navigation = useNavigation() as ChartScreenNavigation;
   const [screenReady, setScreenReady] = useState(false);
   useLayoutEffect(() => subscribeChartScreenEntrance(
     navigation,
