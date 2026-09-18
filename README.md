@@ -50,7 +50,7 @@ See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the full data flow.
 
 ## Quickstart (this repo)
 
-Requires **Node 20+**. This monorepo is **npm-managed** — npm `workspaces` in the root `package.json`, a committed `package-lock.json`, and a root `packageManager` field pinned to npm. Root scripts wrap **Turbo**.
+Requires **Node 20.19.4+, 22.13.0+, or 24.3.0+** on a supported release line. This monorepo is **npm-managed** — npm `workspaces` in the root `package.json`, a committed `package-lock.json`, and npm **11.5.1** specified in `devEngines`. Root scripts wrap **Turbo**.
 
 | Task                 | Command                  |
 | -------------------- | ------------------------ |
@@ -83,6 +83,12 @@ npm run playground:tunnel   # use this if LAN scanning fails
 npm run playground:ios
 npm run playground:android
 ```
+
+The playground uses **Expo SDK 57** and requires matching Expo Go. After upgrading
+dependencies, stop the previous Metro process and run `npm run playground:clear`,
+then scan the new QR code. Existing custom development builds must be rebuilt for SDK 57.
+The playground retains the monorepo's TypeScript 5 toolchain; `expo.install.exclude`
+exempts only TypeScript from Expo's version recommendation, not native dependencies.
 
 `npm run dev` intentionally starts only the docs site to keep local memory usage low. Use
 `npm run dev:packages` when editing package source, or `npm run dev:all` when you explicitly

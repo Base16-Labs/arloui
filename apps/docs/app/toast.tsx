@@ -90,7 +90,7 @@ export default function ToastCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -144,7 +144,7 @@ export default function ToastCanvas() {
             onPrevious={() => router.replace('/gallery')}
             onNext={() => router.replace('/badge')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Position">
                 {POSITIONS.map((value) => (
                   <VariantChip

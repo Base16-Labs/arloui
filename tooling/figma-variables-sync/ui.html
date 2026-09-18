@@ -1,0 +1,143 @@
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font: 12px/1.5 Inter, -apple-system, system-ui, sans-serif;
+    margin: 0; padding: 16px;
+    color: var(--figma-color-text);
+    background: var(--figma-color-bg);
+  }
+  h1 { font-size: 13px; margin: 0 0 4px; }
+  p.lede { margin: 0 0 14px; color: var(--figma-color-text-secondary); }
+  ol { margin: 0 0 14px; padding-left: 18px; color: var(--figma-color-text-secondary); }
+  li { margin-bottom: 3px; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--figma-color-bg-secondary);
+    padding: 1px 4px; border-radius: 3px;
+  }
+  .drop {
+    border: 1px dashed var(--figma-color-border); border-radius: 6px;
+    padding: 18px; text-align: center; cursor: pointer;
+    color: var(--figma-color-text-secondary); margin-bottom: 12px;
+  }
+  .drop.over { border-color: var(--figma-color-border-selected); color: var(--figma-color-text); }
+  .row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+  button {
+    font: inherit; font-weight: 500; padding: 7px 14px; border-radius: 6px;
+    border: 1px solid transparent; cursor: pointer;
+    background: var(--figma-color-bg-brand); color: var(--figma-color-text-onbrand);
+  }
+  button.secondary {
+    background: transparent; color: var(--figma-color-text);
+    border-color: var(--figma-color-border);
+  }
+  button:disabled { opacity: .4; cursor: default; }
+  #out {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px; white-space: pre-wrap; word-break: break-word;
+    background: var(--figma-color-bg-secondary);
+    border-radius: 6px; padding: 10px; max-height: 210px; overflow: auto;
+  }
+  .warn { color: var(--figma-color-text-warning); }
+  .err { color: var(--figma-color-text-danger); }
+  input[type=file] { display: none; }
+</style>
+
+<h1>Arlo UI — Variables Sync</h1>
+<p class="lede">Pushes design tokens from the codebase into this file's variables.</p>
+
+<ol>
+  <li>In the repo: <code>npm run design:sync</code></li>
+  <li>Drop <code>design/tokens.figma.json</code> below</li>
+  <li><b>Preview</b> first, then <b>Import</b></li>
+</ol>
+
+<div class="drop" id="drop">Drop <code>tokens.figma.json</code> here, or click to choose</div>
+<input type="file" id="file" accept="application/json,.json" />
+
+<div class="row">
+  <button id="preview" disabled>Preview</button>
+  <button id="import" class="secondary" disabled>Import</button>
+</div>
+
+<div id="out">No file loaded.</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const out = $('out');
+  let payload = null;
+
+  function load(text, label) {
+    try {
+      payload = JSON.parse(text);
+    } catch (e) {
+      payload = null;
+      out.innerHTML = '<span class="err">Not valid JSON.</span>';
+      return;
+    }
+    if (!payload.collections) {
+      payload = null;
+      out.innerHTML = '<span class="err">Missing a `collections` array — is this tokens.figma.json?</span>';
+      return;
+    }
+    const n = payload.collections.reduce((a, c) => a + c.variables.length, 0);
+    out.textContent =
+      label + '\ntokens v' + (payload.version || '?') + ' · ' +
+      payload.collections.length + ' collections · ' + n + ' variables\n\nPreview to see what would change.';
+    $('preview').disabled = false;
+    $('import').disabled = false;
+  }
+
+  $('drop').onclick = () => $('file').click();
+  $('file').onchange = (e) => {
+    const f = e.target.files[0];
+    if (f) f.text().then((t) => load(t, f.name));
+  };
+  ['dragenter', 'dragover'].forEach((ev) =>
+    $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.add('over'); }),
+  );
+  ['dragleave', 'drop'].forEach((ev) =>
+    $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.remove('over'); }),
+  );
+  $('drop').addEventListener('drop', (e) => {
+    const f = e.dataTransfer.files[0];
+    if (f) f.text().then((t) => load(t, f.name));
+  });
+
+  const send = (dryRun) => {
+    if (!payload) return;
+    out.textContent = dryRun ? 'Previewing…' : 'Importing…';
+    parent.postMessage({ pluginMessage: { type: 'import', payload: payload, dryRun: dryRun } }, '*');
+  };
+  $('preview').onclick = () => send(true);
+  $('import').onclick = () => send(false);
+
+  onmessage = (e) => {
+    const msg = e.data.pluginMessage;
+    if (!msg) return;
+    if (msg.type === 'error') {
+      out.innerHTML = '<span class="err">' + msg.message + '</span>';
+      return;
+    }
+    const r = msg.report;
+    const lines = [r.dryRun ? '— PREVIEW (nothing written) —' : '— IMPORTED —', ''];
+    for (const c of r.collections) {
+      lines.push(
+        c.name +
+          (c.willCreateCollection ? '  [new collection]' : '') +
+          '\n  +' + c.created + ' new   ~' + c.updated + ' changed   =' + c.unchanged + ' same' +
+          (c.modes.length ? '\n  modes: ' + c.modes.join(', ') : ''),
+      );
+    }
+    if (r.conflicts.length) {
+      lines.push('', 'TYPE CONFLICTS (skipped):');
+      r.conflicts.forEach((c) => lines.push('  ! ' + c));
+    }
+    if (r.orphans.length) {
+      lines.push('', 'IN FIGMA BUT NOT IN CODE (' + r.orphans.length + ', left alone):');
+      r.orphans.slice(0, 25).forEach((o) => lines.push('  · ' + o));
+      if (r.orphans.length > 25) lines.push('  … and ' + (r.orphans.length - 25) + ' more');
+    }
+    out.textContent = lines.join('\n');
+  };
+</script>

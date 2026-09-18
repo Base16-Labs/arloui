@@ -82,7 +82,13 @@ function socialPalette(
   }
   const brand = BRAND_COLORS[platform];
   if (type === 'fill') {
-    return { bg: brand, fg: '#FFFFFF', iconFg: '#FFFFFF', border: 'transparent', borderWidth: 0 };
+    return {
+      bg: brand,
+      fg: t.colors.textInteractivePrimary,
+      iconFg: t.colors.textInteractivePrimary,
+      border: 'transparent',
+      borderWidth: 0,
+    };
   }
   // secondary: outlined, brand icon, text-primary label
   return { bg: 'transparent', fg: t.colors.textPrimary, iconFg: brand, border: t.colors.borderPrimary, borderWidth: 1 };
@@ -221,7 +227,7 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
             borderWidth: palette.borderWidth,
             borderRadius: t.radii.full,
             minHeight: dims.minHeight,
-            minWidth: 64,
+            minWidth: t.spacing[16],
             paddingHorizontal: dims.paddingX,
             flexDirection: 'row',
             alignItems: 'center',
@@ -251,7 +257,7 @@ export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function
               fontFamily: t.fontFamilies.sans,
               fontSize: dims.type.fontSize,
               lineHeight: dims.type.lineHeight,
-              fontWeight: '600',
+              fontWeight: t.fontWeights.semibold,
             }}
           >
             {label}

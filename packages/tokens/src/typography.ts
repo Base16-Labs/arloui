@@ -104,6 +104,12 @@ export const typography = {
     letterSpacing: 0,
   },
   labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  overline: {
+    fontSize: 11,
+    lineHeight: 13.2,
+    fontWeight: fontWeights.semibold,
+    letterSpacing: 1.1,
+  },
   buttonLarge: { fontSize: 20, lineHeight: 22, fontWeight: fontWeights.semibold, letterSpacing: 0 },
   buttonMedium: {
     fontSize: 17,

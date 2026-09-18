@@ -1,0 +1,13 @@
+{
+  "name": "Arlo UI — Variables Sync",
+  "id": "arloui-variables-sync",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": "Reads a local JSON file chosen by the user. Never talks to the network."
+  }
+}

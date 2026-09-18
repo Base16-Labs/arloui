@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   Easing,
   type DimensionValue,
@@ -9,6 +8,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type SkeletonShape = 'rectangle' | 'text' | 'circle';
 export type SkeletonAnimation = 'shimmer' | 'pulse' | 'none';
@@ -39,25 +39,17 @@ export function Skeleton({
   const t = useTokens();
   const [progress] = useState(() => new Animated.Value(0));
   const [layoutWidth, setLayoutWidth] = useState(0);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const circle = shape === 'circle';
-  const resolvedWidth = circle && width === '100%' ? 40 : width;
-  const resolvedHeight = height ?? (circle ? resolvedWidth : shape === 'text' ? 12 : 16);
+  const resolvedWidth = circle && width === '100%' ? t.sizing.buttonHeight.md : width;
+  const resolvedHeight =
+    height ?? (circle ? resolvedWidth : shape === 'text' ? t.spacing[3] : t.spacing[4]);
   const resolvedRadius =
-    borderRadius ?? (circle ? 999 : shape === 'text' ? t.radii.full : t.radii.md);
+    borderRadius ?? (circle ? t.radii.full : shape === 'text' ? t.radii.full : t.radii.md);
   const baseColor = color ?? t.colors.surfaceStrong;
   const sheenColor =
     highlightColor ?? (t.name === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.52)');
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => active && setReduceMotion(enabled));
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      subscription.remove();
-    };
-  }, []);
 
   useEffect(() => {
     progress.stopAnimation();
@@ -69,27 +61,27 @@ export function Skeleton({
         ? Animated.sequence([
             Animated.timing(progress, {
               toValue: 1,
-              duration: 600,
+              duration: t.motion.duration.slow * 1.5,
               easing: Easing.inOut(Easing.ease),
               useNativeDriver: true,
             }),
             Animated.timing(progress, {
               toValue: 0,
-              duration: 600,
+              duration: t.motion.duration.slow * 1.5,
               easing: Easing.inOut(Easing.ease),
               useNativeDriver: true,
             }),
           ])
         : Animated.timing(progress, {
             toValue: 1,
-            duration: 1200,
+            duration: t.motion.duration.slow * 3,
             easing: Easing.linear,
             useNativeDriver: true,
           });
     const loop = Animated.loop(cycle);
     loop.start();
     return () => loop.stop();
-  }, [animation, progress, reduceMotion]);
+  }, [animation, progress, reduceMotion, t.motion.duration.slow]);
 
   function handleLayout(event: LayoutChangeEvent) {
     setLayoutWidth(event.nativeEvent.layout.width);

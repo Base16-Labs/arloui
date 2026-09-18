@@ -1,8 +1,26 @@
 import { Carousel } from '../carousel';
+import { fireEvent } from '@testing-library/react-native';
 import { Text, View } from 'react-native';
 import { renderWithTheme, screen } from '../../../../test/render';
 
 describe('Carousel', () => {
+  it('keeps icon arrows labelled and navigable', () => {
+    const onIndexChange = jest.fn();
+    renderWithTheme(
+      <Carousel arrows onIndexChange={onIndexChange}>
+        <View><Text>First</Text></View>
+        <View><Text>Last</Text></View>
+      </Carousel>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
+    fireEvent.press(screen.getByRole('button', { name: 'Next' }));
+    expect(onIndexChange).toHaveBeenLastCalledWith(1);
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+    fireEvent.press(screen.getByRole('button', { name: 'Previous' }));
+    expect(onIndexChange).toHaveBeenLastCalledWith(0);
+  });
+
   it('renders children and pagination dots', () => {
     renderWithTheme(
       <Carousel>

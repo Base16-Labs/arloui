@@ -1,6 +1,6 @@
 # Tab Bar
 
-> Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, transparent or filled surfaces, directional selection motion, and scroll-aware visibility.
+> Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, filled or Liquid Glass surfaces, directional selection motion, and scroll-aware visibility.
 
 **Type:** Component  
 **Category:** Navigation  
@@ -12,6 +12,7 @@
 - When to use
 - Variants
 - Code
+- Props
 - Tokens
 - Accessibility
 - Do · Don't
@@ -19,18 +20,23 @@
 
 ## States
 
-`default` · `selected` · `pressed` · `disabled` · `hidden on scroll`
+`default` · `selected` · `pressed` · `disabled` · `glass` · `hidden on scroll`
 
 ## Tokens used
 
 - `colors.navBackground`
-- `colors.navBorder`
 - `colors.navActive`
 - `colors.navInactive`
-- `colors.navIndicator`
+- `colors.interactiveSecondary`
+- `colors.interactiveError`
+- `colors.textInteractivePrimary`
+- `colors.bg`
+- `materials.glassMedium`
 - `motion.duration.fast`
 - `motion.spring.snappy`
+- `motion.pressed`
 - `sizing.touchTarget.minimum`
+- `sizing.icon.md`
 - `radii.full`
 - `shadows.md`
 

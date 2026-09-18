@@ -25,8 +25,8 @@ export function PlaygroundChip({ label, active, onPress }: PlaygroundChipProps) 
         style={{
           color: active ? t.colors.bg : t.colors.textPrimary,
           fontFamily: t.fontFamilies.sans,
-          fontSize: t.typography.bodySm.fontSize,
-          fontWeight: '600',
+          ...t.typography.bodySmall,
+          fontWeight: t.fontWeights.semibold,
         }}
       >
         {label}

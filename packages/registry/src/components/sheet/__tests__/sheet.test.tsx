@@ -58,13 +58,18 @@ describe('Sheet', () => {
     expect(screen.getByText('Options')).toBeTruthy();
   });
 
-  it('supports the glass surface without a scrim (passthrough + glass)', () => {
+  /**
+   * `passthrough` used to be paired with `surface="glass"` here. The surface is
+   * gone; the backdrop axis it was testing alongside is not, so the spec keeps
+   * the half that still exists — a sheet over live content draws no scrim.
+   */
+  it('leaves the background interactive on a passthrough backdrop', () => {
     renderWithTheme(
-      <Sheet visible onClose={() => {}} surface="glass" backdrop="passthrough">
-        <Text>Glass body</Text>
+      <Sheet visible onClose={() => {}} backdrop="passthrough">
+        <Text>Body</Text>
       </Sheet>,
     );
-    expect(screen.getByText('Glass body')).toBeTruthy();
+    expect(screen.getByText('Body')).toBeTruthy();
     expect(screen.queryByLabelText('Close')).toBeNull();
   });
 

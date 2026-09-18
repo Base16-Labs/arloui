@@ -8,6 +8,8 @@ export const docsSections = [
   { label: 'Facets', href: '/docs/foundations' },
   { label: 'Foundations', href: '/docs/primitives' },
   { label: 'Components', href: '/docs/components' },
+  { label: 'Chart', href: '/docs/components/chart' },
+  { label: 'Design', href: '/docs/design' },
   { label: 'Archetypes', href: '/docs/archetypes' },
   { label: 'Agents', href: '/docs/agents' },
   { label: 'Changelog', href: '/docs/changelog' },
@@ -61,6 +63,16 @@ export const agentItems = [
   { label: 'Prompt cookbook', slug: 'prompt-cookbook' },
 ] as const;
 
+/**
+ * The design-side pages. ArloUI's source of truth is code, so everything here is
+ * about getting the system *into* a design tool rather than authoring it there.
+ */
+export const designItems = [
+  { label: 'Tokens in Figma', slug: 'figma-tokens' },
+  { label: 'Tokens in Paper', slug: 'paper' },
+  { label: 'Figma UI library', slug: 'figma-library' },
+] as const;
+
 export const gettingStartedItems = [
   { label: 'Install', slug: 'install' },
   { label: 'With AI', slug: 'with-ai' },
@@ -73,6 +85,8 @@ export const componentGroups: ComponentGroup[] = [
   {
     label: 'Layout & surface',
     items: [
+      { label: 'Card', slug: 'card' },
+      { label: 'List', slug: 'list' },
       { label: 'Sheet', slug: 'sheet' },
       { label: 'Carousel', slug: 'carousel' },
       { label: 'Gallery', slug: 'gallery' },
@@ -88,6 +102,7 @@ export const componentGroups: ComponentGroup[] = [
       { label: 'Radio', slug: 'radio' },
       { label: 'Input', slug: 'input' },
       { label: 'TextArea', slug: 'text-area' },
+      { label: 'Stepper', slug: 'stepper' },
       { label: 'Date Picker', slug: 'date-picker' },
     ],
   },
@@ -108,6 +123,26 @@ export const componentGroups: ComponentGroup[] = [
     ],
   },
 ];
+
+/**
+ * The per-form Chart pages.
+ *
+ * Chart has its own docs section. Keep these forms outside the Components
+ * listing while preserving their existing URLs.
+ */
+export const chartFormRoutes: { label: string; slug: string }[] = [
+  { label: 'Line chart', slug: 'chart-line' },
+  { label: 'Bar', slug: 'chart-bar' },
+  { label: 'Sparkline', slug: 'chart-sparkline' },
+  { label: 'Donut', slug: 'chart-donut' },
+  { label: 'Meter', slug: 'chart-meter' },
+  { label: 'Heatmap', slug: 'chart-heatmap' },
+];
+
+export function isChartPath(pathname: string): boolean {
+  return pathname === '/docs/components/chart' ||
+    chartFormRoutes.some((form) => pathname === `/docs/components/${form.slug}`);
+}
 
 /** Documented component count — keep copy in sync with `componentGroups`. */
 export const componentCount = componentGroups.reduce(

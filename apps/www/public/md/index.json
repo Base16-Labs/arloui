@@ -1,5 +1,5 @@
 {
-  "count": 43,
+  "count": 54,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -46,8 +46,44 @@
       "md": "/md/docs/components/button.md"
     },
     {
+      "path": "/docs/components/card",
+      "md": "/md/docs/components/card.md"
+    },
+    {
       "path": "/docs/components/carousel",
       "md": "/md/docs/components/carousel.md"
+    },
+    {
+      "path": "/docs/components/chart",
+      "md": "/md/docs/components/chart.md"
+    },
+    {
+      "path": "/docs/components/chart-bar",
+      "md": "/md/docs/components/chart-bar.md"
+    },
+    {
+      "path": "/docs/components/chart-donut",
+      "md": "/md/docs/components/chart-donut.md"
+    },
+    {
+      "path": "/docs/components/chart-heatmap",
+      "md": "/md/docs/components/chart-heatmap.md"
+    },
+    {
+      "path": "/docs/components/chart-line",
+      "md": "/md/docs/components/chart-line.md"
+    },
+    {
+      "path": "/docs/components/chart-meter",
+      "md": "/md/docs/components/chart-meter.md"
+    },
+    {
+      "path": "/docs/components/chart-plot",
+      "md": "/md/docs/components/chart-plot.md"
+    },
+    {
+      "path": "/docs/components/chart-sparkline",
+      "md": "/md/docs/components/chart-sparkline.md"
     },
     {
       "path": "/docs/components/checkbox",
@@ -70,6 +106,10 @@
       "md": "/md/docs/components/input.md"
     },
     {
+      "path": "/docs/components/list",
+      "md": "/md/docs/components/list.md"
+    },
+    {
       "path": "/docs/components/radio",
       "md": "/md/docs/components/radio.md"
     },
@@ -84,6 +124,10 @@
     {
       "path": "/docs/components/spinner",
       "md": "/md/docs/components/spinner.md"
+    },
+    {
+      "path": "/docs/components/stepper",
+      "md": "/md/docs/components/stepper.md"
     },
     {
       "path": "/docs/components/tab-bar",

@@ -10,11 +10,15 @@ import {
   primitiveItems,
   archetypeItems,
   agentItems,
+  designItems,
   gettingStartedItems,
+  chartFormRoutes,
+  isChartPath,
 } from '@/lib/routes';
 
 export function Sidebar() {
   const pathname = usePathname();
+  const chartActive = isChartPath(pathname);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showTop, setShowTop] = useState(false);
   const [showBottom, setShowBottom] = useState(false);
@@ -75,7 +79,9 @@ export function Sidebar() {
           Sections
         </div>
         {docsSections.map((section) => {
-          const active = pathname === section.href;
+          const active = section.href === '/docs/components/chart'
+            ? chartActive
+            : pathname === section.href;
           return (
             <Link
               key={section.href}
@@ -96,7 +102,16 @@ export function Sidebar() {
         <hr className="mx-2 my-[18px] border-line" />
 
         {/* Contextual sub-navigation */}
-        {pathname.startsWith('/docs/components') && (
+        {chartActive && (
+          <SidebarGroup
+            title="Chart"
+            items={[{ label: 'Overview', slug: 'chart' }, ...chartFormRoutes]}
+            basePath="/docs/components"
+            pathname={pathname}
+          />
+        )}
+
+        {pathname.startsWith('/docs/components') && !chartActive && (
           <>
             <div className="mb-2 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
               Components
@@ -107,12 +122,13 @@ export function Sidebar() {
                   {group.label}
                 </div>
                 {group.items.map((item) => (
-                  <SidebarLink
-                    key={item.slug}
-                    href={`/docs/components/${item.slug}`}
-                    label={item.label}
-                    active={pathname === `/docs/components/${item.slug}`}
-                  />
+                  <div key={item.slug}>
+                    <SidebarLink
+                      href={`/docs/components/${item.slug}`}
+                      label={item.label}
+                      active={pathname === `/docs/components/${item.slug}`}
+                    />
+                  </div>
                 ))}
               </div>
             ))}
@@ -144,6 +160,15 @@ export function Sidebar() {
             basePath="/docs/archetypes"
             pathname={pathname}
             anchor
+          />
+        )}
+
+        {pathname.startsWith('/docs/design') && (
+          <SidebarGroup
+            title="Design"
+            items={designItems}
+            basePath="/docs/design"
+            pathname={pathname}
           />
         )}
 

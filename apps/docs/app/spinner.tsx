@@ -65,9 +65,9 @@ export default function SpinnerCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingTop: 64,
-              paddingHorizontal: 20,
-              paddingBottom: 88,
+              paddingTop: t.spacing[16],
+              paddingHorizontal: t.spacing[5],
+              paddingBottom: t.spacing[20] + t.spacing[2],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -77,11 +77,11 @@ export default function SpinnerCanvas() {
                 maxWidth: 350,
                 height: 470,
                 overflow: 'hidden',
-                borderRadius: 34,
+                borderRadius: t.radii['2xl'],
                 borderWidth: 1,
                 borderColor: t.colors.border,
                 backgroundColor: t.colors.surface,
-                padding: 20,
+                padding: t.spacing[5],
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
@@ -117,7 +117,7 @@ export default function SpinnerCanvas() {
             onPrevious={() => router.replace('/skeleton')}
             onNext={() => router.replace('/tab-bar')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Appearance">
                 {APPEARANCES.map((option) => (
                   <VariantChip
@@ -155,4 +155,3 @@ export default function SpinnerCanvas() {
     </>
   );
 }
-

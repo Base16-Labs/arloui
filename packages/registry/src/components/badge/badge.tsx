@@ -1,5 +1,5 @@
 import { forwardRef, useMemo } from 'react';
-import { Platform, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
 
 type Tokens = ReturnType<typeof useTokens>;
@@ -32,18 +32,18 @@ type Dims = {
 function badgeDims(t: Tokens): Record<BadgeSize, Dims> {
   return {
     sm: {
-      height: 20,
+      height: t.sizing.icon.sm,
       paddingX: t.spacing[2],
-      type: { fontSize: 11, lineHeight: 13.2, fontWeight: '400' },
+      type: t.typography.labelSmall,
       dotSize: 6,
       iconSize: t.sizing.icon.xs,
       gap: t.spacing[1],
       insetBorder: 1,
     },
     md: {
-      height: 24,
+      height: t.sizing.icon.md,
       paddingX: t.spacing[2],
-      type: { fontSize: 12, lineHeight: 16.8, fontWeight: '400' },
+      type: t.typography.bodySmall,
       dotSize: 8,
       iconSize: t.sizing.icon.xs,
       gap: t.spacing[1],

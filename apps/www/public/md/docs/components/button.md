@@ -16,6 +16,7 @@
 - Motion
 - Social auth
 - Code
+- Props
 - Tokens
 - Accessibility
 - Do · Don't
@@ -23,7 +24,7 @@
 
 ## States
 
-`default` · `pressed` · `loading` · `disabled` · `focus` · `icon-only` · `reduced motion` · `RTL` · `dynamic type`
+`default` · `pressed` · `loading` · `disabled` · `focus` · `icon-only` · `glass` · `reduced motion` · `reduced transparency` · `RTL` · `dynamic type`
 
 ## Tokens used
 
@@ -45,6 +46,9 @@
 - `colors.borderPrimary`
 - `colors.borderError`
 - `colors.borderSecondary`
+- `materials.glassSmall`
+- `materials.glassSmall.tintOpacity`
+- `materials.glassSmall.tintOpacityPressed`
 - `sizing.buttonHeight.sm`
 - `sizing.buttonHeight.md`
 - `sizing.buttonHeight.lg`

@@ -50,19 +50,36 @@ export const Radio = forwardRef<View, RadioProps>(function Radio(
   const t = useTokens();
   const dims = useMemo(() => radioDims()[size], [size]);
 
+  /*
+   * Two values, one selection — `useNativeDriver` is per-animation, not
+   * per-property.
+   *
+   * The dot pops in (a transform the native driver can own) while the ring
+   * cross-fades (a colour it cannot). One shared value forced both onto the JS
+   * thread; the dot is the part that reads as the control responding, so it is
+   * the part that must not stutter. Identical duration and easing keep them on
+   * the same frame.
+   */
   const [fillAnim] = useState(() => new Animated.Value(selected ? 1 : 0));
+  const [pop] = useState(() => new Animated.Value(selected ? 1 : 0));
 
   const [x1, y1, x2, y2] = t.motion.easing.easeOut;
   const easing = useMemo(() => Easing.bezier(x1, y1, x2, y2), [x1, y1, x2, y2]);
 
   useEffect(() => {
-    Animated.timing(fillAnim, {
+    const config = {
       toValue: selected ? 1 : 0,
       duration: t.motion.duration.instant,
       easing,
-      useNativeDriver: false,
-    }).start();
-  }, [selected, fillAnim, t.motion.duration.instant, easing]);
+    };
+    const animation = Animated.parallel([
+      Animated.timing(pop, { ...config, useNativeDriver: true }),
+      // The ring's fill is a colour, which cannot go native under core `Animated`.
+      Animated.timing(fillAnim, { ...config, useNativeDriver: false }),
+    ]);
+    animation.start();
+    return () => animation.stop();
+  }, [selected, fillAnim, pop, t.motion.duration.instant, easing]);
 
   const handlePress = useCallback(() => {
     if (!disabled && !selected) onSelect?.();
@@ -82,9 +99,9 @@ export const Radio = forwardRef<View, RadioProps>(function Radio(
       {...rest}
     >
       {isOutlined ? (
-        <OutlinedRadio t={t} dims={dims} fillAnim={fillAnim} selected={selected} disabled={disabled} style={style} />
+        <OutlinedRadio t={t} dims={dims} fillAnim={fillAnim} pop={pop} selected={selected} disabled={disabled} style={style} />
       ) : (
-        <FilledRadio t={t} dims={dims} fillAnim={fillAnim} selected={selected} disabled={disabled} style={style} />
+        <FilledRadio t={t} dims={dims} fillAnim={fillAnim} pop={pop} selected={selected} disabled={disabled} style={style} />
       )}
     </Pressable>
   );
@@ -93,7 +110,10 @@ export const Radio = forwardRef<View, RadioProps>(function Radio(
 type RadioVisualProps = {
   t: Tokens;
   dims: Dims;
+  /** Drives the ring's colour. JS-thread by necessity — colours cannot go native. */
   fillAnim: Animated.Value;
+  /** Drives the dot's scale. Native-driven, so the pop never stutters. */
+  pop: Animated.Value;
   selected: boolean;
   disabled: boolean;
   style?: StyleProp<ViewStyle>;
@@ -142,7 +162,7 @@ function OutlinedRadio({ t, dims, fillAnim, selected, disabled, style }: RadioVi
   );
 }
 
-function FilledRadio({ t, dims, fillAnim, selected, disabled, style }: RadioVisualProps) {
+function FilledRadio({ t, dims, pop, selected, disabled, style }: RadioVisualProps) {
   const borderColor = disabled
     ? t.colors.borderSecondary
     : selected
@@ -151,7 +171,7 @@ function FilledRadio({ t, dims, fillAnim, selected, disabled, style }: RadioVisu
 
   const dotColor = disabled ? t.colors.textTertiary : t.colors.interactivePrimary;
 
-  const dotScale = fillAnim.interpolate({
+  const dotScale = pop.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
   });

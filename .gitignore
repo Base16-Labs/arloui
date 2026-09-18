@@ -57,3 +57,6 @@ android/build
 android/app/build
 *.keystore
 !debug.keystore
+
+# local dev server config — contains machine-specific absolute paths
+.claude/launch.json

@@ -34,9 +34,8 @@ export function PlaygroundHero({
         >
           <Text
             style={{
-              fontFamily: 'Space Grotesk Medium',
-              fontSize: 11,
-              letterSpacing: 0.8,
+              fontFamily: t.fontFamilies.sans,
+              ...t.typography.overline,
               color: t.colors.accent,
             }}
           >
@@ -50,9 +49,7 @@ export function PlaygroundHero({
         <Text
           style={{
             fontFamily: t.fontFamilies.display,
-            fontSize: 44,
-            lineHeight: 46,
-            letterSpacing: -0.5,
+            ...t.typography.displayLargeEmphasized,
             color: t.colors.textPrimary,
           }}
         >
@@ -64,8 +61,7 @@ export function PlaygroundHero({
         <Text
           style={{
             fontFamily: t.fontFamilies.sans,
-            fontSize: t.typography.body.fontSize,
-            lineHeight: t.typography.body.lineHeight,
+            ...t.typography.bodyMedium,
             color: t.colors.textSecondary,
           }}
         >

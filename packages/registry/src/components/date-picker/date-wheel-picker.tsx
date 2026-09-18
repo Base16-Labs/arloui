@@ -257,7 +257,7 @@ export function DateWheelPicker({
           width: '100%',
           maxWidth: 350,
           height: WHEEL_HEIGHT,
-          borderRadius: 16,
+          borderRadius: t.radii.xl,
           borderWidth: 1,
           borderColor: t.colors.borderSecondary,
           backgroundColor: t.colors.surfaceElevated,
@@ -273,15 +273,15 @@ export function DateWheelPicker({
         style={{
           position: 'absolute',
           top: WHEEL_PADDING,
-          left: 8,
-          right: 8,
+          left: t.spacing[2],
+          right: t.spacing[2],
           height: ITEM_HEIGHT,
-          borderRadius: 10,
+          borderRadius: t.radii.lg,
           backgroundColor: t.colors.surfaceInput,
         }}
       />
 
-      <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: 8 }}>
+      <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: t.spacing[2] }}>
         {showRollingDate ? (
           <WheelColumn
             accessibilityLabel="Date"
@@ -475,7 +475,7 @@ function WheelColumn({
                 height: ITEM_HEIGHT,
                 alignItems: 'center',
                 justifyContent: 'center',
-                paddingHorizontal: 4,
+                paddingHorizontal: t.spacing[1],
               }}
             >
               <Text
@@ -485,9 +485,10 @@ function WheelColumn({
                 style={{
                   color: distance === 0 ? t.colors.textPrimary : t.colors.textTertiary,
                   fontFamily: t.fontFamilies.sans,
+                  ...(distance === 0
+                    ? t.typography.headingMediumEmphasized
+                    : t.typography.bodyMedium),
                   fontWeight: distance === 0 ? t.fontWeights.semibold : t.fontWeights.medium,
-                  fontSize: distance === 0 ? 17 : 15,
-                  lineHeight: 22,
                   opacity: distance === 0 ? 1 : distance === 1 ? 0.62 : 0.3,
                 }}
               >

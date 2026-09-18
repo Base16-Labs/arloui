@@ -226,13 +226,15 @@ const { theme } = useTheme();
       { name: 'blur.md', value: '16', note: 'Compact overlays' },
       { name: 'blur.lg', value: '24', note: 'Default glass surface' },
       { name: 'blur.xl', value: '40', note: 'Dense modal material' },
-      { name: 'materials.glassRegular', value: '24 + overlay', note: 'Cross-platform glass fallback' },
+      { name: 'materials.glassMedium', value: '24 + overlay', note: 'Cross-platform glass fallback' },
+      { name: 'materials.glassMedium.tintOpacity', value: '0.45', note: "How much of a component's own colour survives the material" },
+      { name: 'materials.glassMedium.tintOpacityPressed', value: '0.6', note: 'Tint deepens on press — the press response for a tinted glass surface' },
     ],
     snippet: `import { Platform, StyleSheet, View, useColorScheme } from 'react-native';
 import { BlurView } from 'expo-blur';
 
 const scheme = useColorScheme() ?? 'light';
-const material = theme.materials.glassRegular;
+const material = theme.materials.glassMedium;
 const overlay =
   scheme === 'dark' ? material.darkOverlay : material.lightOverlay;
 const border =
@@ -267,14 +269,19 @@ const styles = StyleSheet.create({
     title: 'Motion',
     lede: 'Registry motion tokens for press feedback, state transitions, sheet movement, easing, and restrained springs.',
     intro: [
+      'Before reaching for a token, answer two questions: how often does this interaction happen, and what is the animation for? Something a user does a hundred times a day should not animate at all; sheets and modals get standard motion; rare events have the delight budget. If you cannot name the purpose in one word — feedback, spatial consistency, state, explanation — do not build it.',
       'Default easing is easeOut; easeInOut morphs in place and easeSheet drives drawers.',
-      'Springs (snappy, gentle, heavy) are reserved for gesture-driven or playful elements.',
+      'Springs (snappy, gentle, heavy) are reserved for gesture-driven or playful elements. If a finger was involved, use a spring: springs carry velocity through an interruption, timing curves restart.',
       'Pressed feedback combines scale and opacity so touch response feels immediate.',
+      'Transform and opacity are free; width, height, margin, padding, and positioned offsets each trigger a layout pass. Where a value drives both a transform and a colour, split it in two — useNativeDriver is per-animation, not per-property, so one shared value drags the transform onto the JS thread with the colour.',
     ],
     rules: [
       'Use duration.instant for tap acknowledgement.',
       'Use duration.fast / duration.base for toggles, popovers, and sheets.',
       'Avoid transition-all patterns and never animate from scale(0).',
+      'Read the reduce-motion setting through useReduceMotion — one shared answer, never a probe per component.',
+      'Reduced motion means fewer and gentler, not none: keep the opacity and colour changes that explain state, drop translation, scale, and spring overshoot.',
+      'Judge feel in a release build on the slowest device you support. A simulator and a dev build both lie, in opposite directions.',
     ],
     specs: [
       { name: 'duration.instant', value: '130', note: 'Press feedback (100–160)' },

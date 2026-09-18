@@ -8,6 +8,8 @@ import {
   TabBar,
   useTabBarScroll,
   useTokens,
+  type TabBarScrollBehavior,
+  type TabBarSelectionMotion,
   type TabBarSurface,
   type TabBarWidth,
 } from '@arloui/registry';
@@ -18,10 +20,11 @@ import { VariantChip, VariantControlRow } from '@/components/playground/variant-
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type TabValue = 'home' | 'search' | 'activity' | 'profile';
-type ScrollBehavior = 'fixed' | 'on scroll';
 
 const WIDTHS: TabBarWidth[] = ['full', 'floating'];
-const SURFACES: TabBarSurface[] = ['transparent', 'filled'];
+const SURFACES: TabBarSurface[] = ['filled', 'glass'];
+const BEHAVIORS: TabBarScrollBehavior[] = ['hide', 'shrink', 'fixed'];
+const SELECTIONS: TabBarSelectionMotion[] = ['snap', 'jelly'];
 
 export default function TabBarCanvas() {
   const t = useTokens();
@@ -33,7 +36,8 @@ export default function TabBarCanvas() {
   const [width, setWidth] = useState<TabBarWidth>('floating');
   const [surface, setSurface] = useState<TabBarSurface>('filled');
   const [showLabels, setShowLabels] = useState(false);
-  const [scrollBehavior, setScrollBehavior] = useState<ScrollBehavior>('on scroll');
+  const [scrollBehavior, setScrollBehavior] = useState<TabBarScrollBehavior>('shrink');
+  const [selection, setSelection] = useState<TabBarSelectionMotion>('snap');
 
   return (
     <>
@@ -61,9 +65,9 @@ export default function TabBarCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingTop: 64,
-              paddingHorizontal: 20,
-              paddingBottom: 88,
+              paddingTop: t.spacing[16],
+              paddingHorizontal: t.spacing[5],
+              paddingBottom: t.spacing[20] + t.spacing[2],
             }}
           >
             <View
@@ -72,7 +76,7 @@ export default function TabBarCanvas() {
                 maxWidth: 350,
                 height: 470,
                 overflow: 'hidden',
-                borderRadius: 34,
+                borderRadius: t.radii['2xl'],
                 borderWidth: 1,
                 borderColor: t.colors.border,
                 backgroundColor: t.colors.bg,
@@ -83,13 +87,18 @@ export default function TabBarCanvas() {
                 scrollEventThrottle={16}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
-                  paddingTop: 24,
-                  paddingHorizontal: 16,
-                  paddingBottom: 100,
+                  paddingTop: t.spacing[6],
+                  paddingHorizontal: t.spacing[4],
+                  paddingBottom: t.spacing[24] + t.spacing[1],
                 }}
               >
                 <View
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 22 }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: t.spacing[3],
+                    marginBottom: t.spacing[6],
+                  }}
                 >
                   <View
                     style={{
@@ -99,7 +108,7 @@ export default function TabBarCanvas() {
                       backgroundColor: '#155DFC',
                     }}
                   />
-                  <View style={{ gap: 6 }}>
+                  <View style={{ gap: t.spacing[2] }}>
                     <View
                       style={{
                         width: 112,
@@ -120,7 +129,7 @@ export default function TabBarCanvas() {
                 </View>
 
                 {Array.from({ length: 8 }, (_, index) => (
-                  <View key={index} style={{ marginBottom: 28 }}>
+                  <View key={index} style={{ marginBottom: t.spacing[6] }}>
                     <View
                       style={{
                         width: '100%',
@@ -136,7 +145,7 @@ export default function TabBarCanvas() {
                                 : '#E9D5FF',
                       }}
                     />
-                    <View style={{ marginTop: 12, flexDirection: 'row', gap: 14 }}>
+                    <View style={{ marginTop: t.spacing[3], flexDirection: 'row', gap: t.spacing[4] }}>
                       <Ionicons name="heart-outline" size={23} color={t.colors.textPrimary} />
                       <Ionicons name="chatbubble-outline" size={21} color={t.colors.textPrimary} />
                       <Ionicons name="paper-plane-outline" size={22} color={t.colors.textPrimary} />
@@ -145,9 +154,9 @@ export default function TabBarCanvas() {
                       style={{
                         marginTop: 9,
                         color: t.colors.textSecondary,
-                        fontFamily: 'Manrope Medium',
-                        fontSize: 13,
-                        lineHeight: 18,
+                        fontFamily: t.fontFamilies.sans,
+                        ...t.typography.bodyMedium,
+                        fontWeight: t.fontWeights.medium,
                       }}
                     >
                       {index % 2 === 0 ? 'A quiet moment from today.' : 'Saved from the weekend.'}
@@ -171,12 +180,14 @@ export default function TabBarCanvas() {
                   onValueChange={(next) => setValue(next as TabValue)}
                   width={width}
                   surface={surface}
+                  scrollBehavior={scrollBehavior}
+                  selection={selection}
                   showLabels={showLabels}
-                  hidden={scrollBehavior === 'on scroll' ? scroll.hidden : false}
+                  hidden={scroll.hidden}
                   blurComponent={
-                    surface === 'transparent' ? (
+                    surface === 'glass' ? (
                       <BlurView
-                        intensity={40}
+                        intensity={60}
                         tint={t.name === 'dark' ? 'dark' : 'light'}
                         style={StyleSheet.absoluteFill}
                       />
@@ -251,7 +262,7 @@ export default function TabBarCanvas() {
             onPrevious={() => router.replace('/date-picker')}
             onNext={() => router.replace('/sheet')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Width">
                 {WIDTHS.map((option) => (
                   <VariantChip
@@ -282,13 +293,23 @@ export default function TabBarCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Behavior">
-                {(['fixed', 'on scroll'] as const).map((option) => (
+              <VariantControlRow label="On scroll">
+                {BEHAVIORS.map((option) => (
                   <VariantChip
                     key={option}
                     label={option}
                     active={scrollBehavior === option}
                     onPress={() => setScrollBehavior(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Selection">
+                {SELECTIONS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={selection === option}
+                    onPress={() => setSelection(option)}
                   />
                 ))}
               </VariantControlRow>

@@ -10,10 +10,16 @@ import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { haptic } from '../../../foundation/haptics';
 import { ThemeProvider } from '../../../foundation/theme-provider';
 import { usePressFeedback, useReducedMotion } from '../press-feedback';
+import {
+  __setReduceMotionForTests,
+  useReduceMotion,
+} from '../../../foundation/reduce-motion';
 
 const wrapper = ({ children }: { children: ReactNode }) => <ThemeProvider>{children}</ThemeProvider>;
 
 beforeEach(() => jest.clearAllMocks());
+
+afterEach(() => __setReduceMotionForTests(false));
 
 describe('usePressFeedback', () => {
   it('uses a scale transform when reduce-motion is off (default)', () => {
@@ -46,13 +52,16 @@ describe('usePressFeedback', () => {
     expect(result.current.pressed).toBe(false);
   });
 
-  it('falls back to an opacity fade when reduce-motion is on', async () => {
-    // Override the globally-pending mock with a resolved `true` for this test.
-    jest.mocked(AccessibilityInfo.isReduceMotionEnabled).mockResolvedValueOnce(true);
+  it('falls back to an opacity fade when reduce-motion is on', () => {
+    /*
+     * The seam, not a mock on `AccessibilityInfo`. Reduce Motion is one
+     * process-wide store with a single subscription, so it probes the OS once
+     * for the whole suite — a mock installed by a later spec is never consulted,
+     * because an earlier one already resolved the answer.
+     */
+    __setReduceMotionForTests(true);
     const { result } = renderHook(() => usePressFeedback({}), { wrapper });
-    await waitFor(() => {
-      expect(result.current.reduceMotion).toBe(true);
-    });
+    expect(result.current.reduceMotion).toBe(true);
     expect(result.current.animatedStyle).toHaveProperty('opacity');
     expect(result.current.animatedStyle).not.toHaveProperty('transform');
   });
@@ -64,9 +73,17 @@ describe('useReducedMotion', () => {
     expect(result.current).toBe(false);
   });
 
-  it('reflects the OS reduce-motion setting when enabled', async () => {
-    jest.mocked(AccessibilityInfo.isReduceMotionEnabled).mockResolvedValueOnce(true);
+  it('reflects the OS reduce-motion setting when enabled', () => {
+    __setReduceMotionForTests(true);
     const { result } = renderHook(() => useReducedMotion());
-    await waitFor(() => expect(result.current).toBe(true));
+    expect(result.current).toBe(true);
+  });
+
+  /** The alias and the foundation hook must be the same answer, not two. */
+  it('is the shared store, not a second one', () => {
+    __setReduceMotionForTests(true);
+    const alias = renderHook(() => useReducedMotion());
+    const direct = renderHook(() => useReduceMotion());
+    expect(alias.result.current).toBe(direct.result.current);
   });
 });

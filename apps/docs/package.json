@@ -4,6 +4,11 @@
   "private": true,
   "description": "Expo playground for testing Arlo UI React Native components on device, simulator, and web.",
   "main": "expo-router/entry",
+  "expo": {
+    "install": {
+      "exclude": ["typescript"]
+    }
+  },
   "scripts": {
     "sync-icons": "node ./scripts/sync-icon-gallery.mjs",
     "dev": "expo start --lan --port 8081",
@@ -11,10 +16,12 @@
     "playground:clear": "expo start --lan --port 8081 --clear",
     "playground:tunnel": "expo start --tunnel --port 8081",
     "ios": "expo start --ios --port 8081",
+    "ios:native": "expo run:ios",
     "android": "expo start --android --port 8081",
     "web": "node ./scripts/sync-icon-gallery.mjs && expo start --web",
     "build:web": "node ./scripts/sync-icon-gallery.mjs && expo export --platform web",
     "typecheck": "tsc --noEmit",
+    "test:charts": "jest --config jest.config.cjs --runInBand",
     "lint": "eslint app",
     "clean": "rm -rf .expo dist .turbo"
   },
@@ -28,11 +35,11 @@
     "@expo-google-fonts/manrope": "^0.4.2",
     "@expo-google-fonts/space-grotesk": "^0.4.1",
     "@expo-google-fonts/space-mono": "^0.4.2",
-    "@expo/metro-runtime": "~6.1.2",
+    "@expo/dom-webview": "~57.0.1",
+    "@expo/log-box": "~57.0.4",
+    "@expo/metro-runtime": "~57.0.15",
     "@expo/vector-icons": "^15.0.3",
-    "@react-navigation/core": "^7.17.4",
-    "@react-navigation/native": "^7.1.8",
-    "babel-preset-expo": "~54.0.10",
+    "babel-preset-expo": "~57.0.10",
     "buffer": "^6.0.3",
     "debug": "~4.4.0",
     "expo": "~54.0.34",
@@ -40,6 +47,7 @@
     "expo-clipboard": "~8.0.8",
     "expo-constants": "~18.0.13",
     "expo-font": "~14.0.11",
+    "expo-glass-effect": "~0.1.10",
     "expo-haptics": "~15.0.8",
     "expo-linking": "~8.0.12",
     "expo-modules-core": "~3.0.30",
@@ -48,22 +56,26 @@
     "expo-status-bar": "~3.0.9",
     "expo-updates": "~29.0.19",
     "invariant": "^2.2.4",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-native": "0.81.5",
-    "react-native-gesture-handler": "~2.28.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-gesture-handler": "~2.32.0",
     "react-native-is-edge-to-edge": "^1.3.1",
-    "react-native-safe-area-context": "~5.6.0",
-    "react-native-screens": "~4.16.0",
-    "react-native-svg": "15.12.1",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.0",
+    "react-native-worklets": "0.10.1",
     "react-refresh": "^0.18.0",
     "use-sync-external-store": "^1.6.0"
   },
   "devDependencies": {
     "@arloui/tsconfig": "file:../../packages/tsconfig",
     "@babel/core": "^7.25.2",
-    "@types/react": "~19.1.10",
+    "@babel/generator": "^7.29.0",
+    "@babel/traverse": "^7.29.0",
+    "@types/react": "~19.2.0",
     "typescript": "~5.9.2"
   }
 }

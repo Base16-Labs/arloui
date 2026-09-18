@@ -15,6 +15,7 @@ type Tone = "primary" | "neutral" | "danger";
 type Appearance = "solid" | "soft" | "ghost" | "outline";
 type Size = "sm" | "md" | "lg" | "xl";
 type IconLayout = "none" | "leading" | "trailing" | "both";
+type Surface = "default" | "glass";
 
 type Palette = { bg: string; fg: string; border: string; bw: number };
 
@@ -99,6 +100,22 @@ function fabVariant(tone: Tone, appearance: Appearance) {
   return "primary" as const;
 }
 
+function withAlpha(color: string, alpha: number): string {
+  if (!color.startsWith("#")) return `rgba(255,255,255,${alpha})`;
+  const body = color.slice(1);
+  const hex =
+    body.length === 3
+      ? body
+          .split("")
+          .map((ch) => ch + ch)
+          .join("")
+      : body;
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 type PlaygroundProps = { states: readonly string[] };
 
 export function ButtonDocPlayground({ states }: PlaygroundProps) {
@@ -106,6 +123,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
   const [appearance, setAppearance] = useState<Appearance>("solid");
   const [size, setSize] = useState<Size>("md");
   const [iconLayout, setIconLayout] = useState<IconLayout>("both");
+  const [surface, setSurface] = useState<Surface>("default");
   const [pinned, setPinned] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -126,6 +144,12 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
   const darkChrome = docState === "dark mode";
   const rtl = docState === "RTL";
   const dynamicType = docState === "dynamic type";
+  const isGlass =
+    docState !== "disabled" && (surface === "glass" || docState === "glass");
+  const glassTint = withAlpha(
+    palette.bg === "transparent" ? palette.fg : palette.bg,
+    showPressed ? 0.72 : 0.55
+  );
 
   const transitionCls = reducedMotion
     ? "transition-none"
@@ -141,7 +165,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
       <section id="variants" className="border-t border-line py-9">
         <h2 className="text-[26px] font-semibold tracking-tight">Variants &amp; states</h2>
         <p className="mt-1.5 mb-6 text-[13px] text-ink-3">
-          Tone × appearance × size, all token-driven in the registry. Pick a
+          Tone × appearance × size × surface, all token-driven in the registry. Pick a
           variant and hover or pin a state — the sample updates live beside the
           controls.
         </p>
@@ -179,6 +203,20 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
             {(["sm", "md", "lg", "xl"] as const).map((s) => (
               <Chip key={s} active={size === s} onClick={() => setSize(s)}>
                 {s}
+              </Chip>
+            ))}
+          </div>
+          <span className="text-[11px] font-medium uppercase tracking-widest text-ink-3">
+            Surface
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {(["default", "glass"] as const).map((item) => (
+              <Chip
+                key={item}
+                active={surface === item || (item === "glass" && docState === "glass")}
+                onClick={() => setSurface(item)}
+              >
+                {item}
               </Chip>
             ))}
           </div>
@@ -231,11 +269,27 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
             <div className="sticky top-3">
               <div
                 className={cn(
-                  "flex min-h-[150px] items-center justify-center rounded-xl border border-line-strong bg-surface-sunken p-6 dark:bg-surface-raised",
-                  darkChrome && "border-zinc-700 bg-zinc-900"
+                  "relative flex min-h-[150px] items-center justify-center overflow-hidden rounded-xl border border-line-strong bg-surface-sunken p-6 dark:bg-surface-raised",
+                  darkChrome && "border-zinc-700 bg-zinc-900",
+                  isGlass && "bg-[#EFF6FF] dark:bg-zinc-900"
                 )}
                 dir={rtl ? "rtl" : "ltr"}
               >
+          {isGlass ? (
+            <div className="pointer-events-none absolute inset-0">
+              {["#BFDBFE", "#BBF7D0", "#FED7AA"].map((color, index) => (
+                <div
+                  key={color}
+                  className="absolute h-24 w-28 rounded-3xl opacity-90"
+                  style={{
+                    backgroundColor: color,
+                    top: 12 + index * 28,
+                    left: index === 1 ? 140 : 18 + index * 70,
+                  }}
+                />
+              ))}
+            </div>
+          ) : null}
           <div
             className={cn(
               "relative inline-flex",
@@ -270,13 +324,23 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
                       borderStyle: undefined,
                       borderColor: undefined,
                     }
-                  : {
-                      backgroundColor: palette.bg,
-                      color: palette.fg,
-                      borderWidth: palette.bw,
-                      borderStyle: palette.bw ? "solid" : undefined,
-                      borderColor: palette.border,
-                    }
+                  : isGlass
+                    ? {
+                        backgroundColor: glassTint,
+                        color: palette.fg,
+                        borderWidth: 1,
+                        borderStyle: "solid",
+                        borderColor: "rgba(255,255,255,0.56)",
+                        backdropFilter: "blur(8px)",
+                        WebkitBackdropFilter: "blur(8px)",
+                      }
+                    : {
+                        backgroundColor: palette.bg,
+                        color: palette.fg,
+                        borderWidth: palette.bw,
+                        borderStyle: palette.bw ? "solid" : undefined,
+                        borderColor: palette.border,
+                      }
               }
             >
               {!isIconOnly && isLoading && (
@@ -325,7 +389,7 @@ export function ButtonDocPlayground({ states }: PlaygroundProps) {
                   aria-hidden
                 />
               )}
-              {showPressed && (
+              {showPressed && !isGlass && (
                 <span
                   className="pointer-events-none absolute inset-0 bg-black/10"
                   aria-hidden

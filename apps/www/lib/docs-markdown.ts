@@ -11,6 +11,8 @@
  * - Prose pages (foundation essays) register authored markdown in `ESSAYS`.
  */
 
+import { CHART_PROPS, CHART_PROPS_MD } from './generated/chart-props';
+import { chartChoices, chartForms, chartPitfalls, chartQuickStart } from './chart-forms';
 import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
 import { archetypeDescriptions, archetypeItems } from './routes';
 
@@ -129,6 +131,26 @@ type PageData = {
   actions?: readonly DocLink[];
 };
 
+/** A body's own top-level headings, in the order it emits them. */
+function tocOf(body: string): { label: string }[] {
+  return [...body.matchAll(/^## (.+)$/gm)].map((match) => ({ label: match[1]!.trim() }));
+}
+
+/** The choosing table and the pitfalls, from the same data the page renders. */
+function chartWhenToUseMarkdown(): string {
+  const rows = chartChoices.map((choice) => `| ${choice.question} | ${choice.form} |`);
+  const bullets = chartPitfalls.map((item) => `- **${item.rule}** ${item.body}`);
+  return [
+    'Choose a chart based on the comparison or pattern users need to understand.',
+    '',
+    '| The reader asks | Reach for |',
+    '| --- | --- |',
+    ...rows,
+    '',
+    ...bullets,
+  ].join('\n');
+}
+
 export function docDataToMarkdown(
   data: PageData,
   kind: DocMeta['kind'] = 'Component',
@@ -140,7 +162,17 @@ export function docDataToMarkdown(
     slug: data.slug,
     lede: data.lede,
     category: data.category,
-    sections: data.headings ? [...data.headings] : undefined,
+    /*
+     * Derived from the body, not from `headings`.
+     *
+     * `headings` drives the rendered page's right rail, and a page and its
+     * markdown do not carry the same sections — the page has an interactive
+     * Anatomy and a Do · Don't the markdown has no way to express. One list
+     * serving both meant the markdown promised sections it never emitted, and
+     * trimming it to suit the markdown left the page's rail pointing at
+     * anchors that were not there. Each document now lists itself.
+     */
+    sections: body ? tocOf(body) : data.headings ? [...data.headings] : undefined,
     states: data.states,
     tokens: data.tokens,
     figma: data.figma,
@@ -207,14 +239,13 @@ export const sheetData = {
   slug: 'sheet',
   category: 'Layout & surface',
   title: 'Sheet',
-  lede: 'A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, tunable motion and gesture, default or stacked width, and token-based outer padding. Backdrop and surface stay composable, from scrim modal to pass-through Liquid Glass.',
+  lede: 'A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, tunable motion and gesture, default or stacked width, and token-based outer padding. The backdrop stays composable, from scrim modal to pass-through.',
   figma: '#',
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet',
   states: ['open', 'dragging', 'dismissing', 'scrim', 'passthrough', 'long content'],
   tokens: [
     'colors.surfaceElevated',
     'colors.surfaceOverlay',
-    'materials.glassMedium',
     'spacing.4',
     'spacing.6',
     'radii.xl',
@@ -230,6 +261,7 @@ export const sheetData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'customization', label: 'Customization' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
@@ -249,20 +281,25 @@ export const tabBarData = {
   slug: 'tab-bar',
   category: 'Navigation',
   title: 'Tab Bar',
-  lede: "Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, transparent or filled surfaces, directional selection motion, and scroll-aware visibility.",
+  lede: "Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, filled or Liquid Glass surfaces, directional selection motion, and scroll-aware visibility.",
   figma: '#',
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tab-bar',
-  states: ['default', 'selected', 'pressed', 'disabled', 'hidden on scroll'],
+  states: ['default', 'selected', 'pressed', 'disabled', 'glass', 'hidden on scroll'],
   tokens: [
     'colors.navBackground',
-    'colors.navBorder',
     'colors.navActive',
     'colors.navInactive',
-    'colors.navIndicator',
+    'colors.interactiveSecondary',
+    'colors.interactiveError',
+    'colors.textInteractivePrimary',
+    'colors.bg',
+    'materials.glassMedium',
     'motion.duration.fast',
     'motion.spring.snappy',
+    'motion.pressed',
     'sizing.touchTarget.minimum',
+    'sizing.icon.md',
     'radii.full',
     'shadows.md',
   ],
@@ -271,6 +308,7 @@ export const tabBarData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -282,6 +320,89 @@ export const tabBarData = {
       href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tab-bar',
     },
     { label: 'Open playground ↗', href: 'http://localhost:8081/tab-bar' },
+  ],
+};
+
+export const cardData = {
+  slug: 'card',
+  category: 'Layout & surface',
+  title: 'Card',
+  lede: 'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Five variant axes off token scales — surface, elevation, border, padding, radius — and optional whole-card press with a haptic. It ships no baked-in layouts; a metric, media, prompt, list, or carousel card is a composition, not a component.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+  states: ['default', 'elevated', 'bleed', 'inverse', 'elevation', 'border', 'pressable'],
+  tokens: [
+    'colors.surfaceCard',
+    'colors.surfaceElevated',
+    'colors.surfaceBleed',
+    'colors.surfaceInverse',
+    'colors.textInverse',
+    'colors.border',
+    'radii.none … radii.full',
+    'spacing.2 … spacing.8',
+    'shadows.none … shadows.lg',
+    'motion.pressed.scale',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'recipes', label: 'Recipes' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/cards' },
+  ],
+};
+
+export const listData = {
+  slug: 'list',
+  category: 'Layout & surface',
+  title: 'List',
+  lede: 'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle, and a trailing value alongside an optional icon. It draws no surface of its own — set separated to space rows onto their own surfaces, or keep them contiguous with an inset, balanced, edge, or no hairline.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/list',
+  states: ['separated', 'inset', 'balanced', 'edge', 'none', 'comfortable', 'compact'],
+  tokens: [
+    'colors.surface',
+    'colors.border',
+    'colors.borderSecondary',
+    'colors.chartPositive',
+    'colors.chartNegative',
+    'colors.textPrimary … textTertiary',
+    'colors.surfaceInput',
+    'radii.xl',
+    'spacing.2 … spacing.4',
+    'sizing.touchTarget.minimum',
+    'sizing.icon.sm',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'variants', label: 'Variants' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/list',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/list' },
   ],
 };
 
@@ -306,6 +427,7 @@ export const skeletonData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -340,6 +462,7 @@ export const spinnerData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -358,15 +481,16 @@ export const tabsData = {
   slug: 'tabs',
   category: 'Navigation',
   title: 'Tabs',
-  lede: 'Secondary navigation for categorising content or switching views within the current screen, with plain, underlined, and separate filled presentations.',
+  lede: 'Secondary navigation for categorising content or switching views within the current screen, with plain, underline, filled, and segmented presentations, plus a filled or Liquid Glass surface on the segmented track.',
   figma: '#',
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tabs',
-  states: ['default', 'selected', 'pressed', 'disabled', 'overflow'],
+  states: ['default', 'selected', 'pressed', 'disabled', 'overflow', 'glass'],
   tokens: [
     'colors.textPrimary',
     'colors.textSecondary',
     'colors.accent',
     'colors.surfaceStrong',
+    'materials.glassSmall',
     'radii.full',
     'motion.duration.fast',
     'motion.pressed',
@@ -377,6 +501,7 @@ export const tabsData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -405,7 +530,9 @@ export const buttonData = {
     'disabled',
     'focus',
     'icon-only',
+    'glass',
     'reduced motion',
+    'reduced transparency',
     'RTL',
     'dynamic type',
   ],
@@ -428,6 +555,9 @@ export const buttonData = {
     'colors.borderPrimary',
     'colors.borderError',
     'colors.borderSecondary',
+    'materials.glassSmall',
+    'materials.glassSmall.tintOpacity',
+    'materials.glassSmall.tintOpacityPressed',
     'sizing.buttonHeight.sm',
     'sizing.buttonHeight.md',
     'sizing.buttonHeight.lg',
@@ -456,6 +586,7 @@ export const buttonData = {
     { id: 'motion', label: 'Motion' },
     { id: 'social-auth', label: 'Social auth' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -491,6 +622,7 @@ export const datePickerData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -543,6 +675,7 @@ export const inputData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -582,6 +715,7 @@ export const toggleData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -623,6 +757,7 @@ export const checkboxData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -661,6 +796,7 @@ export const radioData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -824,6 +960,7 @@ export const textAreaData = {
     { id: 'variants', label: 'Variants' },
     { id: 'states', label: 'States' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -861,6 +998,7 @@ export const carouselData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -899,6 +1037,7 @@ export const galleryData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -939,6 +1078,7 @@ export const toastData = {
     { id: 'when-to-use', label: 'When to use' },
     { id: 'variants', label: 'Variants' },
     { id: 'code', label: 'Code' },
+    { id: 'props', label: 'Props' },
     { id: 'tokens', label: 'Tokens' },
     { id: 'accessibility', label: 'Accessibility' },
     { id: 'do-dont', label: "Do · Don't" },
@@ -1017,6 +1157,192 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
   ].join('\n');
 }
 
+export const stepperData = {
+  slug: 'stepper',
+  category: 'Controls',
+  title: 'Stepper',
+  lede: 'A numeric control with decrement and increment affordances whose value rolls between numbers instead of snapping, in both input appearances, with the buttons either straddling the value or grouped at one edge beside a value you can tap to type.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/stepper',
+  states: ['filled', 'plain', 'split', 'grouped', 'editable', 'disabled', 'error', 'at min', 'hold to repeat'],
+  tokens: [
+    'colors.surfaceInput',
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.textDisabled',
+    'colors.borderError',
+    'colors.textInteractiveError',
+    'radii.md',
+    'radii.full',
+    'motion.spring.snappy',
+    'motion.pressed.scale',
+  ],
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'tokens', label: 'Tokens' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/stepper',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/stepper' },
+  ],
+};
+/** The prose half of the Chart page — see `chartData.headings`. */
+const CHART_BODY = [
+  '## Overview',
+  '',
+  'ArloUI provides six chart types. Each chart can be installed separately or accessed through the Chart namespace.',
+  '',
+  ...chartForms.map((form) => `- [${form.title}](/docs/components/${form.slug}): ${form.lede}`),
+  '',
+  '## When to use',
+  '',
+  '__CHART_WHEN__',
+  '',
+  '## Get started',
+  '',
+  chartQuickStart.intro,
+  '',
+  '```bash',
+  chartQuickStart.command,
+  '```',
+  '',
+  chartQuickStart.dependencies,
+  '',
+  '```bash',
+  chartQuickStart.expoCommand,
+  '```',
+  '',
+  chartQuickStart.exampleIntro,
+  '',
+  '```tsx',
+  chartQuickStart.example,
+  '```',
+  '',
+  chartQuickStart.family,
+  '',
+  'Install all chart types:',
+  '',
+  '\`\`\`bash',
+  'npx arloui add chart',
+  '\`\`\`',
+  '',
+  'To install only one chart, use its registry entry:',
+  '',
+  ...chartForms.map((form) => `- ${form.title}: \`npx arloui add ${form.entry}\``),
+  '',
+  'Each chart page includes its direct import path and examples. The full chart installation exposes the Chart namespace; standalone installations expose the component directly.',
+  '',
+  '## Composition',
+  '',
+  'Without children, a chart uses its default layout. Add child components to customize optional elements such as the value readout, legend, category labels, and reference lines.',
+  '',
+  'For Line chart, place Value, Delta, and Periods inside LineChart. Place reference lines and the crosshair inside LineChart.Plot. The Chart export remains available for existing code. Other chart types expose their own child components, listed in the API reference.',
+  '',
+  '## API reference',
+  '',
+  '__CHART_PROPS__',
+  '',
+  '## Loading and empty states',
+  '',
+  'Use loading for the initial fetch, when no data is available. Neutral placeholders use a subtle pulse and fade out before the chart enters. During later fetches, pass refreshing and keep supplying the last successful data; the chart stays visible and is marked busy for assistive technology. Charts hide data-dependent readouts only during initial loading. An empty dataset displays an empty state rather than a value of zero. Meter represents a value within a range and does not have an empty-dataset state.',
+  '',
+  'Sparkline supports a compact empty label. Heatmap can still display a calendar without data when an explicit date range is provided.',
+  '',
+  '## Accessibility',
+  '',
+  'Provide meaningful labels and value formatters. Keep important values available as text, and use a data table when users need access to every value.',
+  '',
+  'Use labels or numeric values alongside status colors. Chart animations respect the reduced-motion setting.',
+  '',
+  '## Limitations',
+  '',
+  'The supplied chart types do not include candlestick, radar, scatter, or arbitrary matrix heatmaps. Shared geometry helpers are available for custom chart implementations.',
+].join('\n');
+
+export const chartData = {
+  slug: 'chart',
+  category: 'Data',
+  title: 'Chart',
+  lede: 'Charts for trends, category comparisons, proportions, progress toward a target, and daily activity. Install each chart separately or use the complete Chart namespace.',
+  figma: '#',
+  source:
+    'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
+  states: [
+    'scrub',
+    'rising',
+    'falling',
+    'neutral',
+    'stacked',
+    'gauge',
+    'concentric rings',
+    'loading',
+    'empty',
+    'not enough data',
+    'reduced motion',
+  ],
+  tokens: [
+    'colors.chartPositive',
+    'colors.chartNegative',
+    'colors.chartSeries1',
+    'colors.chartSeries2',
+    'colors.chartSeries3',
+    'colors.chartSeries4',
+    'colors.chartOther',
+    'colors.interactivePrimary',
+    'colors.textPrimary',
+    'colors.textSecondary',
+    'colors.textTertiary',
+    'colors.surfaceElevated',
+    'colors.surfaceInput',
+    'colors.borderSecondary',
+    'colors.feedbackWarning',
+    'colors.feedbackError',
+    'radii.md',
+    'radii.full',
+    'motion.chart.data',
+    'motion.chart.barSwap',
+    'motion.duration.slow',
+  ],
+  /*
+   * These name what the page actually emits, in the order it emits it.
+   *
+   * The list used to promise ten sections — Anatomy, Do · Don't, and the rest —
+   * against a page that rendered four, because nothing passed a body to the
+   * generator. A table of contents pointing at content that does not exist is
+   * worse than a short page: a reader counts six forms in the lede, goes looking
+   * for the section that names them, and finds the page has ended.
+   */
+  headings: [
+    { id: 'anatomy', label: 'Anatomy' },
+    { id: 'forms', label: 'Forms' },
+    { id: 'when-to-use', label: 'When to use' },
+    { id: 'code', label: 'Code' },
+    { id: 'axes', label: 'Two axes' },
+    { id: 'props', label: 'Props' },
+    { id: 'tokens', label: 'Tokens used' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'do-dont', label: "Do · Don't" },
+    { id: 'not-in-the-kit', label: 'Not in the kit' },
+    { id: 'related', label: 'Related' },
+  ],
+  actions: [
+    {
+      label: 'View registry source ↗',
+      href: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
+    },
+    { label: 'Open playground ↗', href: 'http://localhost:8081/chart' },
+  ],
+};
+
 const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/foundations/fluidity': ESSAYS.fluidity,
   ...Object.fromEntries(
@@ -1032,6 +1358,8 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/spinner': docDataToMarkdown(spinnerData),
   '/docs/components/tabs': docDataToMarkdown(tabsData),
   '/docs/components/button': docDataToMarkdown(buttonData),
+  '/docs/components/card': docDataToMarkdown(cardData),
+  '/docs/components/list': docDataToMarkdown(listData),
   '/docs/components/input': docDataToMarkdown(inputData),
   '/docs/components/toggle': docDataToMarkdown(toggleData),
   '/docs/components/checkbox': docDataToMarkdown(checkboxData),
@@ -1042,6 +1370,15 @@ const PAGE_MARKDOWN: Record<string, string> = {
   '/docs/components/badge': docDataToMarkdown(badgeData),
   '/docs/components/chip': docDataToMarkdown(chipData),
   '/docs/components/toast': docDataToMarkdown(toastData),
+  '/docs/components/stepper': docDataToMarkdown(stepperData),
+  '/docs/components/chart': docDataToMarkdown(
+    chartData,
+    'Component',
+    CHART_BODY.replace('__CHART_PROPS__', CHART_PROPS_MD).replace(
+      '__CHART_WHEN__',
+      chartWhenToUseMarkdown(),
+    ),
+  ),
   // Every primitives (foundation) page — Tokens, Type, Color, Spacing, Motion, Effects, Icons.
   ...Object.fromEntries(
     Object.entries(primitiveDocs).map(([slug, doc]) => [
@@ -1064,8 +1401,107 @@ export function markdownForPath(pathname: string): string | null {
  * filesystem, so markdown cannot be read from disk on demand — it is written to
  * static assets at build time and served from there.
  */
+
+/**
+ * A chart form's page, as markdown.
+ *
+ * Built from the same data the rendered page uses, so the two cannot say
+ * different things — the prose from `chart-forms`, the reference from the
+ * generated tables.
+ */
+function chartFormMarkdown(form: (typeof chartForms)[number]): string {
+  const reference = CHART_PROPS.find((section) => section.title === form.referenceKey);
+  const props = reference?.props ?? [];
+  const parts = reference?.parts ?? [];
+  const pipe = (text: string) => text.replace(/\|/g, '\\|');
+
+  const out: string[] = [
+    `# ${form.title}`,
+    '',
+    `\`${form.referenceKey}\``,
+    '',
+    form.lede,
+    '',
+    '## When to use',
+    '',
+    ...form.whenToUse.map((line) => `- ${line}`),
+    '',
+    '## Install',
+    '',
+    '```bash',
+    `npx arloui add ${form.entry}`,
+    '```',
+    '',
+    'Import the component directly when installing this chart on its own:',
+    '',
+    '```tsx',
+    `import { ${form.exportName} } from '@/components/ui/${form.file}';`,
+    '```',
+    '',
+    '## Examples',
+    '',
+    form.slug === 'chart-line'
+      ? 'These examples use LineChart. The old `chart-plot` command and `Chart` export remain supported. Use `npx arloui add chart` to install the entire chart family.'
+      : `These examples use ${form.exportName}, the direct import shown above. Set up the theme provider before rendering them.`,
+    '',
+  ];
+
+  for (const example of form.examples) {
+    out.push(example.caption, '', '```tsx', example.code, '```', '');
+  }
+
+  if (props.length > 0) {
+    out.push('## Props', '', '| Prop | Type | Default | What it does |', '| --- | --- | --- | --- |');
+    for (const prop of props) {
+      const name = prop.required ? `\`${prop.name}\` **·** required` : `\`${prop.name}\``;
+      out.push(
+        `| ${name} | \`${pipe(prop.type)}\` | ${prop.default ? `\`${pipe(prop.default)}\`` : '—'} | ${pipe(prop.description) || '—'} |`,
+      );
+    }
+    out.push('');
+  }
+
+  if (parts.length > 0) {
+    out.push(
+      '## Parts',
+      '',
+      'Without children, the chart uses its default layout. Add child components to choose which optional elements to include. The table lists each component and its available props.',
+      '',
+      '| Part | Takes | What it draws |',
+      '| --- | --- | --- |',
+    );
+    for (const part of parts) {
+      const takes =
+        part.props.length > 0
+          ? part.props.map((prop) => `\`${prop.name}: ${pipe(prop.type)}\``).join(' ')
+          : '—';
+      const name = part.name.startsWith(`${form.referenceKey}.`)
+        ? form.exportName + part.name.slice(form.referenceKey.length)
+        : part.name;
+      out.push(`| \`<${name} />\` | ${takes} | ${pipe(part.description) || '—'} |`);
+    }
+    out.push('');
+  }
+
+  out.push('## Motion', '', form.motion, '',
+    'Motion is enabled by default. Set `animated={false}` to disable entrances, transitions, and loading pulse. Device Reduce Motion takes precedence. Loading shows a neutral pulsing placeholder that fades out before entry. For background fetches, pass `refreshing` and keep supplying the last successful data; the chart stays visible and exposes its busy state. Entry runs once when real data becomes available, including after loading or an empty state. It does not loop.', '',
+    'Use the playground Motion controls to switch animation on or off. Tap On again to replay the entrance.', '',
+    '```tsx', `<${form.exportName} ${form.slug === 'chart-meter' ? 'value={53} max={100}' : 'data={data}'} animated={false} />`, '```', '',
+    '## Limitations', '', form.notThis, '', '## Related', '', '- [Chart overview](/docs/components/chart)');
+  return out.join('\n');
+}
+
 export function allMarkdownPages(): { path: string; markdown: string }[] {
-  return Object.entries(PAGE_MARKDOWN)
-    .map(([path, markdown]) => ({ path, markdown }))
-    .sort((a, b) => a.path.localeCompare(b.path));
+  return [
+    // Keep existing raw Markdown links usable after the documentation rename.
+    ...chartForms.filter((form) => form.slug === 'chart-line').map((form) => ({
+      path: '/docs/components/chart-plot',
+      markdown: chartFormMarkdown(form),
+    })),
+    ...Object.entries(PAGE_MARKDOWN).map(([path, markdown]) => ({ path, markdown })),
+    ...chartForms.map((form) => ({
+      path: `/docs/components/${form.slug}`,
+      markdown: chartFormMarkdown(form),
+    })),
+  ].sort((a, b) => a.path.localeCompare(b.path));
 }

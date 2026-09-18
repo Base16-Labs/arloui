@@ -105,7 +105,7 @@ export default function TextAreaCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -125,8 +125,8 @@ export default function TextAreaCanvas() {
                 accessibilityLabel="Dismiss keyboard"
                 onPress={Keyboard.dismiss}
                 style={({ pressed }) => ({
-                  minHeight: 32,
-                  paddingHorizontal: 12,
+                  minHeight: t.sizing.buttonHeight.sm,
+                  paddingHorizontal: t.spacing[3],
                   borderRadius: t.radii.full,
                   borderWidth: 1,
                   borderColor: t.colors.border,
@@ -138,9 +138,8 @@ export default function TextAreaCanvas() {
                 <Text
                   style={{
                     color: t.colors.textPrimary,
-                    fontFamily: 'Manrope SemiBold',
-                    fontSize: 12,
-                    lineHeight: 16,
+                    fontFamily: t.fontFamilies.sans,
+                    ...t.typography.buttonLabel,
                   }}
                 >
                   Done
@@ -154,7 +153,7 @@ export default function TextAreaCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingHorizontal: 20,
+              paddingHorizontal: t.spacing[5],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -162,7 +161,7 @@ export default function TextAreaCanvas() {
               style={{
                 width: '100%',
                 maxWidth: 350,
-                paddingVertical: 32,
+                paddingVertical: t.spacing[8],
                 alignItems: appearance === 'plain' ? 'center' : 'stretch',
               }}
             >
@@ -212,8 +211,8 @@ export default function TextAreaCanvas() {
                   ) : undefined
                 }
                 containerStyle={appearance === 'plain' ? { width: '100%' } : { width: '100%' }}
-                inputStyle={{ fontFamily: 'Manrope' }}
-                helperStyle={{ fontFamily: 'Manrope' }}
+                inputStyle={{ fontFamily: t.fontFamilies.sans }}
+                helperStyle={{ fontFamily: t.fontFamilies.sans }}
               />
             </View>
           </Animated.View>
@@ -254,7 +253,7 @@ export default function TextAreaCanvas() {
               router.replace('/icons');
             }}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Style">
                 {APPEARANCES.map((option) => (
                   <VariantChip

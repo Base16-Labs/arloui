@@ -177,7 +177,11 @@ function IconDetailOverlay(props: DetailOverlayProps) {
               })}
             >
               <Text
-                style={{ color: t.colors.bg, fontFamily: t.fontFamilies.sans, fontWeight: '600' }}
+                style={{
+                  color: t.colors.bg,
+                  fontFamily: t.fontFamilies.sans,
+                  fontWeight: t.fontWeights.semibold,
+                }}
               >
                 Copy SVG
               </Text>
@@ -198,7 +202,7 @@ function IconDetailOverlay(props: DetailOverlayProps) {
                 style={{
                   color: t.colors.textPrimary,
                   fontFamily: t.fontFamilies.sans,
-                  fontWeight: '600',
+                  fontWeight: t.fontWeights.semibold,
                 }}
               >
                 Copy React usage
@@ -367,7 +371,7 @@ export default function IconsGalleryScreen() {
                   <Text
                     style={{
                       fontFamily: t.fontFamilies.sans,
-                      fontWeight: '600',
+                      fontWeight: t.fontWeights.semibold,
                       fontSize: t.typography.bodySm.fontSize,
                       color: styleTab === 'outline' ? t.colors.bg : t.colors.textPrimary,
                     }}
@@ -391,7 +395,7 @@ export default function IconsGalleryScreen() {
                   <Text
                     style={{
                       fontFamily: t.fontFamilies.sans,
-                      fontWeight: '600',
+                      fontWeight: t.fontWeights.semibold,
                       fontSize: t.typography.bodySm.fontSize,
                       color: styleTab === 'solid' ? t.colors.bg : t.colors.textPrimary,
                     }}
@@ -447,7 +451,7 @@ export default function IconsGalleryScreen() {
                 marginTop: t.spacing[2],
                 color: t.colors.textTertiary,
                 fontFamily: t.fontFamilies.sans,
-                fontSize: 12,
+                ...t.typography.bodySmall,
                 textAlign: 'center',
               }}
             >
@@ -494,7 +498,7 @@ export default function IconsGalleryScreen() {
                   width: tileW - t.spacing[2],
                   color: t.colors.textTertiary,
                   fontFamily: t.fontFamilies.mono,
-                  fontSize: 8,
+                  ...t.typography.labelSmall,
                   lineHeight: labelLine,
                   textAlign: 'center',
                   flexShrink: 0,

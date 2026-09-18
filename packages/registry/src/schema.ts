@@ -44,8 +44,6 @@ export type RegistryEntry = {
   files: RegistryFile[];
   /** Optional metadata for the design skill / docs. */
   meta?: {
-    /** Figma component path, e.g. `Components/Button/Primary`. */
-    figma?: string;
     /** Tags shown in the docs and used by the skill picker. */
     tags?: string[];
   };

@@ -1,7 +1,7 @@
 /**
  * Shared Jest configuration for Arlo UI's React Native packages.
  *
- * Built on the `react-native` preset (lighter than `jest-expo` — our components
+ * Built on the `@react-native/jest-preset` preset (lighter than `jest-expo` — our components
  * only touch `expo-haptics` via a mockable dynamic import, not the Expo app
  * runtime). It wires up the RN babel transform, the RN module mocks, and the
  * node test environment. Each RN package extends this with its own
@@ -12,7 +12,7 @@ const path = require('node:path');
 
 /** @type {import('jest').Config} */
 module.exports = {
-  preset: 'react-native',
+  preset: '@react-native/jest-preset',
   setupFilesAfterEnv: [path.join(__dirname, 'setup.cjs')],
   clearMocks: true,
   // jest-expo ignores node_modules by default; widen the allow-list so the
@@ -36,6 +36,10 @@ module.exports = {
     // react-native-reanimated (v4 + worklets) is a peer dep consumers install;
     // map it to a lightweight manual mock so animated components render in tests.
     '^react-native-reanimated$': path.join(__dirname, 'mocks/react-native-reanimated.js'),
+    // expo-glass-effect is an optional peer dep whose availability checks need a
+    // native module. Map it to a mock that can be switched on and off, so the
+    // native glass path is testable off-device. See mocks/expo-glass-effect.js.
+    '^expo-glass-effect$': path.join(__dirname, 'mocks/expo-glass-effect.js'),
   },
   collectCoverageFrom: ['src/**/*.{ts,tsx}'],
   coveragePathIgnorePatterns: [

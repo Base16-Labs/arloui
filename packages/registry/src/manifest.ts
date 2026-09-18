@@ -37,6 +37,38 @@ export const FOUNDATION: RegistryEntry[] = [
     meta: { tags: ['foundation', 'provider'] },
   },
   {
+    name: 'glass',
+    kind: 'foundation',
+    title: 'Liquid Glass',
+    description:
+      'Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. `GlassBackdrop` paints the whole surface, including a component\'s own colour as the material\'s tint and the press response that deepens it, so a glass control keeps its tone rather than going colourless. Pulled in by components that support `surface="glass"`.',
+    /*
+     * `expo-glass-effect` is optional on purpose. It is loaded through a guarded
+     * `require`, so a project that never installs it still gets a working glass
+     * surface — the fallback — rather than a resolution error. Listing it here is
+     * how `arloui add` offers it; it is not a hard requirement.
+     *
+     * It does, however, require the New Architecture. `GlassView` overrides
+     * Fabric-only view lifecycle methods, so autolinking it into an app with
+     * `newArchEnabled: false` fails the iOS build outright rather than falling
+     * back. Old-architecture projects should leave it uninstalled and take the
+     * fallback path, which needs nothing.
+     */
+    dependencies: ['expo-glass-effect'],
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
+    meta: { tags: ['foundation', 'material', 'glass', 'blur', 'ios26'] },
+  },
+  {
+    name: 'reduce-motion',
+    kind: 'foundation',
+    title: 'Reduce Motion',
+    description:
+      "The user's reduce-motion setting, as one answer for the whole app: a single module-level store with one OS subscription, rather than a `useState` and a probe per animated component. Pulled in by every component that animates.",
+    files: [{ source: 'foundation/reduce-motion.ts', target: 'reduce-motion.ts', type: 'utility' }],
+    meta: { tags: ['foundation', 'motion', 'accessibility'] },
+  },
+  {
     name: 'haptics',
     kind: 'foundation',
     title: 'Haptics',
@@ -47,6 +79,23 @@ export const FOUNDATION: RegistryEntry[] = [
   },
 ];
 
+const LINE_CHART: RegistryEntry = {
+  name: 'chart-line',
+  kind: 'primitive',
+  title: 'Line chart',
+  description:
+    'A scrubbable line and area chart with a value readout, delta, and period selector. Import LineChart and compose LineChart.Value, LineChart.Plot, and LineChart.Periods. Supports comparison lines, stacked areas, and volume bars.',
+  dependencies: ['expo-haptics'],
+  registryDependencies: ['chart-core', 'animated-counter', 'haptics'],
+  files: [
+    { source: 'components/chart/chart.tsx', target: 'chart/chart.tsx' },
+    { source: 'components/chart/chart-context.ts', target: 'chart/chart-context.ts' },
+    { source: 'components/chart/readouts.tsx', target: 'chart/readouts.tsx' },
+    { source: 'components/chart/plot.tsx', target: 'chart/plot.tsx' },
+  ],
+  meta: { tags: ['chart', 'line', 'area', 'scrub', 'gesture', 'primitive'] },
+};
+
 export const COMPONENTS: RegistryEntry[] = [
   {
     name: 'animated-icons',
@@ -55,7 +104,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'Thirty-one stateful SVG icon transitions and feedback animations for common app interactions.',
     dependencies: ['react-native-svg', 'react-native-reanimated'],
-    registryDependencies: ['tokens'],
+    registryDependencies: ['tokens', 'reduce-motion'],
     files: [
       {
         source: 'components/animated-icon/animated-icon.tsx',
@@ -72,9 +121,9 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Button',
     description:
-      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases.',
+      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.',
     dependencies: ['expo-haptics', 'react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'glass', 'reduce-motion'],
     files: [
       { source: 'components/button/button.tsx', target: 'button/button.tsx' },
       { source: 'components/button/ghost-button.tsx', target: 'button/ghost-button.tsx' },
@@ -84,7 +133,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/button/index.ts', target: 'button/index.ts' },
     ],
     meta: {
-      figma: 'Components/Button/Primary',
       tags: ['action', 'primitive'],
     },
   },
@@ -93,15 +141,186 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Card',
     description:
-      'A flexible surface for grouping related content with header, body, footer, and hierarchy options.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Four surfaces (default surface-card, elevated, bleed translucent for coloured backgrounds, and inverse with text that flips to match), an elevation shadow from none to lg, a literal-px border width, token-scaled padding and radius, and optional whole-card press with a haptic. Compose image, metric, prompt, list, and carousel cards from its slots plus the shipped primitives — it ships no baked-in layouts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics'],
     files: [
       { source: 'components/card/card.tsx', target: 'card/card.tsx' },
       { source: 'components/card/index.ts', target: 'card/index.ts' },
     ],
     meta: {
-      figma: 'Components/Card/Default',
       tags: ['surface', 'primitive'],
+    },
+  },
+  {
+    name: 'list',
+    kind: 'primitive',
+    title: 'List',
+    description:
+      'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle node, and a trailing value (with caption and directional tone) alongside an optional trailing icon. Set separated to space each row onto its own surface, or keep them contiguous with an inset, balanced, edge, or no hairline. Draws no surface itself — wrap it in a Card or place it on the page.',
+    registryDependencies: ['tokens', 'theme-provider'],
+    files: [
+      { source: 'components/list/list.tsx', target: 'list/list.tsx' },
+      { source: 'components/list/index.ts', target: 'list/index.ts' },
+    ],
+    meta: {
+      tags: ['list', 'row', 'primitive'],
+    },
+  },
+  {
+    name: 'animated-counter',
+    kind: 'primitive',
+    title: 'Animated counter',
+    description:
+      'A number that rolls between values instead of snapping: each digit is its own 0-9 column, and characters that appear as the number changes places fade in. Shared by Stepper and Chart.',
+    registryDependencies: [],
+    files: [
+      {
+        source: 'components/animated-counter/animated-counter.tsx',
+        target: 'animated-counter/animated-counter.tsx',
+      },
+      { source: 'components/animated-counter/index.ts', target: 'animated-counter/index.ts' },
+    ],
+    meta: {
+      tags: ['motion', 'numeric', 'counter', 'primitive'],
+    },
+  },
+  {
+    name: 'stepper',
+    kind: 'primitive',
+    title: 'Stepper',
+    description:
+      'A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.',
+    dependencies: ['expo-haptics', 'react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'haptics', 'animated-counter'],
+    files: [
+      { source: 'components/stepper/stepper.tsx', target: 'stepper/stepper.tsx' },
+      { source: 'components/stepper/index.ts', target: 'stepper/index.ts' },
+    ],
+    meta: {
+      tags: ['input', 'numeric', 'counter', 'motion', 'primitive'],
+    },
+  },
+  {
+    name: 'chart-core',
+    kind: 'primitive',
+    title: 'Chart core',
+    description:
+      'The geometry, tone, and density every chart form measures with, plus the shared legend, empty slot, and loading skeleton. Installed by each form; install it directly only if you are writing a form of your own against the same scale.',
+    /*
+     * Arlo draws marks with react-native-svg. Reanimated drives reveal masks
+     * on the UI thread; it does not own chart geometry or interaction state.
+     *
+     * `react-native-gifted-charts` and `expo-linear-gradient` used to be here.
+     * Both are gone: the first was paying a full integration cost for features
+     * none of the forms used (an unconditional 10px pad we cancelled, a painted
+     * donut hole that leaked `centerColor` into the public API, bars with no
+     * accessibility under a synthetic press layer, and plot geometry computed
+     * twice and kept in agreement by hand), and the second only ever existed
+     * because gifted resolved a gradient package at import time — the area fill
+     * is an SVG `<LinearGradient>` now.
+     */
+    dependencies: ['@arloui/icons', 'react-native-svg', 'react-native-reanimated', 'react-native-worklets'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
+    files: [
+      { source: 'components/chart/core.ts', target: 'chart/core.ts' },
+      { source: 'components/chart/hooks.ts', target: 'chart/hooks.ts' },
+      { source: 'components/chart/motion.tsx', target: 'chart/motion.tsx' },
+      { source: 'components/chart/format.ts', target: 'chart/format.ts' },
+      { source: 'components/chart/legend.tsx', target: 'chart/legend.tsx' },
+      { source: 'components/chart/empty.tsx', target: 'chart/empty.tsx' },
+      { source: 'components/chart/skeleton.tsx', target: 'chart/skeleton.tsx' },
+    ],
+    meta: { tags: ['chart', 'data', 'foundation', 'primitive'] },
+  },
+  LINE_CHART,
+  {
+    ...LINE_CHART,
+    name: 'chart-plot',
+    title: 'Line chart (legacy alias)',
+    description: 'Backward-compatible alias for chart-line. Installs the same files and dependencies. Use chart-line for new installations; existing Chart imports remain supported.',
+  },
+  {
+    name: 'chart-bar',
+    kind: 'primitive',
+    title: 'Bar chart',
+    description:
+      'Categorical bars — grouped, stacked, or ranked as horizontal rows — with selection and signed values below the zero rule. Composed: `<Chart.Bar>` with `Series`, `Values`, `Labels`, `Baseline`, `Reference`, and `Legend` parts, each drawn because it is named.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [
+      { source: 'components/chart/bar-chart.tsx', target: 'chart/bar-chart.tsx' },
+      { source: 'components/chart/bar-shared.tsx', target: 'chart/bar-shared.tsx' },
+      { source: 'components/chart/bar-vertical.tsx', target: 'chart/bar-vertical.tsx' },
+      { source: 'components/chart/bar-horizontal.tsx', target: 'chart/bar-horizontal.tsx' },
+    ],
+    meta: { tags: ['chart', 'bar', 'categorical', 'primitive'] },
+  },
+  {
+    name: 'chart-sparkline',
+    kind: 'primitive',
+    title: 'Sparkline',
+    description:
+      'A chrome-free inline line for list rows and stat cards: no axes, no scrub, tinted by direction. Composed: `Fill`, `EndDot`, and `Extremes` parts.',
+    registryDependencies: ['chart-core'],
+    files: [{ source: 'components/chart/sparkline.tsx', target: 'chart/sparkline.tsx' }],
+    meta: { tags: ['chart', 'sparkline', 'inline', 'primitive'] },
+  },
+  {
+    name: 'chart-donut',
+    kind: 'primitive',
+    title: 'Donut chart',
+    description:
+      'Part-to-whole. Four validated slices, then everything past them folds into one neutral Other. Composed: `Value`, `Label`, and `Legend` parts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [{ source: 'components/chart/donut-chart.tsx', target: 'chart/donut-chart.tsx' }],
+    meta: { tags: ['chart', 'donut', 'part-to-whole', 'primitive'] },
+  },
+  {
+    name: 'chart-meter',
+    kind: 'primitive',
+    title: 'Meter',
+    description:
+      'One value against a target, as a bar, a ring, or an arc gauge, with warning/danger thresholds. Composed: `Value`, `Label`, and one `Ring` part per concentric ring.',
+    registryDependencies: ['chart-core'],
+    files: [{ source: 'components/chart/meter.tsx', target: 'chart/meter.tsx' }],
+    meta: { tags: ['chart', 'meter', 'gauge', 'progress', 'primitive'] },
+  },
+  {
+    name: 'chart-heatmap',
+    kind: 'primitive',
+    title: 'Heatmap',
+    description:
+      'A calendar streak grid: a month of days as filled and empty squares, where an empty square is the data rather than a gap in it. Composed: `DayLabels` and `Scale` parts.',
+    dependencies: ['expo-haptics'],
+    registryDependencies: ['chart-core', 'haptics'],
+    files: [{ source: 'components/chart/heatmap.tsx', target: 'chart/heatmap.tsx' }],
+    meta: { tags: ['chart', 'heatmap', 'calendar', 'streak', 'primitive'] },
+  },
+  {
+    name: 'chart',
+    kind: 'primitive',
+    title: 'Chart',
+    description:
+      'Every chart form and the `Chart` namespace that reaches them — the plot, sparkline, bar, donut, meter, and heatmap. Take this to get the namespace; take a single form (`chart-bar`, `chart-sparkline`, …) to get one chart and the shared core, and nothing else.',
+    registryDependencies: [
+      'chart-core',
+      'chart-line',
+      'chart-bar',
+      'chart-sparkline',
+      'chart-donut',
+      'chart-meter',
+      'chart-heatmap',
+    ],
+    /*
+     * Only the barrel. Every file belongs to one of the entries above, and this
+     * is the one place that legitimately depends on all of them: it assembles
+     * `Chart.Bar`, `Chart.Donut`, and the rest into the namespace.
+     */
+    files: [{ source: 'components/chart/index.ts', target: 'chart/index.ts' }],
+    meta: {
+      tags: ['chart', 'data', 'visualization', 'gesture', 'motion', 'primitive'],
     },
   },
   {
@@ -110,7 +329,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Skeleton',
     description:
       'A reduced-motion-aware loading placeholder with text, rectangle, and circle geometry plus shimmer, pulse, or static presentation.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/skeleton/skeleton.tsx', target: 'skeleton/skeleton.tsx' },
       { source: 'components/skeleton/index.ts', target: 'skeleton/index.ts' },
@@ -125,7 +344,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Spinner',
     description:
       'A reduced-motion-aware activity indicator in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses — at three sizes.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/spinner/spinner.tsx', target: 'spinner/spinner.tsx' },
       { source: 'components/spinner/index.ts', target: 'spinner/index.ts' },
@@ -139,8 +358,8 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tabs',
     description:
-      'Secondary navigation for categorising content or switching views, with plain, underline, and separate filled appearances plus neutral or accent selection.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'Secondary navigation for categorising content or switching views, with plain, underline, filled, and segmented appearances, plus a filled or Liquid Glass surface on the segmented track.',
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion', 'glass'],
     files: [
       { source: 'components/tabs/tabs.tsx', target: 'tabs/tabs.tsx' },
       { source: 'components/tabs/index.ts', target: 'tabs/index.ts' },
@@ -154,14 +373,13 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Sheet',
     description:
-      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, token-based height and padding, plus composable solid or Liquid-Glass surfaces.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.',
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
       { source: 'components/sheet/index.ts', target: 'sheet/index.ts' },
     ],
     meta: {
-      figma: 'Components/Sheet/Default',
       tags: ['surface', 'overlay', 'primitive'],
     },
   },
@@ -193,7 +411,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/input/index.ts', target: 'input/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Input/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -209,7 +426,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/checkbox/index.ts', target: 'checkbox/index.ts' },
     ],
     meta: {
-      figma: 'Components/Checkbox/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -225,7 +441,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/radio/index.ts', target: 'radio/index.ts' },
     ],
     meta: {
-      figma: 'Components/Radio/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -241,7 +456,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/toggle/index.ts', target: 'toggle/index.ts' },
     ],
     meta: {
-      figma: 'Components/Toggle/Default',
       tags: ['form', 'primitive'],
     },
   },
@@ -257,7 +471,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/text-area/index.ts', target: 'text-area/index.ts' },
     ],
     meta: {
-      figma: 'Components/Text Area/Default',
       tags: ['form', 'primitive', 'multiline'],
     },
   },
@@ -266,8 +479,9 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Tab Bar',
     description:
-      'An animated bottom navigation bar with full-width and floating layouts, transparent or filled surfaces, badges, labels, and scroll-aware visibility.',
-    registryDependencies: ['tokens', 'theme-provider'],
+      'An animated bottom navigation bar with full-width and floating layouts, a filled or Liquid Glass surface, badges, labels, selectable scroll behaviour (hide, shrink, or fixed), and a snap or jelly selection indicator.',
+    dependencies: ['react-native-svg'],
+    registryDependencies: ['tokens', 'theme-provider', 'glass'],
     files: [
       { source: 'components/tab-bar/tab-bar.tsx', target: 'tab-bar/tab-bar.tsx' },
       { source: 'components/tab-bar/index.ts', target: 'tab-bar/index.ts' },
@@ -282,7 +496,8 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Carousel',
     description:
       'A gesture-driven horizontal carousel with item or page snapping, peek, pagination dots, auto-play, and loop support.',
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
+    dependencies: ['@arloui/icons', 'react-native-svg'],
     files: [
       { source: 'components/carousel/carousel.tsx', target: 'carousel/carousel.tsx' },
       { source: 'components/carousel/index.ts', target: 'carousel/index.ts' },
@@ -318,7 +533,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/badge/index.ts', target: 'badge/index.ts' },
     ],
     meta: {
-      figma: 'Components/Badge/Default',
       tags: ['label', 'status', 'primitive'],
     },
   },
@@ -335,7 +549,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/chip/index.ts', target: 'chip/index.ts' },
     ],
     meta: {
-      figma: 'Components/Chip/Default',
       tags: ['filter', 'tag', 'interactive', 'primitive'],
     },
   },
@@ -346,7 +559,7 @@ export const COMPONENTS: RegistryEntry[] = [
     description:
       'A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.',
     dependencies: ['react-native-svg'],
-    registryDependencies: ['tokens', 'theme-provider'],
+    registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/toast/toast.tsx', target: 'toast/toast.tsx' },
       { source: 'components/toast/toaster.tsx', target: 'toast/toaster.tsx' },
@@ -372,7 +585,6 @@ export const COMPONENTS: RegistryEntry[] = [
       { source: 'components/date-picker/index.ts', target: 'date-picker/index.ts' },
     ],
     meta: {
-      figma: 'Components/Date Picker/Default',
       tags: ['form', 'calendar', 'date', 'primitive'],
     },
   },

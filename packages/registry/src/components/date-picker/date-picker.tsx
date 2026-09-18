@@ -145,10 +145,10 @@ export function DatePicker({
   useEffect(() => {
     Animated.timing(chevron, {
       toValue: pickerOpen ? 1 : 0,
-      duration: 160,
+      duration: t.motion.duration.instant,
       useNativeDriver: true,
     }).start();
-  }, [chevron, pickerOpen]);
+  }, [chevron, pickerOpen, t.motion.duration.instant]);
 
   function changeMonth(amount: number) {
     if (disabled) return;
@@ -180,8 +180,8 @@ export function DatePicker({
         {
           width: '100%',
           maxWidth: 350,
-          padding: 12,
-          borderRadius: 16,
+          padding: t.spacing[3],
+          borderRadius: t.radii.xl,
           borderWidth: 1,
           borderColor: t.colors.borderSecondary,
           backgroundColor: t.colors.surfaceElevated,
@@ -193,11 +193,11 @@ export function DatePicker({
     >
       <View
         style={{
-          minHeight: 44,
+          minHeight: t.sizing.touchTarget.minimum,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 8,
+          marginBottom: t.spacing[2],
         }}
       >
         {monthYearDropdown ? (
@@ -208,15 +208,13 @@ export function DatePicker({
             disabled={disabled}
             hitSlop={6}
             onPress={() => setPickerOpen((open) => !open)}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[1] }}
           >
             <Text
               style={{
                 color: t.colors.textPrimary,
                 fontFamily: t.fontFamilies.sans,
-                fontWeight: t.fontWeights.semibold,
-                fontSize: 17,
-                lineHeight: 22,
+                ...t.typography.headingMediumEmphasized,
               }}
             >
               {monthLabel(month, locale)}
@@ -247,16 +245,14 @@ export function DatePicker({
             style={{
               color: t.colors.textPrimary,
               fontFamily: t.fontFamilies.sans,
-              fontWeight: t.fontWeights.semibold,
-              fontSize: 17,
-              lineHeight: 22,
+              ...t.typography.headingMediumEmphasized,
             }}
           >
             {monthLabel(month, locale)}
           </Text>
         )}
         {!wheelOpen ? (
-          <View style={{ flexDirection: 'row', gap: 4 }}>
+          <View style={{ flexDirection: 'row', gap: t.spacing[1] }}>
             <MonthButton
               label="Previous month"
               glyph="‹"
@@ -293,9 +289,8 @@ export function DatePicker({
               style={{
                 color: t.colors.textTertiary,
                 fontFamily: t.fontFamilies.sans,
+                ...t.typography.labelSmall,
                 fontWeight: t.fontWeights.semibold,
-                fontSize: 11,
-                lineHeight: 16,
               }}
             >
               {label}
@@ -304,7 +299,7 @@ export function DatePicker({
         ))}
       </View>
 
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: t.spacing[1] }}>
         {days.map((date) => {
           const outside = date.getMonth() !== month.getMonth();
           const chosen = sameDay(date, selected);
@@ -320,7 +315,12 @@ export function DatePicker({
           return (
             <View
               key={`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`}
-              style={{ width: `${100 / 7}%`, height: 44, alignItems: 'center', justifyContent: 'center' }}
+              style={{
+                width: `${100 / 7}%`,
+                height: t.sizing.touchTarget.minimum,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
               {!hidden ? (
                 <Pressable
@@ -356,9 +356,8 @@ export function DatePicker({
                             ? t.colors.textTertiary
                             : t.colors.textPrimary,
                       fontFamily: t.fontFamilies.sans,
+                      ...t.typography.bodyMedium,
                       fontWeight: chosen ? t.fontWeights.semibold : t.fontWeights.medium,
-                      fontSize: 14,
-                      lineHeight: 19,
                       opacity: unavailable ? 0.46 : 1,
                     }}
                   >
@@ -398,11 +397,11 @@ function MonthButton({
       onPress={onPress}
       hitSlop={4}
       style={({ pressed }) => ({
-        width: 40,
-        height: 40,
+        width: t.sizing.buttonHeight.md,
+        height: t.sizing.buttonHeight.md,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 20,
+        borderRadius: t.radii.full,
         backgroundColor: pressed ? t.colors.interactiveSecondaryPressed : 'transparent',
         opacity: disabled ? 0.32 : 1,
       })}
@@ -412,8 +411,7 @@ function MonthButton({
           marginTop: -3,
           color: t.colors.textSecondary,
           fontFamily: t.fontFamilies.sans,
-          fontSize: 30,
-          lineHeight: 34,
+          ...t.typography.displayMedium,
         }}
       >
         {glyph}

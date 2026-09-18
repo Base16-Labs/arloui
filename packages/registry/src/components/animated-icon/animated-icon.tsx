@@ -8,7 +8,6 @@ import Animated, {
   interpolateColor,
   useAnimatedProps,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withDelay,
   withRepeat,
@@ -16,6 +15,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { motion } from '../../foundation/tokens';
+import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 const AnimatedGroup = Animated.createAnimatedComponent(G);
@@ -322,7 +323,7 @@ function SpecialAnimatedIcon({
   const loop = useSharedValue(0);
   const impulse = useSharedValue(0);
   const swing = useSharedValue(0);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
   const labels = specialLabels[name];
   const [resolved, setResolved] = useState(active);
 
@@ -477,15 +478,15 @@ function MorphingLine({
 function MorphingAnimatedIcon({
   name,
   active,
-  size = 24,
-  color = '#18181B',
+  size,
+  color,
   strokeWidth = 1.5,
   duration = motion.duration.fast,
   accessibilityLabel,
 }: AnimatedIconProps & { name: LineAnimatedIconName }) {
   const definition = definitions[name];
   const progress = useSharedValue(active ? 1 : 0);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReduceMotion();
 
   useEffect(() => {
     progress.value = withTiming(active ? 1 : 0, {
@@ -531,17 +532,18 @@ function MorphingAnimatedIcon({
 }
 
 export function AnimatedIcon(props: AnimatedIconProps) {
+  const t = useTokens();
   const {
     name,
     active,
-    size = 24,
-    color = '#18181B',
+    size = t.sizing.icon.md,
+    color = t.colors.textPrimary,
     strokeWidth = 1.5,
     duration = motion.duration.fast,
     accessibilityLabel,
     autoResetAfter,
     onAutoReset,
-    errorColor = '#DC2626',
+    errorColor = t.colors.feedbackError,
   } = props;
   const [visualActive, setVisualActive] = useState(active);
 
@@ -570,5 +572,13 @@ export function AnimatedIcon(props: AnimatedIconProps) {
     );
   }
 
-  return <MorphingAnimatedIcon {...props} name={name} active={visualActive} />;
+  return (
+    <MorphingAnimatedIcon
+      {...props}
+      name={name}
+      active={visualActive}
+      size={size}
+      color={color}
+    />
+  );
 }

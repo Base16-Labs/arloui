@@ -50,14 +50,14 @@ function chipDims(t: Tokens): Record<ChipSize, Dims> {
     sm: {
       height: 28,
       paddingX: t.spacing[3],
-      type: { fontSize: 12, lineHeight: 16.8 },
+      type: t.typography.bodySmall,
       iconSize: t.sizing.icon.xs,
       gap: t.spacing[1],
     },
     md: {
-      height: 32,
+      height: t.sizing.buttonHeight.sm,
       paddingX: t.spacing[3],
-      type: { fontSize: 14, lineHeight: 16.8 },
+      type: t.typography.labelLarge,
       iconSize: t.sizing.icon.sm,
       gap: t.spacing[2],
     },
@@ -223,7 +223,7 @@ export const Chip = forwardRef<View, ChipProps>(function Chip(
                 fontFamily: t.fontFamilies.sans,
                 fontSize: dims.type.fontSize,
                 lineHeight: dims.type.lineHeight,
-                fontWeight: '400',
+                fontWeight: t.fontWeights.regular,
                 color: palette.fg,
               }}
             >

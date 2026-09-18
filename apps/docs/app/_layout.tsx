@@ -31,8 +31,8 @@ function ThemedStack() {
           headerShadowVisible: false,
           headerBackTitle: 'Back',
           headerTitleStyle: {
-            fontFamily: 'Manrope SemiBold',
-            fontSize: 17,
+            fontFamily: t.fontFamilies.sans,
+            ...t.typography.headingMediumEmphasized,
           },
           contentStyle: { flex: 1, minHeight: 0, backgroundColor: t.colors.bg },
         }}

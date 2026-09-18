@@ -58,6 +58,17 @@ jobs:
             exit 1
           fi
 
+      - name: Sync design payloads (drift check)
+        run: npm run design:sync
+
+      - name: Detect design payload drift
+        run: |
+          if ! git diff --quiet --exit-code -- tooling/figma-variables-sync; then
+            echo "::error::tooling/figma-variables-sync token payloads are out of sync with @arloui/tokens. Run \`npm run design:sync\` from the repo root and commit the result, then re-import into Figma/Paper."
+            git --no-pager diff -- tooling/figma-variables-sync
+            exit 1
+          fi
+
   # Runs the real deploy build on Linux, because the pre-push hook only ever
   # builds on a contributor's machine. Two Cloudflare failures got through that
   # way: a lockfile missing linux binaries installed fine on macOS, then died on

@@ -43,4 +43,11 @@ if ! git diff --quiet -- skills; then
   exit 1
 fi
 
+echo "▶ design payload drift"
+npm run design:sync
+if ! git diff --quiet -- tooling/figma-variables-sync; then
+  echo "✖ figma-variables-sync token payloads drifted — run 'npm run design:sync' and commit it."
+  exit 1
+fi
+
 echo "✓ pre-push checks passed"

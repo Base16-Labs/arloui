@@ -29,7 +29,9 @@
 - `blur.md` — 16 · Compact overlays
 - `blur.lg` — 24 · Default glass surface
 - `blur.xl` — 40 · Dense modal material
-- `materials.glassRegular` — 24 + overlay · Cross-platform glass fallback
+- `materials.glassMedium` — 24 + overlay · Cross-platform glass fallback
+- `materials.glassMedium.tintOpacity` — 0.45 · How much of a component's own colour survives the material
+- `materials.glassMedium.tintOpacityPressed` — 0.6 · Tint deepens on press — the press response for a tinted glass surface
 
 ## Code
 
@@ -38,7 +40,7 @@ import { Platform, StyleSheet, View, useColorScheme } from 'react-native';
 import { BlurView } from 'expo-blur';
 
 const scheme = useColorScheme() ?? 'light';
-const material = theme.materials.glassRegular;
+const material = theme.materials.glassMedium;
 const overlay =
   scheme === 'dark' ? material.darkOverlay : material.lightOverlay;
 const border =

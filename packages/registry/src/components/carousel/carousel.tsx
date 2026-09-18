@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, Children, isValidElement, type ReactNode } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
   I18nManager,
   PanResponder,
@@ -11,8 +10,10 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { OutlineCaretLeft } from '@arloui/icons/OutlineCaretLeft';
+import { OutlineCaretRight } from '@arloui/icons/OutlineCaretRight';
 import { useTokens } from '../../foundation/theme-provider';
+import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type CarouselSnap = 'item' | 'page';
 export type CarouselIndicator = 'dots' | 'none';
@@ -70,7 +71,7 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
   const count = items.length;
 
   const [containerWidth, setContainerWidth] = useState(windowWidth);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReduceMotion();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   const [translateX] = useState(() => new Animated.Value(0));
@@ -84,21 +85,13 @@ export const Carousel = forwardRef<CarouselRef, CarouselProps>(function Carousel
       ? containerWidth
       : peek
         ? containerWidth - peekAmount * 2
-        : containerWidth - t.spacing[4] * 2;
+        : // Item snap without peek is full-bleed — no resting gutter. Peek is the
+          // only thing that reserves room for neighbours.
+          containerWidth;
   const totalWidth = count * itemWidth + (count - 1) * resolvedGap;
 
-  useEffect(() => {
-    let active = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((v) => active && setReduceMotion(v));
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => {
-      active = false;
-      sub.remove();
-    };
-  }, []);
 
-  const inset =
-    snap === 'page' ? 0 : peek ? peekAmount : t.spacing[4];
+  const inset = snap === 'page' ? 0 : peek ? peekAmount : 0;
 
   const offsetForIndex = (index: number) => {
     const rtlSign = I18nManager.isRTL ? 1 : -1;
@@ -286,7 +279,7 @@ function CarouselDots({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 6,
+        gap: t.spacing[2],
         paddingTop: overlay ? 0 : t.spacing[3],
         paddingBottom: overlay ? 0 : t.spacing[1],
       }}
@@ -306,7 +299,9 @@ function CarouselDots({
               overlay
                 ? i === current
                   ? t.colors.accent
-                  : 'rgba(128,128,128,0.5)'
+                  : // Bright enough to read on photos and saturated colours, with a
+                    // little bleed so it never looks like a hard chip.
+                    'rgba(255,255,255,0.8)'
                 : i === current
                   ? t.colors.accent
                   : t.colors.borderStrong,
@@ -328,6 +323,7 @@ function CarouselArrow({
 }) {
   const t = useTokens();
   const isLeft = direction === 'left';
+  const ArrowIcon = isLeft ? OutlineCaretLeft : OutlineCaretRight;
 
   return (
     <Pressable
@@ -347,19 +343,7 @@ function CarouselArrow({
         opacity: disabled ? 0.35 : 1,
       })}
     >
-      <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
-        <Path
-          d={
-            isLeft
-              ? 'M10 3L5 8L10 13'
-              : 'M6 3L11 8L6 13'
-          }
-          stroke={t.colors.textPrimary}
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </Svg>
+      <ArrowIcon width={16} height={16} color={t.colors.textPrimary} accessible={false} />
     </Pressable>
   );
 }

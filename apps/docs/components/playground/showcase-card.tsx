@@ -82,9 +82,10 @@ export function ShowcaseCard({ item, featured = item.featured }: ShowcaseCardPro
           <View style={{ flex: 1, gap: t.spacing[1], minWidth: 0 }}>
             <Text
               style={{
-                fontFamily: 'Space Grotesk SemiBold',
+                fontFamily: t.fontFamilies.display,
                 fontSize: featured ? t.typography.title2.fontSize : t.typography.title3.fontSize,
                 lineHeight: featured ? t.typography.title2.lineHeight : t.typography.title3.lineHeight,
+                fontWeight: t.fontWeights.semibold,
                 color: t.colors.textPrimary,
               }}
             >
@@ -105,8 +106,9 @@ export function ShowcaseCard({ item, featured = item.featured }: ShowcaseCardPro
               <Text
                 style={{
                   marginTop: t.spacing[1],
-                  fontFamily: 'Space Grotesk Medium',
+                  fontFamily: t.fontFamilies.display,
                   fontSize: t.typography.label.fontSize,
+                  fontWeight: t.fontWeights.medium,
                   color: accent,
                 }}
               >

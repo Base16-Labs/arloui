@@ -8,9 +8,8 @@ export function SectionLabel({ children, style }: { children: string; style?: Te
       style={[
         {
           color: t.colors.textTertiary,
-          fontFamily: 'Space Grotesk Medium',
-          fontSize: 11,
-          letterSpacing: 1,
+          fontFamily: t.fontFamilies.sans,
+          ...t.typography.overline,
           textTransform: 'uppercase',
         },
         style,

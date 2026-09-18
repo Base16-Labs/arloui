@@ -143,8 +143,8 @@ export default function InputCanvas() {
       ) : undefined,
     trailingAction,
     containerStyle: appearance === 'plain' ? { alignSelf: 'center' } : { width: '100%' },
-    inputStyle: { fontFamily: 'Manrope' },
-    helperStyle: { fontFamily: 'Manrope' },
+    inputStyle: { fontFamily: t.fontFamilies.sans },
+    helperStyle: { fontFamily: t.fontFamilies.sans },
   };
 
   return (
@@ -164,7 +164,7 @@ export default function InputCanvas() {
               justifyContent: 'space-between',
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t.spacing[3] }}>
               <LiveBadge />
             </View>
             <ThemeToggle />
@@ -175,7 +175,7 @@ export default function InputCanvas() {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              paddingHorizontal: 20,
+              paddingHorizontal: t.spacing[5],
               transform: [{ translateY: previewOffset }],
             }}
           >
@@ -183,7 +183,7 @@ export default function InputCanvas() {
               style={{
                 width: '100%',
                 maxWidth: 350,
-                paddingVertical: 32,
+                paddingVertical: t.spacing[8],
                 alignItems: appearance === 'plain' ? 'center' : 'stretch',
               }}
             >
@@ -218,7 +218,7 @@ export default function InputCanvas() {
             onPrevious={() => router.replace('/button')}
             onNext={() => router.replace('/textarea')}
           >
-            <View style={{ gap: 14 }}>
+            <View style={{ gap: t.spacing[4] }}>
               <VariantControlRow label="Type">
                 {TYPES.map((option) => (
                   <VariantChip

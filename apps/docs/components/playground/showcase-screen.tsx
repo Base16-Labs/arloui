@@ -51,10 +51,8 @@ export function ShowcaseScreen({
             <Eyebrow>{eyebrow}</Eyebrow>
             <Text
               style={{
-                fontFamily: 'Space Grotesk SemiBold',
-                fontSize: t.typography.displayLg.fontSize,
-                lineHeight: t.typography.displayLg.lineHeight,
-                letterSpacing: -0.3,
+                fontFamily: t.fontFamilies.display,
+                ...t.typography.displayMediumEmphasized,
                 color: t.colors.textPrimary,
               }}
             >

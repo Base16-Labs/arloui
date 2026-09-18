@@ -168,7 +168,7 @@ export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButt
                 fontFamily: t.fontFamilies.sans,
                 fontSize: dims.type.fontSize,
                 lineHeight: dims.type.lineHeight,
-                fontWeight: '600',
+                fontWeight: t.fontWeights.semibold,
               },
               labelStyle,
             ]}

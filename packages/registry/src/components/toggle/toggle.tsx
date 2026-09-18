@@ -4,10 +4,9 @@ import {
   Easing,
   Platform,
   Pressable,
-  StyleSheet,
-  View,
   type PressableProps,
   type StyleProp,
+  type View,
   type ViewStyle,
 } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
@@ -33,8 +32,18 @@ type Dims = {
 
 function toggleDims(t: Tokens): Record<ToggleSize, Dims> {
   return {
-    sm: { trackWidth: 40, trackHeight: 24, thumbSize: 18, thumbInset: 3 },
-    md: { trackWidth: 52, trackHeight: 32, thumbSize: 26, thumbInset: 3 },
+    sm: {
+      trackWidth: t.sizing.buttonHeight.md,
+      trackHeight: t.sizing.icon.md,
+      thumbSize: 18,
+      thumbInset: 3,
+    },
+    md: {
+      trackWidth: t.sizing.buttonHeight.xl,
+      trackHeight: t.sizing.buttonHeight.sm,
+      thumbSize: 26,
+      thumbInset: 3,
+    },
   };
 }
 
@@ -42,7 +51,7 @@ function toggleColors(t: Tokens, disabled: boolean) {
   return {
     trackOn: disabled ? t.colors.interactiveDisabled : t.colors.interactivePrimary,
     trackOff: disabled ? t.colors.interactiveDisabled : t.colors.surfaceInput,
-    thumb: disabled ? t.colors.textTertiary : '#FFFFFF',
+    thumb: disabled ? t.colors.textTertiary : t.colors.textInteractivePrimary,
     border: disabled ? t.colors.borderSecondary : t.colors.borderPrimary,
   };
 }
@@ -63,19 +72,37 @@ export const Toggle = forwardRef<View, ToggleProps>(function Toggle(
   const dims = useMemo(() => toggleDims(t)[size], [t, size]);
   const colors = useMemo(() => toggleColors(t, disabled), [t, disabled]);
 
+  /*
+   * Two values, one gesture — because `useNativeDriver` is per-animation, not
+   * per-property.
+   *
+   * The thumb slides (a transform, which the native driver can own) while the
+   * track and its border cross-fade (colours, which it cannot). Driving both off
+   * one value forced the whole thing to `useNativeDriver: false`, which put the
+   * one part of this the finger actually follows — the thumb — on the JS thread,
+   * where a busy frame stutters it.
+   *
+   * They are started together with identical duration and easing, so they cannot
+   * drift: the thumb is native, the colours are not, and the two land on the
+   * same frame.
+   */
   const [position] = useState(() => new Animated.Value(value ? 1 : 0));
+  const [slide] = useState(() => new Animated.Value(value ? 1 : 0));
 
   const [x1, y1, x2, y2] = t.motion.easing.easeOut;
   const easing = useMemo(() => Easing.bezier(x1, y1, x2, y2), [x1, y1, x2, y2]);
 
   useEffect(() => {
-    Animated.timing(position, {
-      toValue: value ? 1 : 0,
-      duration: t.motion.duration.fast,
-      easing,
-      useNativeDriver: false,
-    }).start();
-  }, [value, position, t.motion.duration.fast, easing]);
+    const toValue = value ? 1 : 0;
+    const config = { toValue, duration: t.motion.duration.fast, easing };
+    const animation = Animated.parallel([
+      Animated.timing(slide, { ...config, useNativeDriver: true }),
+      // Colours cannot go native under core `Animated`.
+      Animated.timing(position, { ...config, useNativeDriver: false }),
+    ]);
+    animation.start();
+    return () => animation.stop();
+  }, [value, position, slide, t.motion.duration.fast, easing]);
 
   const handlePress = useCallback(() => {
     if (!disabled) onValueChange?.(!value);
@@ -83,7 +110,7 @@ export const Toggle = forwardRef<View, ToggleProps>(function Toggle(
 
   const travelDistance = dims.trackWidth - dims.thumbSize - dims.thumbInset * 2;
 
-  const thumbTranslateX = position.interpolate({
+  const thumbTranslateX = slide.interpolate({
     inputRange: [0, 1],
     outputRange: [0, travelDistance],
   });
@@ -133,13 +160,8 @@ export const Toggle = forwardRef<View, ToggleProps>(function Toggle(
               backgroundColor: colors.thumb,
             },
             Platform.OS === 'ios' || Platform.OS === 'web'
-              ? {
-                  shadowColor: '#101828',
-                  shadowOpacity: 0.12,
-                  shadowRadius: 3,
-                  shadowOffset: { width: 0, height: 1 },
-                }
-              : { elevation: 3 },
+              ? (t.shadows.sm as ViewStyle)
+              : { elevation: t.shadows.sm.elevation },
             { transform: [{ translateX: thumbTranslateX }] },
           ]}
         />

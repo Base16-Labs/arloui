@@ -3,6 +3,9 @@ import { AccessibilityInfo, StyleSheet } from 'react-native';
 import { Spinner, type SpinnerAppearance } from '../spinner';
 import { themes } from '../../../foundation/tokens';
 import { renderWithTheme, screen, waitFor } from '../../../../test/render';
+import { __setReduceMotionForTests } from '../../../foundation/reduce-motion';
+
+afterEach(() => __setReduceMotionForTests(false));
 
 const APPEARANCES: SpinnerAppearance[] = ['spokes', 'arc', 'dots', 'bars', 'pulse'];
 
@@ -80,7 +83,13 @@ describe('Spinner', () => {
   });
 
   it.each(APPEARANCES)('holds "%s" still when reduce-motion is on', async (appearance) => {
-    jest.mocked(AccessibilityInfo.isReduceMotionEnabled).mockResolvedValueOnce(true);
+    /*
+     * The seam, not a mock on `AccessibilityInfo`. Reduce Motion is one
+     * process-wide store with a single subscription, so it probes the OS once
+     * for the whole suite — a mock installed by the eighth spec is never
+     * consulted, because the first one already resolved the answer.
+     */
+    __setReduceMotionForTests(true);
     renderWithTheme(<Spinner appearance={appearance} size={24} testID="spinner" />);
 
     await waitFor(() => {
