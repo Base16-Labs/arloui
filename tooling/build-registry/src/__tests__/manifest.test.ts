@@ -30,6 +30,30 @@ describe('the real registry manifest', () => {
     expect(missing).toEqual([]);
   });
 
+  /**
+   * A component's files must land inside a folder named after it.
+   *
+   * `badge` and `chip` targeted `badge.tsx` and `chip.tsx` at the root of the
+   * components alias while their own `index.ts` targeted `badge/index.ts` — so a
+   * consumer got a stray file beside the folder, and the barrel re-exported
+   * `'../badge'` to reach back out to it. It worked, which is why it survived;
+   * it just read as a mistake in every consumer's tree.
+   */
+  it('lands every component file inside its own folder', () => {
+    const strays: string[] = [];
+    for (const entry of REGISTRY.items) {
+      for (const file of entry.files) {
+        const match = /^components\/([^/]+)\//.exec(file.source);
+        if (!match) continue; // foundation files target the foundation alias
+        const folder = match[1] as string;
+        if (!file.target.startsWith(`${folder}/`)) {
+          strays.push(`${entry.name}: ${file.source} -> ${file.target}`);
+        }
+      }
+    }
+    expect(strays).toEqual([]);
+  });
+
   it('builds every entry into non-empty, hashed JSON', async () => {
     const resolved = await buildAll(REGISTRY_SRC, REGISTRY);
     expect(resolved).toHaveLength(REGISTRY.items.length);

@@ -51,7 +51,7 @@ import {
   type ChartDensity,
   type ChartTone,
 } from './core';
-import { allParts, collectParts, hasPart, partProps, useSkeletonPulse } from './hooks';
+import { allParts, collectParts, hasPart, partProps, useSkeletonPulse, warnDroppedDefaults } from './hooks';
 import { useReduceMotion } from './hooks';
 
 /**
@@ -131,16 +131,6 @@ export type MeterProps = {
   tone?: ChartTone;
   /** How thick the track is, unless `thickness` overrides it. */
   density?: ChartDensity;
-  /** Text in the middle of a ring, or beside a bar. Defaults to a percentage. */
-  /**
-   * Force the numeric readout on or off. Left unset, a ring or an arc decides
-   * from its own geometry: concentric `rings` eat into the hole, and once there
-   * is not enough of it left the readout would be drawn over the innermost
-   * track. A bar has no hole, so it always shows one.
-   *
-   * Set it explicitly only where you want to override that — the value stated
-   * nearby (`false`), or a crowded dial you have sized yourself (`true`).
-   */
   /** Fraction (0-1) past which the meter turns warning. */
   warnAt?: number;
   /** Fraction (0-1) past which the meter turns danger. */
@@ -149,17 +139,6 @@ export type MeterProps = {
   thickness?: number;
   /** Ring or arc diameter. Ignored by the bar shape. */
   size?: number;
-  /**
-   * Additional concentric rings, drawn inside the primary one. `value` is always
-   * the outermost; these stack inwards in order, exactly as `series` extends
-   * `data` on a bar chart.
-   *
-   * Honoured by `ring` and `arc` only — a bar has no inside to draw into. Extra
-   * rings take the categorical palette rather than the meter's `tone`: once there
-   * is more than one value on the dial they are categories, and a shared tone
-   * would make them unreadable. Thresholds stay with the primary, which is the
-   * one the readout reports.
-   */
   /**
    * Pulses the track and holds back the fill and the readout. The label stays —
    * it is the one part of a meter you already know before the value arrives, and
@@ -176,9 +155,15 @@ export type MeterProps = {
   /** Style for the meter's outer container. */
   style?: StyleProp<ViewStyle>;
   /**
-   * The composed form: `<Meter.Value />` rather than `showValue`, and one
-   * `<Meter.Ring />` per ring rather than the `rings` array. Omit it and the
-   * meter renders exactly as it always has.
+   * The composed form. The readout and the caption are parts, not props:
+   * `<Meter.Value />` for the number (a percentage unless you pass `value` as
+   * your own formatted string) and `<Meter.Label>…</Meter.Label>` for the text
+   * beside or beneath it. Additional concentric rings are one `<Meter.Ring />`
+   * each rather than a `rings` array.
+   *
+   * **Naming any part replaces all of them** — the tree is the whole spec, not an
+   * addition to the default, so a meter with only a `Ring` child has no readout.
+   * Omit `children` and the meter renders exactly as it always has.
    */
   children?: ReactNode;
 };
@@ -591,7 +576,7 @@ function MeterInner({
                   fontFamily: t.fontFamilies.sans,
                   fontSize: readoutType.fontSize,
                   lineHeight: readoutType.lineHeight,
-                  fontWeight: '700',
+                  fontWeight: t.fontWeights.semibold,
                 }}
               >
                 {shownReadout}
@@ -664,7 +649,7 @@ function MeterInner({
                 fontFamily: t.fontFamilies.sans,
                 fontSize: t.typography.bodySm.fontSize,
                 lineHeight: t.typography.bodySm.lineHeight,
-                fontWeight: '600',
+                fontWeight: t.fontWeights.semibold,
               }}
             >
               {shownReadout}
@@ -716,7 +701,17 @@ function MeterLabelPart(_: MeterLabelProps): ReactNode {
   return null;
 }
 
-/** One concentric ring. Replaces an entry in the `rings` array. */
+/**
+ * One concentric ring, drawn inside the primary one. `value` on the meter is
+ * always the outermost; `Meter.Ring` children stack inwards in tree order,
+ * exactly as `Series` extends `data` on a bar chart.
+ *
+ * Honoured by `ring` and `arc` only — a bar has no inside to draw into. Extra
+ * rings take the categorical palette rather than the meter's `tone`: once there
+ * is more than one value on the dial they are categories, and a shared tone
+ * would make them unreadable. Thresholds stay with the primary, which is the
+ * one the readout reports.
+ */
 export type MeterRingProps = MeterRing;
 function MeterRingPart(_: MeterRingProps): ReactNode {
   return null;
@@ -746,9 +741,14 @@ function resolveComposition(props: MeterProps): MeterResolved {
   const label = partProps<MeterLabelProps>(parts, MeterLabelPart);
   const rings = allParts<MeterRingProps>(parts, MeterRingPart);
 
+  const showValue = hasPart(parts, MeterValuePart);
+  // Left unnamed the meter decides from its own geometry; a named tree forces
+  // it off, so a dial with only a `Ring` child loses the number it reports.
+  warnDroppedDefaults(children === null ? '' : 'Chart.Meter', showValue ? [] : ['<Chart.Meter.Value />']);
+
   return {
     ...rest,
-    showValue: hasPart(parts, MeterValuePart),
+    showValue,
     valueLabel: value?.value,
     label: typeof label?.children === 'string' ? label.children : undefined,
     rings: rings.length > 0 ? rings : undefined,

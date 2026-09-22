@@ -20,11 +20,12 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Stop, Circle, Line, ClipPath, G } from 'react-native-svg';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import {
   areaPath,
+  chartChrome,
   bandPath,
   barPath,
   densityMetrics,
@@ -43,7 +44,7 @@ import {
 } from './core';
 import { EmptyContent } from './empty';
 import { useChart } from './chart-context';
-import { allParts, collectParts, useReduceMotion } from './hooks';
+import { allParts, collectParts, useReduceMotion, warnDroppedDefaults } from './hooks';
 import { useChartEntrance } from './hooks';
 import { ChartFill, ChartReveal } from './motion';
 import { ChartLegend } from './legend';
@@ -56,11 +57,8 @@ export type ChartPlotProps = {
   height?: number;
   /** Fade a gradient under the line. */
   fill?: boolean;
-  /** Turn off scrubbing for a static, decorative plot. */
   /** Straight segments (default) or a fitted spline. See `ChartCurve`. */
   curve?: ChartCurve;
-  /** Overrides the root's `chrome` for this plot. */
-  /** One reference line, or several — the min/max pair a dense series reads against. */
   /**
    * A second series, drawn dashed in the neutral hue — the baseline a projection
    * is measured against. It never takes the scrub: one series answers to the
@@ -173,14 +171,24 @@ export function ChartPlot({
       return { chrome: 'baseline' as ChartChrome, reference: undefined, crosshair: true };
     const parts = collectParts(children);
     const named = allParts<ChartReferenceProps>(parts, ChartReferencePart);
+    const crosshair = parts.has(ChartCrosshairPart);
+    const baseline = parts.has(ChartBaselinePart);
+    // Losing the crosshair is the loud one: the plot stops answering a finger
+    // at all, which reads as a broken chart rather than a composed one. A
+    // reference line stands in for the baseline, so it only counts as dropped
+    // when neither was named.
+    warnDroppedDefaults(children === null ? '' : 'Chart.Plot', [
+      ...(baseline || named.length > 0 ? [] : ['<Chart.Baseline />']),
+      ...(crosshair ? [] : ['<Chart.Crosshair />']),
+    ]);
     return {
       chrome: (named.length > 0
         ? 'reference'
-        : parts.has(ChartBaselinePart)
+        : baseline
           ? 'baseline'
           : 'none') as ChartChrome,
       reference: named.length > 0 ? named : undefined,
-      crosshair: parts.has(ChartCrosshairPart),
+      crosshair,
     };
   }, [children]);
   const chrome = declaredChrome.chrome;
@@ -202,14 +210,13 @@ export function ChartPlot({
   const compareValues = useMemo(() => (compare ? valuesOf(toPoints(compare)) : []), [compare]);
 
   /**
-   * The bar marks this plot was given, as plain values.
+   * The extra line marks this plot was given, in tree order, as plain values.
    *
-   * A combo chart is one scale with two kinds of mark on it. Bars measured on a
+   * A combo chart is one scale with two kinds of mark on it. Marks measured on a
    * scale of their own would sit at plausible-looking but wrong heights against
-   * the line — the failure is silent, which is why they go through the same
-   * `extrasRange` union every other extra does.
+   * the primary — the failure is silent, which is why every extra goes through
+   * the same `extrasRange` union.
    */
-  /** The extra line marks, in tree order — see `barMarks` for why they are read. */
   const lineMarks = useMemo(() => {
     const declared = allParts<ChartLineProps>(collectParts(children), ChartLinePart);
     return declared.map((mark, index) => ({
@@ -221,6 +228,7 @@ export function ChartPlot({
     }));
   }, [children]);
 
+  /** The bar marks, read the same way and onto the same scale — see `lineMarks`. */
   const barMarks = useMemo(() => {
     const declared = allParts<ChartBarsProps>(collectParts(children), ChartBarsPart);
     return declared.map((mark) => ({
@@ -749,7 +757,7 @@ export function ChartPlot({
                 color: t.colors.textTertiary,
                 fontFamily: t.fontFamilies.mono,
                 fontSize: metrics.labelSize - 1,
-                fontWeight: '500',
+                fontWeight: t.fontWeights.medium,
               }}
             >
               {entry.label ?? (format ? format(entry.value) : String(entry.value))}
@@ -770,18 +778,18 @@ export function ChartPlot({
             top: Math.max(0, active.y - metrics.dot - 28),
             transform: [{ translateX: '-50%' }],
             backgroundColor: t.colors.surfaceInverse,
-            borderRadius: 6,
-            paddingHorizontal: 9,
-            paddingVertical: 4,
+            borderRadius: chartChrome.pillRadius,
+            paddingHorizontal: t.spacing[2],
+            paddingVertical: t.spacing[1],
           }}
         >
           <Text
             style={{
               color: t.colors.textInverse,
               fontFamily: t.fontFamilies.sans,
-              fontSize: 11,
-              lineHeight: 14,
-              fontWeight: '700',
+              fontSize: metrics.labelSize,
+              lineHeight: chartChrome.labelLineHeight,
+              fontWeight: t.fontWeights.semibold,
             }}
           >
             {tooltipText}
@@ -829,8 +837,6 @@ export function ChartPlot({
  * what is arriving.
  */
 export const PlotShimmer = PlotPlaceholder;
-
-/** Time-range selector. Renders nothing when the chart was given no `periods`. */
 
 /**
  * The scrub crosshair — the vertical rule and the dot that follow a finger.

@@ -87,7 +87,7 @@ Without children, the chart uses its default layout. Add child components to cho
 | Part | Takes | What it draws |
 | --- | --- | --- |
 | `<Sparkline.EndDot />` | — | A dot on the final point, so the eye lands on where the series ended. |
-| `<Sparkline.Extremes />` | — | Dots on the highest and lowest points, with their values. |
+| `<Sparkline.Extremes />` | — | Labels the series' own high and low in the margins above and below the mark. |
 | `<Sparkline.Fill />` | — | A gradient wash under the line, fading to nothing at the bottom of the box. |
 
 ## Motion

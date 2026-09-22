@@ -14,6 +14,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
 import {
   barPath,
+  chartChrome,
   densityMetrics,
   type ChartChrome,
   type ChartDensity,
@@ -24,7 +25,13 @@ import {
 import { type ChartEmptyProps } from './empty';
 import { useReduceMotion, useSkeletonPulse } from './hooks';
 
-/** A bar needs a name, so `label` is required here even though `ChartPoint`'s is not. */
+/**
+ * The reference pill always reads at the compact label size, whatever the
+ * chart's density is — it is an annotation clinging to the plot edge, not a
+ * category label that should grow with the mark.
+ */
+const COMPACT_LABEL_SIZE = 10;
+
 /**
  * What the renderers take: the public props plus everything the parts resolve
  * to. Presence lives in the tree now, so these are no longer anyone's to pass —
@@ -40,6 +47,7 @@ export type BarChartResolved = Omit<BarChartProps, 'data'> & {
   showLabels?: boolean;
 };
 
+/** A bar needs a name, so `label` is required here even though `ChartPoint`'s is not. */
 export type BarDatum = ChartPoint & {
   label: string;
   /** Overrides the resolved colour for this bar alone. Single-series only. */
@@ -290,18 +298,18 @@ export function ReferenceLine({ y, width, label }: { y: number; width: number; l
           right: 0,
           top: y - 9,
           backgroundColor: t.colors.feedbackInfoBg,
-          borderRadius: 6,
-          paddingHorizontal: 10,
-          paddingVertical: 2,
+          borderRadius: chartChrome.pillRadius,
+          paddingHorizontal: t.spacing[2],
+          paddingVertical: chartChrome.pillPaddingY,
         }}
       >
         <Text
           style={{
             color: t.colors.textInteractiveTertiary,
             fontFamily: t.fontFamilies.sans,
-            fontSize: 10,
-            lineHeight: 14,
-            fontWeight: '700',
+            fontSize: COMPACT_LABEL_SIZE,
+            lineHeight: chartChrome.labelLineHeight,
+            fontWeight: t.fontWeights.semibold,
           }}
         >
           {label}

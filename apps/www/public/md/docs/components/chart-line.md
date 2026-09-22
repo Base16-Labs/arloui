@@ -124,7 +124,7 @@ export default function ChartExample() {
 | `activeIndex` | `number \| null` | — | Controlled scrub position. Leave undefined to let the chart hold it. |
 | `activeAt` | `number \| string \| Date \| null` | — | Scrub position as an x-*value* rather than an index. `activeIndex` is an index into this chart's own series, so two charts sharing one only line up if their points line up — same length, same order… |
 | `defaultActiveIndex` | `number \| null` | `null` | Where the scrub starts when it is uncontrolled. `null` means "show the last point". |
-| `onScrub` | `(index: number \| null, point: ChartPoint \| null) => void` | — | Fires on every scrub change, controlled or not. `null` on release. |
+| `onScrub` | `(index: number \| null, point: ChartPoint \| null) => void` | — | Fires on every scrub change, controlled or not. **Called with `(null, null)` on release**, because the crosshair belongs to the finger and stops existing when the finger lifts. |
 | `loading` | `boolean` | `false` | Reserves the plot with a neutral pulsing placeholder until data is ready. |
 | `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |
 | `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |

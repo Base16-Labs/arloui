@@ -15,10 +15,10 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
-import { densityMetrics, seriesColorAt, toneColor } from './core';
+import { chartChrome, densityMetrics, seriesColorAt, toneColor } from './core';
 import { EmptyContent } from './empty';
 import { useControllableIndex, useReduceMotion, useSkeletonPulse } from './hooks';
 import { useChartFade } from './hooks';
@@ -320,7 +320,7 @@ export function HorizontalBars({
               return (
                 <View key={`skeleton-${index}`} style={{ flexDirection: 'row', alignItems: 'center', gap: COLUMN_GAP }}>
                   {withLabels ? (
-                    <View style={{ width: row.label, height: row.font, borderRadius: 3, backgroundColor: t.colors.surfaceInput }} />
+                    <View style={{ width: row.label, height: row.font, borderRadius: chartChrome.swatchRadius, backgroundColor: t.colors.surfaceInput }} />
                   ) : null}
                   <View
                     style={{
@@ -400,7 +400,7 @@ export function HorizontalBars({
                       fontFamily: t.fontFamilies.sans,
                       fontSize: row.font,
                       lineHeight: row.font + 3,
-                      fontWeight: '500',
+                      fontWeight: t.fontWeights.medium,
                     }}
                   >
                     {datum.label}
@@ -494,7 +494,7 @@ export function HorizontalBars({
                     fontFamily: t.fontFamilies.sans,
                     fontSize: row.font,
                     lineHeight: row.font + 3,
-                    fontWeight: '700',
+                    fontWeight: t.fontWeights.semibold,
                     opacity: valueShown ? 1 : 0,
                   }}
                 >
@@ -562,18 +562,18 @@ export function HorizontalBars({
               left: railLeft + Math.min(Math.max(referenceAt, 0), 1) * trackWidth,
               transform: [{ translateX: '-50%' }],
               backgroundColor: t.colors.feedbackInfoBg,
-              borderRadius: 6,
-              paddingHorizontal: 8,
-              paddingVertical: 2,
+              borderRadius: chartChrome.pillRadius,
+              paddingHorizontal: t.spacing[2],
+              paddingVertical: chartChrome.pillPaddingY,
             }}
           >
             <Text
               style={{
                 color: t.colors.textInteractiveTertiary,
                 fontFamily: t.fontFamilies.sans,
-                fontSize: 10,
-                lineHeight: 14,
-                fontWeight: '700',
+                fontSize: ROW_METRICS.compact.font,
+                lineHeight: chartChrome.labelLineHeight,
+                fontWeight: t.fontWeights.semibold,
               }}
             >
               {reference?.label ?? formatValue(reference?.value ?? 0)}

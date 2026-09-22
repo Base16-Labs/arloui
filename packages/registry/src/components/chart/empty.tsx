@@ -60,6 +60,15 @@ function EmptyChartIcon() {
 }
 
 /**
+ * The action sits a hair below the body copy — not a spacing step.
+ *
+ * `spacing[1]` (4) opens a visible gap that reads as a separate block; zero lets
+ * the link collide with the line above it. Two points is optical, which is why
+ * it is named here rather than rounded to the nearest token.
+ */
+const ACTION_NUDGE = 2;
+
+/**
  * The rendered empty slot. Lives here rather than in `ChartEmpty` because the
  * plot draws it inside its own box — `ChartEmpty` only carries the configuration.
  */
@@ -75,7 +84,7 @@ export function EmptyContent({ title, description, action, icon, showIcon = true
             fontFamily: t.fontFamilies.sans,
             fontSize: t.typography.title3.fontSize,
             lineHeight: t.typography.title3.lineHeight,
-            fontWeight: '700',
+            fontWeight: t.fontWeights.semibold,
             textAlign: 'center',
           }}
         >
@@ -105,7 +114,7 @@ export function EmptyContent({ title, description, action, icon, showIcon = true
           onPress={action.onPress}
           hitSlop={8}
           style={({ pressed }) => ({
-            marginTop: 2,
+            marginTop: ACTION_NUDGE,
             opacity: pressed ? t.motion.pressed.opacity : 1,
             cursor: Platform.OS === 'web' ? 'pointer' : undefined,
           })}
@@ -116,7 +125,7 @@ export function EmptyContent({ title, description, action, icon, showIcon = true
               fontFamily: t.fontFamilies.sans,
               fontSize: t.typography.bodySm.fontSize,
               lineHeight: t.typography.bodySm.lineHeight,
-              fontWeight: '600',
+              fontWeight: t.fontWeights.semibold,
             }}
           >
             {action.label} →

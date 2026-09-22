@@ -62,19 +62,6 @@ export type SparklineProps = {
   width?: number;
   /** Fixed height in points. Small by default: this is an inline mark. */
   height?: number;
-  /** Fade a gradient under the line. Off by default — inline marks stay light. */
-  /** Dot on the final point, for "where it ended up". */
-  /**
-   * Label the series' own high and low in the margins above and below the mark.
-   *
-   * These are the *data's* extremes, not an axis: two numbers the series
-   * actually reached, which is the same thing `chrome="reference"` draws as a
-   * min/max pair on `Chart.Plot`. There is still no scale, no ticks, and no
-   * gridlines — the rule the chart core sets out holds.
-   *
-   * Reserves a row top and bottom, so the mark shrinks rather than running under
-   * the text.
-   */
   /** Formats the extreme labels. Raw values when omitted. */
   format?: (value: number) => string;
   /**
@@ -338,6 +325,11 @@ function SparklineInner({
 }
 
 const EXTREME_ROW = 13;
+/**
+ * The extreme labels are always compact-sized. A sparkline is inline chrome
+ * whatever density it is drawn at, so these never grow with the mark.
+ */
+const EXTREME_LABEL_SIZE = 10;
 const SparklineSkeleton = PlotPlaceholder;
 
 /**
@@ -357,7 +349,7 @@ function ExtremeLabel({ top, text }: { top: boolean; text: string }) {
         ...(top ? { top: 0 } : { bottom: 0 }),
         color: t.colors.textTertiary,
         fontFamily: t.fontFamilies.mono,
-        fontSize: 10,
+        fontSize: EXTREME_LABEL_SIZE,
         lineHeight: EXTREME_ROW,
       }}
     >
@@ -375,7 +367,17 @@ function SparklineEndDotPart(): ReactNode {
   return null;
 }
 
-/** Dots on the highest and lowest points, with their values. */
+/**
+ * Labels the series' own high and low in the margins above and below the mark.
+ *
+ * These are the *data's* extremes, not an axis: two numbers the series actually
+ * reached, which is what `Chart.Reference` draws as a min/max pair on
+ * `Chart.Plot`. There is still no scale, no ticks, and no gridlines — the rule
+ * the chart core sets out holds.
+ *
+ * Reserves a row top and bottom, so the mark shrinks rather than running under
+ * the text.
+ */
 function SparklineExtremesPart(): ReactNode {
   return null;
 }

@@ -16,7 +16,7 @@ import {
   type LayoutChangeEvent,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import { barPath, densityMetrics, seriesColorAt, toneColor } from './core';
@@ -514,7 +514,7 @@ export function VerticalBars({
                       color: selection === index ? t.colors.textPrimary : t.colors.textSecondary,
                       fontFamily: t.fontFamilies.sans,
                       fontSize: metrics.labelSize - 1,
-                      fontWeight: '600',
+                      fontWeight: t.fontWeights.semibold,
                     }}
                   >
                     {formatValue(bar.value)}
@@ -542,7 +542,7 @@ export function VerticalBars({
                       color: selection === index ? t.colors.textPrimary : t.colors.textSecondary,
                       fontFamily: t.fontFamilies.sans,
                       fontSize: metrics.labelSize - 1,
-                      fontWeight: '600',
+                      fontWeight: t.fontWeights.semibold,
                     }}
                   >
                     {formatValue(categoryTotal(index))}

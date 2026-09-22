@@ -42,7 +42,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Svg, { Circle, Defs, G, Mask, Path } from 'react-native-svg';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import { ChartLoading, ChartMotion, useChartEntrance } from './hooks';
@@ -50,12 +50,13 @@ import { ChartSweep } from './motion';
 import {
   annulusPath,
   arcPath,
+  chartChrome,
   densityMetrics,
   seriesColorAt,
   type ChartDensity,
   type ChartPoint,
 } from './core';
-import { allParts, collectParts, hasPart, partProps, useControllableIndex, useSkeletonPulse } from './hooks';
+import { allParts, collectParts, hasPart, partProps, useControllableIndex, useSkeletonPulse, warnDroppedDefaults } from './hooks';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 
 
@@ -87,14 +88,6 @@ export type DonutChartProps = {
   edges?: DonutEdges;
   /** How much mark there is: ring thickness and the hairline between slices. */
   density?: ChartDensity;
-  /** Big text in the middle. Defaults to the summed total. */
-  /**
-   * Hide the figure in the hole, for a ring that is read from its legend or
-   * captioned elsewhere. Named to match `Meter`'s `showValue`.
-   *
-   * Independent of `centerLabel`, which only ever renders when you pass one — so
-   * a caption with no number is `showValue={false}` plus a `centerLabel`.
-   */
   /** Emphasised slice. Controlled when passed; `defaultActiveIndex` seeds the internal one. */
   activeIndex?: number | null;
   /** Which slice starts selected when selection is uncontrolled. */
@@ -139,14 +132,19 @@ export type DonutChartProps = {
   /** Style for the chart's outer container. */
   style?: StyleProp<ViewStyle>;
   /**
-   * The composed form: `<DonutChart.Value />` rather than `showValue`,
-   * `<DonutChart.Legend />` rather than `showLegend`. Omit it and the chart
-   * renders exactly as it always has.
+   * The composed form. The centre readout and the legend are parts, not props:
+   * `<DonutChart.Value />` for the figure in the hole (the summed total unless
+   * you pass your own text), `<DonutChart.Label>…</DonutChart.Label>` for a
+   * caption under it, and `<DonutChart.Legend />` to name the slices. A caption
+   * with no number is a `Label` with no `Value`.
+   *
+   * **Naming any part replaces all of them** — the tree is the whole spec, not an
+   * addition to the default. Omit `children` and the ring renders exactly as it
+   * always has.
    */
   children?: ReactNode;
 };
 
-/** Unselected slices fade to this, so the selected one reads as the subject. */
 /**
  * The categorical palette's validated slots, and the most arcs a ring may draw:
  * those four plus one "Other".
@@ -154,6 +152,7 @@ export type DonutChartProps = {
 const NAMED_SLOTS = 4;
 const MAX_ARCS = NAMED_SLOTS + 1;
 
+/** Unselected slices fade to this, so the selected one reads as the subject. */
 const DIMMED_ALPHA = 0.35;
 
 /**
@@ -453,7 +452,7 @@ function DonutChartInner({
                 fontFamily: t.fontFamilies.sans,
                 fontSize: t.typography.title2.fontSize,
                 lineHeight: t.typography.title2.lineHeight,
-                fontWeight: '700',
+                fontWeight: t.fontWeights.semibold,
               }}
             >
               {segments.length === 0 ? emptyLabel : resolvedCenterValue}
@@ -498,7 +497,7 @@ function DonutChartInner({
                   style={{
                     width: 10,
                     height: 10,
-                    borderRadius: 3,
+                    borderRadius: chartChrome.swatchRadius,
                     backgroundColor: segment.color,
                   }}
                 />
@@ -522,7 +521,7 @@ function DonutChartInner({
                     fontFamily: t.fontFamilies.sans,
                     fontSize: t.typography.bodySm.fontSize,
                     lineHeight: t.typography.bodySm.lineHeight,
-                    fontWeight: '700',
+                    fontWeight: t.fontWeights.semibold,
                   }}
                 >
                   {format ? format(segment.slice.value) : segment.slice.value}
@@ -644,12 +643,22 @@ function resolveComposition(props: DonutChartProps): DonutChartResolved {
     .map((l) => (typeof l.children === 'string' ? l.children : undefined))
     .find((l) => l != null);
 
+  const showValue = hasPart(parts, DonutValuePart);
+  const showLegend = hasPart(parts, DonutLegendPart);
+  // A ring with no legend names nothing, and a ring with no centre figure reads
+  // as decoration — both are in the default, and both go quiet when a tree
+  // names something else.
+  warnDroppedDefaults(children === null ? '' : 'Chart.Donut', [
+    ...(showValue ? [] : ['<Chart.Donut.Value />']),
+    ...(showLegend ? [] : ['<Chart.Donut.Legend />']),
+  ]);
+
   return {
     ...rest,
-    showValue: hasPart(parts, DonutValuePart),
+    showValue,
     centerValue: value?.value,
     centerLabel: labelText,
-    showLegend: hasPart(parts, DonutLegendPart),
+    showLegend,
   };
 }
 

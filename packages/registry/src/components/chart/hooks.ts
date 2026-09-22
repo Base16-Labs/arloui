@@ -41,7 +41,14 @@ import { BAR_ENTER_STAGGER } from './motion';
 
 const MotionEnabled = createContext(true);
 
-/** A local opt-out never overrides the device's accessibility preference. */
+/**
+ * Mirrors the user's Reduce Motion setting. A local opt-out never overrides the
+ * device's accessibility preference.
+ *
+ * Charts consult this for entrances and for the period morph. They deliberately
+ * do **not** consult it for scrub: that is direct manipulation, and a crosshair
+ * that stopped following the finger would read as broken rather than as calm.
+ */
 export function useReduceMotion(): boolean {
   const system = useSystemReduceMotion();
   const enabled = useContext(MotionEnabled);
@@ -218,14 +225,6 @@ export function useControllableIndex(
   return [value ?? null, set];
 }
 
-/**
- * Mirrors the user's Reduce Motion setting.
- *
- * Charts consult this for entrances and for the period morph. They deliberately
- * do **not** consult it for scrub: that is direct manipulation, and a crosshair
- * that stopped following the finger would read as broken rather than as calm.
- */
-
 /** One restrained opacity pulse; reduced motion uses a static placeholder. */
 export function useSkeletonPulse(
   durationMs: number,
@@ -315,4 +314,44 @@ export function partProps<T>(parts: PartMap, type: unknown): T | undefined {
 /** Every one of this part, in tree order — for series, rings, and the like. */
 export function allParts<T>(parts: PartMap, type: unknown): T[] {
   return (parts.get(type) ?? []) as T[];
+}
+
+/**
+ * Warns when a named composition has dropped part of the default.
+ *
+ * Naming one part replaces *all* of them: the tree is the whole spec, not an
+ * addition to the default. That is deliberate — it is the only way to ask for a
+ * bare mark — but it fails by subtraction and in silence. Adding
+ * `<Chart.Bar.Values />` to get amounts on the bars also takes away the
+ * category labels and the zero rule, and nothing on screen says why.
+ *
+ * So the rule stays and the silence goes. Dev only, and once per distinct
+ * message: a warning that fires every render is a warning nobody reads.
+ *
+ * Forms whose default is already bare (`Sparkline`) have nothing to drop and do
+ * not call this.
+ */
+const warnedCompositions = new Set<string>();
+
+export function warnDroppedDefaults(form: string, dropped: readonly string[]): void {
+  // Guarded rather than bare: `__DEV__` is a Metro global, and these files get
+  // copied into projects that may render them through react-native-web or an
+  // SSR pass where the global does not exist.
+  // An empty `form` is the caller saying this tree asked to be bare — `{null}`,
+  // the documented escape hatch. Warning there would scold someone for using
+  // the feature as designed.
+  const dev = typeof __DEV__ !== 'undefined' && __DEV__;
+  if (!dev || form === '' || dropped.length === 0) return;
+
+  const key = `${form}|${dropped.join(',')}`;
+  if (warnedCompositions.has(key)) return;
+  warnedCompositions.add(key);
+
+  const one = dropped.length === 1;
+  console.warn(
+    `[${form}] naming a part replaces the whole default composition, so ` +
+      `${dropped.join(' and ')} ${one ? 'is' : 'are'} no longer drawn. Name ` +
+      `${one ? 'it' : 'them'} alongside your other children to keep ` +
+      `${one ? 'it' : 'them'}, or pass {null} for a deliberately bare mark.`,
+  );
 }
