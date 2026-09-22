@@ -213,7 +213,7 @@ export default function ChartExample() {
   return (
     <BarChart data={spend} layout="horizontal" format={money}>
       <BarChart.Categories />
-      <BarChart.Values />
+      <BarChart.Amounts />
       <BarChart.Reference value={400} label="Budget" />
     </BarChart>
   );

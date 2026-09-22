@@ -83,7 +83,7 @@ export default function ChartExample() {
   return (
     <BarChart data={spend} layout="horizontal" format={money}>
       <BarChart.Categories />
-      <BarChart.Values />
+      <BarChart.Amounts />
       <BarChart.Reference value={400} label="Budget" />
     </BarChart>
   );
@@ -121,8 +121,7 @@ Without children, the chart uses its default layout. Add child components to cho
 | Part | Takes | What it draws |
 | --- | --- | --- |
 | `<BarChart.Series />` | `data: readonly BarDatum[] \| readonly number[]` `label: string` | One series. The first declares the categories; the rest ride on them. |
-| `<BarChart.Values />` | — | Prints each bar's value above it. Without it, only the selected bar shows a figure. |
-| `<BarChart.Categories />` | — | The category names — under the bars, or beside the rows when `layout="horizontal"`. |
+| `<BarChart.Amounts />` | — | Prints each bar's figure above it. Without it, only the selected bar shows one. |
 | `<BarChart.Baseline />` | — | The zero rule. Drawn only when the data crosses zero — an all-positive chart has its zero at the axis already. |
 | `<BarChart.Reference />` | `value: number` `label: string` | A labelled dashed line at a value you name — a target, a budget, an average. Adds to the zero rule rather than replacing it. |
 | `<BarChart.Legend />` | — | The series legend. Unnamed series use their position, such as Series 1. |
