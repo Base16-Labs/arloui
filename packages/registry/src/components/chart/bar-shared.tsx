@@ -14,6 +14,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
 import {
   barPath,
+  chartChrome,
   densityMetrics,
   type ChartChrome,
   type ChartDensity,
@@ -23,6 +24,18 @@ import {
 } from './core';
 import { type ChartEmptyProps } from './empty';
 import { useReduceMotion, useSkeletonPulse } from './hooks';
+
+/**
+ * Reference-pill padding, and the label size inside it.
+ *
+ * The pill always reads at the compact label size whatever the chart's density
+ * is — it is an annotation clinging to the plot edge, not a category label that
+ * should grow with the mark. The padding is this file's own: the three readout
+ * pills in the kit sit at 10, 9 and 8, which is drift rather than intent, so it
+ * is named here rather than unified under the reader's feet.
+ */
+const REFERENCE_PILL_PADDING_X = 10;
+const COMPACT_LABEL_SIZE = 10;
 
 /**
  * What the renderers take: the public props plus everything the parts resolve
@@ -290,18 +303,18 @@ export function ReferenceLine({ y, width, label }: { y: number; width: number; l
           right: 0,
           top: y - 9,
           backgroundColor: t.colors.feedbackInfoBg,
-          borderRadius: 6,
-          paddingHorizontal: 10,
-          paddingVertical: 2,
+          borderRadius: chartChrome.pillRadius,
+          paddingHorizontal: REFERENCE_PILL_PADDING_X,
+          paddingVertical: chartChrome.pillPaddingY,
         }}
       >
         <Text
           style={{
             color: t.colors.textInteractiveTertiary,
             fontFamily: t.fontFamilies.sans,
-            fontSize: 10,
-            lineHeight: 14,
-            fontWeight: '700',
+            fontSize: COMPACT_LABEL_SIZE,
+            lineHeight: chartChrome.labelLineHeight,
+            fontWeight: t.fontWeights.semibold,
           }}
         >
           {label}

@@ -12,7 +12,7 @@ import { Platform, Pressable, Text, View, type StyleProp, type TextStyle, type V
 import { AnimatedCounter } from '../animated-counter';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
-import { toneColor } from './core';
+import { chartChrome, toneColor } from './core';
 import { useChart } from './chart-context';
 import { SkeletonBlock } from './skeleton';
 import { useReduceMotion } from './hooks';
@@ -47,7 +47,7 @@ export function ChartValue({
 
   if (loading) {
     return (
-      <View style={[{ alignItems: 'flex-start', gap: 6 }, style]}>
+      <View style={[{ alignItems: 'flex-start', gap: chartChrome.labelGap }, style]}>
         <SkeletonBlock width={150} height={26} radius={7} />
       </View>
     );
@@ -116,7 +116,7 @@ export function ChartDelta({
           fontFamily: t.fontFamilies.sans,
           fontSize: t.typography.body.fontSize,
           lineHeight: t.typography.body.lineHeight,
-          fontWeight: '600',
+          fontWeight: t.fontWeights.semibold,
         },
         style,
       ]}
@@ -153,7 +153,7 @@ export function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
         // Not a tablist while there is nothing to select between.
         accessibilityRole="progressbar"
         accessibilityLabel="Loading"
-        style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, style]}
+        style={[{ flexDirection: 'row', alignItems: 'center', gap: chartChrome.labelGap }, style]}
       >
         {periods.map((option) => (
           <View key={option} style={{ flex: 1 }}>
@@ -244,7 +244,7 @@ export function ChartTitle({ children, style }: { children?: ReactNode; style?: 
           fontFamily: t.fontFamilies.sans,
           fontSize: t.typography.bodySm.fontSize,
           lineHeight: t.typography.bodySm.lineHeight,
-          fontWeight: '600',
+          fontWeight: t.fontWeights.semibold,
         },
         style,
       ]}

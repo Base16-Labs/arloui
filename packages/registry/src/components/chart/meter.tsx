@@ -576,7 +576,7 @@ function MeterInner({
                   fontFamily: t.fontFamilies.sans,
                   fontSize: readoutType.fontSize,
                   lineHeight: readoutType.lineHeight,
-                  fontWeight: '700',
+                  fontWeight: t.fontWeights.semibold,
                 }}
               >
                 {shownReadout}
@@ -649,7 +649,7 @@ function MeterInner({
                 fontFamily: t.fontFamilies.sans,
                 fontSize: t.typography.bodySm.fontSize,
                 lineHeight: t.typography.bodySm.lineHeight,
-                fontWeight: '600',
+                fontWeight: t.fontWeights.semibold,
               }}
             >
               {shownReadout}

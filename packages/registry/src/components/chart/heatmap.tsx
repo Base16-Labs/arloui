@@ -34,6 +34,7 @@ import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useTokens } from '../../foundation/theme-provider';
+import { chartChrome } from './core';
 import { ChartLoading, ChartMotion, useReduceMotion } from './hooks';
 import { BAR_ENTER_STAGGER } from './motion';
 import type { ChartPoint } from './core';
@@ -86,6 +87,22 @@ export type HeatmapProps = {
    */
   children?: ReactNode;
 };
+
+/**
+ * The grid's own scale.
+ *
+ * A heatmap is a lattice, not a mark on an axis, so its gutter and key swatch
+ * are sized against the cell rather than against `spacing` or `densityMetrics`.
+ * Five points is the widest gutter that still reads as one surface at a year's
+ * width; the key squares match a cell at that size.
+ */
+const CELL_GAP = 5;
+const KEY_SWATCH = 11;
+/** Weekday initials sit a notch under the scale caption and ride tight to the columns. */
+const DAY_INITIAL_SIZE = 10;
+const DAY_INITIAL_LINE_HEIGHT = 12;
+/** The Less–More caption, at the default label size. */
+const SCALE_CAPTION_SIZE = 11;
 
 const DAY_INITIALS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
@@ -286,7 +303,7 @@ function HeatmapInner({
         accessibilityState={{ busy: loading || refreshing }}
         accessibilityLabel={interactive ? undefined : summary}
         onLayout={(event) => setGridWidth(event.nativeEvent.layout.width)}
-        style={{ gap: 5, opacity: loading ? pulse : 1 }}
+        style={{ gap: CELL_GAP, opacity: loading ? pulse : 1 }}
       >
         {/*
           Weeks enter top to bottom — time in this grid runs down the rows.
@@ -294,7 +311,7 @@ function HeatmapInner({
           intensity is the datum, and animating it would count the days.
         */}
         {showDayLabels ? (
-          <View style={{ flexDirection: 'row', gap: 5 }}>
+          <View style={{ flexDirection: 'row', gap: CELL_GAP }}>
             {DAY_INITIALS.map((initial, index) => (
               <Text
                 key={`${initial}-${index}`}
@@ -303,9 +320,9 @@ function HeatmapInner({
                   textAlign: 'center',
                   color: t.colors.textTertiary,
                   fontFamily: t.fontFamilies.sans,
-                  fontSize: 10,
-                  lineHeight: 12,
-                  fontWeight: '600',
+                  fontSize: DAY_INITIAL_SIZE,
+                  lineHeight: DAY_INITIAL_LINE_HEIGHT,
+                  fontWeight: t.fontWeights.semibold,
                 }}
               >
                 {initial}
@@ -316,7 +333,7 @@ function HeatmapInner({
 
         {weeks.map((week, weekIndex) => {
           const row = (
-            <View style={{ flexDirection: 'row', gap: 5 }}>
+            <View style={{ flexDirection: 'row', gap: CELL_GAP }}>
               {week.map((cell) => {
                 const datum = loading ? null : (byDay.get(cell.key) ?? null);
                 const level = datum ? levelFor(datum.value) : 0;
@@ -324,7 +341,7 @@ function HeatmapInner({
                 const square = {
                   flex: 1,
                   aspectRatio: 1,
-                  borderRadius: 3,
+                  borderRadius: chartChrome.swatchRadius,
                   backgroundColor,
                 } as const;
 
@@ -357,26 +374,26 @@ function HeatmapInner({
       </Animated.View>
 
       {showScale && !loading ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: chartChrome.labelGap }}>
           <Text
             style={{
               color: t.colors.textTertiary,
               fontFamily: t.fontFamilies.sans,
-              fontSize: 11,
-              lineHeight: 14,
+              fontSize: SCALE_CAPTION_SIZE,
+              lineHeight: chartChrome.labelLineHeight,
             }}
           >
             Less
           </Text>
           {Array.from({ length: levels + 1 }, (_, level) => (
-            <View key={level} style={{ width: 11, height: 11, borderRadius: 3, backgroundColor: levelColor(level) }} />
+            <View key={level} style={{ width: KEY_SWATCH, height: KEY_SWATCH, borderRadius: chartChrome.swatchRadius, backgroundColor: levelColor(level) }} />
           ))}
           <Text
             style={{
               color: t.colors.textTertiary,
               fontFamily: t.fontFamilies.sans,
-              fontSize: 11,
-              lineHeight: 14,
+              fontSize: SCALE_CAPTION_SIZE,
+              lineHeight: chartChrome.labelLineHeight,
             }}
           >
             More

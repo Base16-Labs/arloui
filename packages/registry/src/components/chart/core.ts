@@ -178,6 +178,29 @@ export function densityMetrics(density: ChartDensity): DensityMetrics {
     : { stroke: 2, dot: 6, barRadius: 4, gap: 2, showLabels: true, labelSize: 11, inset: 6 }; // token-ignore: the density scale itself.
 }
 
+/**
+ * The chrome scale — the furniture a chart draws *around* its marks, where
+ * `densityMetrics` is the marks themselves.
+ *
+ * Chart-specific on purpose. There is no 6pt radius or 3pt swatch in `radii`
+ * and there should not be: those sizes exist only because a readout pill and a
+ * legend key are small chrome sitting beside a mark, not surfaces in their own
+ * right. What they must not be is scattered — the same pill was written three
+ * times in three files, and its horizontal padding had already drifted to 8, 9
+ * and 10. Naming them here is what stops that.
+ */
+export const chartChrome = {
+  /** Readout pill: the scrub tooltip and the bar value chip. */
+  pillRadius: 6,
+  pillPaddingY: 2,
+  /** A small colour swatch — legend key, heatmap cell, skeleton block. */
+  swatchRadius: 3,
+  /** Between a mark and the text that labels it. */
+  labelGap: 6,
+  /** Line height for chrome label text, whatever `labelSize` the density picks. */
+  labelLineHeight: 14,
+} as const;
+
 /* -------------------------------------------------------------- geometry --- */
 
 export type Pt = { x: number; y: number };

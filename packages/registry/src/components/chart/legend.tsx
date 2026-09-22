@@ -16,6 +16,7 @@
  */
 import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
+import { chartChrome } from './core';
 
 export type ChartLegendItem = {
   label: string;
@@ -50,13 +51,13 @@ export function ChartLegend({ items, style }: ChartLegendProps) {
       {items.map((item, index) => (
         <View
           key={`${item.label}-${index}`}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: chartChrome.labelGap }}
         >
           <View
             style={{
               width: 10,
               height: 10,
-              borderRadius: 3,
+              borderRadius: chartChrome.swatchRadius,
               backgroundColor: item.color,
               opacity: item.faded ? 0.18 : 1,
             }}
@@ -68,7 +69,7 @@ export function ChartLegend({ items, style }: ChartLegendProps) {
               fontFamily: t.fontFamilies.sans,
               fontSize: t.typography.bodySm.fontSize,
               lineHeight: t.typography.bodySm.lineHeight,
-              fontWeight: '600',
+              fontWeight: t.fontWeights.semibold,
             }}
           >
             {item.label}

@@ -62,7 +62,7 @@ export function ChartState({
           fontFamily: t.fontFamilies.sans,
           fontSize: compact ? t.typography.bodySm.fontSize : t.typography.body.fontSize,
           lineHeight: compact ? t.typography.bodySm.lineHeight : t.typography.body.lineHeight,
-          fontWeight: '600',
+          fontWeight: t.fontWeights.semibold,
           textAlign: 'center',
         }}
       >

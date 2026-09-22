@@ -25,6 +25,7 @@ import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import {
   areaPath,
+  chartChrome,
   bandPath,
   barPath,
   densityMetrics,
@@ -118,6 +119,15 @@ export type ChartPlotProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+
+/**
+ * Horizontal padding on the scrub tooltip.
+ *
+ * This file's own: the three readout pills in the kit sit at 10, 9 and 8pt,
+ * which is drift rather than intent. Named here so it is visible and cheap to
+ * reconcile, rather than unified under the reader's feet.
+ */
+const SCRUB_PILL_PADDING_X = 9;
 
 /**
  * The mark itself — the line, and whatever else is named inside it.
@@ -746,7 +756,7 @@ export function ChartPlot({
                 color: t.colors.textTertiary,
                 fontFamily: t.fontFamilies.mono,
                 fontSize: metrics.labelSize - 1,
-                fontWeight: '500',
+                fontWeight: t.fontWeights.medium,
               }}
             >
               {entry.label ?? (format ? format(entry.value) : String(entry.value))}
@@ -767,18 +777,18 @@ export function ChartPlot({
             top: Math.max(0, active.y - metrics.dot - 28),
             transform: [{ translateX: '-50%' }],
             backgroundColor: t.colors.surfaceInverse,
-            borderRadius: 6,
-            paddingHorizontal: 9,
-            paddingVertical: 4,
+            borderRadius: chartChrome.pillRadius,
+            paddingHorizontal: SCRUB_PILL_PADDING_X,
+            paddingVertical: t.spacing[1],
           }}
         >
           <Text
             style={{
               color: t.colors.textInverse,
               fontFamily: t.fontFamilies.sans,
-              fontSize: 11,
-              lineHeight: 14,
-              fontWeight: '700',
+              fontSize: metrics.labelSize,
+              lineHeight: chartChrome.labelLineHeight,
+              fontWeight: t.fontWeights.semibold,
             }}
           >
             {tooltipText}

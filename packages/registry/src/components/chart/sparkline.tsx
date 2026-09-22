@@ -325,6 +325,11 @@ function SparklineInner({
 }
 
 const EXTREME_ROW = 13;
+/**
+ * The extreme labels are always compact-sized. A sparkline is inline chrome
+ * whatever density it is drawn at, so these never grow with the mark.
+ */
+const EXTREME_LABEL_SIZE = 10;
 const SparklineSkeleton = PlotPlaceholder;
 
 /**
@@ -344,7 +349,7 @@ function ExtremeLabel({ top, text }: { top: boolean; text: string }) {
         ...(top ? { top: 0 } : { bottom: 0 }),
         color: t.colors.textTertiary,
         fontFamily: t.fontFamilies.mono,
-        fontSize: 10,
+        fontSize: EXTREME_LABEL_SIZE,
         lineHeight: EXTREME_ROW,
       }}
     >

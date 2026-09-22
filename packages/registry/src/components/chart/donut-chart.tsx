@@ -50,6 +50,7 @@ import { ChartSweep } from './motion';
 import {
   annulusPath,
   arcPath,
+  chartChrome,
   densityMetrics,
   seriesColorAt,
   type ChartDensity,
@@ -451,7 +452,7 @@ function DonutChartInner({
                 fontFamily: t.fontFamilies.sans,
                 fontSize: t.typography.title2.fontSize,
                 lineHeight: t.typography.title2.lineHeight,
-                fontWeight: '700',
+                fontWeight: t.fontWeights.semibold,
               }}
             >
               {segments.length === 0 ? emptyLabel : resolvedCenterValue}
@@ -496,7 +497,7 @@ function DonutChartInner({
                   style={{
                     width: 10,
                     height: 10,
-                    borderRadius: 3,
+                    borderRadius: chartChrome.swatchRadius,
                     backgroundColor: segment.color,
                   }}
                 />
@@ -520,7 +521,7 @@ function DonutChartInner({
                     fontFamily: t.fontFamilies.sans,
                     fontSize: t.typography.bodySm.fontSize,
                     lineHeight: t.typography.bodySm.lineHeight,
-                    fontWeight: '700',
+                    fontWeight: t.fontWeights.semibold,
                   }}
                 >
                   {format ? format(segment.slice.value) : segment.slice.value}

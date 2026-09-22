@@ -514,7 +514,7 @@ export function VerticalBars({
                       color: selection === index ? t.colors.textPrimary : t.colors.textSecondary,
                       fontFamily: t.fontFamilies.sans,
                       fontSize: metrics.labelSize - 1,
-                      fontWeight: '600',
+                      fontWeight: t.fontWeights.semibold,
                     }}
                   >
                     {formatValue(bar.value)}
@@ -542,7 +542,7 @@ export function VerticalBars({
                       color: selection === index ? t.colors.textPrimary : t.colors.textSecondary,
                       fontFamily: t.fontFamilies.sans,
                       fontSize: metrics.labelSize - 1,
-                      fontWeight: '600',
+                      fontWeight: t.fontWeights.semibold,
                     }}
                   >
                     {formatValue(categoryTotal(index))}

@@ -50,6 +50,7 @@ export {
   areaPath,
   bandPath,
   barPath,
+  chartChrome,
   densityMetrics,
   interpolateSeries,
   linePath,
