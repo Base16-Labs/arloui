@@ -147,7 +147,7 @@ For Line chart, place Value, Delta, and Periods inside LineChart. Place referenc
 | `activeIndex` | `number \| null` | — | Controlled scrub position. Leave undefined to let the chart hold it. |
 | `activeAt` | `number \| string \| Date \| null` | — | Scrub position as an x-*value* rather than an index. `activeIndex` is an index into this chart's own series, so two charts sharing one only line up if their points line up — same length, same order… |
 | `defaultActiveIndex` | `number \| null` | `null` | Where the scrub starts when it is uncontrolled. `null` means "show the last point". |
-| `onScrub` | `(index: number \| null, point: ChartPoint \| null) => void` | — | Fires on every scrub change, controlled or not. `null` on release. |
+| `onScrub` | `(index: number \| null, point: ChartPoint \| null) => void` | — | Fires on every scrub change, controlled or not. **Called with `(null, null)` on release**, because the crosshair belongs to the finger and stops existing when the finger lifts. |
 | `loading` | `boolean` | `false` | Reserves the plot with a neutral pulsing placeholder until data is ready. |
 | `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |
 | `style` | `StyleProp<ViewStyle>` | — | Style for the chart's outer container. |
@@ -173,7 +173,7 @@ For Line chart, place Value, Delta, and Periods inside LineChart. Place referenc
 | `height` | `number` | `180` | How tall the plot box is, in points. The width comes from the parent. |
 | `fill` | `boolean` | `true` | Fade a gradient under the line. |
 | `curve` | `ChartCurve` | `'steep'` | Straight segments (default) or a fitted spline. See `ChartCurve`. |
-| `compare` | `ChartData` | — | One reference line, or several — the min/max pair a dense series reads against. A second series, drawn dashed in the neutral hue — the baseline a projection is measured against. |
+| `compare` | `ChartData` | — | A second series, drawn dashed in the neutral hue — the baseline a projection is measured against. It never takes the scrub: one series answers to the finger, the other is context. |
 | `range` | `ChartRange` | — | A shaded band between two bounds — the "likely range" behind a projection. A prop on `Chart.Plot` rather than a new form: the readout, the scrub, and the tone all still belong to the primary series. |
 | `stack` | `readonly ChartData[]` | — | Series stacked on top of the primary — part-to-total over time, the shape a bar chart draws with `variant="stacked"` when the x-axis is continuous rather than categorical. |
 | `stackColors` | `readonly string[]` | — | Stacked-series colors, primary first. Missing slots use the theme palette. |
@@ -237,7 +237,7 @@ For Line chart, place Value, Delta, and Periods inside LineChart. Place referenc
 | Part | Takes | What it draws |
 | --- | --- | --- |
 | `<Chart.Sparkline.EndDot />` | — | A dot on the final point, so the eye lands on where the series ended. |
-| `<Chart.Sparkline.Extremes />` | — | Dots on the highest and lowest points, with their values. |
+| `<Chart.Sparkline.Extremes />` | — | Labels the series' own high and low in the margins above and below the mark. |
 | `<Chart.Sparkline.Fill />` | — | A gradient wash under the line, fading to nothing at the bottom of the box. |
 
 ### Chart.Donut
@@ -281,7 +281,7 @@ For Line chart, place Value, Delta, and Periods inside LineChart. Place referenc
 | `dangerAt` | `number` | — | Fraction (0-1) past which the meter turns danger. |
 | `thickness` | `number` | — | Bar thickness, or ring stroke width. |
 | `size` | `number` | — | Ring or arc diameter. Ignored by the bar shape. |
-| `loading` | `boolean` | `false` | Additional concentric rings, drawn inside the primary one. `value` is always the outermost; these stack inwards in order, exactly as `series` extends `data` on a bar chart. |
+| `loading` | `boolean` | `false` | Pulses the track and holds back the fill and the readout. |
 | `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |
 | `accessibilityLabel` | `string` | — | Overrides the label read to assistive tech, which otherwise uses the meter's name. |
 | `style` | `StyleProp<ViewStyle>` | — | Style for the meter's outer container. |
@@ -290,7 +290,7 @@ For Line chart, place Value, Delta, and Periods inside LineChart. Place referenc
 | --- | --- | --- |
 | `<Chart.Meter.Value />` | `value` | The value, as a figure. On a ring or arc it sits in the hole; on a bar it sits above the track. |
 | `<Chart.Meter.Label />` | `children` | The name under the readout. Takes its text as children. |
-| `<Chart.Meter.Ring />` | `value` `max` `min` `color` `label` | One concentric ring. Replaces an entry in the `rings` array. |
+| `<Chart.Meter.Ring />` | `value` `max` `min` `color` `label` | One concentric ring, drawn inside the primary one. `value` on the meter is always the outermost; `Meter.Ring` children stack inwards in tree order, exactly as `Series` extends `data` on a bar chart. |
 
 ### Chart.Heatmap
 | Prop | Type | Default | What it does |

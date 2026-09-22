@@ -84,7 +84,7 @@ export default function ChartExample() {
 | `dangerAt` | `number` | — | Fraction (0-1) past which the meter turns danger. |
 | `thickness` | `number` | — | Bar thickness, or ring stroke width. |
 | `size` | `number` | — | Ring or arc diameter. Ignored by the bar shape. |
-| `loading` | `boolean` | `false` | Additional concentric rings, drawn inside the primary one. `value` is always the outermost; these stack inwards in order, exactly as `series` extends `data` on a bar chart. |
+| `loading` | `boolean` | `false` | Pulses the track and holds back the fill and the readout. |
 | `refreshing` | `boolean` | `false` | Keep the last supplied data visible during a background fetch. Overrides loading. |
 | `accessibilityLabel` | `string` | — | Overrides the label read to assistive tech, which otherwise uses the meter's name. |
 | `style` | `StyleProp<ViewStyle>` | — | Style for the meter's outer container. |
@@ -97,7 +97,7 @@ Without children, the chart uses its default layout. Add child components to cho
 | --- | --- | --- |
 | `<Meter.Value />` | `value: string` | The value, as a figure. On a ring or arc it sits in the hole; on a bar it sits above the track. |
 | `<Meter.Label />` | `children: ReactNode` | The name under the readout. Takes its text as children. |
-| `<Meter.Ring />` | `value: number` `max: number` `min: number` `color: string` `label: string` | One concentric ring. Replaces an entry in the `rings` array. |
+| `<Meter.Ring />` | `value: number` `max: number` `min: number` `color: string` `label: string` | One concentric ring, drawn inside the primary one. `value` on the meter is always the outermost; `Meter.Ring` children stack inwards in tree order, exactly as `Series` extends `data` on a bar chart. |
 
 ## Motion
 
