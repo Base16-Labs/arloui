@@ -159,7 +159,18 @@ export type ChartProps = {
   activeAt?: number | string | Date | null;
   /** Where the scrub starts when it is uncontrolled. `null` means "show the last point". */
   defaultActiveIndex?: number | null;
-  /** Fires on every scrub change, controlled or not. `null` on release. */
+  /**
+   * Fires on every scrub change, controlled or not.
+   *
+   * **Called with `(null, null)` on release**, because the crosshair belongs to
+   * the finger and stops existing when the finger lifts. Anything you derive
+   * from it disappears at the same moment — a linked readout, a second chart, a
+   * comparison row — which on touch reads as a flash rather than an answer.
+   *
+   * If you want the position to persist after release, ignore the null:
+   *
+   *   onScrub={(_, point) => { if (point) setAt(point.at); }}
+   */
   onScrub?: (index: number | null, point: ChartPoint | null) => void;
   /** Reserves the plot with a neutral pulsing placeholder until data is ready. */
   loading?: boolean;
