@@ -56,7 +56,7 @@ import {
   type ChartDensity,
   type ChartPoint,
 } from './core';
-import { allParts, collectParts, hasPart, partProps, useControllableIndex, useSkeletonPulse } from './hooks';
+import { allParts, collectParts, hasPart, partProps, useControllableIndex, useSkeletonPulse, warnDroppedDefaults } from './hooks';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 
 
@@ -643,12 +643,22 @@ function resolveComposition(props: DonutChartProps): DonutChartResolved {
     .map((l) => (typeof l.children === 'string' ? l.children : undefined))
     .find((l) => l != null);
 
+  const showValue = hasPart(parts, DonutValuePart);
+  const showLegend = hasPart(parts, DonutLegendPart);
+  // A ring with no legend names nothing, and a ring with no centre figure reads
+  // as decoration — both are in the default, and both go quiet when a tree
+  // names something else.
+  warnDroppedDefaults(children === null ? '' : 'Chart.Donut', [
+    ...(showValue ? [] : ['<Chart.Donut.Value />']),
+    ...(showLegend ? [] : ['<Chart.Donut.Legend />']),
+  ]);
+
   return {
     ...rest,
-    showValue: hasPart(parts, DonutValuePart),
+    showValue,
     centerValue: value?.value,
     centerLabel: labelText,
-    showLegend: hasPart(parts, DonutLegendPart),
+    showLegend,
   };
 }
 

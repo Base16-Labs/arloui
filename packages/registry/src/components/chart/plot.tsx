@@ -44,7 +44,7 @@ import {
 } from './core';
 import { EmptyContent } from './empty';
 import { useChart } from './chart-context';
-import { allParts, collectParts, useReduceMotion } from './hooks';
+import { allParts, collectParts, useReduceMotion, warnDroppedDefaults } from './hooks';
 import { useChartEntrance } from './hooks';
 import { ChartFill, ChartReveal } from './motion';
 import { ChartLegend } from './legend';
@@ -171,14 +171,24 @@ export function ChartPlot({
       return { chrome: 'baseline' as ChartChrome, reference: undefined, crosshair: true };
     const parts = collectParts(children);
     const named = allParts<ChartReferenceProps>(parts, ChartReferencePart);
+    const crosshair = parts.has(ChartCrosshairPart);
+    const baseline = parts.has(ChartBaselinePart);
+    // Losing the crosshair is the loud one: the plot stops answering a finger
+    // at all, which reads as a broken chart rather than a composed one. A
+    // reference line stands in for the baseline, so it only counts as dropped
+    // when neither was named.
+    warnDroppedDefaults(children === null ? '' : 'Chart.Plot', [
+      ...(baseline || named.length > 0 ? [] : ['<Chart.Baseline />']),
+      ...(crosshair ? [] : ['<Chart.Crosshair />']),
+    ]);
     return {
       chrome: (named.length > 0
         ? 'reference'
-        : parts.has(ChartBaselinePart)
+        : baseline
           ? 'baseline'
           : 'none') as ChartChrome,
       reference: named.length > 0 ? named : undefined,
-      crosshair: parts.has(ChartCrosshairPart),
+      crosshair,
     };
   }, [children]);
   const chrome = declaredChrome.chrome;

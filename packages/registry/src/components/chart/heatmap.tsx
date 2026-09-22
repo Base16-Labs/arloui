@@ -38,7 +38,7 @@ import { chartChrome } from './core';
 import { ChartLoading, ChartMotion, useReduceMotion } from './hooks';
 import { BAR_ENTER_STAGGER } from './motion';
 import type { ChartPoint } from './core';
-import { collectParts, hasPart, useSkeletonPulse } from './hooks';
+import { collectParts, hasPart, useSkeletonPulse, warnDroppedDefaults } from './hooks';
 
 export type HeatmapDatum = ChartPoint & {
   /** A timestamp, an ISO string, or a `Date` — normalised to local midnight. */
@@ -429,11 +429,16 @@ function resolveComposition(props: HeatmapProps): HeatmapResolved {
    */
   if (children === undefined) return { ...rest, showDayLabels: true, showScale: true };
   const parts = collectParts(children);
-  return {
-    ...rest,
-    showDayLabels: hasPart(parts, HeatmapDayLabelsPart),
-    showScale: hasPart(parts, HeatmapScalePart),
-  };
+  const showDayLabels = hasPart(parts, HeatmapDayLabelsPart);
+  const showScale = hasPart(parts, HeatmapScalePart);
+  // Both are in the default: without the initials the columns are unlabelled,
+  // and without the key the fill levels mean nothing.
+  warnDroppedDefaults(children === null ? '' : 'Chart.Heatmap', [
+    ...(showDayLabels ? [] : ['<Chart.Heatmap.DayLabels />']),
+    ...(showScale ? [] : ['<Chart.Heatmap.Scale />']),
+  ]);
+
+  return { ...rest, showDayLabels, showScale };
 }
 
 function HeatmapRoot(props: HeatmapProps) {

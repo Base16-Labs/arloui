@@ -51,7 +51,7 @@ import {
   type ChartDensity,
   type ChartTone,
 } from './core';
-import { allParts, collectParts, hasPart, partProps, useSkeletonPulse } from './hooks';
+import { allParts, collectParts, hasPart, partProps, useSkeletonPulse, warnDroppedDefaults } from './hooks';
 import { useReduceMotion } from './hooks';
 
 /**
@@ -741,9 +741,14 @@ function resolveComposition(props: MeterProps): MeterResolved {
   const label = partProps<MeterLabelProps>(parts, MeterLabelPart);
   const rings = allParts<MeterRingProps>(parts, MeterRingPart);
 
+  const showValue = hasPart(parts, MeterValuePart);
+  // Left unnamed the meter decides from its own geometry; a named tree forces
+  // it off, so a dial with only a `Ring` child loses the number it reports.
+  warnDroppedDefaults(children === null ? '' : 'Chart.Meter', showValue ? [] : ['<Chart.Meter.Value />']);
+
   return {
     ...rest,
-    showValue: hasPart(parts, MeterValuePart),
+    showValue,
     valueLabel: value?.value,
     label: typeof label?.children === 'string' ? label.children : undefined,
     rings: rings.length > 0 ? rings : undefined,

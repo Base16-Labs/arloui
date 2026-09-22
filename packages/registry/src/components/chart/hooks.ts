@@ -315,3 +315,43 @@ export function partProps<T>(parts: PartMap, type: unknown): T | undefined {
 export function allParts<T>(parts: PartMap, type: unknown): T[] {
   return (parts.get(type) ?? []) as T[];
 }
+
+/**
+ * Warns when a named composition has dropped part of the default.
+ *
+ * Naming one part replaces *all* of them: the tree is the whole spec, not an
+ * addition to the default. That is deliberate — it is the only way to ask for a
+ * bare mark — but it fails by subtraction and in silence. Adding
+ * `<Chart.Bar.Values />` to get amounts on the bars also takes away the
+ * category labels and the zero rule, and nothing on screen says why.
+ *
+ * So the rule stays and the silence goes. Dev only, and once per distinct
+ * message: a warning that fires every render is a warning nobody reads.
+ *
+ * Forms whose default is already bare (`Sparkline`) have nothing to drop and do
+ * not call this.
+ */
+const warnedCompositions = new Set<string>();
+
+export function warnDroppedDefaults(form: string, dropped: readonly string[]): void {
+  // Guarded rather than bare: `__DEV__` is a Metro global, and these files get
+  // copied into projects that may render them through react-native-web or an
+  // SSR pass where the global does not exist.
+  // An empty `form` is the caller saying this tree asked to be bare — `{null}`,
+  // the documented escape hatch. Warning there would scold someone for using
+  // the feature as designed.
+  const dev = typeof __DEV__ !== 'undefined' && __DEV__;
+  if (!dev || form === '' || dropped.length === 0) return;
+
+  const key = `${form}|${dropped.join(',')}`;
+  if (warnedCompositions.has(key)) return;
+  warnedCompositions.add(key);
+
+  const one = dropped.length === 1;
+  console.warn(
+    `[${form}] naming a part replaces the whole default composition, so ` +
+      `${dropped.join(' and ')} ${one ? 'is' : 'are'} no longer drawn. Name ` +
+      `${one ? 'it' : 'them'} alongside your other children to keep ` +
+      `${one ? 'it' : 'them'}, or pass {null} for a deliberately bare mark.`,
+  );
+}

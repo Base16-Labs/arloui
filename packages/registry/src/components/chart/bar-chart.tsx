@@ -44,7 +44,7 @@
  */
 import type { ReactNode } from 'react';
 import { type ChartReference } from './core';
-import { allParts, collectParts, hasPart, partProps } from './hooks';
+import { allParts, collectParts, hasPart, partProps, warnDroppedDefaults } from './hooks';
 import { ChartLoading, ChartMotion } from './hooks';
 import { HorizontalBars } from './bar-horizontal';
 import { VerticalBars } from './bar-vertical';
@@ -130,6 +130,15 @@ function resolveComposition(props: BarChartProps): BarChartResolved {
   // arrays were the thing that most wanted composing: `legend[1]` naming
   // `series[0]` because `data` was series zero is a mistake the tree cannot
   // express.
+  // Categories and the zero rule are in the default; a named tree that omits
+  // them turns them off, which is the whole point of the inversion and also the
+  // easiest way to lose them by accident.
+  // `{null}` asks for a bare mark on purpose, so it is not a drop.
+  warnDroppedDefaults(children === null ? '' : 'Chart.Bar', [
+    ...(showLabels ? [] : ['<Chart.Bar.Categories />']),
+    ...(baseline ? [] : ['<Chart.Bar.Baseline />']),
+  ]);
+
   const data = declared[0]?.data ?? rest.data ?? [];
   const series = declared.slice(1).map((d) => d.data as BarSeries);
   const names = declared.map((d, index) => d.label ?? `Series ${index + 1}`);
