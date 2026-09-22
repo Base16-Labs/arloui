@@ -20,7 +20,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Stop, Circle, Line, ClipPath, G } from 'react-native-svg';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import {
@@ -56,11 +56,8 @@ export type ChartPlotProps = {
   height?: number;
   /** Fade a gradient under the line. */
   fill?: boolean;
-  /** Turn off scrubbing for a static, decorative plot. */
   /** Straight segments (default) or a fitted spline. See `ChartCurve`. */
   curve?: ChartCurve;
-  /** Overrides the root's `chrome` for this plot. */
-  /** One reference line, or several — the min/max pair a dense series reads against. */
   /**
    * A second series, drawn dashed in the neutral hue — the baseline a projection
    * is measured against. It never takes the scrub: one series answers to the
@@ -202,14 +199,13 @@ export function ChartPlot({
   const compareValues = useMemo(() => (compare ? valuesOf(toPoints(compare)) : []), [compare]);
 
   /**
-   * The bar marks this plot was given, as plain values.
+   * The extra line marks this plot was given, in tree order, as plain values.
    *
-   * A combo chart is one scale with two kinds of mark on it. Bars measured on a
+   * A combo chart is one scale with two kinds of mark on it. Marks measured on a
    * scale of their own would sit at plausible-looking but wrong heights against
-   * the line — the failure is silent, which is why they go through the same
-   * `extrasRange` union every other extra does.
+   * the primary — the failure is silent, which is why every extra goes through
+   * the same `extrasRange` union.
    */
-  /** The extra line marks, in tree order — see `barMarks` for why they are read. */
   const lineMarks = useMemo(() => {
     const declared = allParts<ChartLineProps>(collectParts(children), ChartLinePart);
     return declared.map((mark, index) => ({
@@ -221,6 +217,7 @@ export function ChartPlot({
     }));
   }, [children]);
 
+  /** The bar marks, read the same way and onto the same scale — see `lineMarks`. */
   const barMarks = useMemo(() => {
     const declared = allParts<ChartBarsProps>(collectParts(children), ChartBarsPart);
     return declared.map((mark) => ({
@@ -829,8 +826,6 @@ export function ChartPlot({
  * what is arriving.
  */
 export const PlotShimmer = PlotPlaceholder;
-
-/** Time-range selector. Renders nothing when the chart was given no `periods`. */
 
 /**
  * The scrub crosshair — the vertical rule and the dot that follow a finger.

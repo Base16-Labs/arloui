@@ -214,7 +214,7 @@ export function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
   );
 }
 
-/**
+/* ---------------------------------------------------------------------------
  * The plot and the pieces that compose inside it.
  *
  * The `Chart` namespace — this root plus the five standalone forms — is
@@ -224,7 +224,7 @@ export function ChartPeriods({ style }: { style?: StyleProp<ViewStyle> }) {
  * *used* them, but the import graph did not know that: taking `Chart.Plot`
  * pulled in every form in the kit, and the registry had no way to offer one
  * chart without shipping all thirteen files.
- */
+ * ------------------------------------------------------------------------- */
 
 /**
  * The chart's name, above the readout.

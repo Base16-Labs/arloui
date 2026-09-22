@@ -30,7 +30,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Animated, Easing, Pressable, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useTokens } from '../../foundation/theme-provider';
@@ -55,8 +55,6 @@ export type HeatmapProps = {
   from?: string | number | Date;
   /** Grid end; defaults to the latest datum, run on to Sunday. */
   to?: string | number | Date;
-  /** Weekday initials over the columns. On by default. */
-  /** The Less–More scale under the grid. On by default. */
   /** Tapping a day. Without this the grid is one image, not forty-two buttons. */
   onSelect?: (datum: HeatmapDatum | null, date: Date) => void;
   /** Formats a day's value in its accessibility label. */

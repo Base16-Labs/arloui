@@ -54,7 +54,19 @@ export const FOUNDATION: RegistryEntry[] = [
      * back. Old-architecture projects should leave it uninstalled and take the
      * fallback path, which needs nothing.
      */
-    dependencies: ['expo-glass-effect'],
+    /*
+     * `nativeDeps`, not `dependencies`: listing it as a plain npm dependency made
+     * the CLI print `npm i expo-glass-effect` with no caveat attached, which is
+     * the one instruction that can break an old-architecture build. This prints
+     * the condition next to the package instead.
+     */
+    nativeDeps: [
+      {
+        name: 'expo-glass-effect',
+        setup:
+          'Optional, and New Architecture only. It buys you the real iOS 26 system material; without it glass falls back to a translucent overlay that needs nothing. In an app with newArchEnabled: false, autolinking it fails the iOS build outright — leave it uninstalled there.',
+      },
+    ],
     registryDependencies: ['tokens', 'theme-provider'],
     files: [{ source: 'foundation/glass.tsx', target: 'glass.tsx', type: 'utility' }],
     meta: { tags: ['foundation', 'material', 'glass', 'blur', 'ios26'] },
@@ -108,9 +120,10 @@ export const COMPONENTS: RegistryEntry[] = [
     files: [
       {
         source: 'components/animated-icon/animated-icon.tsx',
-        target: 'animated-icon.tsx',
+        target: 'animated-icon/animated-icon.tsx',
         type: 'component',
       },
+      { source: 'components/animated-icon/index.ts', target: 'animated-icon/index.ts' },
     ],
     meta: {
       tags: ['icon', 'motion', 'animated', 'state'],
@@ -529,7 +542,7 @@ export const COMPONENTS: RegistryEntry[] = [
       'A non-interactive status label with dot, count, and icon variants across five semantic tones.',
     registryDependencies: ['tokens', 'theme-provider'],
     files: [
-      { source: 'components/badge/badge.tsx', target: 'badge.tsx' },
+      { source: 'components/badge/badge.tsx', target: 'badge/badge.tsx' },
       { source: 'components/badge/index.ts', target: 'badge/index.ts' },
     ],
     meta: {
@@ -545,7 +558,7 @@ export const COMPONENTS: RegistryEntry[] = [
     dependencies: ['react-native-svg', 'expo-haptics'],
     registryDependencies: ['tokens', 'theme-provider', 'button'],
     files: [
-      { source: 'components/chip/chip.tsx', target: 'chip.tsx' },
+      { source: 'components/chip/chip.tsx', target: 'chip/chip.tsx' },
       { source: 'components/chip/index.ts', target: 'chip/index.ts' },
     ],
     meta: {

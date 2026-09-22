@@ -24,7 +24,6 @@ import {
 import { type ChartEmptyProps } from './empty';
 import { useReduceMotion, useSkeletonPulse } from './hooks';
 
-/** A bar needs a name, so `label` is required here even though `ChartPoint`'s is not. */
 /**
  * What the renderers take: the public props plus everything the parts resolve
  * to. Presence lives in the tree now, so these are no longer anyone's to pass —
@@ -40,6 +39,7 @@ export type BarChartResolved = Omit<BarChartProps, 'data'> & {
   showLabels?: boolean;
 };
 
+/** A bar needs a name, so `label` is required here even though `ChartPoint`'s is not. */
 export type BarDatum = ChartPoint & {
   label: string;
   /** Overrides the resolved colour for this bar alone. Single-series only. */

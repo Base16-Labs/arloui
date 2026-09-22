@@ -41,7 +41,14 @@ import { BAR_ENTER_STAGGER } from './motion';
 
 const MotionEnabled = createContext(true);
 
-/** A local opt-out never overrides the device's accessibility preference. */
+/**
+ * Mirrors the user's Reduce Motion setting. A local opt-out never overrides the
+ * device's accessibility preference.
+ *
+ * Charts consult this for entrances and for the period morph. They deliberately
+ * do **not** consult it for scrub: that is direct manipulation, and a crosshair
+ * that stopped following the finger would read as broken rather than as calm.
+ */
 export function useReduceMotion(): boolean {
   const system = useSystemReduceMotion();
   const enabled = useContext(MotionEnabled);
@@ -217,14 +224,6 @@ export function useControllableIndex(
   );
   return [value ?? null, set];
 }
-
-/**
- * Mirrors the user's Reduce Motion setting.
- *
- * Charts consult this for entrances and for the period morph. They deliberately
- * do **not** consult it for scrub: that is direct manipulation, and a crosshair
- * that stopped following the finger would read as broken rather than as calm.
- */
 
 /** One restrained opacity pulse; reduced motion uses a static placeholder. */
 export function useSkeletonPulse(

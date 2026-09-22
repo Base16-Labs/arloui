@@ -27,8 +27,8 @@
  *
  * Deliberate choices:
  *
- * - **No axis furniture.** No ticks, no gridlines, no axis labels — `chrome` has
- *   no `axis` member and will not get one. The value readout is the label, and it
+ * - **No axis furniture.** No ticks, no gridlines, no axis labels — there is no
+ *   `Chart.Axis` part and there will not be one. The value readout is the label, and it
  *   updates as you scrub. A chart at this size answers "shape and direction", not
  *   "what exactly was Tuesday".
  * - **Direction, not identity.** One series, so no legend and no categorical
@@ -89,8 +89,31 @@ export type ChartProps = {
   /** The series, oldest first. Bare numbers, or points carrying a time and a label. */
   data: ChartData;
   /**
-   * Omit for the documented composition: value, delta, plot, periods. Name the
-   * parts when you need a different order, or only some of them.
+   * Omit for the documented composition: value, delta, plot, periods.
+   *
+   * **Naming any part replaces all of them.** The tree is the whole spec, not an
+   * addition to the default — `<Chart data={d}><Chart.Plot /></Chart>` is a plot
+   * with no value readout and no period selector, because neither was named. The
+   * same inversion applies inside `Chart.Plot` (baseline, crosshair, reference)
+   * and to every other form in the namespace.
+   *
+   * So to keep the defaults *and* add something, spell the defaults out:
+   *
+   *   <Chart data={d}>
+   *     <Chart.Value />
+   *     <Chart.Delta />
+   *     <Chart.Plot><Chart.Baseline /><Chart.Crosshair /></Chart.Plot>
+   *     <Chart.Periods />
+   *   </Chart>
+   *
+   * `{null}` is a deliberate empty tree — the bare mark, nothing around it.
+   *
+   * The plot's furniture is named the same way, inside `<Chart.Plot>`: the dashed
+   * baseline is `<Chart.Baseline />`, the scrub crosshair is
+   * `<Chart.Crosshair />`, and reference lines are one or more
+   * `<Chart.Reference value={n} label="…" />` — one line, or the min/max pair a
+   * dense series reads against. None of these is a prop, and there is no band
+   * system.
    */
   children?: ReactNode;
   /**
@@ -103,10 +126,6 @@ export type ChartProps = {
   baseline?: number;
   /** Stroke, dot, and label weight. `'compact'` drops labels for inline use. */
   density?: ChartDensity;
-  /**
-   * The labelled line(s) drawn when `chrome="reference"` — one line, or several
-   * for the min/max pair a dense series reads against. Not a band system.
-   */
   /** Formats every value in the subtree — readout, delta, reference label. */
   format?: (value: number) => string;
   /** Formats a point's `at` for `Chart.Value`, so the readout can say *when*. */

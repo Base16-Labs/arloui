@@ -15,7 +15,7 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import { densityMetrics, seriesColorAt, toneColor } from './core';

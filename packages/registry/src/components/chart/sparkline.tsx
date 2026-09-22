@@ -62,19 +62,6 @@ export type SparklineProps = {
   width?: number;
   /** Fixed height in points. Small by default: this is an inline mark. */
   height?: number;
-  /** Fade a gradient under the line. Off by default — inline marks stay light. */
-  /** Dot on the final point, for "where it ended up". */
-  /**
-   * Label the series' own high and low in the margins above and below the mark.
-   *
-   * These are the *data's* extremes, not an axis: two numbers the series
-   * actually reached, which is the same thing `chrome="reference"` draws as a
-   * min/max pair on `Chart.Plot`. There is still no scale, no ticks, and no
-   * gridlines — the rule the chart core sets out holds.
-   *
-   * Reserves a row top and bottom, so the mark shrinks rather than running under
-   * the text.
-   */
   /** Formats the extreme labels. Raw values when omitted. */
   format?: (value: number) => string;
   /**
@@ -375,7 +362,17 @@ function SparklineEndDotPart(): ReactNode {
   return null;
 }
 
-/** Dots on the highest and lowest points, with their values. */
+/**
+ * Labels the series' own high and low in the margins above and below the mark.
+ *
+ * These are the *data's* extremes, not an axis: two numbers the series actually
+ * reached, which is what `Chart.Reference` draws as a min/max pair on
+ * `Chart.Plot`. There is still no scale, no ticks, and no gridlines — the rule
+ * the chart core sets out holds.
+ *
+ * Reserves a row top and bottom, so the mark shrinks rather than running under
+ * the text.
+ */
 function SparklineExtremesPart(): ReactNode {
   return null;
 }

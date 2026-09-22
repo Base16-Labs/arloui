@@ -16,7 +16,7 @@ import {
   type LayoutChangeEvent,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { rgbaFromHex } from '@arloui/tokens';
+import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import { barPath, densityMetrics, seriesColorAt, toneColor } from './core';

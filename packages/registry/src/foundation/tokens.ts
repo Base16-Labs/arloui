@@ -578,3 +578,24 @@ export const themes = {
 
 export type ThemeName = keyof typeof themes;
 export type Theme = (typeof themes)[ThemeName];
+
+/**
+ * Convert `#RRGGBB` to `rgba(r,g,b,a)`.
+ *
+ * Mirrors `rgbaFromHex` in `@arloui/tokens`, and lives here for the same reason
+ * every value in this file does: what the CLI copies into a consumer project has
+ * to stand on its own. Chart marks reach for it to fade a series colour — a
+ * dimmed bar, a gradient stop, a heatmap cell — none of which can hardcode an
+ * `rgba()` string when the hue comes from a token.
+ *
+ * Components must import it from here (`../../foundation/tokens`) rather than
+ * from `@arloui/tokens`: that package is a workspace dependency of this repo,
+ * not of the app the files are copied into.
+ */
+export function rgbaFromHex(hex: string, alpha: number): string {
+  const n = hex.replace('#', '');
+  const r = Number.parseInt(n.slice(0, 2), 16);
+  const g = Number.parseInt(n.slice(2, 4), 16);
+  const b = Number.parseInt(n.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
