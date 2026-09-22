@@ -26,15 +26,10 @@ import { type ChartEmptyProps } from './empty';
 import { useReduceMotion, useSkeletonPulse } from './hooks';
 
 /**
- * Reference-pill padding, and the label size inside it.
- *
- * The pill always reads at the compact label size whatever the chart's density
- * is — it is an annotation clinging to the plot edge, not a category label that
- * should grow with the mark. The padding is this file's own: the three readout
- * pills in the kit sit at 10, 9 and 8, which is drift rather than intent, so it
- * is named here rather than unified under the reader's feet.
+ * The reference pill always reads at the compact label size, whatever the
+ * chart's density is — it is an annotation clinging to the plot edge, not a
+ * category label that should grow with the mark.
  */
-const REFERENCE_PILL_PADDING_X = 10;
 const COMPACT_LABEL_SIZE = 10;
 
 /**
@@ -304,7 +299,7 @@ export function ReferenceLine({ y, width, label }: { y: number; width: number; l
           top: y - 9,
           backgroundColor: t.colors.feedbackInfoBg,
           borderRadius: chartChrome.pillRadius,
-          paddingHorizontal: REFERENCE_PILL_PADDING_X,
+          paddingHorizontal: t.spacing[2],
           paddingVertical: chartChrome.pillPaddingY,
         }}
       >

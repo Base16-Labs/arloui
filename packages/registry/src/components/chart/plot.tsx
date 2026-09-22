@@ -121,15 +121,6 @@ export type ChartPlotProps = {
 
 
 /**
- * Horizontal padding on the scrub tooltip.
- *
- * This file's own: the three readout pills in the kit sit at 10, 9 and 8pt,
- * which is drift rather than intent. Named here so it is visible and cheap to
- * reconcile, rather than unified under the reader's feet.
- */
-const SCRUB_PILL_PADDING_X = 9;
-
-/**
  * The mark itself — the line, and whatever else is named inside it.
  *
  * Its children are what gets drawn in the box: `Line` and `Bars` for extra
@@ -778,7 +769,7 @@ export function ChartPlot({
             transform: [{ translateX: '-50%' }],
             backgroundColor: t.colors.surfaceInverse,
             borderRadius: chartChrome.pillRadius,
-            paddingHorizontal: SCRUB_PILL_PADDING_X,
+            paddingHorizontal: t.spacing[2],
             paddingVertical: t.spacing[1],
           }}
         >

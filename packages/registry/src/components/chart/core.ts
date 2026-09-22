@@ -186,12 +186,21 @@ export function densityMetrics(density: ChartDensity): DensityMetrics {
  * and there should not be: those sizes exist only because a readout pill and a
  * legend key are small chrome sitting beside a mark, not surfaces in their own
  * right. What they must not be is scattered — the same pill was written three
- * times in three files, and its horizontal padding had already drifted to 8, 9
- * and 10. Naming them here is what stops that.
+ * times in three files, and its horizontal padding had drifted to 8, 9 and 10
+ * before anyone noticed. Naming them here is what stops that.
+ *
+ * Horizontal padding is deliberately *not* here: every pill takes `spacing[2]`,
+ * because a real token said the same thing. What stays is the handful of sizes
+ * the app scale has no answer for.
  */
 export const chartChrome = {
-  /** Readout pill: the scrub tooltip and the bar value chip. */
+  /** Readout pill: the scrub tooltip and the reference chip. */
   pillRadius: 6,
+  /**
+   * Vertical padding on a reference chip. The scrub tooltip runs roomier at
+   * `spacing[1]` — it is the readout a finger is driving, not an annotation
+   * pinned to a rule.
+   */
   pillPaddingY: 2,
   /** A small colour swatch — legend key, heatmap cell, skeleton block. */
   swatchRadius: 3,
