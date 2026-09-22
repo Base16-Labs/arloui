@@ -34,8 +34,11 @@
       "kind": "foundation",
       "title": "Liquid Glass",
       "description": "Decides what a glass surface is made of and resolves the material tokens into a fill, border, blur strength, and tint. On iOS 26 it hands the surface to the real system material via `expo-glass-effect` (which requires the New Architecture); everywhere else — and in any app without it — it renders a translucent overlay over a host blur layer. `GlassBackdrop` paints the whole surface, including a component's own colour as the material's tint and the press response that deepens it, so a glass control keeps its tone rather than going colourless. Pulled in by components that support `surface=\"glass\"`.",
-      "dependencies": [
-        "expo-glass-effect"
+      "nativeDeps": [
+        {
+          "name": "expo-glass-effect",
+          "setup": "Optional, and New Architecture only. It buys you the real iOS 26 system material; without it glass falls back to a translucent overlay that needs nothing. In an app with newArchEnabled: false, autolinking it fails the iOS build outright — leave it uninstalled there."
+        }
       ],
       "registryDependencies": [
         "tokens",

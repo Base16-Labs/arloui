@@ -37,9 +37,7 @@
         "tokens",
         "theme-provider"
       ],
-      "dependencies": [
-        "expo-glass-effect"
-      ],
+      "dependencies": [],
       "tags": [
         "foundation",
         "material",
