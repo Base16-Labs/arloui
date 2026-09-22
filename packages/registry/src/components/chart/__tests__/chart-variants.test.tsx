@@ -76,7 +76,7 @@ describe('BarChart', () => {
         data={[{ label: 'A', value: -20 }, { label: 'B', value: 40 }]}
         onSelect={() => {}}
       >
-        <BarChart.Values />
+        <BarChart.Amounts />
         <BarChart.Categories />
       </BarChart>,
     );
@@ -124,7 +124,7 @@ describe('BarChart', () => {
   it('still shows every value when asked explicitly', () => {
     renderWithTheme(
       <BarChart data={week} format={money} onSelect={() => {}}>
-        <BarChart.Values />
+        <BarChart.Amounts />
         <BarChart.Categories />
       </BarChart>,
     );
@@ -194,7 +194,7 @@ describe('BarChart', () => {
  * `layout="horizontal"` used to take only `data`, so every other prop was
  * silently dropped the moment it was set: a grouped chart collapsed to its first
  * series, negatives rendered as empty tracks, and `tone`, `legend`, `chrome`,
- * `showValues`, and `showLabels` did nothing at all. A prop a component accepts
+ * `showAmounts`, and `showLabels` did nothing at all. A prop a component accepts
  * and ignores is worse than one it rejects — there is no error, just a control
  * that does not work. These pin that the two layouts answer the same props.
  */
@@ -324,7 +324,7 @@ describe('BarChart — horizontal answers the same props as vertical', () => {
     // Composition inverts the default: an unnamed part is an absent one.
     rerender(
       <BarChart data={week} layout="horizontal">
-        <BarChart.Values />
+        <BarChart.Amounts />
       </BarChart>,
     );
     expect(screen.queryByText('M')).toBeNull();
@@ -991,7 +991,7 @@ describe('BarChart — spacing, density, and empty', () => {
   it('draws no row labels when the part is not named', () => {
     renderWithTheme(
       <BarChart data={week} layout="horizontal" density="compact">
-        <BarChart.Values />
+        <BarChart.Amounts />
       </BarChart>,
     );
     expect(screen.queryByText('M')).toBeNull();
@@ -1717,7 +1717,7 @@ it('centres the value label over the bar at every spacing', () => {
 
   for (const spacing of ['tight', 'default', 'loose'] as const) {
     const r = renderWithTheme(
-      <BarChart data={week} spacing={spacing} showValues format={(v) => `$${v}`} />,
+      <BarChart data={week} spacing={spacing} showAmounts format={(v) => `$${v}`} />,
     );
     const node = screen.UNSAFE_root
       .findAllByType('View' as never)

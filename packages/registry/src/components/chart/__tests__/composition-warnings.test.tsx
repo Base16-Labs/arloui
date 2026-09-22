@@ -1,7 +1,7 @@
 /**
  * Naming a part replaces the whole default composition. That stays — it is the
  * only way to ask for a bare mark — but it used to fail by subtraction and in
- * silence: adding `<Chart.Bar.Values />` to put amounts on the bars also took
+ * silence: adding `<Chart.Bar.Amounts />` to put amounts on the bars also took
  * away the category labels and the zero rule, with nothing on screen to say so.
  *
  * These tests pin the warning that replaced the silence, and, just as
@@ -34,7 +34,7 @@ describe('dropped default parts warn in dev', () => {
   it('names what a partial BarChart tree turned off', () => {
     renderWithTheme(
       <BarChart data={BARS}>
-        <BarChart.Values />
+        <BarChart.Amounts />
       </BarChart>,
     );
     expect(said('<Chart.Bar.Categories />')).toBe(true);
@@ -44,7 +44,7 @@ describe('dropped default parts warn in dev', () => {
   it('says nothing when the tree names the defaults back', () => {
     renderWithTheme(
       <BarChart data={BARS}>
-        <BarChart.Values />
+        <BarChart.Amounts />
         <BarChart.Categories />
         <BarChart.Baseline />
       </BarChart>,

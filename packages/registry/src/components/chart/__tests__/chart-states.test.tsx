@@ -282,13 +282,13 @@ describe('BarChart — loading', () => {
    */
   it('shows no value labels over the silhouette', async () => {
     const { rerender } = renderWithTheme(
-      <BarChart data={week} showValues format={money} loading />,
+      <BarChart data={week} showAmounts format={money} loading />,
     );
     layout();
     expect(screen.queryByText('$30.00')).toBeNull();
     expect(screen.queryByText('$44.00')).toBeNull();
 
-    rerender(<BarChart data={week} showValues format={money} />);
+    rerender(<BarChart data={week} showAmounts format={money} />);
     layout();
     await waitFor(() => expect(screen.getByText('$30.00')).toBeTruthy());
   });

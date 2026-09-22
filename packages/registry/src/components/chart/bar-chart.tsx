@@ -75,8 +75,16 @@ function BarReferencePart(_: BarReferenceProps): ReactNode {
   return null;
 }
 
-/** Prints each bar's value above it. Without it, only the selected bar shows a figure. */
-function BarValuesPart(): ReactNode {
+/**
+ * Prints each bar's figure above it. Without it, only the selected bar shows one.
+ *
+ * Named `Amounts` rather than `Values` because `Value` means something else
+ * everywhere else in the namespace — the *one* readout for a whole chart, as on
+ * `Chart`, `Donut` and `Meter`. Two names a letter apart for "the single
+ * readout" and "a label on every mark" is a trap, and `Chart.Bar.Value` does not
+ * exist to catch you.
+ */
+function BarAmountsPart(): ReactNode {
   return null;
 }
 
@@ -121,7 +129,7 @@ function resolveComposition(props: BarChartProps): BarChartResolved {
   const parts = collectParts(children);
   const declared = allParts<BarSeriesProps>(parts, BarSeriesPart);
   const reference = partProps<ChartReference>(parts, BarReferencePart);
-  const showValues = hasPart(parts, BarValuesPart);
+  const showAmounts = hasPart(parts, BarAmountsPart);
   const showLabels = hasPart(parts, BarCategoriesPart);
   const baseline = hasPart(parts, BarBaselinePart);
   const legendOn = hasPart(parts, BarLegendPart);
@@ -148,7 +156,7 @@ function resolveComposition(props: BarChartProps): BarChartResolved {
     data,
     series,
     legend: legendOn && names.length > 0 ? names : undefined,
-    showValues,
+    showAmounts,
     showLabels,
     // `reference` adds to the zero rule rather than replacing it, exactly as the
     // enum did — naming a reference line does not silently drop the baseline.
@@ -169,10 +177,12 @@ function BarChartRoot(props: BarChartProps) {
   </ChartMotion>;
 }
 
-/** The parts, for `Chart.Bar.Values` and friends. */
+/** The parts, for `Chart.Bar.Amounts` and friends. */
 export const BarChartParts = {
   Series: BarSeriesPart,
-  Values: BarValuesPart,
+  Amounts: BarAmountsPart,
+  /** @deprecated Renamed to `Amounts`; this alias is the same part and still works. */
+  Values: BarAmountsPart,
   Categories: BarCategoriesPart,
   Baseline: BarBaselinePart,
   Reference: BarReferencePart,

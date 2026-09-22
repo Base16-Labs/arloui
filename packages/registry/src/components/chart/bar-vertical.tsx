@@ -51,7 +51,7 @@ export function VerticalBars({
   activeIndex: activeIndexProp,
   defaultActiveIndex = null,
   onSelect,
-  showValues = false,
+  showAmounts = false,
   showLabels = true,
   format,
   maxValue,
@@ -154,7 +154,7 @@ export function VerticalBars({
    * under the baseline, and its label — clamped to the top of the box — lands
    * inside the bar.
    */
-  const canShowValues = showValues || onSelect != null || activeIndexProp !== undefined;
+  const canShowValues = showAmounts || onSelect != null || activeIndexProp !== undefined;
   const reserved = canShowValues && plotHeight > VALUE_HEIGHT ? VALUE_HEIGHT : 0;
   const drawHeight = plotHeight - reserved;
 
@@ -480,7 +480,7 @@ export function VerticalBars({
             charts label the one bar; multi-series charts label the category total. */}
         {/*
           Never while loading. These used to render regardless, so a chart with
-          `showValues` painted real figures over the grey silhouette — and
+          `showAmounts` painted real figures over the grey silhouette — and
           positioned them by `yFor(bar.value)`, the *loaded* geometry, while the
           bars underneath used the fixed skeleton profile. Numbers floating at
           heights nothing on screen agreed with. Same rule as `Chart.Value`: a
@@ -488,7 +488,7 @@ export function VerticalBars({
         */}
         {loading ? null : seriesCount === 1
           ? bars.map((bar, index) => {
-              if (!(showValues || selection === index)) return null;
+              if (!(showAmounts || selection === index)) return null;
               const valueY = yFor(bar.value);
               return (
                 <View
@@ -523,7 +523,7 @@ export function VerticalBars({
               );
             })
           : bars.map((bar, index) => {
-              if (!(showValues || selection === index)) return null;
+              if (!(showAmounts || selection === index)) return null;
               return (
                 <View
                   key={`value-${bar.label}-${index}`}

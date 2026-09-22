@@ -43,7 +43,7 @@ export type BarChartResolved = Omit<BarChartProps, 'data'> & {
   legend?: readonly string[];
   chrome?: ChartChrome;
   reference?: ChartReference;
-  showValues?: boolean;
+  showAmounts?: boolean;
   showLabels?: boolean;
 };
 
@@ -168,7 +168,7 @@ export type BarChartProps = {
   style?: StyleProp<ViewStyle>;
   /**
    * The composed form. Each part's presence in the tree is the switch —
-   * `<BarChart.Values />` rather than `showValues`, `<BarChart.Baseline />`
+   * `<BarChart.Amounts />` rather than `showValues`, `<BarChart.Baseline />`
    * rather than `chrome="baseline"`. See `resolveComposition`.
    *
    * Omit it and the chart renders exactly as it always has.

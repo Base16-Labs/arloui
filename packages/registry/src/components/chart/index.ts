@@ -8,6 +8,34 @@
  * population pyramid, scatter, and 3-D are consumer-owned — so the scale and the
  * path builders the six are drawn with are public. A seventh form written against
  * them measures the same way these do.
+ *
+ * ## The parts
+ *
+ * Every form composes through children rather than boolean props. This is the
+ * whole list, because it is otherwise spread across seven files and you are
+ * reading the copy in your own project:
+ *
+ * | Form               | Parts                                                     |
+ * | ------------------ | --------------------------------------------------------- |
+ * | `Chart`            | Value, Delta, Plot, Periods, Title, Legend, Empty          |
+ * | `Chart.Plot`       | Baseline, Crosshair, Reference, Line, Bars                 |
+ * | `Chart.Bar`        | Series, Amounts, Categories, Baseline, Reference, Legend   |
+ * | `Chart.Donut`      | Value, Label, Legend                                       |
+ * | `Chart.Meter`      | Value, Label, Ring                                         |
+ * | `Chart.Heatmap`    | DayLabels, Scale                                           |
+ * | `Chart.Sparkline`  | EndDot, Extremes, Fill                                     |
+ *
+ * `Value` means the same thing wherever it appears — *the* readout, one figure
+ * for the whole chart. A label on every mark is `Amounts` on a bar chart,
+ * `Categories` for the names beneath them, `DayLabels` on a heatmap: different
+ * words because they are different things, not the same thing spelled three ways.
+ *
+ * **Naming any part replaces the whole default composition.** The tree is the
+ * spec, not an addition to it, which is the only way to ask for a bare mark —
+ * so `<Chart.Bar><Chart.Bar.Amounts /></Chart.Bar>` is a chart with amounts and
+ * *nothing else*, no category labels and no zero rule. Spell the defaults out
+ * alongside whatever you are adding, or pass `{null}` for a deliberately bare
+ * mark. In dev the forms say which parts a tree turned off.
  */
 // The plot half is already assembled in `chart.tsx`, so a standalone
 // `chart-plot` install gets the same `Chart` the examples use. This adds the
