@@ -65,7 +65,7 @@ const COLUMN_GAP = 10;
  *
  * **It answers the same props as the vertical path.** It used to take only
  * `data`, so `tone`, `series`, `variant`, `legend`, `chrome`, `reference`,
- * `showValues`, and `showLabels` were silently dropped the moment
+ * `showAmounts`, and `showLabels` were silently dropped the moment
  * `layout="horizontal"` was set — every one of those controls looked live and did
  * nothing, and a grouped or stacked chart quietly collapsed to its first series.
  * A prop that a component accepts and ignores is worse than one it does not
@@ -86,7 +86,7 @@ export function HorizontalBars({
   spacing = 'default',
   chrome = 'baseline',
   reference,
-  showValues = false,
+  showAmounts = false,
   showLabels = true,
   emptyLabel = 'No data',
   empty,
@@ -364,7 +364,7 @@ export function HorizontalBars({
             // the vertical path: off unless asked for, and always on for the row
             // being read. The column keeps its width either way so toggling
             // values never reflows the track.
-            const valueShown = showValues || selected;
+            const valueShown = showAmounts || selected;
 
             let stackedFrom = 0;
 

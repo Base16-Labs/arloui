@@ -286,6 +286,16 @@ export function partsOf(file: string, objectName: string, prefix: string): PartD
     const [, name, fn] = match;
     if (!name || !fn) continue;
     /*
+     * A renamed part keeps its old name as an alias onto the same function, so
+     * both spellings resolve and nothing a consumer already wrote breaks. The
+     * reference should only carry the name we want people to reach for, and the
+     * marker sits on the property rather than the function — the two names share
+     * one function and would otherwise be indistinguishable here.
+     */
+    if (/@deprecated/.test(block.slice(0, match.index ?? 0).split('\n').slice(-3).join('\n'))) {
+      continue;
+    }
+    /*
      * The namespace is assembled from several files — the plot's parts live in
      * `plot`, the readouts in `readouts`, the legend in `legend` — so a part is
      * looked up wherever it is declared rather than only beside its object.

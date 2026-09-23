@@ -360,7 +360,7 @@ describe('bar value labels clear the bar', () => {
   const VALUE_HEIGHT = 16; // reserved strip
 
   function render(props: Partial<Parameters<typeof BarChart>[0]> = {}) {
-    renderWithTheme(<BarChart data={week} showValues height={HEIGHT} {...props} />);
+    renderWithTheme(<BarChart data={week} showAmounts height={HEIGHT} {...props} />);
     fireEvent(screen.getByRole('image'), 'layout', {
       nativeEvent: { layout: { width: 240, height: HEIGHT, x: 0, y: 0 } },
     });

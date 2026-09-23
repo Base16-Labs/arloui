@@ -21,6 +21,50 @@ describe('TabBar', () => {
     expect(onValueChange).toHaveBeenCalledWith('search');
   });
 
+  /**
+   * A floating bar is a pill with air around it, so the safe-area inset has to
+   * lift it. It used to pad it instead: on a 34pt inset the pill grew to 98pt
+   * while the row of icons stayed 64pt at the top, which put them 17pt above the
+   * middle of the shape they sit in and dropped the bar's bottom edge flush onto
+   * the screen edge. A full-width bar is the opposite case and still pads, so
+   * its fill reaches the edge while its content clears the home indicator.
+   */
+  describe('bottomInset', () => {
+    const flatten = (style: unknown): Record<string, unknown> =>
+      Object.assign({}, ...[style].flat(Infinity).filter(Boolean) as object[]);
+
+    const barStyle = (width: 'floating' | 'full') => {
+      renderWithTheme(
+        <TabBar value="a" onValueChange={() => {}} width={width} showLabels bottomInset={34}>
+          <TabBar.Item value="a" label="A" />
+          <TabBar.Item value="b" label="B" />
+        </TabBar>,
+      );
+      // The bar is the ancestor that carries the inset; the tabs live inside it.
+      const tab = screen.getByRole('tab', { name: 'A' });
+      let node: typeof tab | null = tab;
+      while (node) {
+        const style = flatten(node.props?.style);
+        if (style.minHeight != null && style.borderRadius != null) return style;
+        node = node.parent;
+      }
+      throw new Error('bar node not found');
+    };
+
+    it('lifts a floating bar rather than padding it', () => {
+      const style = barStyle('floating');
+      expect(style.minHeight).toBe(64); // the row's own height, not 64 + 34
+      expect(style.paddingBottom).toBe(0);
+      expect(style.marginBottom).toBe(34);
+    });
+
+    it('still pads a full-width bar, which sits on the screen edge', () => {
+      const style = barStyle('full');
+      expect(style.minHeight).toBe(64 + 34);
+      expect(style.paddingBottom).toBe(34);
+    });
+  });
+
   it('supports labels, badges, and disabled items', () => {
     renderWithTheme(
       <TabBar value="inbox" onValueChange={() => {}} showLabels surface="transparent">

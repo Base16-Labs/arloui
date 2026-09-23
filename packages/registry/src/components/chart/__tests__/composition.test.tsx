@@ -54,6 +54,31 @@ function layout(width = 300, height = 160) {
   fireEvent(node as never, 'layout', { nativeEvent: { layout: { width, height, x: 0, y: 0 } } });
 }
 
+/**
+ * `Values` was renamed to `Amounts` so that `Value` means one thing across the
+ * namespace — the single readout, as on Chart, Donut and Meter. The old name is
+ * kept as an alias pointing at the same part, so a tree written against it keeps
+ * working; anyone re-adding the component gets the clearer name.
+ */
+describe('Chart.Bar.Amounts', () => {
+  it('is the same part as the deprecated Values alias', () => {
+    expect(BarChart.Amounts).toBe(BarChart.Values);
+  });
+
+  it('prints each bar figure under either name', () => {
+    for (const Part of [BarChart.Amounts, BarChart.Values]) {
+      const view = renderWithTheme(
+        <BarChart data={[{ label: 'Mon', value: 3 }]}>
+          <Part />
+          <BarChart.Categories />
+        </BarChart>,
+      );
+      expect(screen.getByText('3')).toBeTruthy();
+      view.unmount();
+    }
+  });
+});
+
 describe('the composed form', () => {
   it.each(['vertical', 'horizontal'] as const)('keeps partially named series aligned in %s bars', (direction) => {
     renderWithTheme(
@@ -118,7 +143,7 @@ describe('the composed form', () => {
 
   it('matches the prop form for values, labels and the zero rule', () => {
     const propForm = renderWithTheme(
-      <BarChart data={SPEND} format={money} showValues showLabels chrome="baseline" />,
+      <BarChart data={SPEND} format={money} showAmounts showLabels chrome="baseline" />,
     );
     layout();
     const fromProps = textOf();
@@ -126,7 +151,7 @@ describe('the composed form', () => {
 
     renderWithTheme(
       <BarChart data={SPEND} format={money}>
-        <BarChart.Values />
+        <BarChart.Amounts />
         <BarChart.Categories />
         <BarChart.Baseline />
       </BarChart>,
@@ -181,7 +206,7 @@ describe('the composed form', () => {
     screen.unmount?.();
     renderWithTheme(
       <BarChart data={SPEND} format={money}>
-        <BarChart.Values />
+        <BarChart.Amounts />
       </BarChart>,
     );
     layout();

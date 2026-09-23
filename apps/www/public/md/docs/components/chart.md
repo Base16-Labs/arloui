@@ -209,8 +209,7 @@ For Line chart, place Value, Delta, and Periods inside LineChart. Place referenc
 | Part | Takes | What it draws |
 | --- | --- | --- |
 | `<Chart.Bar.Series />` | `data` `label` | One series. The first declares the categories; the rest ride on them. |
-| `<Chart.Bar.Values />` | — | Prints each bar's value above it. Without it, only the selected bar shows a figure. |
-| `<Chart.Bar.Categories />` | — | The category names — under the bars, or beside the rows when `layout="horizontal"`. |
+| `<Chart.Bar.Amounts />` | — | Prints each bar's figure above it. Without it, only the selected bar shows one. |
 | `<Chart.Bar.Baseline />` | — | The zero rule. Drawn only when the data crosses zero — an all-positive chart has its zero at the axis already. |
 | `<Chart.Bar.Reference />` | `value` `label` | A labelled dashed line at a value you name — a target, a budget, an average. Adds to the zero rule rather than replacing it. |
 | `<Chart.Bar.Legend />` | — | The series legend. Unnamed series use their position, such as Series 1. |
