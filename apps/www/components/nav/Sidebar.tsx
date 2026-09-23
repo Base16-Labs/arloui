@@ -101,10 +101,10 @@ export function Sidebar() {
         {/* Divider */}
         <hr className="mx-2 my-[18px] border-line" />
 
-        {/* Contextual sub-navigation */}
+        {/* Contextual sub-navigation. No heading of its own: the section is
+            already selected directly above, so naming it again is noise. */}
         {chartActive && (
           <SidebarGroup
-            title="Chart"
             items={[{ label: 'Overview', slug: 'chart' }, ...chartFormRoutes]}
             basePath="/docs/components"
             pathname={pathname}
@@ -113,12 +113,14 @@ export function Sidebar() {
 
         {pathname.startsWith('/docs/components') && !chartActive && (
           <>
-            <div className="mb-2 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
-              Components
-            </div>
-            {componentGroups.map((group) => (
+            {componentGroups.map((group, index) => (
               <div key={group.label}>
-                <div className="mt-3.5 mb-2 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
+                <div
+                  className={cn(
+                    'mb-2 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3',
+                    index > 0 && 'mt-3.5',
+                  )}
+                >
                   {group.label}
                 </div>
                 {group.items.map((item) => (
@@ -137,7 +139,6 @@ export function Sidebar() {
 
         {pathname.startsWith('/docs/getting-started') && (
           <SidebarGroup
-            title="Getting started"
             items={gettingStartedItems}
             basePath="/docs/getting-started"
             pathname={pathname}
@@ -146,7 +147,6 @@ export function Sidebar() {
 
         {pathname.startsWith('/docs/primitives') && (
           <SidebarGroup
-            title="Foundations"
             items={primitiveItems}
             basePath="/docs/primitives"
             pathname={pathname}
@@ -155,7 +155,6 @@ export function Sidebar() {
 
         {pathname.startsWith('/docs/archetypes') && (
           <SidebarGroup
-            title="Archetypes"
             items={archetypeItems}
             basePath="/docs/archetypes"
             pathname={pathname}
@@ -165,7 +164,6 @@ export function Sidebar() {
 
         {pathname.startsWith('/docs/design') && (
           <SidebarGroup
-            title="Design"
             items={designItems}
             basePath="/docs/design"
             pathname={pathname}
@@ -174,7 +172,6 @@ export function Sidebar() {
 
         {pathname.startsWith('/docs/agents') && (
           <SidebarGroup
-            title="Agents"
             items={agentItems}
             basePath="/docs/agents"
             pathname={pathname}
@@ -214,13 +211,11 @@ function SidebarLink({ href, label, active }: { href: string; label: string; act
 }
 
 function SidebarGroup({
-  title,
   items,
   basePath,
   pathname,
   anchor = false,
 }: {
-  title: string;
   items: readonly { label: string; slug: string }[];
   basePath: string;
   pathname: string;
@@ -229,9 +224,6 @@ function SidebarGroup({
 }) {
   return (
     <>
-      <div className="mb-2 px-2 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
-        {title}
-      </div>
       {items.map((item) => (
         <SidebarLink
           key={item.slug}
