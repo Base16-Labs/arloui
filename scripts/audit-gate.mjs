@@ -44,10 +44,40 @@ const vulns = JSON.parse(raw).vulnerabilities ?? {};
 const blocking = [];
 const ignored = [];
 
+/** Whether `from` reaches `target` by following `via` package names. */
+function reaches(from, target, seen = new Set()) {
+  if (seen.has(from)) return false;
+  seen.add(from);
+  return (vulns[from]?.via ?? []).some(
+    (dep) => typeof dep === 'string' && (dep === target || reaches(dep, target, seen)),
+  );
+}
+
+/**
+ * npm marks a package `fixAvailable: true` when it sits in a dependency cycle
+ * with an unfixable one — metro and metro-transform-worker require each other,
+ * and metro is vulnerable in every version — although `npm audit fix` changes
+ * nothing. So a package flagged only *through* other packages, every one of
+ * them unfixable and depending back on it, is treated as unfixable too.
+ *
+ * Deliberately narrow: without the cycle, `fixAvailable: true` is trusted, since
+ * a patch can drop the vulnerable dependency outright (@expo/metro-file-map
+ * 57.0.4 stopped depending on the unfixable micromatch).
+ */
+function isFixable(name) {
+  const info = vulns[name];
+  if (!hasSafeFix(info.fixAvailable)) return false;
+  const viaPackagesOnly = info.via.every((v) => typeof v === 'string');
+  const onlyThroughUnfixableCycle =
+    viaPackagesOnly &&
+    info.via.every((dep) => !hasSafeFix(vulns[dep]?.fixAvailable) && reaches(dep, name));
+  return !onlyThroughUnfixableCycle;
+}
+
 for (const [name, info] of Object.entries(vulns)) {
   if (info.severity !== 'high' && info.severity !== 'critical') continue;
   const label = `${info.severity} · ${name} (${info.range})`;
-  (hasSafeFix(info.fixAvailable) ? blocking : ignored).push(label);
+  (isFixable(name) ? blocking : ignored).push(label);
 }
 
 // Everything goes to one stream. Splitting the report across stdout/stderr let
