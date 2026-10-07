@@ -414,6 +414,12 @@ export function GlassBackdrop({
       return (
         <View pointerEvents="none" style={StyleSheet.absoluteFill}>
           <GlassView
+            // The native view does not pick up a new `colorScheme` or `tintColor`
+            // once mounted — measured on iOS 26: after a theme switch a lens kept
+            // its light material in dark mode, under white text. Keying on both
+            // rebuilds it when either changes (a theme switch, a tone change),
+            // never on a press, which rides on the overlay below instead.
+            key={`${t.name}:${tintColor ?? 'none'}`}
             glassEffectStyle={MATERIAL_GLASS_STYLE[resolved]}
             colorScheme={t.name === 'dark' ? 'dark' : 'light'}
             isInteractive={interactive}
