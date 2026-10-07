@@ -21,7 +21,7 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type TabValue = 'home' | 'search' | 'activity' | 'profile';
 
-const WIDTHS: TabBarWidth[] = ['full', 'floating'];
+const WIDTHS: TabBarWidth[] = ['full', 'floating', 'fit'];
 const SURFACES: TabBarSurface[] = ['filled', 'glass'];
 const BEHAVIORS: TabBarScrollBehavior[] = ['hide', 'shrink', 'fixed'];
 const SELECTIONS: TabBarSelectionMotion[] = ['snap', 'jelly'];
@@ -170,7 +170,7 @@ export default function TabBarCanvas() {
                 style={{
                   position: 'absolute',
                   right: 0,
-                  bottom: width === 'floating' ? 14 : 0,
+                  bottom: width === 'full' ? 0 : 14,
                   left: 0,
                   zIndex: 8,
                 }}

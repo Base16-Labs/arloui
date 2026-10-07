@@ -676,7 +676,7 @@ function TabBarDocPage() {
           <div className="rounded-xl border border-line bg-canvas p-6 sm:p-8">
             <div className="mx-auto max-w-[420px]">
               {[
-                ['Container', 'full or floating'],
+                ['Container', 'full, floating, or fit'],
                 ['Surface', 'filled or Liquid Glass'],
                 ['Item', 'icon and optional label'],
                 ['Indicator', 'floating pill, snap or jelly motion'],
@@ -701,6 +701,10 @@ function TabBarDocPage() {
               Use three to five destinations that remain available across the main app experience.
             </li>
             <li>Use floating when content should remain visible around the navigation surface.</li>
+            <li>
+              Use fit for two or three destinations: the floating pill sized to its tabs, so they
+              sit together instead of spreading across the screen.
+            </li>
             <li>Use scroll-aware hiding only on immersive, vertically scrolling screens.</li>
           </ul>
         </Section>
