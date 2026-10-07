@@ -8,6 +8,7 @@
  */
 import { build } from 'esbuild';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Snack } from 'snack-sdk';
@@ -17,6 +18,11 @@ const REPO = join(HERE, '..', '..', '..');
 const DOCS = join(REPO, 'apps/docs');
 const TMP = join(HERE, '..', '.tmp');
 const SNACK_MAP = join(REPO, 'apps/www/lib/snack-map.json');
+/**
+ * The SDK the Snacks run on. It has to be the SDK the App Store's Expo Go runs:
+ * Expo Go on iOS only ever carries the latest SDK, and iPhone users can't install
+ * an older one, so a Snack on an older SDK simply won't open from the QR code.
+ */
 const SDK_VERSION = '57.0.0';
 
 mkdirSync(TMP, { recursive: true });
@@ -70,28 +76,79 @@ const PROVIDED = new Set(['react', 'react-native', 'react-dom']);
 const NODE_MODULES = [join(DOCS, 'node_modules'), join(REPO, 'node_modules')];
 
 /**
- * The SDK's recommended version range for every module Expo Go ships with.
- * Snack's editor lints each dependency against this exact map and warns
- * ("'expo-font@14.0.11' is not the recommended version for SDK 57.0.0") on any
- * other string — including a concrete version that satisfies the range.
+ * The recommended version range for every module Expo Go ships with, for the SDK
+ * the Snacks are PUBLISHED on — not the SDK installed here. Snack's editor lints
+ * each dependency against this exact map, and the runtime only carries these
+ * native modules, so a version from any other SDK either warns or crashes.
+ *
+ * It used to be read from the installed `expo`, which silently went wrong the
+ * moment the playground moved ahead of the Snack SDK: a run with SDK 57 installed
+ * published SDK 54 Snacks with SDK 57 native versions (Reanimated 4.5 on a 4.1
+ * runtime, glass-effect 57 on 0.1). snack-sdk only accepts up to SDK 54, so the
+ * playground and the Snacks can legitimately differ — the published SDK's own
+ * list is the only correct source. A fetch failure stops the run rather than
+ * falling back to the installed list.
  */
-const bundledNativeModules = (() => {
-  for (const base of NODE_MODULES) {
+const SDK_MAJOR = SDK_VERSION.split('.')[0];
+const bundledNativeModules = await (async () => {
+  const sources = [
+    `https://cdn.jsdelivr.net/npm/expo@${SDK_MAJOR}/bundledNativeModules.json`,
+    `https://unpkg.com/expo@${SDK_MAJOR}/bundledNativeModules.json`,
+  ];
+  for (const url of sources) {
     try {
-      return JSON.parse(readFileSync(join(base, 'expo/bundledNativeModules.json'), 'utf8'));
+      const res = await fetch(url);
+      if (res.ok) return await res.json();
     } catch {
-      // try the next location
+      // try the next source
     }
   }
-  console.warn('! expo/bundledNativeModules.json not found — Snacks may warn about dep versions');
-  return {};
+  throw new Error(
+    `Could not fetch SDK ${SDK_MAJOR}'s bundledNativeModules.json — refusing to publish Snacks ` +
+      'with guessed native versions.',
+  );
 })();
 
-// The recommendations above only match the editor's if the installed SDK is the
-// one we publish against.
+/**
+ * snack-sdk validates `sdkVersion` against a list baked into the library, and it
+ * lags Expo: 6.6.2 (the latest) stops at 54 while Expo's servers and Expo Go are
+ * on 57. When the library doesn't know the SDK yet, register it at run time —
+ * modelled on the newest entry it has, with this SDK's own core versions — so the
+ * Snacks can target what phones actually run. Once snack-sdk ships the SDK, its
+ * own entry is used and this does nothing.
+ */
+{
+  const require = createRequire(import.meta.url);
+  const sdks = createRequire(require.resolve('snack-sdk'))('snack-content/build/sdks').default;
+  if (!sdks[SDK_VERSION]) {
+    const known = Object.keys(sdks).sort((a, b) => Number(a.split('.')[0]) - Number(b.split('.')[0]));
+    const base = sdks[known.at(-1)];
+    const expoPkg = await fetch(`https://cdn.jsdelivr.net/npm/expo@${SDK_MAJOR}/package.json`).then((r) => {
+      if (!r.ok) throw new Error(`Could not fetch expo@${SDK_MAJOR}'s package.json`);
+      return r.json();
+    });
+    sdks[SDK_VERSION] = {
+      ...base,
+      version: `^${SDK_VERSION}`,
+      coreModules: {
+        ...base.coreModules,
+        expo: `~${expoPkg.version}`,
+        react: bundledNativeModules.react,
+        'react-dom': bundledNativeModules['react-dom'],
+        'react-native': bundledNativeModules['react-native'],
+      },
+      bundledModules: { ...base.bundledModules },
+      deprecatedModules: {},
+    };
+    console.log(`· snack-sdk knows SDKs up to ${known.at(-1)}; registered ${SDK_VERSION} (expo ${expoPkg.version})`);
+  }
+}
+
 const installedSdk = resolveInstalledVersion('expo');
-if (installedSdk && installedSdk.split('.')[0] !== SDK_VERSION.split('.')[0]) {
-  console.warn(`! installed expo ${installedSdk} != SDK_VERSION ${SDK_VERSION} — bump SDK_VERSION`);
+if (installedSdk && installedSdk.split('.')[0] !== SDK_MAJOR) {
+  console.log(
+    `· playground runs expo ${installedSdk}; Snacks publish on SDK ${SDK_VERSION} with that SDK's native versions`,
+  );
 }
 
 function resolveInstalledVersion(pkg) {
