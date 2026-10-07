@@ -54,6 +54,7 @@ export {
   seriesStats,
   toPoints,
   toneColor,
+  ChartEntranceGate,
   useControllableIndex,
   valuesOf,
   type BarChartProps,
