@@ -479,7 +479,8 @@ export function arcLength(radius: number, sweep: number): number {
  * photo, or glass. A cut hole is a hole on all of them.
  *
  * Angles are radians clockwise from 12 o'clock, which is where a part-to-whole
- * ring is read from.
+ * ring is read from. `cornerRadius` fillets the four corners of a slice; leave
+ * it off for a radial cut.
  */
 export function annulusPath({
   cx,
@@ -488,6 +489,7 @@ export function annulusPath({
   innerRadius,
   startAngle,
   endAngle,
+  cornerRadius = 0,
 }: {
   cx: number;
   cy: number;
@@ -495,6 +497,12 @@ export function annulusPath({
   innerRadius: number;
   startAngle: number;
   endAngle: number;
+  /**
+   * Fillet on the four corners of a slice. Zero (the default) is a radial cut.
+   * A few points — the same order as a bar's data-end — is a softened join, not
+   * a pill cap the thickness of the ring.
+   */
+  cornerRadius?: number;
 }): string {
   const sweep = endAngle - startAngle;
   if (sweep <= 0 || outerRadius <= 0) return '';
@@ -531,15 +539,75 @@ export function annulusPath({
       'Z',
     ].join(' ');
   }
-  const iEnd = at(innerRadius, endAngle);
-  const iStart = at(innerRadius, startAngle);
+
+  const cr = clampAnnulusCornerRadius(cornerRadius, outerRadius, innerRadius, sweep);
+  if (cr <= 0) {
+    const iEnd = at(innerRadius, endAngle);
+    const iStart = at(innerRadius, startAngle);
+    return [
+      `M${f(oStart.x)},${f(oStart.y)}`,
+      `A${f(outerRadius)},${f(outerRadius)} 0 ${largeArc} 1 ${f(oEnd.x)},${f(oEnd.y)}`,
+      `L${f(iEnd.x)},${f(iEnd.y)}`,
+      `A${f(innerRadius)},${f(innerRadius)} 0 ${largeArc} 0 ${f(iStart.x)},${f(iStart.y)}`,
+      'Z',
+    ].join(' ');
+  }
+
+  /*
+   * Four circular fillets, each internally tangent to one ring and one radial.
+   * The fillet radius is a few points — enough to take the knife-edge off the
+   * cut, not enough to read as a round-capped stroke.
+   */
+  const outerDelta = Math.asin(cr / (outerRadius - cr));
+  const innerDelta = Math.asin(cr / (innerRadius + cr));
+  const outerTanR = (outerRadius - cr) * Math.cos(outerDelta);
+  const innerTanR = (innerRadius + cr) * Math.cos(innerDelta);
+
+  const outerArcStart = at(outerRadius, startAngle + outerDelta);
+  const outerArcEnd = at(outerRadius, endAngle - outerDelta);
+  const endOuterJoin = at(outerTanR, endAngle);
+  const endInnerJoin = at(innerTanR, endAngle);
+  const innerArcEnd = at(innerRadius, endAngle - innerDelta);
+  const innerArcStart = at(innerRadius, startAngle + innerDelta);
+  const startInnerJoin = at(innerTanR, startAngle);
+  const startOuterJoin = at(outerTanR, startAngle);
+
   return [
-    `M${f(oStart.x)},${f(oStart.y)}`,
-    `A${f(outerRadius)},${f(outerRadius)} 0 ${largeArc} 1 ${f(oEnd.x)},${f(oEnd.y)}`,
-    `L${f(iEnd.x)},${f(iEnd.y)}`,
-    `A${f(innerRadius)},${f(innerRadius)} 0 ${largeArc} 0 ${f(iStart.x)},${f(iStart.y)}`,
+    `M${f(outerArcStart.x)},${f(outerArcStart.y)}`,
+    `A${f(outerRadius)},${f(outerRadius)} 0 ${largeArc} 1 ${f(outerArcEnd.x)},${f(outerArcEnd.y)}`,
+    `A${f(cr)},${f(cr)} 0 0 1 ${f(endOuterJoin.x)},${f(endOuterJoin.y)}`,
+    `L${f(endInnerJoin.x)},${f(endInnerJoin.y)}`,
+    `A${f(cr)},${f(cr)} 0 0 1 ${f(innerArcEnd.x)},${f(innerArcEnd.y)}`,
+    `A${f(innerRadius)},${f(innerRadius)} 0 ${largeArc} 0 ${f(innerArcStart.x)},${f(innerArcStart.y)}`,
+    `A${f(cr)},${f(cr)} 0 0 1 ${f(startInnerJoin.x)},${f(startInnerJoin.y)}`,
+    `L${f(startOuterJoin.x)},${f(startOuterJoin.y)}`,
+    `A${f(cr)},${f(cr)} 0 0 1 ${f(outerArcStart.x)},${f(outerArcStart.y)}`,
     'Z',
   ].join(' ');
+}
+
+/** Shrink a requested fillet until it fits the ring thickness and the slice's sweep. */
+function clampAnnulusCornerRadius(
+  cornerRadius: number,
+  outerRadius: number,
+  innerRadius: number,
+  sweep: number,
+): number {
+  if (cornerRadius <= 0) return 0;
+  let cr = Math.min(cornerRadius, (outerRadius - innerRadius) / 2, innerRadius);
+  for (let i = 0; i < 8 && cr > 0.5; i += 1) {
+    const outerSpan = outerRadius - cr;
+    const innerSpan = innerRadius + cr;
+    if (outerSpan <= 0 || innerSpan <= 0) {
+      cr *= 0.5;
+      continue;
+    }
+    const outerDelta = Math.asin(Math.min(1, cr / outerSpan));
+    const innerDelta = Math.asin(Math.min(1, cr / innerSpan));
+    if (outerDelta * 2 < sweep - 1e-4 && innerDelta * 2 < sweep - 1e-4) return cr;
+    cr *= 0.5;
+  }
+  return 0;
 }
 
 /* ----------------------------------------------------------------- morph --- */

@@ -194,6 +194,37 @@ describe('annulusPath', () => {
       annulusPath({ cx: 0, cy: 0, outerRadius: 10, innerRadius: 5, startAngle: 1, endAngle: 1 }),
     ).toBe('');
   });
+
+  it('fillets the four corners when a corner radius is given', () => {
+    const d = annulusPath({
+      cx: 50,
+      cy: 50,
+      outerRadius: 50,
+      innerRadius: 30,
+      startAngle: 0,
+      endAngle: Math.PI / 2,
+      cornerRadius: 4,
+    });
+    // Outer + inner + four fillets. A round-capped stroke would not produce this.
+    expect(d.match(/A/g)).toHaveLength(6);
+    expect(d).toContain('A4.00,4.00');
+    expect(d).toContain('A50.00,50.00');
+    expect(d).toContain('A30.00,30.00');
+  });
+
+  it('falls back to a radial cut when the fillet cannot fit the sweep', () => {
+    const d = annulusPath({
+      cx: 0,
+      cy: 0,
+      outerRadius: 10,
+      innerRadius: 5,
+      startAngle: 0,
+      endAngle: 0.02,
+      cornerRadius: 4,
+    });
+    expect(d.match(/A/g)).toHaveLength(2);
+    expect(d).not.toContain('A4.00,4.00');
+  });
 });
 
 describe('resample', () => {
