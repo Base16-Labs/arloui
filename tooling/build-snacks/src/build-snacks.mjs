@@ -17,7 +17,7 @@ const REPO = join(HERE, '..', '..', '..');
 const DOCS = join(REPO, 'apps/docs');
 const TMP = join(HERE, '..', '.tmp');
 const SNACK_MAP = join(REPO, 'apps/www/lib/snack-map.json');
-const SDK_VERSION = '54.0.0';
+const SDK_VERSION = '57.0.0';
 
 mkdirSync(TMP, { recursive: true });
 
@@ -28,6 +28,10 @@ const SCREENS = {
   input: 'input', list: 'list', radio: 'radio', sheet: 'sheet',
   skeleton: 'skeleton', spinner: 'spinner', stepper: 'stepper', 'tab-bar': 'tab-bar',
   tabs: 'tabs', textarea: 'text-area', toast: 'toast', toggle: 'toggle',
+  // Chart is a folder of screens — an overview plus one per form — and each docs
+  // page asks for its own route (apps/www/lib/chart-forms.ts).
+  'chart/index': 'chart', 'chart/bar': 'chart/bar', 'chart/sparkline': 'chart/sparkline',
+  'chart/donut': 'chart/donut', 'chart/meter': 'chart/meter', 'chart/heatmap': 'chart/heatmap',
 };
 
 // A single Snack has no file-based routing, so stub expo-router.
@@ -68,7 +72,7 @@ const NODE_MODULES = [join(DOCS, 'node_modules'), join(REPO, 'node_modules')];
 /**
  * The SDK's recommended version range for every module Expo Go ships with.
  * Snack's editor lints each dependency against this exact map and warns
- * ("'expo-font@14.0.11' is not the recommended version for SDK 54.0.0") on any
+ * ("'expo-font@14.0.11' is not the recommended version for SDK 57.0.0") on any
  * other string — including a concrete version that satisfies the range.
  */
 const bundledNativeModules = (() => {
@@ -117,7 +121,8 @@ function resolveVersion(pkg) {
 async function bundleScreen(screen) {
   // Entry wraps the real screen in the providers the app root supplies — and
   // loads the same Manrope / Space Mono fonts so text matches the playground.
-  const entryPath = join(TMP, `_entry_${screen}.tsx`);
+  // Nested screens (chart/bar) would otherwise name a directory that doesn't exist.
+  const entryPath = join(TMP, `_entry_${screen.replaceAll('/', '_')}.tsx`);
   writeFileSync(
     entryPath,
     `import * as React from 'react';
