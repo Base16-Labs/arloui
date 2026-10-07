@@ -294,12 +294,89 @@ describe('Tabs surface="glass"', () => {
   });
 
   /**
-   * Same as the bar: the track has no tone of its own to keep. `surfaceStrong`
-   * is the well we are replacing, not a colour that should survive as a tint.
+   * The track has no brand tone to keep — `surfaceStrong` is the well we are
+   * replacing, not a colour that should survive. It does take the theme's own
+   * ground as a neutral tint, so light content passing behind a dark-mode track
+   * cannot wash it pale under light labels.
    */
-  it('takes no tint, because the track has no colour of its own to keep', () => {
+  it('takes only a neutral tint of the theme ground, never a tone', () => {
     glassEffect.__setLiquidGlassAvailable(true);
-    renderWithTheme(control('glass'));
-    expect(screen.getByTestId('native-glass-view').props.tintColor).toBeUndefined();
+    renderWithTheme(control('glass'), { theme: 'dark' });
+    expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(
+      withAlpha(themes.dark.colors.surfaceBackground, materials.glassSmall.tintOpacity),
+    );
+  });
+
+  /** The thumb only exists once the track has a width to divide. */
+  function measure() {
+    fireEvent(screen.getByLabelText('Content tabs'), 'layout', {
+      nativeEvent: { layout: { width: 240, height: 44, x: 0, y: 0 } },
+    });
+  }
+
+  /**
+   * The selection is glass on glass, one step heavier than the track — the way
+   * the iOS 26 segmented control raises its lens — rather than an opaque slab
+   * that blanks out the material exactly where the eye goes.
+   */
+  it('makes the thumb a heavier lens of the same material in dark mode', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(control('glass'), { theme: 'dark' });
+    measure();
+    const styles = screen.getAllByTestId('native-glass-view').map((view) => view.props.glassEffectStyle);
+    expect(styles).toEqual(['clear', 'regular']);
+  });
+
+  it('paints a brighter translucent thumb, not a solid one, in the fallback', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    const { toJSON } = renderWithTheme(control('glass'), { theme: 'dark' });
+    measure();
+    const painted = fills(toJSON());
+    expect(painted).toContain(withAlpha(themes.dark.colors.textPrimary, 0.14));
+    expect(painted).not.toContain(themes.dark.colors.borderStrong);
+  });
+
+  /**
+   * Over glass the backdrop's brightness is unknown — a dark-mode label can land
+   * on pale glass. The label carries its own contrast: primary ink, not the
+   * faint secondary grey, plus a soft halo in the opposite tone.
+   */
+  it('gives labels on a glass track a stronger ink and an opposite-tone halo', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(control('glass'), { theme: 'dark' });
+    measure();
+    const label = StyleSheet.flatten(screen.getByText('Two').props.style);
+    expect(label.color).toBe(withAlpha(themes.dark.colors.textPrimary, 0.78));
+    expect(label.textShadowColor).toBe(withAlpha(themes.dark.colors.surfaceBackground, 0.9));
+    expect(label.textShadowRadius).toBeGreaterThan(0);
+  });
+
+  it('leaves labels on a filled track as they were', () => {
+    renderWithTheme(control('filled'), { theme: 'dark' });
+    measure();
+    const label = StyleSheet.flatten(screen.getByText('Two').props.style);
+    expect(label.color).toBe(themes.dark.colors.textSecondary);
+    expect(label.textShadowRadius).toBeUndefined();
+  });
+
+  /**
+   * In light mode a translucent lens over white can't be told from the track, so
+   * the selection is the iOS 26 light-mode platter: white, with a real lift.
+   */
+  it('uses a lifted white platter, not a lens, in light mode', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    const { toJSON } = renderWithTheme(control('glass'), { theme: 'light' });
+    measure();
+    // Only the track is glass; the thumb is the platter.
+    expect(screen.getAllByTestId('native-glass-view')).toHaveLength(1);
+    expect(JSON.stringify(toJSON())).toContain('"shadowOpacity":0.14');
+  });
+
+  it('keeps the solid thumb on a filled track', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    const { toJSON } = renderWithTheme(control('filled'), { theme: 'dark' });
+    measure();
+    expect(screen.queryByTestId('native-glass-view')).toBeNull();
+    expect(fills(toJSON())).toContain(themes.dark.colors.borderStrong);
   });
 });
