@@ -1173,12 +1173,14 @@ describe('DonutChart', () => {
 
   it('rounds slice ends when edges are curve', () => {
     renderWithTheme(<DonutChart animated={false} data={spend} edges="curve" />);
-    const caps = screen.UNSAFE_getAllByType(Path).filter(
-      (n) =>
-        (n.props as { strokeLinecap?: string; strokeLineCap?: string }).strokeLinecap === 'round' ||
-        (n.props as { strokeLineCap?: string }).strokeLineCap === 'round',
-    );
-    expect(caps).toHaveLength(spend.length);
+    const paths = screen.UNSAFE_root
+      .findAllByType('RNSVGPath' as never)
+      .map((n) => n.props as { d?: string; strokeLinecap?: string; fill?: string })
+      .filter((p) => (p.d ?? '').includes('A') && p.fill != null && p.fill !== 'none');
+    expect(paths).toHaveLength(spend.length);
+    expect(paths.every((p) => p.strokeLinecap == null)).toBe(true);
+    // Four fillets plus the outer and inner arcs — not a round-capped stroke.
+    expect((paths[0]?.d?.match(/A/g) ?? []).length).toBe(6);
   });
 
   it('cuts slices radially by default', () => {

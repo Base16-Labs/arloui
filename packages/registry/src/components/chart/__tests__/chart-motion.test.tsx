@@ -4,13 +4,15 @@ import { Circle, G, Path, Rect } from 'react-native-svg';
 import * as Reanimated from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
 import { ChartBarGrow, ChartFill, ChartReveal, ChartSweep, BAR_ENTER_STAGGER } from '../motion';
-import { Chart } from '../index';
+import { Chart, ChartEntranceGate } from '../index';
 import { act, fireEvent, renderWithTheme, screen } from '../../../../test/render';
 import { __setReduceMotionForTests } from '../../../foundation/reduce-motion';
 
 const slices = [{ label: 'One', value: 60 }, { label: 'Two', value: 40 }];
 const paths = () => screen.UNSAFE_getAllByType(Path).map((node) => node.props.d);
 const settle = () => act(() => { jest.advanceTimersByTime(1000); });
+/** Entrances wait for one painted frame after mount (two rAFs) before starting. */
+const paint = () => act(() => { jest.advanceTimersByTime(40); });
 
 beforeEach(() => {
   jest.useFakeTimers();
@@ -25,6 +27,8 @@ it('draws the donut to the same final geometry as motion off, without replaying 
   const timing = jest.spyOn(Reanimated, 'withTiming');
   const view = renderWithTheme(<Chart.Donut data={slices} />);
   const initial = paths();
+  expect(timing).not.toHaveBeenCalled();
+  paint();
   expect(timing).toHaveBeenCalledWith(1, expect.objectContaining({ duration: 400 }));
   timing.mockClear();
   view.rerender(<Chart.Donut data={slices} activeIndex={0} />);
@@ -43,8 +47,10 @@ it('restarts the donut entrance when loading finishes and when explicitly remoun
   view.rerender(<Chart.Donut data={slices} />);
   expect(timing).not.toHaveBeenCalled();
   settle();
+  paint();
   expect(timing).toHaveBeenCalledTimes(1);
   view.rerender(<Chart.Donut key="replay" data={slices} />);
+  paint();
   expect(timing).toHaveBeenCalledTimes(2);
   timing.mockRestore();
 });
@@ -55,6 +61,7 @@ it('finishes immediately when motion is disabled mid-sweep', () => {
   const view = renderWithTheme(<Chart.Donut data={slices} animated={false} />);
   expect(timing).not.toHaveBeenCalled();
   view.rerender(<Chart.Donut data={slices} animated />);
+  paint();
   expect(timing).toHaveBeenCalledTimes(1);
   cancel.mockClear();
   act(() => __setReduceMotionForTests(true));
@@ -80,12 +87,40 @@ it.each([0, 0.5, 1])('maps progress %s to continuous SVG masks and supporting fi
 
 it('retargets a meter from its displayed value without resetting to zero', () => {
   const view = renderWithTheme(<Chart.Meter value={53} />);
+  paint();
   settle();
   expect(screen.getByText('53%')).toBeTruthy();
   view.rerender(<Chart.Meter value={75} />);
   expect(screen.getByText('53%')).toBeTruthy();
   settle();
   expect(screen.getByText('75%')).toBeTruthy();
+});
+
+it('holds an entrance behind a closed gate and plays it when the gate opens', () => {
+  const timing = jest.spyOn(Reanimated, 'withTiming');
+  const view = renderWithTheme(
+    <ChartEntranceGate ready={false}><Chart.Donut data={slices} /></ChartEntranceGate>,
+  );
+  paint();
+  expect(timing).not.toHaveBeenCalled();
+  view.rerender(<ChartEntranceGate ready><Chart.Donut data={slices} /></ChartEntranceGate>);
+  paint();
+  expect(timing).toHaveBeenCalledTimes(1);
+  timing.mockRestore();
+});
+
+it('does not track the sweep when the meter shows a fixed label', () => {
+  const listen = jest.spyOn(Animated.Value.prototype, 'addListener');
+  renderWithTheme(
+    <Chart.Meter value={53}>
+      <Chart.Meter.Value value="12.5%" />
+    </Chart.Meter>,
+  );
+  paint();
+  settle();
+  expect(listen).not.toHaveBeenCalled();
+  expect(screen.getByText('12.5%')).toBeTruthy();
+  listen.mockRestore();
 });
 
 it('does not run a skeleton pulse for a loaded meter', () => {
@@ -103,6 +138,7 @@ it.each(['line', 'sparkline'])('reveals %s only after measurement and renders fu
   const view = renderWithTheme(chart(true));
   expect(timing).not.toHaveBeenCalled();
   fireEvent(screen.getByRole('image'), 'layout', { nativeEvent: { layout: { width: 200, height: 180, x: 0, y: 0 } } });
+  paint();
   expect(timing).toHaveBeenCalledWith(1, expect.objectContaining({ duration: 400 }));
   view.rerender(chart(false));
   expect(screen.UNSAFE_getAllByType(Rect)[0].props.width).toBe(200);
@@ -116,6 +152,7 @@ it('grows vertical bars from the baseline, staggered, after measurement', () => 
   fireEvent(screen.getByRole('image'), 'layout', {
     nativeEvent: { layout: { width: 200, height: 160, x: 0, y: 0 } },
   });
+  paint();
   expect(timing).toHaveBeenCalledWith(
     1,
     expect.objectContaining({ duration: 400 + BAR_ENTER_STAGGER * 2 }),
@@ -135,6 +172,7 @@ it('staggers heatmap weeks on first paint', () => {
       to="2026-03-15"
     />,
   );
+  paint();
   act(() => { jest.advanceTimersByTime(BAR_ENTER_STAGGER); });
   expect(timing).toHaveBeenCalledTimes(2);
   expect(timing).toHaveBeenCalledWith(

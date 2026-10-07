@@ -101,7 +101,7 @@ export {
   type Scale,
   type SeriesStats,
 } from './core';
-export { useControllableIndex, useReduceMotion } from './hooks';
+export { ChartEntranceGate, useControllableIndex, useReduceMotion } from './hooks';
 export { formatMoney, formatNumber, formatPercent } from './format';
 export { type SparklineProps } from './sparkline';
 export {

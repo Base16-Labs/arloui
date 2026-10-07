@@ -52,7 +52,7 @@ import {
   type ChartTone,
 } from './core';
 import { allParts, collectParts, hasPart, partProps, useSkeletonPulse, warnDroppedDefaults } from './hooks';
-import { useReduceMotion } from './hooks';
+import { useEntranceStart, useReduceMotion } from './hooks';
 
 /**
  * Created once at module scope. Building it inside render returns a new component
@@ -276,6 +276,7 @@ function ExtraRing({
   partial,
   loading,
   reduceMotion,
+  start,
   duration,
 }: {
   ring: MeterRing;
@@ -291,6 +292,8 @@ function ExtraRing({
   partial: boolean;
   loading: boolean;
   reduceMotion: boolean;
+  /** False until the gate opens and a frame has painted — the ring waits at empty. */
+  start: boolean;
   duration: number;
 }) {
   const t = useTokens();
@@ -307,7 +310,7 @@ function ExtraRing({
       return;
     }
     const animation = Animated.timing(progress, {
-      toValue: fraction,
+      toValue: start ? fraction : 0,
       duration,
       easing: Easing.out(Easing.cubic),
       // Stroke offset is not a transform, so this cannot go native.
@@ -315,7 +318,7 @@ function ExtraRing({
     });
     animation.start();
     return () => animation.stop();
-  }, [fraction, progress, reduceMotion, duration, partial]);
+  }, [fraction, progress, reduceMotion, start, duration, partial]);
 
   return (
     <Sweep
@@ -367,7 +370,18 @@ function MeterInner({
   /** A smaller dial takes a smaller figure — 20pt in an 88pt ring reads oversized. */
   const readoutType = density === 'compact' ? t.typography.title3 : t.typography.title2;
   const reduceMotion = useReduceMotion();
+  const start = useEntranceStart(true);
   const [progress] = useState(() => new Animated.Value(0));
+  /**
+   * The bar fill slides in on the native driver (a transform), so it never waits
+   * on the JS thread — which is busy exactly when the value is changing, e.g. on
+   * every keystroke of an input that feeds it. A ring or arc animates a stroke
+   * offset, which cannot go native. Both read one value, so the driver is fixed
+   * per shape; the shape is the remount key (see the export below).
+   */
+  const native = shape === 'bar';
+  /** Track width in px — the fill's travel. Zero until the first layout. */
+  const [trackWidth, setTrackWidth] = useState(0);
 
   const range = max - min;
   // The fill stays empty while loading — a meter that sweeps to a real number
@@ -383,7 +397,12 @@ function MeterInner({
    * the final number for one frame before the sweep yanked it back to zero.
    */
   const [shownFraction, setShownFraction] = useState(0);
-
+  /**
+   * Only an automatic percentage counts up. A caller's own label (`valueLabel`,
+   * or a `Meter.Value` with a `value`) is fixed text, so tracking the sweep for
+   * it would re-render the meter every frame to paint the same string.
+   */
+  const counting = valueLabel == null;
 
   useEffect(() => {
     if (reduceMotion) {
@@ -394,24 +413,26 @@ function MeterInner({
     }
     // The readout is driven off the same value as the fill, so the number and the
     // shape can never disagree part-way through the sweep.
-    const id = progress.addListener(({ value }) => setShownFraction(Math.round(value * 100) / 100));
+    const target = start ? fraction : 0;
+    const id = counting
+      ? progress.addListener(({ value }) => setShownFraction(Math.round(value * 100) / 100))
+      : null;
     // Retarget from the current fill instead of restarting at zero on every update.
     const animation = Animated.timing(progress, {
-      toValue: fraction,
+      toValue: target,
       duration: t.motion.duration.slow,
       easing: Easing.out(Easing.cubic),
-      // Width and stroke offset are layout properties, so this can't go native.
-      useNativeDriver: false,
+      useNativeDriver: native,
     });
     animation.start(({ finished }) => {
       // Land exactly on the target: the last listener frame is close, not equal.
-      if (finished) setShownFraction(fraction);
+      if (finished && counting) setShownFraction(target);
     });
     return () => {
       animation.stop();
-      progress.removeListener(id);
+      if (id != null) progress.removeListener(id);
     };
-  }, [fraction, progress, reduceMotion, shape, t.motion.duration.slow]);
+  }, [fraction, progress, reduceMotion, start, counting, native, shape, t.motion.duration.slow]);
 
   // Thresholds move the meter onto the reserved status palette; without them it
   // stays on the requested tone.
@@ -529,6 +550,7 @@ function MeterInner({
               partial={partial}
               loading={loading}
               reduceMotion={reduceMotion}
+              start={start}
               duration={t.motion.duration.slow}
             />
           ))}
@@ -658,6 +680,7 @@ function MeterInner({
         </View>
       ) : null}
       <Animated.View
+        onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
         style={{
           height: meterThickness,
           borderRadius: t.radii.full,
@@ -666,15 +689,28 @@ function MeterInner({
           opacity: trackOpacity,
         }}
       >
+        {/*
+         * A full-width pill slid in from the left, not a width that grows: a
+         * translate is a transform, so it runs on the native driver, and the
+         * fill's leading edge keeps its round cap the whole way instead of being
+         * squashed the way a scaleX would. Hidden until the track is measured,
+         * or its first frame would paint full.
+         */}
         <Animated.View
           style={{
             height: '100%',
+            width: '100%',
             borderRadius: t.radii.full,
             backgroundColor: color,
-            width: progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['0%', '100%'],
-            }),
+            opacity: trackWidth > 0 ? 1 : 0,
+            transform: [
+              {
+                translateX: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-trackWidth, 0],
+                }),
+              },
+            ],
           }}
         />
       </Animated.View>
@@ -756,7 +792,7 @@ function resolveComposition(props: MeterProps): MeterResolved {
 }
 
 function MeterRoot(props: MeterProps) {
-  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <MeterInner {...resolveComposition(props)} loading={loading} />}</ChartLoading></ChartMotion>;
+  return <ChartMotion animated={props.animated}><ChartLoading loading={props.loading} refreshing={props.refreshing}>{(loading) => <MeterInner key={props.shape ?? 'bar'} {...resolveComposition(props)} loading={loading} />}</ChartLoading></ChartMotion>;
 }
 
 /** The parts, for `Chart.Meter.Value` and friends. */

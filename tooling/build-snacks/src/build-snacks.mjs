@@ -17,6 +17,11 @@ const REPO = join(HERE, '..', '..', '..');
 const DOCS = join(REPO, 'apps/docs');
 const TMP = join(HERE, '..', '.tmp');
 const SNACK_MAP = join(REPO, 'apps/www/lib/snack-map.json');
+/**
+ * The SDK the Snacks are published on. It is deliberately independent of the
+ * playground's own Expo SDK (apps/docs), which tracks the latest Expo Go for
+ * local testing — snack-sdk and the Snack editor only support up to 54.
+ */
 const SDK_VERSION = '54.0.0';
 
 mkdirSync(TMP, { recursive: true });
@@ -28,6 +33,10 @@ const SCREENS = {
   input: 'input', list: 'list', radio: 'radio', sheet: 'sheet',
   skeleton: 'skeleton', spinner: 'spinner', stepper: 'stepper', 'tab-bar': 'tab-bar',
   tabs: 'tabs', textarea: 'text-area', toast: 'toast', toggle: 'toggle',
+  // Chart is a folder of screens — an overview plus one per form — and each docs
+  // page asks for its own route (apps/www/lib/chart-forms.ts).
+  'chart/index': 'chart', 'chart/bar': 'chart/bar', 'chart/sparkline': 'chart/sparkline',
+  'chart/donut': 'chart/donut', 'chart/meter': 'chart/meter', 'chart/heatmap': 'chart/heatmap',
 };
 
 // A single Snack has no file-based routing, so stub expo-router.
@@ -44,7 +53,19 @@ export const Link = ({ children }) => children ?? null;
 export const Redirect = Null;
 export const router = { back: noop, push: noop, replace: noop, navigate: noop, dismiss: noop, setParams: noop, canGoBack: () => false };
 export const useRouter = () => router;
-export const useNavigation = () => ({ setOptions: noop, navigate: noop, goBack: noop });
+// One stable object (screens key effects on it). A Snack has no navigator, so the
+// screen has already "arrived": fire transitionEnd once listeners are attached,
+// which is what the chart screens wait for before starting their entrance.
+const navigation = {
+  setOptions: noop, navigate: noop, goBack: noop,
+  isFocused: () => true,
+  addListener: (event, callback) => {
+    if (event !== 'transitionEnd') return noop;
+    const id = setTimeout(callback, 0);
+    return () => clearTimeout(id);
+  },
+};
+export const useNavigation = () => navigation;
 export const useLocalSearchParams = () => ({});
 export const useGlobalSearchParams = () => ({});
 export const usePathname = () => '/';
@@ -58,6 +79,21 @@ export const useFocusEffect = noop;
 const reactShimPath = join(TMP, '_react-shim.js');
 writeFileSync(reactShimPath, `import * as React from 'react';\nexport { React };\n`);
 
+// Prebuilt packages (@arloui/icons' dist) were compiled with the automatic
+// runtime and import "react/jsx-runtime" themselves — map it onto createElement.
+const jsxRuntimeShimPath = join(TMP, '_jsx-runtime-shim.js');
+writeFileSync(
+  jsxRuntimeShimPath,
+  `import { createElement, Fragment } from 'react';
+export { Fragment };
+export function jsx(type, props, key) {
+  return createElement(type, key === undefined ? props : { ...props, key });
+}
+export const jsxs = jsx;
+export const jsxDEV = jsx;
+`,
+);
+
 const docsPkg = JSON.parse(readFileSync(join(DOCS, 'package.json'), 'utf8'));
 const allDeps = { ...docsPkg.dependencies, ...docsPkg.devDependencies };
 const PROVIDED = new Set(['react', 'react-native', 'react-dom']);
@@ -66,28 +102,43 @@ const PROVIDED = new Set(['react', 'react-native', 'react-dom']);
 const NODE_MODULES = [join(DOCS, 'node_modules'), join(REPO, 'node_modules')];
 
 /**
- * The SDK's recommended version range for every module Expo Go ships with.
- * Snack's editor lints each dependency against this exact map and warns
- * ("'expo-font@14.0.11' is not the recommended version for SDK 54.0.0") on any
- * other string — including a concrete version that satisfies the range.
+ * The recommended version range for every module Expo Go ships with, for the SDK
+ * the Snacks are PUBLISHED on — not the SDK installed here. Snack's editor lints
+ * each dependency against this exact map, and the runtime only carries these
+ * native modules, so a version from any other SDK either warns or crashes.
+ *
+ * It used to be read from the installed `expo`, which silently went wrong the
+ * moment the playground moved ahead of the Snack SDK: a run with SDK 57 installed
+ * published SDK 54 Snacks with SDK 57 native versions (Reanimated 4.5 on a 4.1
+ * runtime, glass-effect 57 on 0.1). The playground and the Snacks legitimately
+ * differ, so the published SDK's own list is the only correct source. A fetch failure stops the run rather than
+ * falling back to the installed list.
  */
-const bundledNativeModules = (() => {
-  for (const base of NODE_MODULES) {
+const SDK_MAJOR = SDK_VERSION.split('.')[0];
+const bundledNativeModules = await (async () => {
+  const sources = [
+    `https://cdn.jsdelivr.net/npm/expo@${SDK_MAJOR}/bundledNativeModules.json`,
+    `https://unpkg.com/expo@${SDK_MAJOR}/bundledNativeModules.json`,
+  ];
+  for (const url of sources) {
     try {
-      return JSON.parse(readFileSync(join(base, 'expo/bundledNativeModules.json'), 'utf8'));
+      const res = await fetch(url);
+      if (res.ok) return await res.json();
     } catch {
-      // try the next location
+      // try the next source
     }
   }
-  console.warn('! expo/bundledNativeModules.json not found — Snacks may warn about dep versions');
-  return {};
+  throw new Error(
+    `Could not fetch SDK ${SDK_MAJOR}'s bundledNativeModules.json — refusing to publish Snacks ` +
+      'with guessed native versions.',
+  );
 })();
 
-// The recommendations above only match the editor's if the installed SDK is the
-// one we publish against.
 const installedSdk = resolveInstalledVersion('expo');
-if (installedSdk && installedSdk.split('.')[0] !== SDK_VERSION.split('.')[0]) {
-  console.warn(`! installed expo ${installedSdk} != SDK_VERSION ${SDK_VERSION} — bump SDK_VERSION`);
+if (installedSdk && installedSdk.split('.')[0] !== SDK_MAJOR) {
+  console.log(
+    `· playground runs expo ${installedSdk}; Snacks publish on SDK ${SDK_VERSION} with that SDK's native versions`,
+  );
 }
 
 function resolveInstalledVersion(pkg) {
@@ -117,7 +168,8 @@ function resolveVersion(pkg) {
 async function bundleScreen(screen) {
   // Entry wraps the real screen in the providers the app root supplies — and
   // loads the same Manrope / Space Mono fonts so text matches the playground.
-  const entryPath = join(TMP, `_entry_${screen}.tsx`);
+  // Nested screens (chart/bar) would otherwise name a directory that doesn't exist.
+  const entryPath = join(TMP, `_entry_${screen.replaceAll('/', '_')}.tsx`);
   writeFileSync(
     entryPath,
     `import * as React from 'react';
@@ -189,6 +241,7 @@ export default function App() {
             const p = args.path;
             if (p.startsWith('.') || p.startsWith('/') || p.startsWith('@/') || p.startsWith('@arloui/')) return;
             if (p === 'expo-router' || p.startsWith('expo-router/')) return { path: stubPath };
+            if (p === 'react/jsx-runtime' || p === 'react/jsx-dev-runtime') return { path: jsxRuntimeShimPath };
             externals.add(p.startsWith('@') ? p.split('/').slice(0, 2).join('/') : p.split('/')[0]);
             return { path: p, external: true };
           });

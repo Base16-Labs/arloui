@@ -35,7 +35,7 @@ import { haptic } from '../../foundation/haptics';
 import { EmptyContent, type ChartEmptyProps } from './empty';
 import { useTokens } from '../../foundation/theme-provider';
 import { chartChrome } from './core';
-import { ChartLoading, ChartMotion, useReduceMotion } from './hooks';
+import { ChartLoading, ChartMotion, useEntranceStart, useReduceMotion } from './hooks';
 import { BAR_ENTER_STAGGER } from './motion';
 import type { ChartPoint } from './core';
 import { collectParts, hasPart, useSkeletonPulse, warnDroppedDefaults } from './hooks';
@@ -116,6 +116,7 @@ const WEEK_TRAVEL = 6;
 function HeatmapWeekEnter({ index, children }: { index: number; children: ReactNode }) {
   const t = useTokens();
   const reduced = useReduceMotion();
+  const start = useEntranceStart(true);
   const [opacity] = useState(() => new Animated.Value(reduced ? 1 : 0));
   const {
     duration,
@@ -128,6 +129,8 @@ function HeatmapWeekEnter({ index, children }: { index: number; children: ReactN
       return;
     }
     opacity.setValue(0);
+    // Wait at empty until the gate opens and a frame has painted.
+    if (!start) return;
     // Delay via timeout, not `timing.delay`: stopping a delayed Animated.timing
     // in React Strict Mode leaves the value at 0 and the second start is a no-op.
     const timer = setTimeout(() => {
@@ -144,7 +147,7 @@ function HeatmapWeekEnter({ index, children }: { index: number; children: ReactN
       clearTimeout(timer);
       opacity.stopAnimation();
     };
-  }, [reduced, opacity, duration, x1, y1, x2, y2, index]);
+  }, [reduced, start, opacity, duration, x1, y1, x2, y2, index]);
   return (
     <Animated.View
       style={{

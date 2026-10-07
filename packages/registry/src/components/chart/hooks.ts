@@ -66,6 +66,51 @@ export function ChartMotion({
   return createElement(MotionEnabled.Provider, { value: parentEnabled && animated }, children);
 }
 
+const EntranceGate = createContext(true);
+
+/**
+ * Holds every chart entrance inside it until `ready` is true.
+ *
+ * Charts animate in when they mount, and a screen mounts everything at once — so
+ * a chart below the fold finishes its entrance before anyone scrolls to it. Wrap
+ * it and open the gate when it comes into view: the chart lays out normally but
+ * waits at its first frame (empty fill, no bars), then plays. No remount, so
+ * there is no second render and no layout jump. Gates nest; the inner one can
+ * only hold back further, never release what an outer gate holds.
+ */
+export function ChartEntranceGate({ ready, children }: { ready: boolean; children: ReactNode }) {
+  const parent = useContext(EntranceGate);
+  return createElement(EntranceGate.Provider, { value: parent && ready }, children);
+}
+
+/**
+ * Whether an entrance may start: the chart is ready, any gate around it is open,
+ * and one frame has been painted since.
+ *
+ * Starting in the same frame as the mount puts the fastest part of an ease-out
+ * curve exactly where the screen is still being built and frames drop, which
+ * reads as a jump. Two `requestAnimationFrame`s wait for the commit to reach the
+ * screen first. Once started it stays started, so a later data change retargets
+ * instead of replaying.
+ */
+export function useEntranceStart(ready: boolean): boolean {
+  const gate = useContext(EntranceGate);
+  const wanted = ready && gate;
+  const [painted, setPainted] = useState(false);
+  useEffect(() => {
+    if (!wanted || painted) return;
+    let second = 0;
+    const first = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => setPainted(true));
+    });
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
+  }, [wanted, painted]);
+  return wanted && painted;
+}
+
 const SkeletonExit = createContext<Animated.Value | number>(1);
 
 /**
@@ -122,9 +167,10 @@ export function ChartLoading({
 }
 
 /** Run once when real, measured data becomes available, not on every selection. */
-export function useChartEntrance(ready: boolean): SharedValue<number> {
+export function useChartEntrance(readyProp: boolean): SharedValue<number> {
   const t = useTokens();
   const reduced = useReduceMotion();
+  const ready = useEntranceStart(readyProp);
   const progress = useSharedValue(reduced ? 1 : 0);
   const recipe = t.motion.chart.enter;
   const [x1, y1, x2, y2] = recipe.easing;
@@ -149,9 +195,10 @@ export function useChartEntrance(ready: boolean): SharedValue<number> {
  * on its own offset. Count is read when `ready` flips so a later data change
  * does not replay the grow — that is `barSwap`'s job.
  */
-export function useStaggeredEntrance(ready: boolean, count: number): SharedValue<number> {
+export function useStaggeredEntrance(readyProp: boolean, count: number): SharedValue<number> {
   const t = useTokens();
   const reduced = useReduceMotion();
+  const ready = useEntranceStart(readyProp);
   const progress = useSharedValue(reduced ? 1 : 0);
   const countRef = useRef(count);
   const duration = t.motion.chart.enter.duration;
@@ -176,9 +223,13 @@ export function useStaggeredEntrance(ready: boolean, count: number): SharedValue
 }
 
 /** Opacity-only entrances stay off the React render loop. */
-export function useChartFade(ready: boolean): Animated.Value | number {
+export function useChartFade(readyProp: boolean): Animated.Value | number {
   const t = useTokens();
   const reduced = useReduceMotion();
+  const ready = useEntranceStart(readyProp);
+  // Ready but not yet allowed to start (gate shut, or not painted): stay hidden,
+  // or the bars would show at full strength and then blink out to fade in.
+  const held = readyProp && !ready && !reduced;
   const [opacity] = useState(() => new Animated.Value(0));
   const {
     duration,
@@ -200,6 +251,7 @@ export function useChartFade(ready: boolean): Animated.Value | number {
     animation.start();
     return () => animation.stop();
   }, [ready, reduced, opacity, duration, x1, y1, x2, y2]);
+  if (held) return 0;
   return reduced || !ready ? 1 : opacity;
 }
 

@@ -148,7 +148,8 @@ describe('the Snack map', () => {
 
     const slugs = componentGroups.flatMap((group) => group.items.map((item) => item.slug));
     const screens = generator.slice(generator.indexOf('const SCREENS = {'));
-    const mapped = [...screens.slice(0, screens.indexOf('};')).matchAll(/: '([\w-]+)'/g)].map(
+    // Slugs can be nested (chart/bar) — chart is a folder of screens, one per form.
+    const mapped = [...screens.slice(0, screens.indexOf('};')).matchAll(/: '([\w/-]+)'/g)].map(
       (match) => match[1]!,
     );
 

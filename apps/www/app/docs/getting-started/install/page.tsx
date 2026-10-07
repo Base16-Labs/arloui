@@ -35,7 +35,7 @@ export default function InstallPage() {
           <p className="text-[17px] leading-relaxed text-ink-2">
             A React Native app on React 19 and React Native 0.79+ — an Expo
             project (SDK 53+) is the smoothest path. Arlo UI is built and tested
-            on Expo SDK 54 / React Native 0.81.
+            on Expo SDK 57 / React Native 0.86.
           </p>
         </section>
 

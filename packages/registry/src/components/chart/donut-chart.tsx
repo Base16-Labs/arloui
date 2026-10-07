@@ -24,8 +24,9 @@
  *   a photo, or glass. There is nothing to match now, so the prop is gone.
  * - **A real gap between slices**, cut out of the arc rather than stroked over it,
  *   so touching arcs stay separable on any background for the same reason.
- * - **Straight or curved ends.** Radial cuts by default; `edges="curve"` rounds
- *   them the way a stroke with round caps would.
+ * - **Straight or curved ends.** Radial cuts by default; `edges="curve"`
+ *   fillets the four corners of each slice — a few points, the same order as a
+ *   bar's data-end, not a pill the thickness of the ring.
  * - **Center label, not slice labels.** Text inside thin arcs is unreadable; the
  *   middle holds the total.
  * - **The legend carries selection.** Arcs are poor tap targets, and the legend
@@ -41,7 +42,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Circle, Defs, G, Mask, Path } from 'react-native-svg';
+import Svg, { Defs, G, Mask, Path } from 'react-native-svg';
 import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
@@ -49,7 +50,6 @@ import { ChartLoading, ChartMotion, useChartEntrance } from './hooks';
 import { ChartSweep } from './motion';
 import {
   annulusPath,
-  arcPath,
   chartChrome,
   densityMetrics,
   seriesColorAt,
@@ -65,7 +65,7 @@ export type DonutSlice = ChartPoint & {
   color?: string;
 };
 
-/** How each slice meets the next. Radial cuts, or rounded the way a stroke caps. */
+/** How each slice meets the next. Radial cuts, or a small fillet on each corner. */
 export type DonutEdges = 'straight' | 'curve';
 
 export type DonutChartProps = {
@@ -82,8 +82,8 @@ export type DonutChartProps = {
   /** Ring thickness. Defaults from `density` — 16 at default, 12 at compact. */
   thickness?: number;
   /**
-   * How each slice ends. `'straight'` cuts radially. `'curve'` rounds the ends,
-   * the way a stroke with round caps would.
+   * How each slice ends. `'straight'` cuts radially. `'curve'` fillets the
+   * corners — enough to soften the cut, not a round cap the thickness of the ring.
    */
   edges?: DonutEdges;
   /** How much mark there is: ring thickness and the hairline between slices. */
@@ -156,11 +156,8 @@ const MAX_ARCS = NAMED_SLOTS + 1;
 const DIMMED_ALPHA = 0.35;
 
 /**
- * One slice of the ring.
- *
- * Straight is a filled annulus — radial cuts, a real gap between neighbours.
- * Curve is a stroke with round caps, inset by half the thickness so the rounded
- * noses sit where the cuts were instead of overlapping the next slice.
+ * One slice of the ring: a filled annulus, radial cuts, a real gap between
+ * neighbours. `cornerRadius` fillets the four corners when edges are curved.
  */
 function DonutSliceMark({
   cx,
@@ -169,8 +166,7 @@ function DonutSliceMark({
   innerRadius,
   startAngle,
   endAngle,
-  thickness,
-  edges,
+  cornerRadius,
   color,
   opacity,
 }: {
@@ -180,48 +176,22 @@ function DonutSliceMark({
   innerRadius: number;
   startAngle: number;
   endAngle: number;
-  thickness: number;
-  edges: DonutEdges;
+  cornerRadius: number;
   color: string;
   opacity: number;
 }) {
-  const sweep = endAngle - startAngle;
-  // A full ring has no ends to round — rounding it would open a bite at 12 o'clock.
-  if (edges === 'straight' || sweep >= Math.PI * 2 - 1e-6) {
-    return (
-      <Path
-        d={annulusPath({ cx, cy, outerRadius, innerRadius, startAngle, endAngle })}
-        fill={color}
-        opacity={opacity}
-      />
-    );
-  }
-
-  const midRadius = (outerRadius + innerRadius) / 2;
-  const capAngle = thickness / 2 / Math.max(midRadius, 1);
-  const inset = Math.min(capAngle, sweep / 2);
-  const from = startAngle + inset;
-  const to = endAngle - inset;
-  if (to - from < 1e-3) {
-    const mid = (startAngle + endAngle) / 2;
-    return (
-      <Circle
-        cx={cx + midRadius * Math.sin(mid)}
-        cy={cy - midRadius * Math.cos(mid)}
-        r={thickness / 2}
-        fill={color}
-        opacity={opacity}
-      />
-    );
-  }
-
   return (
     <Path
-      d={arcPath({ cx, cy, radius: midRadius, startAngle: from, endAngle: to })}
-      fill="none"
-      stroke={color}
-      strokeWidth={thickness}
-      strokeLinecap="round"
+      d={annulusPath({
+        cx,
+        cy,
+        outerRadius,
+        innerRadius,
+        startAngle,
+        endAngle,
+        cornerRadius,
+      })}
+      fill={color}
       opacity={opacity}
     />
   );
@@ -410,8 +380,7 @@ function DonutChartInner({
                   innerRadius={innerRadius}
                   startAngle={segment.startAngle}
                   endAngle={segment.endAngle}
-                  thickness={ringThickness}
-                  edges={edges}
+                  cornerRadius={edges === 'curve' ? metrics.barRadius : 0}
                   color={color}
                   opacity={dimmed && !segment.color.startsWith('#') ? DIMMED_ALPHA : 1}
                 />
