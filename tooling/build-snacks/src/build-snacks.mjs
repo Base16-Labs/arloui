@@ -53,7 +53,19 @@ export const Link = ({ children }) => children ?? null;
 export const Redirect = Null;
 export const router = { back: noop, push: noop, replace: noop, navigate: noop, dismiss: noop, setParams: noop, canGoBack: () => false };
 export const useRouter = () => router;
-export const useNavigation = () => ({ setOptions: noop, navigate: noop, goBack: noop });
+// One stable object (screens key effects on it). A Snack has no navigator, so the
+// screen has already "arrived": fire transitionEnd once listeners are attached,
+// which is what the chart screens wait for before starting their entrance.
+const navigation = {
+  setOptions: noop, navigate: noop, goBack: noop,
+  isFocused: () => true,
+  addListener: (event, callback) => {
+    if (event !== 'transitionEnd') return noop;
+    const id = setTimeout(callback, 0);
+    return () => clearTimeout(id);
+  },
+};
+export const useNavigation = () => navigation;
 export const useLocalSearchParams = () => ({});
 export const useGlobalSearchParams = () => ({});
 export const usePathname = () => '/';
@@ -66,6 +78,21 @@ export const useFocusEffect = noop;
 // automatic runtime (Snack can't resolve the "react/jsx-runtime" subpath).
 const reactShimPath = join(TMP, '_react-shim.js');
 writeFileSync(reactShimPath, `import * as React from 'react';\nexport { React };\n`);
+
+// Prebuilt packages (@arloui/icons' dist) were compiled with the automatic
+// runtime and import "react/jsx-runtime" themselves — map it onto createElement.
+const jsxRuntimeShimPath = join(TMP, '_jsx-runtime-shim.js');
+writeFileSync(
+  jsxRuntimeShimPath,
+  `import { createElement, Fragment } from 'react';
+export { Fragment };
+export function jsx(type, props, key) {
+  return createElement(type, key === undefined ? props : { ...props, key });
+}
+export const jsxs = jsx;
+export const jsxDEV = jsx;
+`,
+);
 
 const docsPkg = JSON.parse(readFileSync(join(DOCS, 'package.json'), 'utf8'));
 const allDeps = { ...docsPkg.dependencies, ...docsPkg.devDependencies };
@@ -214,6 +241,7 @@ export default function App() {
             const p = args.path;
             if (p.startsWith('.') || p.startsWith('/') || p.startsWith('@/') || p.startsWith('@arloui/')) return;
             if (p === 'expo-router' || p.startsWith('expo-router/')) return { path: stubPath };
+            if (p === 'react/jsx-runtime' || p === 'react/jsx-dev-runtime') return { path: jsxRuntimeShimPath };
             externals.add(p.startsWith('@') ? p.split('/').slice(0, 2).join('/') : p.split('/')[0]);
             return { path: p, external: true };
           });
