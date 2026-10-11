@@ -5,7 +5,7 @@ import { Lede } from "@/components/mdx/Lede";
 import { RightRail } from "@/components/nav/RightRail";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 import { Pill } from "@/components/ui/Pill";
-import { FIGMA_FILE_URL } from "@/lib/figma";
+import { FIGMA_COMMUNITY_URL, FIGMA_FILE_URL } from "@/lib/figma";
 import { designItems } from "@/lib/routes";
 
 const slugs: readonly string[] = designItems.map((i) => i.slug);
@@ -249,8 +249,8 @@ function FigmaLibraryDoc() {
         </Lede>
 
         <div className="mb-2 flex gap-2">
-          <Pill as="a" href={FIGMA_FILE_URL}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Open in Figma{" "}
+          <Pill as="a" href={FIGMA_COMMUNITY_URL}>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Get it on Figma Community{" "}
             <span className="opacity-50">↗</span>
           </Pill>
         </div>
@@ -258,21 +258,28 @@ function FigmaLibraryDoc() {
         <Section id="get-it" title="Get the file">
           <ol className="ml-5 list-decimal space-y-2">
             <li>
-              <a href={FIGMA_FILE_URL} className="text-ink underline underline-offset-4">
-                Open the library
+              Open the{" "}
+              <a href={FIGMA_COMMUNITY_URL} className="text-ink underline underline-offset-4">
+                Community page
               </a>{" "}
-              and duplicate it into your drafts.
+              and click <b className="text-ink">Open in Figma</b>. A copy lands
+              in your drafts.
             </li>
             <li>
-              Move the copy into your team and publish it from the{" "}
-              <b className="text-ink">Assets</b> panel. Your other files can then
-              enable it as a library and use its components, variables and
-              styles.
+              To use it across files, move the copy into your team and publish
+              it from the <b className="text-ink">Assets</b> panel. Other files
+              can then enable it as a library and use its components, variables
+              and styles.
             </li>
           </ol>
           <p>
-            Every component page in these docs links to its place in the file,
-            and each page in the file links back to its docs page.
+            Just looking? Every component page in these docs has a Figma link
+            that opens the{" "}
+            <a href={FIGMA_FILE_URL} className="text-ink underline underline-offset-4">
+              view-only file
+            </a>{" "}
+            on that component, and each page in the file links back to its docs
+            page. You can duplicate from there too.
           </p>
         </Section>
 

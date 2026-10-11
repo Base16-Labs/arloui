@@ -1,10 +1,14 @@
 /**
- * The ArloUI Figma library — the published Community file.
+ * The ArloUI Figma library lives at two links.
  *
- * Every Figma link on the site is built from this one key, so moving the file
- * is a one-line change. Node ids are the file's page and component-set ids;
- * they survive publishing, so a link opens the file on that page or component.
+ * - The Community page is where people get it: "Open in Figma" copies the
+ *   file into their drafts in one click. General "Figma" buttons go here.
+ * - The source file is shared view-only, so a docs page can open the file on
+ *   its own component. It can be duplicated from there too.
  */
+export const FIGMA_COMMUNITY_URL =
+  'https://www.figma.com/community/file/1691139600842877395/arlo-ui-v1-0';
+
 export const FIGMA_FILE_KEY = 'zoopBam4dC975x8E1xrrPt';
 
 export const FIGMA_FILE_URL = `https://www.figma.com/design/${FIGMA_FILE_KEY}/Arlo-UI`;
