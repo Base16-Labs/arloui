@@ -119,7 +119,7 @@ function buttonVariants(t: Tokens): {
       },
       neutral: {
         solid: { bg: t.colors.textSecondary, fg: t.colors.textInverse, border: 'transparent', borderWidth: 0 },
-        soft: { bg: t.colors.surfaceInput, fg: t.colors.textPrimary, border: 'transparent', borderWidth: 0 },
+        soft: { bg: t.colors.interactiveSecondary, fg: t.colors.textInteractiveSecondary, border: 'transparent', borderWidth: 0 },
         ghost: transparent(t.colors.textPrimary),
         outline: { bg: 'transparent', fg: t.colors.textPrimary, border: t.colors.borderPrimary, borderWidth: 1 },
       },
@@ -137,10 +137,10 @@ function buttonVariants(t: Tokens): {
       outline: { bg: 'transparent', fg: t.colors.textTertiary, border: t.colors.borderSecondary, borderWidth: 1 },
     },
     size: {
-      sm: { minHeight: t.sizing.buttonHeight.sm, paddingX: t.spacing[3], type: t.typography.bodySm, gap: t.spacing[1], iconSize: t.sizing.icon.xs },
-      md: { minHeight: t.sizing.buttonHeight.md, paddingX: t.spacing[4], type: t.typography.body, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
-      lg: { minHeight: t.sizing.buttonHeight.lg, paddingX: t.spacing[5], type: t.typography.title3, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
-      xl: { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[6], type: t.typography.title3, gap: t.spacing[3], iconSize: t.sizing.icon.md },
+      sm: { minHeight: t.sizing.buttonHeight.sm, paddingX: t.spacing[3], type: t.typography.buttonLabel, gap: t.spacing[1], iconSize: t.sizing.icon.xs },
+      md: { minHeight: t.sizing.buttonHeight.md, paddingX: t.spacing[4], type: t.typography.buttonSmall, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
+      lg: { minHeight: t.sizing.buttonHeight.lg, paddingX: t.spacing[5], type: t.typography.buttonMedium, gap: t.spacing[2], iconSize: t.sizing.icon.sm },
+      xl: { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[6], type: t.typography.buttonLarge, gap: t.spacing[3], iconSize: t.sizing.icon.md },
     },
   };
 }
