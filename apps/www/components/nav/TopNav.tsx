@@ -8,6 +8,7 @@ import { siteLinks } from '@/lib/routes';
 import { useSearch } from '@/components/search/search-provider';
 import { Icon } from '@/components/ui/Icon';
 import { GithubMark } from '@/components/ui/GithubMark';
+import { FIGMA_FILE_URL } from '@/lib/figma';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const GITHUB_URL = 'https://github.com/Base16-Labs/arloui';
@@ -92,7 +93,9 @@ export function TopNav() {
               <span>0</span>
             </a>
             <a
-              href="#"
+              href={FIGMA_FILE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex h-8 w-8 items-center justify-center rounded-md text-ink-2 transition-colors hover:bg-ink/[0.06] hover:text-ink"
               aria-label="Figma"
             >
@@ -193,7 +196,9 @@ export function TopNav() {
                     <span>0</span>
                   </a>
                   <a
-                    href="#"
+                    href={FIGMA_FILE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-ink/[0.04] text-ink-2"
                     aria-label="Figma"
                   >

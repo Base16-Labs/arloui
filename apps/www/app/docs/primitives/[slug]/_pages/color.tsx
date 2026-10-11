@@ -14,6 +14,7 @@ import {
   paletteSecondary,
 } from '@/lib/color-tokens';
 import { Section } from '../_shared';
+import { FIGMA_NODES, figmaNode } from '@/lib/figma';
 
 const colorThemeCode = `import { useTheme } from '@/foundation/theme-provider';
 
@@ -123,7 +124,7 @@ export function ColorPage() {
   const actions = [
     {
       label: 'Figma',
-      href: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=16-2033',
+      href: figmaNode(FIGMA_NODES.color),
     },
     {
       label: 'Source',

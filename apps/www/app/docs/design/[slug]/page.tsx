@@ -4,6 +4,8 @@ import { Eyebrow } from "@/components/mdx/Eyebrow";
 import { Lede } from "@/components/mdx/Lede";
 import { RightRail } from "@/components/nav/RightRail";
 import { CodeBlock } from "@/components/ui/CodeBlock";
+import { Pill } from "@/components/ui/Pill";
+import { FIGMA_FILE_URL } from "@/lib/figma";
 import { designItems } from "@/lib/routes";
 
 const slugs: readonly string[] = designItems.map((i) => i.slug);
@@ -226,25 +228,116 @@ border-radius: var(--radius-2xl);`}</CodeBlock>
 
 /* ---------------------------------------------------------- figma library */
 
+const libraryHeadings = [
+  { id: "get-it", label: "Get the file" },
+  { id: "whats-inside", label: "What's inside" },
+  { id: "how-its-built", label: "How it's built" },
+  { id: "figma-and-code", label: "Figma and code" },
+];
+
 function FigmaLibraryDoc() {
   return (
-    <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
-      <Eyebrow>Design</Eyebrow>
-      <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
-        Figma UI library
-      </h1>
-      <Lede>Coming soon.</Lede>
-      <p className="mt-10 text-[17px] leading-relaxed text-ink-2">
-        Every ArloUI primitive as a Figma component set, with each variant bound
-        to the library variables rather than carrying copied values.
-      </p>
-      <p className="mt-5 text-[17px] leading-relaxed text-ink-2">
-        In the meantime,{" "}
-        <Link href="/docs/design/figma-tokens" className="text-ink underline underline-offset-4">
-          import the tokens
-        </Link>{" "}
-        — components built on them will match what ships.
-      </p>
-    </main>
+    <>
+      <main className="max-w-[820px] flex-1 px-14 pt-10 pb-20">
+        <Eyebrow>Design</Eyebrow>
+        <h1 className="mt-3.5 text-[56px] font-medium leading-none tracking-tight">
+          Figma UI library
+        </h1>
+        <Lede>
+          Every ArloUI component as a Figma component set, bound to the same
+          tokens the app renders — in light and dark.
+        </Lede>
+
+        <div className="mb-2 flex gap-2">
+          <Pill as="a" href={FIGMA_FILE_URL}>
+            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Open in Figma{" "}
+            <span className="opacity-50">↗</span>
+          </Pill>
+        </div>
+
+        <Section id="get-it" title="Get the file">
+          <ol className="ml-5 list-decimal space-y-2">
+            <li>
+              <a href={FIGMA_FILE_URL} className="text-ink underline underline-offset-4">
+                Open the library
+              </a>{" "}
+              and duplicate it into your drafts.
+            </li>
+            <li>
+              Move the copy into your team and publish it from the{" "}
+              <b className="text-ink">Assets</b> panel. Your other files can then
+              enable it as a library and use its components, variables and
+              styles.
+            </li>
+          </ol>
+          <p>
+            Every component page in these docs links to its place in the file,
+            and each page in the file links back to its docs page.
+          </p>
+        </Section>
+
+        <Section id="whats-inside" title="What's inside">
+          <ul className="ml-5 list-disc space-y-1.5">
+            <li>
+              <b className="text-ink">Foundations</b> — colour, typography,
+              icons, spacing and sizing, elevation and materials, each documented
+              on its own page.
+            </li>
+            <li>
+              <b className="text-ink">Components</b> — buttons (including Liquid
+              Glass and the FAB), inputs, text area, toggle, checkbox, radio,
+              stepper, badge, chip, tabs, tab bar, date picker, gallery,
+              carousel, sheet, card, list, spinner, toast, and all six chart
+              forms.
+            </li>
+            <li>
+              <b className="text-ink">Examples</b> — each component in real
+              layouts on a phone frame, light and dark side by side.
+            </li>
+          </ul>
+          <p>
+            Skeleton is code-only for now.
+          </p>
+        </Section>
+
+        <Section id="how-its-built" title="How it's built">
+          <ul className="ml-5 list-disc space-y-1.5">
+            <li>
+              <b className="text-ink">Variables, not values.</b> Fills, strokes,
+              spacing and radii bind to the same collections described in{" "}
+              <Link href="/docs/design/figma-tokens" className="text-ink underline underline-offset-4">
+                Tokens in Figma
+              </Link>
+              . Switch a frame&apos;s mode to Dark and everything inside follows,
+              Liquid Glass included.
+            </li>
+            <li>
+              <b className="text-ink">Text styles</b> for all type, matching the
+              typography scale in code.
+            </li>
+            <li>
+              <b className="text-ink">Phosphor icons</b> as instances, so any
+              glyph can be swapped from the instance menu.
+            </li>
+            <li>
+              <b className="text-ink">Slots</b> where a component holds content —
+              a card body, a sheet, a list row — so you drop in other components
+              instead of detaching.
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="figma-and-code" title="Figma and code">
+          <p>
+            Code is the specification; the file mirrors it. Where the two
+            differ, it is in approach, not in values. Figma ships fewer variants
+            with strong defaults — a card comes prestyled per surface, where
+            code exposes surface, border, elevation and padding as separate
+            props. Each page header in the file notes where that applies.
+          </p>
+        </Section>
+      </main>
+      <RightRail headings={libraryHeadings} />
+    </>
   );
 }
