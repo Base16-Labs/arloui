@@ -2051,7 +2051,7 @@
     {
       "type": "color",
       "name": "--color-dark-interactive-secondary",
-      "value": "rgba(39, 39, 42, 0.7)",
+      "value": "var(--color-zinc-800)",
       "description": "Semantic · dark"
     },
     {

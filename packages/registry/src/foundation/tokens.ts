@@ -113,7 +113,7 @@ export const darkSemanticColors = {
   textInteractiveError: '#FF6467',
   interactivePrimary: '#2B7FFF',
   interactivePrimaryPressed: '#155DFC',
-  interactiveSecondary: 'rgba(39,39,42,0.7)',
+  interactiveSecondary: '#27272A',
   interactiveSecondaryPressed: '#3F3F46',
   interactiveTertiary: 'transparent',
   interactiveTertiaryPressed: 'rgba(39,39,42,0.55)',
