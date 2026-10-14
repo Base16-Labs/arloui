@@ -1,5 +1,5 @@
 {
-  "count": 54,
+  "count": 53,
   "pages": [
     {
       "path": "/docs/archetypes/creation",
@@ -188,10 +188,6 @@
     {
       "path": "/skills/SKILL.md",
       "md": "/md/skills/SKILL.md"
-    },
-    {
-      "path": "/skills/component-debt.md",
-      "md": "/md/skills/component-debt.md"
     },
     {
       "path": "/skills/references/components.md",
