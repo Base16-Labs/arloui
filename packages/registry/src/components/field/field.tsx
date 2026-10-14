@@ -17,7 +17,7 @@
  *
  * The high-level `Input` (see input.tsx) is a preset built from these parts.
  */
-import { createContext, forwardRef, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, forwardRef, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Platform,
   Pressable,
@@ -282,7 +282,10 @@ function FieldAction({ children, accessibilityLabel, disabled, style, ...rest }:
 }
 
 export type FieldInputProps = Omit<TextInputProps, 'style' | 'editable'> & {
-  /** Compact label shown inside the control, above the value. */
+  /**
+   * Label drawn inside the control. It sits in the placeholder position while the
+   * field is empty, and moves above the value once the field is focused or filled.
+   */
   insetLabel?: string;
   style?: StyleProp<TextStyle>;
 };
@@ -294,7 +297,10 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
     style,
     onFocus,
     onBlur,
+    onChangeText,
+    placeholder,
     placeholderTextColor,
+    accessibilityLabel,
     value,
     defaultValue,
     multiline: multilineProp,
@@ -304,9 +310,14 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
   ref,
 ) {
   const t = useTokens();
-  const { size, hasError, disabled, setFocused } = useField();
+  const { size, hasError, disabled, focused, setFocused } = useField();
   const { dims, isPlain, multiline: fieldMultiline, stretches } = useFieldDims();
   const multiline = multilineProp ?? fieldMultiline;
+  const inputRef = useRef<TextInput>(null);
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? '');
+  const currentText = value !== undefined ? value : uncontrolledValue;
+  const hasValue = currentText.length > 0;
+  const floated = Boolean(insetLabel) && (focused || hasValue);
 
   const textColor = hasError
     ? t.colors.textInteractiveError
@@ -316,11 +327,26 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
         ? t.colors.textSecondary
         : t.colors.textPrimary;
 
-  const plainText = String(value || defaultValue || rest.placeholder || '');
+  const plainText = String(currentText || (floated ? placeholder : insetLabel || placeholder) || '');
   const plainInputWidth =
     isPlain && !multiline
       ? Math.max(size === 'md' ? 132 : 88, Math.min(300, plainText.length * dims.font.fontSize * 0.68 + 12))
       : undefined;
+
+  const labelType = size === 'sm' ? t.typography.labelSmall : t.typography.labelMedium;
+  const labelColor = hasError
+    ? t.colors.textInteractiveError
+    : disabled
+      ? t.colors.textDisabled
+      : t.colors.textTertiary;
+  const labelStyle: TextStyle = {
+    color: labelColor,
+    fontFamily: t.fontFamilies.sans,
+    fontSize: labelType.fontSize,
+    lineHeight: labelType.lineHeight,
+    fontWeight: labelType.fontWeight,
+    textAlign: isPlain && !multiline ? 'center' : 'left',
+  };
 
   const handleFocus: TextInputProps['onFocus'] = (event) => {
     setFocused(true);
@@ -330,61 +356,100 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
     setFocused(false);
     onBlur?.(event);
   };
+  const handleChange: TextInputProps['onChangeText'] = (text) => {
+    if (value === undefined) setUncontrolledValue(text);
+    onChangeText?.(text);
+  };
+  const setRefs = (node: TextInput | null) => {
+    inputRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) ref.current = node;
+  };
+
+  const label = insetLabel ? (
+    <Text
+      numberOfLines={1}
+      accessibilityElementsHidden
+      importantForAccessibility="no"
+      style={labelStyle}
+    >
+      {insetLabel}
+    </Text>
+  ) : null;
 
   return (
     <View
       style={
         multiline
-          ? { flex: 1, alignSelf: 'stretch' }
-          : { flex: stretches ? 1 : undefined, minWidth: stretches ? 0 : undefined, justifyContent: 'center' }
+          ? { flex: 1, alignSelf: 'stretch', gap: floated ? t.spacing[1] : undefined }
+          : {
+              flex: stretches ? 1 : undefined,
+              minWidth: stretches ? 0 : undefined,
+              gap: floated ? t.spacing[1] : undefined,
+            }
       }
     >
-      {insetLabel && !multiline ? (
-        <Text
-          numberOfLines={1}
-          style={{
-            color: hasError ? t.colors.textInteractiveError : t.colors.textTertiary,
-            fontFamily: t.fontFamilies.sans,
-            fontSize: dims.label.fontSize,
-            lineHeight: dims.label.lineHeight,
-            fontWeight: dims.label.fontWeight,
-          }}
+      {floated ? (
+        <Pressable
+          accessible={false}
+          disabled={disabled}
+          onPress={() => inputRef.current?.focus()}
         >
-          {insetLabel}
-        </Text>
+          {label}
+        </Pressable>
       ) : null}
-      <TextInput
-        ref={ref}
-        value={value}
-        defaultValue={defaultValue}
-        editable={!disabled}
-        multiline={multiline}
-        textAlignVertical={textAlignVertical ?? (multiline ? 'top' : undefined)}
-        placeholderTextColor={placeholderTextColor ?? t.colors.textTertiary}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        style={[
-          {
-            color: textColor,
-            fontFamily: t.fontFamilies.sans,
-            fontSize: dims.font.fontSize,
-            lineHeight: dims.font.lineHeight,
-            fontWeight: dims.font.fontWeight,
-            minHeight: dims.font.lineHeight,
-            flex: multiline ? 1 : undefined,
-            alignSelf: multiline ? 'stretch' : undefined,
-            width: plainInputWidth,
-            textAlign: isPlain && !multiline ? 'center' : 'left',
-            padding: t.spacing[0],
-            margin: t.spacing[0],
-          },
-          Platform.OS === 'web'
-            ? ({ outlineStyle: 'none', ...(multiline ? { resize: 'none' } : null) } as unknown as TextStyle)
-            : null,
-          style,
-        ]}
-        {...rest}
-      />
+      <View style={{ flex: multiline ? 1 : undefined, justifyContent: 'center' }}>
+        <TextInput
+          ref={setRefs}
+          {...rest}
+          value={value}
+          defaultValue={defaultValue}
+          editable={!disabled}
+          multiline={multiline}
+          textAlignVertical={textAlignVertical ?? (multiline ? 'top' : undefined)}
+          placeholder={floated || !insetLabel ? placeholder : undefined}
+          placeholderTextColor={placeholderTextColor ?? t.colors.textTertiary}
+          accessibilityLabel={accessibilityLabel ?? insetLabel}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChangeText={handleChange}
+          style={[
+            {
+              color: textColor,
+              fontFamily: t.fontFamilies.sans,
+              fontSize: dims.font.fontSize,
+              lineHeight: dims.font.lineHeight,
+              fontWeight: dims.font.fontWeight,
+              minHeight: dims.font.lineHeight,
+              flex: multiline ? 1 : undefined,
+              alignSelf: multiline ? 'stretch' : undefined,
+              width: plainInputWidth,
+              textAlign: isPlain && !multiline ? 'center' : 'left',
+              padding: t.spacing[0],
+              margin: t.spacing[0],
+            },
+            Platform.OS === 'web'
+              ? ({ outlineStyle: 'none', ...(multiline ? { resize: 'none' } : null) } as unknown as TextStyle)
+              : null,
+            style,
+          ]}
+        />
+        {insetLabel && !floated ? (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0,
+              justifyContent: multiline ? 'flex-start' : 'center',
+            }}
+          >
+            {label}
+          </View>
+        ) : null}
+      </View>
     </View>
   );
 });

@@ -1,8 +1,13 @@
 /**
  * Arlo UI — Input
  *
- * A ready-made text input: label, helper/error text, leading/trailing icons and
- * actions, inset label, plain/filled treatment, secure entry, and disabled state.
+ * A ready-made text input: floating label, helper/error text, leading/trailing
+ * icons and actions, plain/filled treatment, secure entry, and disabled state.
+ *
+ * The label floats inside the field (`typography.labelMedium`, `textTertiary`):
+ * it occupies the placeholder position while the field is empty, and sits above
+ * the value once the field is focused or filled. Pass `insetLabel={false}` to
+ * render `Field.Label` above the control instead.
  *
  * `Input` is a preset assembled from the composable `Field` primitives. Reach for
  * `Field` directly (see field.tsx) when you need a custom layout; reach for `Input`
@@ -39,7 +44,10 @@ export type InputProps = Omit<TextInputProps, 'style'> & {
   inputStyle?: StyleProp<TextStyle>;
   helperStyle?: StyleProp<TextStyle>;
   fullWidth?: boolean;
-  /** Shows a small label inside the input above the current value. */
+  /**
+   * Floats `label` inside the field. Set `false` to render it above the control.
+   * Defaults to `true`.
+   */
   insetLabel?: boolean;
 };
 
@@ -59,7 +67,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
     inputStyle,
     helperStyle,
     fullWidth = true,
-    insetLabel = false,
+    insetLabel = true,
     editable = true,
     ...rest
   },

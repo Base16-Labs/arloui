@@ -73,7 +73,7 @@ describe('Field (composable primitives)', () => {
           </Field.Control>
         </Field>,
       );
-      expect(screen.getByText('Amount')).toBeTruthy();
+      expect(screen.getByText('Amount', { includeHiddenElements: true })).toBeTruthy();
     });
 
     it('is not editable when the Field is disabled', () => {

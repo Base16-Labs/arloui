@@ -7,6 +7,10 @@
  * bottom `Field.Toolbar` for icon/action slots, and an optional character count in
  * the helper row.
  *
+ * The label floats inside the field, same as `Input`: placeholder position while
+ * empty, above the value once focused or filled. Pass `insetLabel={false}` to
+ * render `Field.Label` above the control instead.
+ *
  * Reach for `TextArea` when you want the batteries-included multiline field; drop
  * down to `<Field multiline>…</Field>` when you need a custom layout.
  */
@@ -31,6 +35,11 @@ export type TextAreaState = InputState;
 
 export type TextAreaProps = Omit<TextInputProps, 'style' | 'multiline'> & {
   label?: string;
+  /**
+   * Floats `label` inside the field. Set `false` to render it above the control.
+   * Defaults to `true`.
+   */
+  insetLabel?: boolean;
   helperText?: string;
   errorText?: string;
   state?: TextAreaState;
@@ -53,6 +62,7 @@ export type TextAreaProps = Omit<TextInputProps, 'style' | 'multiline'> & {
 export const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(
   {
     label,
+    insetLabel = true,
     helperText,
     errorText,
     state,
@@ -94,7 +104,7 @@ export const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(
       fullWidth={fullWidth}
       style={containerStyle}
     >
-      {label ? <Field.Label>{label}</Field.Label> : null}
+      {label && !insetLabel ? <Field.Label>{label}</Field.Label> : null}
 
       <Field.Control>
         <Field.Input
@@ -102,6 +112,7 @@ export const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(
           value={value}
           defaultValue={defaultValue}
           maxLength={maxLength}
+          insetLabel={insetLabel && label ? label : undefined}
           style={inputStyle}
           {...rest}
         />
