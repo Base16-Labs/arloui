@@ -40,7 +40,7 @@
 
 ## Links
 
-- [Figma](https://www.figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=875-2658&m=dev)
+- [Figma](https://www.figma.com/design/zoopBam4dC975x8E1xrrPt/Arlo-UI?node-id=875-2658)
 - [Source](https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area)
 
 ---

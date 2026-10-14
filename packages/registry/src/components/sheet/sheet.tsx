@@ -136,7 +136,7 @@ export type SheetProps = {
   bottomOffset?: number;
   /** Maximum visual width for tablet/large phones. */
   maxWidth?: number;
-  /** Surface corner radius. Defaults to 24 for default and 20 for stack. */
+  /** Surface corner radius. Defaults to `radii['2xl']` (24) for both widths. */
   cornerRadius?: number;
   handleWidth?: number;
   handleHeight?: number;
@@ -286,7 +286,7 @@ function SheetRoot({
   const resolvedInset = horizontalInset ?? (padding == null ? legacyInset : tokenPadding);
   const isInset = resolvedInset > 0;
   const resolvedBottomOffset = bottomOffset ?? (isInset ? resolvedInset : 0);
-  const resolvedRadius = cornerRadius ?? (resolvedWidth === 'stack' ? 20 : t.radii['2xl']);
+  const resolvedRadius = cornerRadius ?? t.radii['2xl'];
 
   const maxHeight = windowHeight - Math.max(topInset, 24) - resolvedBottomOffset - 8;
   const snaps = useMemo(

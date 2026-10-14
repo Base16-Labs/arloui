@@ -196,6 +196,9 @@ export const paletteSecondary = {
     700: '#3F3F46',
     800: '#27272A',
     900: '#18181B',
+    // Half step (midpoint of 900 and 950) — the dark card fill, so an input
+    // (900) always reads a half step lighter than the card it sits on.
+    925: '#111113',
     950: '#09090B',
   },
   stone: {

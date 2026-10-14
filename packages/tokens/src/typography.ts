@@ -24,7 +24,7 @@ export const typography = {
   displayLarge: {
     fontSize: 34,
     lineHeight: 42.5,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     letterSpacing: -0.68,
   },
   displayLargeEmphasized: {
@@ -36,7 +36,7 @@ export const typography = {
   displayMedium: {
     fontSize: 28,
     lineHeight: 35,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     letterSpacing: -0.56,
   },
   displayMediumEmphasized: {
@@ -48,7 +48,7 @@ export const typography = {
   displaySmall: {
     fontSize: 24,
     lineHeight: 30,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     letterSpacing: -0.48,
   },
   displaySmallEmphasized: {
@@ -60,7 +60,7 @@ export const typography = {
   headingLarge: {
     fontSize: 20,
     lineHeight: 26,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     letterSpacing: -0.2,
   },
   headingLargeEmphasized: {
@@ -72,7 +72,7 @@ export const typography = {
   headingMedium: {
     fontSize: 17,
     lineHeight: 22.1,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     letterSpacing: -0.17,
   },
   headingMediumEmphasized: {
@@ -84,7 +84,7 @@ export const typography = {
   headingSmall: {
     fontSize: 14,
     lineHeight: 18.2,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     letterSpacing: -0.14,
   },
   headingSmallEmphasized: {
@@ -96,14 +96,14 @@ export const typography = {
   bodyLarge: { fontSize: 17, lineHeight: 23.8, fontWeight: fontWeights.regular, letterSpacing: 0 },
   bodyMedium: { fontSize: 14, lineHeight: 19.6, fontWeight: fontWeights.regular, letterSpacing: 0 },
   bodySmall: { fontSize: 12, lineHeight: 16.8, fontWeight: fontWeights.regular, letterSpacing: 0 },
-  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: fontWeights.medium, letterSpacing: 0 },
   labelMedium: {
     fontSize: 12,
     lineHeight: 14.4,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     letterSpacing: 0,
   },
-  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: fontWeights.regular, letterSpacing: 0 },
+  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: fontWeights.medium, letterSpacing: 0 },
   overline: {
     fontSize: 11,
     lineHeight: 13.2,

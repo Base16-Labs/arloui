@@ -9,9 +9,10 @@
 
 export const lightSemanticColors = {
   surfaceBackground: '#F9FAFB',
-  // Card fill — a step greyer than the background and the (white) elevated surface,
-  // so a resting card reads as its own plane without a shadow. Grey-100.
-  surfaceCard: '#F3F4F6',
+  // Card fill — greyer than the background and the (white) elevated surface, so a
+  // resting card reads as its own plane without a shadow, and a half step darker
+  // than surfaceInput so an input reads on a card. Grey-150.
+  surfaceCard: '#ECEEF1',
   surfaceInput: '#F3F4F6',
   surfaceInputActive: '#E5E7EB',
   surfaceElevated: '#FFFFFF',
@@ -90,8 +91,9 @@ export const lightSemanticColors = {
 
 export const darkSemanticColors = {
   surfaceBackground: '#09090B',
-  // Card fill — sits between the background and the elevated surface.
-  surfaceCard: '#18181B',
+  // Card fill — between the background and surfaceInput, a half step darker than
+  // an input so the input reads on a card. Zinc-925.
+  surfaceCard: '#111113',
   surfaceInput: '#18181B',
   surfaceInputActive: '#27272A',
   surfaceElevated: '#27272A',
@@ -132,7 +134,7 @@ export const darkSemanticColors = {
   feedbackError: '#FB2C36',
   feedbackErrorBg: '#460809',
   feedbackInfo: '#51A2FF',
-  feedbackInfoBg: '#09090B',
+  feedbackInfoBg: '#162456',
   /**
    * Dark keeps the brighter Success-400: against Error-500 on a dark surface it
    * separates by ΔE 14.0 under deuteranopia — the widest of any pair tested — and
@@ -202,7 +204,7 @@ export const typography = {
   displayLarge: {
     fontSize: 34,
     lineHeight: 42.5,
-    fontWeight: '400' as const,
+    fontWeight: '500' as const,
     letterSpacing: -0.68,
   },
   displayLargeEmphasized: {
@@ -211,21 +213,21 @@ export const typography = {
     fontWeight: '600' as const,
     letterSpacing: -0.68,
   },
-  displayMedium: { fontSize: 28, lineHeight: 35, fontWeight: '400' as const, letterSpacing: -0.56 },
+  displayMedium: { fontSize: 28, lineHeight: 35, fontWeight: '500' as const, letterSpacing: -0.56 },
   displayMediumEmphasized: {
     fontSize: 28,
     lineHeight: 35,
     fontWeight: '600' as const,
     letterSpacing: -0.56,
   },
-  displaySmall: { fontSize: 24, lineHeight: 30, fontWeight: '400' as const, letterSpacing: -0.48 },
+  displaySmall: { fontSize: 24, lineHeight: 30, fontWeight: '500' as const, letterSpacing: -0.48 },
   displaySmallEmphasized: {
     fontSize: 24,
     lineHeight: 30,
     fontWeight: '600' as const,
     letterSpacing: -0.48,
   },
-  headingLarge: { fontSize: 20, lineHeight: 26, fontWeight: '400' as const, letterSpacing: -0.2 },
+  headingLarge: { fontSize: 20, lineHeight: 26, fontWeight: '500' as const, letterSpacing: -0.2 },
   headingLargeEmphasized: {
     fontSize: 20,
     lineHeight: 26,
@@ -235,7 +237,7 @@ export const typography = {
   headingMedium: {
     fontSize: 17,
     lineHeight: 22.1,
-    fontWeight: '400' as const,
+    fontWeight: '500' as const,
     letterSpacing: -0.17,
   },
   headingMediumEmphasized: {
@@ -247,7 +249,7 @@ export const typography = {
   headingSmall: {
     fontSize: 14,
     lineHeight: 18.2,
-    fontWeight: '400' as const,
+    fontWeight: '500' as const,
     letterSpacing: -0.14,
   },
   headingSmallEmphasized: {
@@ -259,9 +261,9 @@ export const typography = {
   bodyLarge: { fontSize: 17, lineHeight: 23.8, fontWeight: '400' as const, letterSpacing: 0 },
   bodyMedium: { fontSize: 14, lineHeight: 19.6, fontWeight: '400' as const, letterSpacing: 0 },
   bodySmall: { fontSize: 12, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
-  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
-  labelMedium: { fontSize: 12, lineHeight: 14.4, fontWeight: '400' as const, letterSpacing: 0 },
-  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: '400' as const, letterSpacing: 0 },
+  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: '500' as const, letterSpacing: 0 },
+  labelMedium: { fontSize: 12, lineHeight: 14.4, fontWeight: '500' as const, letterSpacing: 0 },
+  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: '500' as const, letterSpacing: 0 },
   overline: {
     fontSize: 11,
     lineHeight: 13.2,

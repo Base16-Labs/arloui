@@ -2,6 +2,7 @@ import { TypographyDoc } from '@/components/docs/typography-doc';
 import { Eyebrow } from '@/components/mdx/Eyebrow';
 import { Lede } from '@/components/mdx/Lede';
 import { RightRail } from '@/components/nav/RightRail';
+import { FIGMA_NODES, figmaNode } from '@/lib/figma';
 
 export function TypographyPage() {
   const headings = [
@@ -19,7 +20,7 @@ export function TypographyPage() {
   const actions = [
     {
       label: 'Figma',
-      href: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=74-4376',
+      href: figmaNode(FIGMA_NODES.typography),
     },
     {
       label: 'Source',

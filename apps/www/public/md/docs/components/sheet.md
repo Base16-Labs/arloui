@@ -39,6 +39,7 @@
 
 ## Links
 
+- [Figma](https://www.figma.com/design/zoopBam4dC975x8E1xrrPt/Arlo-UI?node-id=2319-719)
 - [Source](https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet)
 
 ---

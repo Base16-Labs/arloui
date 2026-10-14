@@ -14,7 +14,6 @@ The hand-authored markdown is the design contract; `npm run skill:sync` (run fro
 skills/
 ├── README.md                 maintainer-facing (optional to copy into agents)
 ├── SKILL.md                  entry point: rules, workflow, output conventions
-├── component-debt.md         maintainer-facing: where the shipped code owes the spec
 └── references/
     ├── tokens.md             hand-authored: type, color, spacing, radius, motion
     ├── components.md         hand-authored: primitives, variants, screen recipes

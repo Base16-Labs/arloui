@@ -56,6 +56,17 @@ import {
   stepperData,
 } from '@/lib/docs-markdown';
 
+/** Figma link pill — renders nothing for a component with no Figma counterpart. */
+function FigmaPill({ href }: { href?: string }) {
+  if (!href || href === '#') return null;
+  return (
+    <Pill as="a" href={href}>
+      <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+      <span className="opacity-50">↗</span>
+    </Pill>
+  );
+}
+
 export function generateStaticParams() {
   return [
     { slug: 'chart' },
@@ -188,6 +199,7 @@ function TabsDocPage() {
         <Lede>{tabsData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={tabsData.figma} />
           <Pill as="a" href={tabsData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -353,6 +365,7 @@ function SkeletonDocPage() {
         <Lede>{skeletonData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={skeletonData.figma} />
           <Pill as="a" href={skeletonData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -507,6 +520,7 @@ function SpinnerDocPage() {
         <Lede>{spinnerData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={spinnerData.figma} />
           <Pill as="a" href={spinnerData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>
@@ -660,6 +674,7 @@ function TabBarDocPage() {
         <Lede>{tabBarData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={tabBarData.figma} />
           <Pill as="a" href={tabBarData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -826,6 +841,7 @@ function DatePickerDocPage() {
         <Lede>{datePickerData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={datePickerData.figma} />
           <Pill as="a" href={datePickerData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -989,10 +1005,7 @@ function SheetDocPage() {
 
         {/* Action pills */}
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={sheetData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={sheetData.figma} />
           <Pill as="a" href={sheetData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1242,10 +1255,7 @@ function InputDocPage() {
         <Lede>{inputData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={inputData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={inputData.figma} />
           <Pill as="a" href={inputData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1439,10 +1449,7 @@ function TextAreaDocPage() {
         <Lede>{textAreaData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={textAreaData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={textAreaData.figma} />
           <Pill as="a" href={textAreaData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1622,10 +1629,7 @@ function ButtonDocPage() {
         <Lede>{buttonData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={buttonData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={buttonData.figma} />
           <Pill as="a" href={buttonData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1986,10 +1990,7 @@ function FormControlDocPage({
         <Lede>{data.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={data.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={data.figma} />
           <Pill as="a" href={data.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -2181,6 +2182,7 @@ function CardDocPage() {
         <Lede>{cardData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={cardData.figma} />
           <Pill as="a" href={cardData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>
@@ -2386,6 +2388,7 @@ function ListDocPage() {
         <Lede>{listData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={listData.figma} />
           <Pill as="a" href={listData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>
@@ -2576,6 +2579,7 @@ function CarouselDocPage() {
         <Lede>{carouselData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={carouselData.figma} />
           <Pill as="a" href={carouselData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -2759,6 +2763,7 @@ function GalleryDocPage() {
         <Lede>{galleryData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={galleryData.figma} />
           <Pill as="a" href={galleryData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -2927,6 +2932,7 @@ function BadgeDocPage() {
         <Lede>{badgeData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={badgeData.figma} />
           <Pill as="a" href={badgeData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -3077,6 +3083,7 @@ function ChipDocPage() {
         <Lede>{chipData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={chipData.figma} />
           <Pill as="a" href={chipData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -3256,6 +3263,7 @@ function ToastDocPage() {
         <Lede>{toastData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={toastData.figma} />
           <Pill as="a" href={toastData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -3463,6 +3471,7 @@ function StepperDocPage() {
         <Lede>{stepperData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={stepperData.figma} />
           <Pill as="a" href={stepperData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>
