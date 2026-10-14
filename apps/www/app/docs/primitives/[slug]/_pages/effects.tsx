@@ -2,6 +2,7 @@ import { EffectsDoc } from '@/components/docs/effects-doc';
 import { Eyebrow } from '@/components/mdx/Eyebrow';
 import { Lede } from '@/components/mdx/Lede';
 import { RightRail } from '@/components/nav/RightRail';
+import { FIGMA_NODES, figmaNode } from '@/lib/figma';
 
 export function EffectsPage() {
   const headings = [
@@ -19,7 +20,7 @@ export function EffectsPage() {
   const actions = [
     {
       label: 'Figma',
-      href: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=238-2275',
+      href: figmaNode(FIGMA_NODES.effects),
     },
     {
       label: 'Source',
