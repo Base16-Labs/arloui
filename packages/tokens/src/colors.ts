@@ -26,8 +26,9 @@ const E = error;
 /** Light — Figma utility tokens (camelCase). */
 export const lightSemanticColors = {
   surfaceBackground: G[50],
-  // Card fill — a step greyer than the background and the (white) elevated surface.
-  surfaceCard: G[100],
+  // Card fill — greyer than the background and the (white) elevated surface, and a
+  // half step darker than surfaceInput so an input reads on a card.
+  surfaceCard: G[150],
   surfaceInput: G[100],
   surfaceInputActive: G[200],
   surfaceElevated: base.white,
@@ -123,8 +124,9 @@ export const lightSemanticColors = {
 /** Dark — same token names; neutrals run on Zinc (see `Z` above), accents on the Main palette. */
 export const darkSemanticColors = {
   surfaceBackground: Z[950],
-  // Card fill — sits between the background and the elevated surface.
-  surfaceCard: Z[900],
+  // Card fill — between the background and surfaceInput, a half step darker than an
+  // input so the input reads on a card.
+  surfaceCard: Z[925],
   surfaceInput: Z[900],
   surfaceInputActive: Z[800],
   surfaceElevated: Z[800],
