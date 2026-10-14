@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { Text } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import { Sheet } from '../sheet';
 import { renderWithTheme, screen, fireEvent, waitFor } from '../../../../test/render';
 
@@ -108,6 +108,42 @@ describe('Sheet', () => {
       </Sheet>,
     );
     expect(screen.getByText('Snap sheet')).toBeTruthy();
+  });
+
+  it('scrolls the body at a fixed height so the footer stays reachable', () => {
+    renderWithTheme(
+      <Sheet visible onClose={() => {}} height="full">
+        <Sheet.Header title="Filters" />
+        <Sheet.Body>
+          <Text>Field</Text>
+        </Sheet.Body>
+        <Sheet.Footer>
+          <Text>Save</Text>
+        </Sheet.Footer>
+      </Sheet>,
+    );
+
+    const scroller = screen.UNSAFE_getByType(ScrollView);
+    expect(scroller.props.style).toEqual(expect.objectContaining({ flex: 1 }));
+    expect(screen.getByText('Field')).toBeTruthy();
+    expect(screen.getByText('Save')).toBeTruthy();
+  });
+
+  it('leaves an auto-height body content-sized', () => {
+    renderWithTheme(
+      <Sheet visible onClose={() => {}} height="auto">
+        <Sheet.Body>
+          <Text>Short</Text>
+        </Sheet.Body>
+        <Sheet.Footer>
+          <Text>Done</Text>
+        </Sheet.Footer>
+      </Sheet>,
+    );
+
+    expect(screen.UNSAFE_queryByType(ScrollView)).toBeNull();
+    expect(screen.getByText('Short')).toBeTruthy();
+    expect(screen.getByText('Done')).toBeTruthy();
   });
 
   it('keeps the legacy presentation and detent props compatible', () => {

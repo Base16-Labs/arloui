@@ -18,16 +18,30 @@
  *
  * Compound parts: `<Sheet.Handle>`, `<Sheet.Header>`, `<Sheet.Body>`, `<Sheet.Footer>`.
  *
+ * At a fixed height (`half`, `full`, a fraction, or `snapPoints`), `Sheet.Body`
+ * fills the space between the header and the footer and scrolls. `Sheet.Footer`
+ * stays on the bottom edge of the visible sheet, including at a shorter detent.
+ *
  * The Sheet renders an absolutely-positioned, full-screen overlay, so place it near
  * the root of the screen it should cover (a `flex: 1` parent).
  */
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import {
   Animated,
   BackHandler,
   Easing,
   PanResponder,
   Pressable,
+  ScrollView,
   Text,
   useWindowDimensions,
   View,
@@ -203,6 +217,26 @@ function detentAt(snaps: number[], index: number): number {
   const clamped = Math.max(0, Math.min(index, snaps.length - 1));
   return snaps[clamped] ?? 0;
 }
+
+type SheetFrameValue = {
+  /** Fixed height: body fills the leftover space and scrolls. */
+  fill: boolean;
+  /**
+   * Cancels the sheet's downward translation so the footer stays on the visible
+   * bottom edge. Null when the sheet isn't moving between detents.
+   */
+  footerShift: Animated.AnimatedInterpolation<number> | null;
+  /** Extra body padding while a shorter detent has the footer overlapping it. */
+  contentInsetBottom: number;
+  reportFooter: (height: number) => void;
+};
+
+const SheetFrameContext = createContext<SheetFrameValue>({
+  fill: false,
+  footerShift: null,
+  contentInsetBottom: 0,
+  reportFooter: () => {},
+});
 
 function SheetRoot({
   visible,
@@ -474,6 +508,33 @@ function SheetRoot({
     [translateY, sheetHeight],
   );
 
+  const [footerHeight, setFooterHeight] = useState(0);
+  const reportFooter = useCallback((next: number) => {
+    setFooterHeight((prev) => (Math.abs(prev - next) < 0.5 ? prev : next));
+  }, []);
+
+  // A multi-detent sheet is one tall surface translated downward to show a
+  // shorter detent. Shift the footer back up by that same amount, and stop
+  // once the drag passes the shortest detent so dismiss takes the footer with it.
+  const footerShift = useMemo(() => {
+    if (snaps == null || snaps.length < 2 || sheetHeight <= 0) return null;
+    const maxPin = sheetHeight - detentAt(snaps, 0);
+    if (maxPin <= 0) return null;
+    return translateY.interpolate({
+      inputRange: [-1, 0, maxPin, maxPin + 1],
+      outputRange: [0, 0, -maxPin, -maxPin],
+      extrapolate: 'clamp',
+    });
+  }, [snaps, sheetHeight, translateY]);
+
+  const fill = fixedHeight != null;
+  const contentInsetBottom =
+    footerShift != null && snaps != null && snapIndex < snaps.length - 1 ? footerHeight : 0;
+  const frame = useMemo<SheetFrameValue>(
+    () => ({ fill, footerShift, contentInsetBottom, reportFooter }),
+    [fill, footerShift, contentInsetBottom, reportFooter],
+  );
+
   if (!mounted) return null;
 
   const surfaceColor = t.colors.surfaceElevated;
@@ -580,15 +641,17 @@ function SheetRoot({
               overflow: 'hidden',
             }}
           >
-            {showHandle ? (
-              <View {...panResponder.panHandlers}>
-                <SheetHandle width={handleWidth} height={handleHeight} />
-              </View>
-            ) : (
-              <View {...panResponder.panHandlers} style={{ height: t.spacing[2] }} />
-            )}
+            <SheetFrameContext.Provider value={frame}>
+              {showHandle ? (
+                <View {...panResponder.panHandlers}>
+                  <SheetHandle width={handleWidth} height={handleHeight} />
+                </View>
+              ) : (
+                <View {...panResponder.panHandlers} style={{ height: t.spacing[2] }} />
+              )}
 
-            {children}
+              {children}
+            </SheetFrameContext.Provider>
           </View>
         </View>
       </Animated.View>
@@ -673,27 +736,60 @@ function SheetHeader({
 
 function SheetBody({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const t = useTokens();
+  const { fill, contentInsetBottom } = useContext(SheetFrameContext);
+  const contentStyle = [
+    {
+      paddingHorizontal: t.spacing[5],
+      paddingBottom: contentInsetBottom,
+      gap: t.spacing[3],
+    },
+    style,
+  ];
+
+  // A content-sized sheet has nothing to scroll inside. A fixed height does:
+  // flex fills the gap above the footer, and the scroll view clips the rest.
+  if (!fill) {
+    return <View style={contentStyle}>{children}</View>;
+  }
+
   return (
-    <View style={[{ paddingHorizontal: t.spacing[5], gap: t.spacing[3] }, style]}>{children}</View>
+    <ScrollView
+      style={{ flex: 1, minHeight: 0 }}
+      contentContainerStyle={contentStyle}
+      keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled
+      automaticallyAdjustKeyboardInsets
+    >
+      {children}
+    </ScrollView>
   );
 }
 
 function SheetFooter({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const t = useTokens();
+  const { footerShift, reportFooter } = useContext(SheetFrameContext);
   return (
-    <View
+    <Animated.View
+      onLayout={(e) => reportFooter(e.nativeEvent.layout.height)}
       style={[
         {
           paddingHorizontal: t.spacing[5],
           paddingTop: t.spacing[4],
           marginTop: t.spacing[2],
           gap: t.spacing[2],
+          ...(footerShift != null
+            ? {
+                transform: [{ translateY: footerShift }],
+                zIndex: 1,
+                backgroundColor: t.colors.surfaceElevated,
+              }
+            : null),
         },
         style,
       ]}
     >
       {children}
-    </View>
+    </Animated.View>
   );
 }
 
