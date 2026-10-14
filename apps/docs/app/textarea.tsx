@@ -15,12 +15,14 @@ import { ThemeToggle } from '@/components/playground/theme-toggle';
 import { VariantChip, VariantControlRow } from '@/components/playground/variant-controls';
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
+type LabelMode = 'none' | 'inset' | 'above';
 type IconMode = 'none' | 'leading' | 'trailing' | 'both';
 type ContentMode = 'empty' | 'filled' | 'long';
 type FieldState = 'default' | 'helper' | 'error' | 'disabled';
 type CounterMode = 'off' | 'on';
 
 const APPEARANCES: TextAreaAppearance[] = ['filled', 'plain'];
+const LABELS: LabelMode[] = ['none', 'inset', 'above'];
 const SIZES: TextAreaSize[] = ['sm', 'md'];
 const ICONS: IconMode[] = ['none', 'leading', 'trailing', 'both'];
 const CONTENT: ContentMode[] = ['empty', 'filled', 'long'];
@@ -33,6 +35,7 @@ export default function TextAreaCanvas() {
   const insets = useSafeAreaInsets();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [appearance, setAppearance] = useState<TextAreaAppearance>('filled');
+  const [labelMode, setLabelMode] = useState<LabelMode>('inset');
   const [size, setSize] = useState<TextAreaSize>('md');
   const [icons, setIcons] = useState<IconMode>('none');
   const [content, setContent] = useState<ContentMode>('filled');
@@ -170,7 +173,8 @@ export default function TextAreaCanvas() {
                 onChangeText={setValue}
                 appearance={appearance}
                 size={size}
-                label={appearance === 'filled' ? 'Message' : undefined}
+                label={labelMode === 'none' ? undefined : 'Message'}
+                insetLabel={labelMode !== 'above'}
                 placeholder="Write a message"
                 editable={state !== 'disabled'}
                 state={state === 'error' ? 'error' : 'default'}
@@ -261,6 +265,16 @@ export default function TextAreaCanvas() {
                     label={option === 'plain' ? 'no bg' : option}
                     active={appearance === option}
                     onPress={() => setAppearance(option)}
+                  />
+                ))}
+              </VariantControlRow>
+              <VariantControlRow label="Label">
+                {LABELS.map((option) => (
+                  <VariantChip
+                    key={option}
+                    label={option}
+                    active={labelMode === option}
+                    onPress={() => setLabelMode(option)}
                   />
                 ))}
               </VariantControlRow>
