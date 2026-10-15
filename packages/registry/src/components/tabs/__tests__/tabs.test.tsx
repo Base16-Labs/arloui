@@ -110,8 +110,7 @@ describe('Tabs', () => {
           </Tabs>,
         );
         layoutTrack(300);
-        const expected =
-          name === 'dark' ? themes.dark.colors.borderStrong : themes.light.colors.surface;
+        const expected = themes[name].colors.surfaceElevated;
         expect(JSON.stringify(toJSON())).toContain(`"backgroundColor":"${expected}"`);
         unmount();
       }

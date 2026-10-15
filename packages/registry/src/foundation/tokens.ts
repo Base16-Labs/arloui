@@ -33,6 +33,9 @@ export const lightSemanticColors = {
   textInteractiveError: '#E7000B',
   interactivePrimary: '#155DFC',
   interactivePrimaryPressed: '#1447E6',
+  // Glass tints stay on the 400 step in both modes. The material follows the theme.
+  interactivePrimaryGlass: '#51A2FF',
+  interactiveErrorGlass: '#FF6467',
   interactiveSecondary: 'rgba(229,231,235,0.7)',
   interactiveSecondaryPressed: '#E5E7EB',
   interactiveTertiary: 'transparent',
@@ -99,7 +102,8 @@ export const darkSemanticColors = {
   surfaceElevated: '#27272A',
   // Translucent fill — the app background at 50%, a subtle frost over colour.
   surfaceBleed: 'rgba(9,9,11,0.5)',
-  surfaceOverlay: 'rgba(16,24,40,0.7)',
+  // Zinc-950 at 70%. Grey-900 (#101828) casts navy over a zinc page.
+  surfaceOverlay: 'rgba(9,9,11,0.7)',
   surfaceInverse: '#FAFAFA',
   textPrimary: '#FAFAFA',
   textSecondary: '#A1A1AA',
@@ -113,6 +117,8 @@ export const darkSemanticColors = {
   textInteractiveError: '#FF6467',
   interactivePrimary: '#2B7FFF',
   interactivePrimaryPressed: '#155DFC',
+  interactivePrimaryGlass: '#51A2FF',
+  interactiveErrorGlass: '#FF6467',
   interactiveSecondary: 'rgba(39,39,42,0.7)',
   interactiveSecondaryPressed: '#3F3F46',
   interactiveTertiary: 'transparent',
@@ -308,6 +314,7 @@ export const sizing = {
   avatar: { xs: 16, sm: 24, md: 32, lg: 40 },
   buttonHeight: { sm: 32, md: 40, lg: 48, xl: 52 },
   touchTarget: { minimum: 44, comfortable: 48 },
+  tab: { minWidth: 52 },
 } as const;
 
 /**
@@ -333,6 +340,7 @@ export const motion = {
     heavy: { stiffness: 300, damping: 40, mass: 1.2 }, // drag-to-dismiss commit, large surface
   },
   pressed: { scale: 0.97, opacity: 0.85 },
+  disabled: { opacity: 0.36 },
   /**
    * Chart recipes. A chart animates two things on two clocks: `control` is the
    * period pill answering a tap (press feedback), `data` is the series morphing

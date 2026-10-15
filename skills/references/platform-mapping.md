@@ -24,7 +24,7 @@ Use this file when translating between Figma, React Native, and SwiftUI. Match h
 - Reach for `FlatList` or `SectionList` when a pattern is clearly list-shaped.
 - Animation libraries are optional. If the codebase does not already use one, keep motion simple and native.
 
-Token naming in `tokens.ts` should mirror the CSS custom property names from `references/tokens.md` where possible (e.g., `bg`, `surface`, `textPrimary`, `accent`) so the design system stays in sync across targets.
+Token names in code are the semantic camelCase keys (`surfaceBackground`, `textPrimary`, `interactivePrimary`). The flat aliases `bg`, `surface`, and `accent` exist for older call sites. New code uses the semantic names.
 
 **Platform differences to watch:**
 - Safe area: wrap root screens in `SafeAreaView` or use `useSafeAreaInsets` for fine-grained control. Bottom insets differ significantly between notched iOS and Android.

@@ -135,7 +135,8 @@ function SpokesSpinner({ px, color, still }: GlyphProps) {
             height: spokeLength,
             borderRadius: spokeWidth / 2,
             backgroundColor: color,
-            opacity: 1 - (index / SPOKES) * 0.85,
+            // Fall off counter-clockwise: the bright spoke leads, the fade trails behind it.
+            opacity: 1 - (((SPOKES - index) % SPOKES) / SPOKES) * 0.85,
             transform: [
               { rotate: `${(index * 360) / SPOKES}deg` },
               { translateY: -(px / 2 - spokeLength / 2) },

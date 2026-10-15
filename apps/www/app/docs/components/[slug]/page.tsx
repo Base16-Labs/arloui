@@ -1113,37 +1113,30 @@ function SheetDocPage() {
         <Section id="code" title="Code" sub="React Native, copy-paste.">
           <CodeBlock language="tsx">{`npx arloui add sheet
 
-import { BlurView } from "expo-blur";
-import { StyleSheet } from "react-native";
 import { Sheet } from "@/components/ui/sheet";
 
-<Sheet
-  visible={open}
-  onClose={() => setOpen(false)}
-  backdrop="passthrough"
-  surface="glass"
-  width="stack"
-  snapPoints={[0.4, 0.92]}
-  padding="md"
-  handleHeight={3}
-  motion="gentle"
-  gesture={{ dismissDistance: 0.35, dismissVelocity: 0.75 }}
-  blurComponent={
-    <BlurView
-      intensity={34}
-      tint="systemMaterial"
-      style={StyleSheet.absoluteFill}
-    />
-  }
->
-  <Sheet.Header title="Add to collection" />
-  <Sheet.Body>
-    {/* Your content */}
-  </Sheet.Body>
-  <Sheet.Footer>
-    {/* Primary action */}
-  </Sheet.Footer>
-</Sheet>`}</CodeBlock>
+<Sheet.Stack>
+  <Sheet.Screen>{/* The screen, or the sheet underneath. */}</Sheet.Screen>
+  <Sheet
+    visible={open}
+    onClose={() => setOpen(false)}
+    backdrop="passthrough"
+    stack
+    snapPoints={[0.4, 0.92]}
+    padding="md"
+    handleHeight={3}
+    motion="gentle"
+    gesture={{ dismissDistance: 0.35, dismissVelocity: 0.75 }}
+  >
+    <Sheet.Header title="Add to collection" />
+    <Sheet.Body>
+      {/* Your content */}
+    </Sheet.Body>
+    <Sheet.Footer>
+      {/* Primary action */}
+    </Sheet.Footer>
+  </Sheet>
+</Sheet.Stack>`}</CodeBlock>
         </Section>
 
         <Section
@@ -1153,7 +1146,7 @@ import { Sheet } from "@/components/ui/sheet";
         >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>
-              Layout axes stay token-driven: <code className="font-mono text-[13px]">width</code>,{' '}
+              Layout axes stay token-driven: <code className="font-mono text-[13px]">stack</code>,{' '}
               <code className="font-mono text-[13px]">height</code> (or a fraction like{' '}
               <code className="font-mono text-[13px]">0.4</code>),{' '}
               <code className="font-mono text-[13px]">padding</code>,{' '}
@@ -1165,9 +1158,11 @@ import { Sheet } from "@/components/ui/sheet";
               to snap between resting heights; drag past the smallest to dismiss.
             </li>
             <li>
-              Material axes compose: <code className="font-mono text-[13px]">backdrop</code> ×{' '}
-              <code className="font-mono text-[13px]">surface</code>, plus optional{' '}
-              <code className="font-mono text-[13px]">blurComponent</code>.
+              <code className="font-mono text-[13px]">backdrop</code> is{' '}
+              <code className="font-mono text-[13px]">scrim</code> or{' '}
+              <code className="font-mono text-[13px]">passthrough</code>.{' '}
+              <code className="font-mono text-[13px]">stack</code> morphs{' '}
+              <code className="font-mono text-[13px]">Sheet.Screen</code> into the card above the sheet.
             </li>
             <li>
               Motion recipes: <code className="font-mono text-[13px]">motion=&quot;gentle&quot; | &quot;snappy&quot; | &quot;heavy&quot;</code>{' '}
@@ -1667,7 +1662,7 @@ function ButtonDocPage() {
               {[
                 ['Label', 'typography.body · weight 600'],
                 ['Leading / trailing icon', 'sizing.icon.xs–md'],
-                ['Height', 'sizing.buttonHeight.sm–xl · 36–52'],
+                ['Height', 'sizing.buttonHeight.sm–xl · 32–52'],
                 ['Corner radius', 'radii.full (pill)'],
                 ['Horizontal padding', 'spacing.3–6 by size'],
                 ['Icon ↔ label gap', 'spacing.1–3 by size'],
@@ -1768,9 +1763,10 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
 <Button loading>Submit</Button>
 <Button fullWidth>Continue</Button>
 
-// Liquid Glass — the tone's fill becomes the material's tint
+// Liquid Glass — primary solid, danger solid, and neutral soft only
 <Button surface="glass">Continue</Button>
-<Button surface="glass" tone="danger">Delete</Button>`}</CodeBlock>
+<Button surface="glass" tone="danger">Delete</Button>
+<Button surface="glass" tone="neutral" appearance="soft">Cancel</Button>`}</CodeBlock>
 
             <CodeBlock language="tsx">{`// Ghost - chromeless, low emphasis
 <GhostButton type="primary">Learn more</GhostButton>
@@ -1778,6 +1774,8 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
 
 // FAB - floating action, requires accessibilityLabel
 <FAB tone="primary" icon={<Plus />} accessibilityLabel="Add item" onPress={handleAdd} />
+<FAB surface="glass" tone="primary" icon={<Plus />} accessibilityLabel="Add item" />
+<FAB surface="glass" tone="neutral" icon={<Plus />} accessibilityLabel="Add item" />
 
 // Social auth - fixed provider styling, four platforms
 <SocialAuthButton platform="google" type="fill" onPress={handleGoogle} />

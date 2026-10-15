@@ -336,7 +336,7 @@ export function DatePicker({
                     height: 36,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    borderRadius: 18,
+                    borderRadius: t.radii.full,
                     borderWidth: current && !chosen ? 1 : 0,
                     borderColor: t.colors.borderFocus,
                     backgroundColor: chosen

@@ -6,8 +6,9 @@
  * it goes wrong is one component quietly painting its own fill under the material
  * or keeping a treatment the material already provides.
  */
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 import { Button } from '../button/button';
+import { FAB } from '../button/fab-button';
 import { TabBar } from '../tab-bar/tab-bar';
 import { Tabs } from '../tabs/tabs';
 import { __resetGlassCacheForTests, withAlpha } from '../../foundation/glass';
@@ -108,7 +109,7 @@ describe('Button surface="glass"', () => {
     renderWithTheme(<Button surface="glass">Continue</Button>, { theme: 'light' });
 
     expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(
-      tint(themes.light.colors.interactivePrimary),
+      tint(themes.light.colors.interactivePrimaryGlass),
     );
   });
 
@@ -118,10 +119,20 @@ describe('Button surface="glass"', () => {
       theme: 'light',
     });
 
-    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimary));
+    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimaryGlass));
   });
 
-  it('tints a danger button with danger, not with primary', () => {
+  it('keeps Primary 400 as the tint in dark mode', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    const { toJSON } = renderWithTheme(<Button surface="glass">Continue</Button>, {
+      theme: 'dark',
+    });
+
+    expect(fills(toJSON())).toContain(tint(themes.dark.colors.interactivePrimaryGlass));
+    expect(fills(toJSON())).not.toContain(tint(themes.dark.colors.interactivePrimary));
+  });
+
+  it('tints a danger button with the error glass token, not with primary', () => {
     glassEffect.__setLiquidGlassAvailable(false);
     const { toJSON } = renderWithTheme(
       <Button surface="glass" tone="danger">
@@ -131,8 +142,22 @@ describe('Button surface="glass"', () => {
     );
 
     const painted = fills(toJSON());
-    expect(painted).toContain(tint(themes.light.colors.feedbackError));
-    expect(painted).not.toContain(tint(themes.light.colors.interactivePrimary));
+    expect(painted).toContain(tint(themes.light.colors.interactiveErrorGlass));
+    expect(painted).not.toContain(tint(themes.light.colors.interactivePrimaryGlass));
+  });
+
+  it('tints secondary glass with interactiveSecondary and presses to the pressed token', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    const { toJSON } = renderWithTheme(
+      <Button surface="glass" tone="neutral" appearance="soft">
+        Cancel
+      </Button>,
+      { theme: 'light' },
+    );
+
+    expect(fills(toJSON())).toContain(themes.light.colors.interactiveSecondary);
+    fireEvent(screen.getByRole('button', { name: 'Cancel' }), 'pressIn');
+    expect(fills(toJSON())).toContain(themes.light.colors.interactiveSecondaryPressed);
   });
 
   /**
@@ -163,7 +188,7 @@ describe('Button surface="glass"', () => {
     fireEvent(screen.getByRole('button', { name: 'Continue' }), 'pressIn');
 
     const painted = fills(toJSON());
-    expect(painted).toContain(tint(themes.light.colors.interactivePrimary, 'pressed'));
+    expect(painted).toContain(tint(themes.light.colors.interactivePrimaryGlass, 'pressed'));
     expect(painted).not.toContain(themes.light.colors.touchFeedbackMain);
   });
 
@@ -177,9 +202,9 @@ describe('Button surface="glass"', () => {
     // Re-assigning `tintColor` makes `GlassView` rebuild its effect, which
     // flashes. The native material's props stay put and the press rides above.
     expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(
-      tint(themes.light.colors.interactivePrimary),
+      tint(themes.light.colors.interactivePrimaryGlass),
     );
-    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimary, 'pressed'));
+    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimaryGlass, 'pressed'));
   });
 
   /**
@@ -196,6 +221,60 @@ describe('Button surface="glass"', () => {
   it('is opt-in — a default button has no glass at all', () => {
     glassEffect.__setLiquidGlassAvailable(true);
     renderWithTheme(<Button>Continue</Button>);
+    expect(screen.queryByTestId('native-glass-view')).toBeNull();
+  });
+
+  it('draws no shadow on a glass button', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    const { toJSON } = renderWithTheme(<Button surface="glass">Continue</Button>, {
+      theme: 'light',
+    });
+    const shadows: string[] = [];
+    const walk = (node: unknown): void => {
+      if (Array.isArray(node)) return node.forEach(walk);
+      if (!node || typeof node !== 'object') return;
+      const element = node as { props?: { style?: unknown }; children?: unknown };
+      const style = StyleSheet.flatten(element.props?.style as never) as
+        | { boxShadow?: string; shadowOpacity?: number }
+        | undefined;
+      if (style?.boxShadow) shadows.push(style.boxShadow);
+      if (style?.shadowOpacity) shadows.push(String(style.shadowOpacity));
+      walk(element.children);
+    };
+    walk(toJSON());
+    expect(shadows).toEqual([]);
+  });
+});
+
+describe('FAB surface="glass"', () => {
+  it('tints primary glass with the primary glass token and draws no shadow', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    const { toJSON } = renderWithTheme(
+      <FAB surface="glass" icon={<Text>+</Text>} accessibilityLabel="Add" />,
+      { theme: 'light' },
+    );
+    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimaryGlass));
+    const style = StyleSheet.flatten(
+      (toJSON() as { children?: Array<{ props?: { style?: unknown } }> }).children?.[0]?.props
+        ?.style as never,
+    ) as { shadowOpacity?: number; boxShadow?: string } | undefined;
+    expect(style?.boxShadow ?? style?.shadowOpacity ?? 0).toBeFalsy();
+  });
+
+  it('tints neutral glass with interactiveSecondary', () => {
+    glassEffect.__setLiquidGlassAvailable(false);
+    const { toJSON } = renderWithTheme(
+      <FAB surface="glass" tone="neutral" icon={<Text>+</Text>} accessibilityLabel="Add" />,
+      { theme: 'light' },
+    );
+    expect(fills(toJSON())).toContain(themes.light.colors.interactiveSecondary);
+  });
+
+  it('never goes to glass while disabled', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(
+      <FAB surface="glass" disabled icon={<Text>+</Text>} accessibilityLabel="Add" />,
+    );
     expect(screen.queryByTestId('native-glass-view')).toBeNull();
   });
 });
@@ -377,6 +456,11 @@ describe('Tabs surface="glass"', () => {
     const { toJSON } = renderWithTheme(control('filled'), { theme: 'dark' });
     measure();
     expect(screen.queryByTestId('native-glass-view')).toBeNull();
-    expect(fills(toJSON())).toContain(themes.dark.colors.borderStrong);
+    expect(fills(toJSON())).toEqual(
+      expect.arrayContaining([
+        themes.dark.colors.interactiveSecondary,
+        themes.dark.colors.surfaceElevated,
+      ]),
+    );
   });
 });

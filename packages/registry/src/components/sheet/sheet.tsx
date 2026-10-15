@@ -2,7 +2,8 @@
  * Arlo UI — Sheet (Bottom Drawer)
  *
  * A bottom-anchored surface with a grabber, drag-to-dismiss, safe-area padding,
- * and token-based width, height, and padding controls.
+ * and token-based height and padding. Padding sets the sheet's width. `stack`
+ * morphs the screen behind it into the card that peeks above the sheet.
  *
  *   - `backdrop`: 'scrim' (modal — dims and blocks the background, default) or
  *     'passthrough' (iOS-style — the background stays visible and interactive).
@@ -53,6 +54,7 @@ import { useTokens } from '../../foundation/theme-provider';
 import { useReduceMotion } from '../../foundation/reduce-motion';
 
 export type SheetBackdrop = 'scrim' | 'passthrough';
+/** @deprecated The stack is the `stack` prop. Width comes from `padding`. */
 export type SheetWidth = 'default' | 'stack';
 /** `'auto'` hugs the content, `'half'` uses half the screen, and `'full'` fills the available height. */
 export type SheetHeight = 'auto' | 'half' | 'full';
@@ -110,7 +112,12 @@ export type SheetProps = {
   onClose: () => void;
   /** `'scrim'` dims + blocks the background (modal); `'passthrough'` leaves it interactive. */
   backdrop?: SheetBackdrop;
-  /** `'default'` uses one surface; `'stack'` adds a second surface behind it. */
+  /**
+   * Morphs the screen behind the sheet — wrapped in `Sheet.Stack` / `Sheet.Screen` —
+   * into the card that peeks above it. Width comes from `padding`.
+   */
+  stack?: boolean;
+  /** @deprecated Use `stack`. Width comes from `padding`. */
   width?: SheetWidth;
   /**
    * Controls how much vertical space the sheet occupies when `snapPoints` is not set.
@@ -123,9 +130,9 @@ export type SheetProps = {
    * When set, takes precedence over `height`.
    */
   snapPoints?: number[];
-  /** Token-based outer gutter. This is independent of `width`. */
+  /** Token-based outer gutter. This is what sets the sheet's width. */
   padding?: SheetPadding;
-  /** @deprecated Use `width` and `padding`. */
+  /** @deprecated Use `stack` and `padding`. */
   presentation?: SheetPresentation;
   /** @deprecated Use `height`. Fractional numbers remain supported here for compatibility. */
   detent?: SheetDetent;
@@ -136,7 +143,7 @@ export type SheetProps = {
   bottomOffset?: number;
   /** Maximum visual width for tablet/large phones. */
   maxWidth?: number;
-  /** Surface corner radius. Defaults to `radii['2xl']` (24) for both widths. */
+  /** Surface corner radius. Defaults to `radii['2xl']` (24). */
   cornerRadius?: number;
   handleWidth?: number;
   handleHeight?: number;
@@ -238,10 +245,91 @@ const SheetFrameContext = createContext<SheetFrameValue>({
   reportFooter: () => {},
 });
 
+/** How far the screen behind a stacked sheet settles: slightly inset, as a card. */
+const STACK_SCALE = 0.92;
+
+type SheetStackFrame = { radius: number };
+type SheetStackApi = {
+  progress: Animated.Value;
+  frame: SheetStackFrame | null;
+  setFrame: (frame: SheetStackFrame | null) => void;
+};
+
+const SheetStackContext = createContext<SheetStackApi | null>(null);
+
+function SheetStack({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  const [progress] = useState(() => new Animated.Value(0));
+  const [frame, setFrameState] = useState<SheetStackFrame | null>(null);
+  const setFrame = useCallback((next: SheetStackFrame | null) => {
+    setFrameState((prev) => {
+      if (prev == null && next == null) return prev;
+      if (prev != null && next != null && prev.radius === next.radius) return prev;
+      return next;
+    });
+  }, []);
+  const api = useMemo(
+    () => ({ progress, frame, setFrame }),
+    [progress, frame, setFrame],
+  );
+
+  return (
+    <SheetStackContext.Provider value={api}>
+      <View style={[{ flex: 1 }, style]}>{children}</View>
+    </SheetStackContext.Provider>
+  );
+}
+
+/**
+ * The surface a stacked sheet rises over. As the sheet moves, this view scales
+ * down, drops a step, and rounds — the screen itself becomes the peeking card.
+ */
+function SheetScreen({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  const t = useTokens();
+  const api = useContext(SheetStackContext);
+  if (api == null || api.frame == null) {
+    return <View style={[{ flex: 1 }, style]}>{children}</View>;
+  }
+
+  const { progress, frame } = api;
+  return (
+    <Animated.View
+      style={[
+        {
+          flex: 1,
+          overflow: 'hidden',
+          backgroundColor: t.colors.bg,
+          borderRadius: progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, frame.radius],
+          }),
+          transform: [
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, STACK_SCALE],
+              }),
+            },
+            {
+              translateY: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, t.spacing[3]],
+              }),
+            },
+          ],
+        },
+        style,
+      ]}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+
 function SheetRoot({
   visible,
   onClose,
   backdrop = 'scrim',
+  stack = false,
   width,
   height,
   snapPoints,
@@ -266,8 +354,8 @@ function SheetRoot({
   style,
 }: SheetProps) {
   const t = useTokens();
-  const dark = t.name === 'dark';
   const { height: windowHeight } = useWindowDimensions();
+  const stackHost = useContext(SheetStackContext);
   const { openDuration, closeDuration, easing: easingPoints, spring: settleSpring } =
     resolveMotion(t.motion, motionOverride);
   const [x1, y1, x2, y2] = easingPoints;
@@ -279,7 +367,7 @@ function SheetRoot({
   const overdragResistance = gestureOverride?.overdragResistance ?? 0.18;
 
   const isScrim = backdrop === 'scrim';
-  const resolvedWidth: SheetWidth = width ?? (presentation === 'stack' ? 'stack' : 'default');
+  const resolvedStack = stack || width === 'stack' || presentation === 'stack';
   const resolvedHeight: SheetHeight | number = height ?? detent ?? 'auto';
   const tokenPadding = padding === 'md' ? t.spacing[4] : padding === 'lg' ? t.spacing[6] : 0;
   const legacyInset = presentation === 'inset' || presentation === 'stack' ? t.spacing[4] : 0;
@@ -535,11 +623,37 @@ function SheetRoot({
     [fill, footerShift, contentInsetBottom, reportFooter],
   );
 
+  const publishStack = stackHost?.setFrame;
+  const stackProgress = stackHost?.progress;
+
+  useEffect(() => {
+    if (!resolvedStack || publishStack == null) return;
+    publishStack({ radius: resolvedRadius });
+    return () => publishStack(null);
+  }, [resolvedStack, publishStack, resolvedRadius]);
+
+  // The screen behind the sheet follows this translation, including the drag,
+  // so the card and the sheet are one motion.
+  useEffect(() => {
+    if (!resolvedStack || stackProgress == null) return;
+    const travel = Math.max(closedY - restY, 1);
+    const publish = (value: number) => {
+      const p = 1 - Math.min(1, Math.max(0, (value - restY) / travel));
+      stackProgress.setValue(p);
+    };
+    const id = translateY.addListener(({ value }) => publish(value));
+    const current = (translateY as unknown as { __getValue?: () => number }).__getValue?.();
+    if (typeof current === 'number') publish(current);
+    return () => {
+      translateY.removeListener(id);
+      stackProgress.setValue(0);
+    };
+  }, [resolvedStack, stackProgress, closedY, restY, translateY]);
+
   if (!mounted) return null;
 
   const surfaceColor = t.colors.surfaceElevated;
   const surfaceBorder = t.colors.border;
-  const shadow = dark ? t.shadows.none : t.shadows.xl;
 
   return (
     <View
@@ -595,64 +709,33 @@ function SheetRoot({
           style,
         ]}
       >
-        {resolvedWidth === 'stack' ? (
-          <View
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              top: -12,
-              right: t.spacing[3],
-              left: t.spacing[3],
-              height: 30,
-              borderRadius: resolvedRadius,
-              backgroundColor: dark ? t.colors.surfaceRaised : t.colors.surfaceElevated,
-              borderWidth: 1,
-              borderColor: surfaceBorder,
-              opacity: dark ? 0.82 : 0.94,
-              transform: [{ scaleX: 0.97 }],
-            }}
-          />
-        ) : null}
-
         <View
           style={{
             flex: fixedHeight != null ? 1 : undefined,
+            paddingBottom: Math.max(bottomInset, t.spacing[4]),
             borderTopLeftRadius: resolvedRadius,
             borderTopRightRadius: resolvedRadius,
             borderBottomLeftRadius: isInset ? resolvedRadius : 0,
             borderBottomRightRadius: isInset ? resolvedRadius : 0,
-            ...shadow,
-            shadowOffset: { width: 0, height: -4 },
+            // Top only. The other three sides carried the glass surface's full
+            // hairline and are 0 without it, which is RN's default anyway.
+            borderTopWidth: 1,
+            borderColor: surfaceBorder,
+            backgroundColor: surfaceColor,
+            overflow: 'hidden',
           }}
         >
-          <View
-            style={{
-              flex: fixedHeight != null ? 1 : undefined,
-              paddingBottom: Math.max(bottomInset, t.spacing[4]),
-              borderTopLeftRadius: resolvedRadius,
-              borderTopRightRadius: resolvedRadius,
-              borderBottomLeftRadius: isInset ? resolvedRadius : 0,
-              borderBottomRightRadius: isInset ? resolvedRadius : 0,
-              // Top only. The other three sides carried the glass surface's full
-              // hairline and are 0 without it, which is RN's default anyway.
-              borderTopWidth: 1,
-              borderColor: surfaceBorder,
-              backgroundColor: surfaceColor,
-              overflow: 'hidden',
-            }}
-          >
-            <SheetFrameContext.Provider value={frame}>
-              {showHandle ? (
-                <View {...panResponder.panHandlers}>
-                  <SheetHandle width={handleWidth} height={handleHeight} />
-                </View>
-              ) : (
-                <View {...panResponder.panHandlers} style={{ height: t.spacing[2] }} />
-              )}
+          <SheetFrameContext.Provider value={frame}>
+            {showHandle ? (
+              <View {...panResponder.panHandlers}>
+                <SheetHandle width={handleWidth} height={handleHeight} />
+              </View>
+            ) : (
+              <View {...panResponder.panHandlers} style={{ height: t.spacing[2] }} />
+            )}
 
-              {children}
-            </SheetFrameContext.Provider>
-          </View>
+            {children}
+          </SheetFrameContext.Provider>
         </View>
       </Animated.View>
     </View>
@@ -794,6 +877,8 @@ function SheetFooter({ children, style }: { children: ReactNode; style?: StylePr
 }
 
 export const Sheet = Object.assign(SheetRoot, {
+  Stack: SheetStack,
+  Screen: SheetScreen,
   Handle: SheetHandle,
   Header: SheetHeader,
   Body: SheetBody,

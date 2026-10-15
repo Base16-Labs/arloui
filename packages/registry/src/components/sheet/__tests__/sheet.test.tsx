@@ -73,12 +73,18 @@ describe('Sheet', () => {
     expect(screen.queryByLabelText('Close')).toBeNull();
   });
 
-  it('supports independent width, height, and padding variants', () => {
+  it('supports stack, height, and padding independently', () => {
     renderWithTheme(
-      <Sheet visible onClose={() => {}} width="stack" height="half" padding="lg" handleHeight={3}>
-        <Text>Stacked sheet</Text>
-      </Sheet>,
+      <Sheet.Stack>
+        <Sheet.Screen>
+          <Text>Library</Text>
+        </Sheet.Screen>
+        <Sheet visible onClose={() => {}} stack height="half" padding="lg" handleHeight={3}>
+          <Text>Stacked sheet</Text>
+        </Sheet>
+      </Sheet.Stack>,
     );
+    expect(screen.getByText('Library')).toBeTruthy();
     expect(screen.getByText('Stacked sheet')).toBeTruthy();
   });
 

@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { OutlineArrowRight, OutlineBag } from '@arloui/icons';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Animated, View } from 'react-native';
@@ -61,6 +61,7 @@ export default function ButtonCanvas() {
         : t.colors.textInteractiveError;
     }
     if (tone === 'neutral') {
+      if (surface === 'glass') return t.colors.textInteractiveSecondary;
       return appearance === 'solid' ? t.colors.textInverse : t.colors.textPrimary;
     }
     return appearance === 'solid'
@@ -68,13 +69,19 @@ export default function ButtonCanvas() {
       : appearance === 'soft'
         ? t.colors.interactivePrimary
         : t.colors.textInteractiveTertiary;
-  }, [appearance, state, t, tone]);
+  }, [appearance, state, surface, t, tone]);
 
   const iconSize =
     size === 'sm' ? t.sizing.icon.xs :
     size === 'md' ? t.sizing.icon.sm :
     size === 'lg' ? t.sizing.icon.sm :
     t.sizing.icon.md; // xl
+  /*
+   * The bag body sits 2.25 units below the center of its 24 grid, because the
+   * handle is drawn above the body. Shift the artwork up by that fraction so
+   * the body shares the label and arrow's center. The slot itself stays put.
+   */
+  const bagNudge = -(2.25 / 24) * iconSize;
 
   return (
     <>
@@ -119,9 +126,13 @@ export default function ButtonCanvas() {
               the preview exists to show.
             */}
             <Button
-              tone={tone}
-              appearance={appearance}
-              surface={surface}
+              {...(surface === 'glass' && tone === 'danger' && appearance === 'solid'
+                ? { surface: 'glass' as const, tone: 'danger' as const, appearance: 'solid' as const }
+                : surface === 'glass' && tone === 'neutral' && appearance === 'soft'
+                  ? { surface: 'glass' as const, tone: 'neutral' as const, appearance: 'soft' as const }
+                  : surface === 'glass' && tone === 'primary' && appearance === 'solid'
+                    ? { surface: 'glass' as const, tone: 'primary' as const, appearance: 'solid' as const }
+                    : { surface: 'default' as const, tone, appearance })}
               size={size}
               loading={state === 'loading'}
               disabled={state === 'disabled'}
@@ -130,16 +141,14 @@ export default function ButtonCanvas() {
               accessibilityLabel={icons === 'icon-only' ? 'Proceed' : undefined}
               leadingIcon={
                 icons === 'leading' || icons === 'both' || icons === 'icon-only' ? (
-                  <Ionicons name="bag-outline" size={iconSize} color={iconColor} />
+                  <View style={{ transform: [{ translateY: bagNudge }] }}>
+                    <OutlineBag width={iconSize} height={iconSize} color={iconColor} />
+                  </View>
                 ) : undefined
               }
               trailingIcon={
                 icons === 'trailing' || icons === 'both' ? (
-                  <Ionicons
-                    name="arrow-forward"
-                    size={Math.max(iconSize - 2, 12)}
-                    color={iconColor}
-                  />
+                  <OutlineArrowRight width={iconSize} height={iconSize} color={iconColor} />
                 ) : undefined
               }
               labelStyle={{
@@ -193,7 +202,11 @@ export default function ButtonCanvas() {
                     key={value}
                     label={value}
                     active={tone === value}
-                    onPress={() => setTone(value)}
+                    onPress={() => {
+                      setTone(value);
+                      if (surface !== 'glass') return;
+                      setAppearance(value === 'neutral' ? 'soft' : 'solid');
+                    }}
                   />
                 ))}
               </VariantControlRow>
@@ -203,7 +216,13 @@ export default function ButtonCanvas() {
                     key={value}
                     label={value}
                     active={appearance === value}
-                    onPress={() => setAppearance(value)}
+                    onPress={() => {
+                      setAppearance(value);
+                      const glassOk =
+                        (value === 'solid' && (tone === 'primary' || tone === 'danger')) ||
+                        (value === 'soft' && tone === 'neutral');
+                      if (!glassOk) setSurface('default');
+                    }}
                   />
                 ))}
               </VariantControlRow>
@@ -213,7 +232,15 @@ export default function ButtonCanvas() {
                     key={value}
                     label={value}
                     active={surface === value}
-                    onPress={() => setSurface(value)}
+                    onPress={() => {
+                      if (value === 'default') {
+                        setSurface('default');
+                        return;
+                      }
+                      setSurface('glass');
+                      if (tone === 'neutral') setAppearance('soft');
+                      else setAppearance('solid');
+                    }}
                   />
                 ))}
               </VariantControlRow>

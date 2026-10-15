@@ -29,6 +29,11 @@
 ## Tokens used
 
 - `colors.interactivePrimary`
+- `colors.interactivePrimaryGlass`
+- `colors.interactiveErrorGlass`
+- `colors.interactiveSecondary`
+- `colors.interactiveSecondaryPressed`
+- `colors.textInteractiveSecondary`
 - `colors.feedbackError`
 - `colors.feedbackErrorBg`
 - `colors.feedbackInfoBg`

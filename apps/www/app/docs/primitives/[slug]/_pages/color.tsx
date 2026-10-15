@@ -463,6 +463,13 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         usage: 'Pressed state',
       },
       {
+        token: 'interactive-primary-glass',
+        semanticKey: 'interactivePrimaryGlass',
+        palette: 'Primary-400',
+        darkPalette: 'Primary-400',
+        usage: 'Primary glass button and FAB tint',
+      },
+      {
         token: 'interactive-secondary',
         semanticKey: 'interactiveSecondary',
         palette: 'Grey-200 @ 70%',
@@ -503,6 +510,13 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         palette: 'Error-500',
         darkPalette: 'Error-500',
         usage: 'Error state backgrounds',
+      },
+      {
+        token: 'interactive-error-glass',
+        semanticKey: 'interactiveErrorGlass',
+        palette: 'Error-400',
+        darkPalette: 'Error-400',
+        usage: 'Danger glass button tint',
       },
       {
         token: 'focus-ring-main',

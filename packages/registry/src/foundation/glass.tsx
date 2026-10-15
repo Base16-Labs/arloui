@@ -353,6 +353,8 @@ export function GlassBackdrop({
   material,
   interactive = false,
   tintColor,
+  pressedTintColor,
+  literalTint = false,
   pressed = false,
   borderRadius,
   children,
@@ -380,6 +382,19 @@ export function GlassBackdrop({
    */
   tintColor?: string;
   /**
+   * A different colour for the press overlay. The native material keeps
+   * `tintColor` so the effect does not rebuild; this colour only paints above it.
+   */
+  pressedTintColor?: string;
+  /**
+   * Paint `tintColor` and `pressedTintColor` as given.
+   *
+   * The default re-alphas an opaque tone through `tintOpacity`. A tint that
+   * already carries its own alpha — secondary glass is Grey 200 at 70% — would
+   * be diluted a second time. Set this so that alpha is the one that shows.
+   */
+  literalTint?: boolean;
+  /**
    * Deepens the tint to `tintOpacityPressed` while a control is held.
    *
    * This is the press response for a tinted glass surface, and it is a plain
@@ -400,9 +415,19 @@ export function GlassBackdrop({
   const surface = useGlassSurface(resolved);
   const tokens = t.materials[MATERIAL_TOKEN[resolved]];
 
-  const tint = tintColor
-    ? withAlpha(tintColor, pressed ? tokens.tintOpacityPressed : tokens.tintOpacity)
+  const resting = tintColor
+    ? literalTint
+      ? tintColor
+      : withAlpha(tintColor, tokens.tintOpacity)
     : undefined;
+  const pressedSource = pressedTintColor ?? tintColor;
+  const pressedFill =
+    pressed && pressedSource
+      ? literalTint && pressedTintColor
+        ? pressedTintColor
+        : withAlpha(pressedSource, tokens.tintOpacityPressed)
+      : undefined;
+  const tint = pressed && pressedFill ? pressedFill : resting;
 
   if (surface.native) {
     const mod = loadGlassEffect();
@@ -426,12 +451,12 @@ export function GlassBackdrop({
             // Fixed for the life of the surface — see `pressed` above. The tint
             // is applied at the material's resting opacity and the press delta
             // rides on the overlay below.
-            tintColor={tintColor ? withAlpha(tintColor, tokens.tintOpacity) : undefined}
+            tintColor={resting}
             borderRadius={borderRadius}
             style={StyleSheet.absoluteFill}
           />
-          {tint && pressed ? (
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: tint, borderRadius }]} />
+          {pressed && pressedFill ? (
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: pressedFill, borderRadius }]} />
           ) : null}
         </View>
       );

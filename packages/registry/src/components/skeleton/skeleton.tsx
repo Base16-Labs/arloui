@@ -46,9 +46,8 @@ export function Skeleton({
     height ?? (circle ? resolvedWidth : shape === 'text' ? t.spacing[3] : t.spacing[4]);
   const resolvedRadius =
     borderRadius ?? (circle ? t.radii.full : shape === 'text' ? t.radii.full : t.radii.md);
-  const baseColor = color ?? t.colors.surfaceStrong;
-  const sheenColor =
-    highlightColor ?? (t.name === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.52)');
+  const baseColor = color ?? t.colors.surfaceRaised;
+  const sheenColor = highlightColor ?? t.colors.surfaceStrong;
 
 
   useEffect(() => {

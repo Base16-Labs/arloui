@@ -38,10 +38,7 @@ type WheelItem = {
   accessibilityLabel?: string;
 };
 
-const ITEM_HEIGHT = 44;
 const VISIBLE_ITEMS = 5;
-const WHEEL_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
-const WHEEL_PADDING = ITEM_HEIGHT * Math.floor(VISIBLE_ITEMS / 2);
 
 function startOfDay(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -131,6 +128,9 @@ export function DateWheelPicker({
   ...rest
 }: DateWheelPickerProps) {
   const t = useTokens();
+  const itemHeight = t.sizing.touchTarget.minimum;
+  const wheelHeight = itemHeight * VISIBLE_ITEMS;
+  const wheelPadding = itemHeight * Math.floor(VISIBLE_ITEMS / 2);
   const [fallbackValue] = useState(() => defaultValue ?? new Date());
   const [initialYear] = useState(() =>
     clampDate(value ?? fallbackValue, minDate, maxDate).getFullYear(),
@@ -256,7 +256,7 @@ export function DateWheelPicker({
         {
           width: '100%',
           maxWidth: 350,
-          height: WHEEL_HEIGHT,
+          height: wheelHeight,
           borderRadius: t.radii.xl,
           borderWidth: 1,
           borderColor: t.colors.borderSecondary,
@@ -272,10 +272,10 @@ export function DateWheelPicker({
         pointerEvents="none"
         style={{
           position: 'absolute',
-          top: WHEEL_PADDING,
+          top: wheelPadding,
           left: t.spacing[2],
           right: t.spacing[2],
-          height: ITEM_HEIGHT,
+          height: itemHeight,
           borderRadius: t.radii.lg,
           backgroundColor: t.colors.surfaceInput,
         }}
@@ -293,6 +293,8 @@ export function DateWheelPicker({
               changeValue(date);
             }}
             disabled={disabled}
+            itemHeight={itemHeight}
+            wheelPadding={wheelPadding}
             flex={2.25}
           />
         ) : null}
@@ -307,6 +309,8 @@ export function DateWheelPicker({
                 changeValue(withDateParts(selected, { month: Number(month) }))
               }
               disabled={disabled}
+              itemHeight={itemHeight}
+              wheelPadding={wheelPadding}
               flex={1.7}
             />
             {mode === 'date' ? (
@@ -316,6 +320,8 @@ export function DateWheelPicker({
                 selectedValue={selected.getDate()}
                 onValueChange={(day) => changeValue(withDateParts(selected, { day: Number(day) }))}
                 disabled={disabled}
+                itemHeight={itemHeight}
+                wheelPadding={wheelPadding}
               />
             ) : null}
             <WheelColumn
@@ -324,6 +330,8 @@ export function DateWheelPicker({
               selectedValue={selected.getFullYear()}
               onValueChange={(year) => changeValue(withDateParts(selected, { year: Number(year) }))}
               disabled={disabled}
+              itemHeight={itemHeight}
+              wheelPadding={wheelPadding}
               flex={1.25}
             />
           </>
@@ -337,6 +345,8 @@ export function DateWheelPicker({
               selectedValue={selectedHour}
               onValueChange={(hour) => setHour(Number(hour))}
               disabled={disabled}
+              itemHeight={itemHeight}
+              wheelPadding={wheelPadding}
             />
             <WheelColumn
               accessibilityLabel="Minute"
@@ -344,6 +354,8 @@ export function DateWheelPicker({
               selectedValue={selectedMinute}
               onValueChange={(minute) => setMinute(Number(minute))}
               disabled={disabled}
+              itemHeight={itemHeight}
+              wheelPadding={wheelPadding}
             />
             {hourCycle === 12 ? (
               <WheelColumn
@@ -352,6 +364,8 @@ export function DateWheelPicker({
                 selectedValue={selectedPeriod}
                 onValueChange={setPeriod}
                 disabled={disabled}
+                itemHeight={itemHeight}
+                wheelPadding={wheelPadding}
               />
             ) : null}
           </>
@@ -365,7 +379,7 @@ export function DateWheelPicker({
           top: 0,
           left: 0,
           right: 0,
-          height: ITEM_HEIGHT,
+          height: itemHeight,
           backgroundColor: t.colors.surfaceElevated,
           opacity: 0.72,
         }}
@@ -377,7 +391,7 @@ export function DateWheelPicker({
           bottom: 0,
           left: 0,
           right: 0,
-          height: ITEM_HEIGHT,
+          height: itemHeight,
           backgroundColor: t.colors.surfaceElevated,
           opacity: 0.72,
         }}
@@ -392,6 +406,8 @@ function WheelColumn({
   selectedValue,
   onValueChange,
   disabled,
+  itemHeight,
+  wheelPadding,
   flex = 1,
 }: {
   accessibilityLabel: string;
@@ -399,6 +415,8 @@ function WheelColumn({
   selectedValue: WheelValue;
   onValueChange: (value: WheelValue) => void;
   disabled: boolean;
+  itemHeight: number;
+  wheelPadding: number;
   flex?: number;
 }) {
   const t = useTokens();
@@ -409,8 +427,8 @@ function WheelColumn({
   );
 
   useEffect(() => {
-    listRef.current?.scrollToOffset({ offset: selectedIndex * ITEM_HEIGHT, animated: false });
-  }, [items.length, selectedIndex]);
+    listRef.current?.scrollToOffset({ offset: selectedIndex * itemHeight, animated: false });
+  }, [itemHeight, items.length, selectedIndex]);
 
   function selectIndex(index: number) {
     const nextIndex = Math.max(0, Math.min(items.length - 1, index));
@@ -419,7 +437,7 @@ function WheelColumn({
   }
 
   function settle(event: NativeSyntheticEvent<NativeScrollEvent>) {
-    selectIndex(Math.round(event.nativeEvent.contentOffset.y / ITEM_HEIGHT));
+    selectIndex(Math.round(event.nativeEvent.contentOffset.y / itemHeight));
   }
 
   return (
@@ -436,7 +454,7 @@ function WheelColumn({
       onAccessibilityAction={(event) => {
         const amount = event.nativeEvent.actionName === 'increment' ? 1 : -1;
         const nextIndex = Math.max(0, Math.min(items.length - 1, selectedIndex + amount));
-        listRef.current?.scrollToOffset({ offset: nextIndex * ITEM_HEIGHT, animated: true });
+        listRef.current?.scrollToOffset({ offset: nextIndex * itemHeight, animated: true });
         selectIndex(nextIndex);
       }}
       style={{ flex }}
@@ -447,15 +465,15 @@ function WheelColumn({
         data={items}
         keyExtractor={(item) => String(item.value)}
         getItemLayout={(_, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
+          length: itemHeight,
+          offset: itemHeight * index,
           index,
         })}
         initialScrollIndex={selectedIndex}
-        contentContainerStyle={{ paddingVertical: WHEEL_PADDING }}
+        contentContainerStyle={{ paddingVertical: wheelPadding }}
         showsVerticalScrollIndicator={false}
         scrollEnabled={!disabled}
-        snapToInterval={ITEM_HEIGHT}
+        snapToInterval={itemHeight}
         snapToAlignment="start"
         decelerationRate="fast"
         onMomentumScrollEnd={settle}
@@ -468,11 +486,11 @@ function WheelColumn({
             <Pressable
               disabled={disabled}
               onPress={() => {
-                listRef.current?.scrollToOffset({ offset: index * ITEM_HEIGHT, animated: true });
+                listRef.current?.scrollToOffset({ offset: index * itemHeight, animated: true });
                 selectIndex(index);
               }}
               style={{
-                height: ITEM_HEIGHT,
+                height: itemHeight,
                 alignItems: 'center',
                 justifyContent: 'center',
                 paddingHorizontal: t.spacing[1],

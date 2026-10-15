@@ -48,7 +48,8 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { OutlineMinus } from '@arloui/icons/OutlineMinus';
+import { OutlinePlus } from '@arloui/icons/OutlinePlus';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
 import { AnimatedCounter } from '../animated-counter/animated-counter';
@@ -133,7 +134,7 @@ function stepperDims(t: Tokens, isPlain: boolean, size: StepperSize): StepperDim
   if (isPlain) {
     return size === 'md'
       ? {
-          minHeight: 35,
+          minHeight: t.typography.displayMedium.lineHeight,
           paddingX: 0,
           font: t.typography.displayMedium,
           label: t.typography.bodySm,
@@ -142,7 +143,7 @@ function stepperDims(t: Tokens, isPlain: boolean, size: StepperSize): StepperDim
           gap: t.spacing[5],
         }
       : {
-          minHeight: 26,
+          minHeight: t.typography.headingLarge.lineHeight,
           paddingX: 0,
           font: t.typography.headingLarge,
           label: t.typography.label,
@@ -153,7 +154,7 @@ function stepperDims(t: Tokens, isPlain: boolean, size: StepperSize): StepperDim
   }
   return size === 'md'
     ? {
-        minHeight: 52,
+        minHeight: t.sizing.buttonHeight.xl,
         paddingX: t.spacing[2],
         font: t.typography.body,
         label: t.typography.bodySm,
@@ -162,7 +163,7 @@ function stepperDims(t: Tokens, isPlain: boolean, size: StepperSize): StepperDim
         gap: t.spacing[2],
       }
     : {
-        minHeight: 36,
+        minHeight: t.sizing.buttonHeight.sm,
         paddingX: t.spacing[1],
         font: t.typography.bodySm,
         label: t.typography.label,
@@ -170,22 +171,6 @@ function stepperDims(t: Tokens, isPlain: boolean, size: StepperSize): StepperDim
         iconSize: t.sizing.icon.xs,
         gap: t.spacing[1],
       };
-}
-
-function MinusIcon({ color, size }: { color: string; size: number }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M5 12h14" stroke={color} strokeWidth={2} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
-function PlusIcon({ color, size }: { color: string; size: number }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path d="M12 5v14M5 12h14" stroke={color} strokeWidth={2} strokeLinecap="round" />
-    </Svg>
-  );
 }
 
 /** Repeat cadence while a button is held: a beat before the first repeat, then accelerating. */
@@ -733,7 +718,7 @@ function StepperButton({
 }) {
   const t = useTokens();
   const isIncrement = kind === 'increment';
-  const Icon = isIncrement ? PlusIcon : MinusIcon;
+  const Icon = isIncrement ? OutlinePlus : OutlineMinus;
 
   // Plain steppers get a visible circular affordance because there's no field
   // surface to anchor them; filled steppers sit inside one already.
@@ -772,7 +757,7 @@ function StepperButton({
         cursor: Platform.OS === 'web' && enabled ? 'pointer' : undefined,
       })}
     >
-      <Icon color={iconColor} size={dims.iconSize} />
+      <Icon width={dims.iconSize} height={dims.iconSize} color={iconColor} />
     </Pressable>
   );
 }

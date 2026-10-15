@@ -45,7 +45,7 @@ Squint test: if more than one element competes for hero, you have not made a hie
 - Two type families maximum per screen. Default to a single neutral sans (system or a tasteful neogrotesque) and reach for a second face only for numerals or eyebrow labels.
 - Three sizes per screen: hero, body, caption. Adding a fourth is almost always a spacing problem in disguise.
 - Two weights per screen: a regular and one accent (medium or semibold). Bold is loud — earn it.
-- Use `tabular-nums` for any number that changes (prices, counters, timers, balances). Aligned digits are non-negotiable in a financial or data view.
+- Use `tabular-nums` for any number that changes (prices, counters, timers, balances). Aligned digits are non-negotiable in a financial or data view. `AnimatedCounter` and `Stepper` already do this. `Badge` and `DatePicker` stay on Manrope.
 - Loosen letter-spacing on uppercase labels (`tracking: 0.04–0.08em`). Tight uppercase reads cramped.
 - Use the `…` character, not three dots. Truncation must follow the container.
 
@@ -254,26 +254,21 @@ Every component Arlo ships should feel inevitable — as though it could not hav
 
 ### 3.5 Primitive vocabulary
 
-Arlo primitives have stable names. Reach for what already ships before inventing a component, and never emit a primitive that is only *planned*. (Full specs for shipped primitives live in `references/components.md`.)
+Reach for a shipped primitive before composing a one-off. Install names and one-line contracts are in `references/usage.md`. The notes you compose from are in `references/components.md`. If a name is in neither, it is not a component — do not import it.
 
-**Shipped today:**
+**Shipped:**
 
-- **Layout & surface:** `Card`, `Sheet`.
-- **Controls:** `Button` (with `GhostButton`, `FabButton`, `SocialAuthButton`), `Chip`, `Toggle`, `Checkbox`, `Radio`, `Field` (label/hint/error slots), `Input`, `TextArea`, `DatePicker` (+ `DateWheelPicker`).
-- **Media:** `Carousel`, `Gallery`.
-- **Navigation:** `TabBar`, `Tabs` (segmented control).
-- **Feedback & state:** `Skeleton`, `Badge` (status pill).
+- **Foundation:** tokens, `ThemeProvider`, Liquid Glass (`GlassBackdrop`), reduce-motion, haptics.
+- **Layout and surface:** `Card`, `List` (`List.Row`), `Sheet`, `Carousel`, `Gallery`.
+- **Controls:** `Button` (`GhostButton`, `FabButton`, `SocialAuthButton`), `Chip`, `Field`, `Input`, `TextArea`, `Checkbox`, `Radio`, `Toggle`, `Stepper`, `DatePicker` (`DateWheelPicker`).
+- **Navigation:** `TabBar`, `Tabs`.
+- **Feedback:** `Skeleton`, `Spinner`, `Badge`, `Toast` (`Toaster`, `useToast`).
+- **Data:** `Chart` (line, bar, sparkline, donut, meter, heatmap), `AnimatedCounter`.
 - **Icon:** `AnimatedIcon`.
 
-**Planned — not yet built.** These are intended design, not available components. Do not emit them: compose from the shipped primitives above, or name the gap so it can be built to spec.
+Words like header, stat, empty, row, and divider are screen recipes (§1.8 and `references/components.md`), not imports. The row is `List.Row`. The hairline is `List`'s `divider` prop. A hero number is type on the canvas, or `Stepper` / `Chart` when the number is the control. There is no `Stack`, `Stat`, `Header`, `Empty`, `Pill`, `Slider`, `Select`, `Banner`, `Progress`, `Breadcrumb`, `Tray`, or `Note` component.
 
-- **Layout & surface:** `Stack`, `Group`, `Row` (44pt min, lead/value/accessory slots), `List` (inset-grouped or edge-to-edge), `Divider` (dense lists only), `Tray`, `Scrim`, `SafeArea`.
-- **Type & content:** `Title`, `Body`, `Caption`, `Stat` (hero number + label), `Note` (inline helper or callout), `Eyebrow`.
-- **Controls:** `Pill` (chip-shaped action), `Stepper`, `Slider`, `Select`.
-- **Feedback:** `Toast`, `Banner`, `Spinner`, `Progress`, `Empty` (illustration + line + action).
-- **Navigation:** `Header` (large title or compact), `Breadcrumb`.
-
-A component with more than five props is probably two components (§5.1). A new primitive needs justification — propose first, then build. The skill defines the target; the registry catches up to it, never the other way around.
+A component with more than five props is probably two components (§5.1). Propose a new primitive before adding it. The skill describes what the registry ships.
 
 ---
 
@@ -405,4 +400,4 @@ When polishing existing UI, return a markdown table with `Area | Status | Before
 - `references/tokens.md` — type, color, spacing, radius, motion curves, haptic mapping.
 - `references/components.md` — primitives, variants, states, screen recipes.
 - `references/platform-mapping.md` — Figma, SwiftUI, React Native conventions.
-- `references/troubleshooting.md` — common pitfalls and fixes (added as the system grows).
+- `references/usage.md` — generated install list. This is the inventory of components that exist.

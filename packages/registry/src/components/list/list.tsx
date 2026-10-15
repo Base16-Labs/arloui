@@ -243,10 +243,10 @@ function ListRow({
 
   const surface: ViewStyle = separated
     ? {
-        backgroundColor: t.colors.surface,
+        backgroundColor: t.colors.surfaceElevated,
         borderRadius: t.radii.xl,
         borderWidth: 1,
-        borderColor: t.colors.border,
+        borderColor: t.colors.borderSecondary,
         overflow: 'hidden',
       }
     : {};

@@ -47,27 +47,11 @@ export type { ButtonHaptic };
 /** @deprecated Prefer `tone` + `appearance`. */
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
-export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
+type ButtonCommonProps = Omit<PressableProps, 'style' | 'children'> & {
   children?: string;
   /** @deprecated Use `children` prop instead. */
   label?: string;
-  /** @deprecated Maps to `tone` + `appearance`. When set, overrides `tone` and `appearance`. */
-  variant?: ButtonVariant;
-  tone?: ButtonTone;
-  appearance?: ButtonAppearance;
   size?: ButtonSize;
-  /**
-   * `'glass'` swaps the tone's opaque fill for the Liquid Glass material — the
-   * real system surface on iOS 26, Arlo's translucent overlay everywhere else.
-   *
-   * The button keeps its colour. The tone's fill becomes the material's tint
-   * rather than disappearing, so a glass primary button still reads as the
-   * primary button and a glass danger button still reads as danger — what
-   * changes is that the colour is now made of glass, not that there is no
-   * colour. `appearance` still applies, but a glass surface and a `ghost`
-   * appearance are close to the same request — prefer `solid` or `soft` with it.
-   */
-  surface?: ButtonSurface;
   loading?: boolean;
   disabled?: boolean;
   leadingIcon?: React.ReactNode;
@@ -87,6 +71,62 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   style?: StyleProp<ViewStyle>;
   labelStyle?: StyleProp<TextStyle>;
 };
+
+/**
+ * Glass exists for three buttons: solid primary, solid danger, and neutral soft
+ * (the secondary button). Outline and ghost have no glass design, and neither
+ * do the other tone × appearance pairs. The union makes those combinations
+ * unrepresentable.
+ */
+export type ButtonProps = ButtonCommonProps &
+  (
+    | {
+        surface?: 'default';
+        /** @deprecated Maps to `tone` + `appearance`. When set, overrides `tone` and `appearance`. */
+        variant?: ButtonVariant;
+        tone?: ButtonTone;
+        appearance?: ButtonAppearance;
+      }
+    | {
+        surface: 'glass';
+        variant?: never;
+        tone?: 'primary';
+        appearance?: 'solid';
+      }
+    | {
+        surface: 'glass';
+        variant?: never;
+        tone: 'danger';
+        appearance?: 'solid';
+      }
+    | {
+        surface: 'glass';
+        variant?: never;
+        tone: 'neutral';
+        appearance: 'soft';
+      }
+    | {
+        surface: 'glass';
+        /** @deprecated Prefer `tone` + `appearance`. */
+        variant: 'primary';
+        tone?: never;
+        appearance?: never;
+      }
+    | {
+        surface: 'glass';
+        /** @deprecated Prefer `tone` + `appearance`. */
+        variant: 'danger';
+        tone?: never;
+        appearance?: never;
+      }
+    | {
+        surface: 'glass';
+        /** @deprecated Prefer `tone="neutral" appearance="soft"`. */
+        variant: 'secondary';
+        tone?: never;
+        appearance?: never;
+      }
+  );
 
 type Palette = { bg: string; fg: string; border: string; borderWidth: number };
 type Dims = { minHeight: number; paddingX: number; type: { fontSize: number; lineHeight: number }; gap: number; iconSize: number };
@@ -151,6 +191,14 @@ const LEGACY_VARIANT: Record<ButtonVariant, { tone: ButtonTone; appearance: Butt
   ghost: { tone: 'neutral', appearance: 'ghost' },
   danger: { tone: 'danger', appearance: 'solid' },
 };
+
+/** Primary solid, danger solid, and neutral soft are the only glass buttons. */
+function supportsGlass(tone: ButtonTone, appearance: ButtonAppearance) {
+  return (
+    (appearance === 'solid' && (tone === 'primary' || tone === 'danger')) ||
+    (appearance === 'soft' && tone === 'neutral')
+  );
+}
 
 function touchTargetInset(visualSize: number, minimumSize: number) {
   const inset = Math.max(0, Math.ceil((minimumSize - visualSize) / 2));
@@ -262,21 +310,26 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
    * A disabled button never goes to glass. The material's whole job is to look
    * live and reactive, which is the opposite of what disabled has to communicate —
    * and on iOS 26 an interactive system surface would still respond to touch on a
-   * control that does nothing.
+   * control that does nothing. Outline, ghost, and the other tone pairs have no
+   * glass design either, so a mismatched `surface` stays on the opaque fill.
    */
-  const isGlass = surface === 'glass' && !useDisabledVisual;
+  const isGlass = surface === 'glass' && supportsGlass(tone, appearance) && !useDisabledVisual;
   const glass = useGlassSurface('small');
 
   /*
-   * The tone's fill, handed to the material as a tint instead of being dropped.
-   *
-   * `ghost` and `outline` have no fill to give, so they tint from the tone's
-   * foreground — otherwise a glass ghost button would be the one glass button
-   * with no colour at all, which is the inconsistency rather than the restraint.
-   * `glassSmall.tintOpacity` decides how much survives; this is the whole
-   * colour decision.
+   * Primary and danger glass tint with the 400-step glass tokens. The material's
+   * `tintOpacity` decides how much of that colour survives. Secondary glass is
+   * `interactiveSecondary` as specified — Grey 200 / Zinc 800 at 70% — so its
+   * alpha is left alone, and a press swaps in `interactiveSecondaryPressed`.
    */
-  const glassTint = palette.bg === 'transparent' ? palette.fg : palette.bg;
+  const glassLiteral = tone === 'neutral';
+  const glassTint =
+    tone === 'danger'
+      ? t.colors.interactiveErrorGlass
+      : tone === 'neutral'
+        ? t.colors.interactiveSecondary
+        : t.colors.interactivePrimaryGlass;
+  const glassPressedTint = tone === 'neutral' ? t.colors.interactiveSecondaryPressed : undefined;
 
   const hitSlop = useMemo(
     () => touchTargetInset(dims.minHeight, t.sizing.touchTarget.minimum),
@@ -370,6 +423,8 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
           <GlassBackdrop
             material="small"
             tintColor={glassTint}
+            pressedTintColor={glassPressedTint}
+            literalTint={glassLiteral}
             pressed={pressed && !isPressDisabled}
             borderRadius={glassCornerRadius}
           >

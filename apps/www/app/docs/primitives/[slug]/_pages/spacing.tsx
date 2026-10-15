@@ -83,7 +83,7 @@ const avatarSizes = [
 ] as const;
 
 const buttonHeights = [
-  ['sm', 36],
+  ['sm', 32],
   ['md', 40],
   ['lg', 48],
   ['xl', 52],
@@ -293,6 +293,7 @@ export function SpacingPage() {
     ...buttonHeights.map(([key]) => `sizing.buttonHeight.${key}`),
     'sizing.touchTarget.minimum',
     'sizing.touchTarget.comfortable',
+    'sizing.tab.minWidth',
   ];
 
   return (

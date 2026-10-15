@@ -98,7 +98,7 @@ function fieldDims(t: Tokens, isPlain: boolean, size: InputSize, multiline: bool
   }
   return size === 'md'
     ? { minHeight: t.sizing.buttonHeight.xl, paddingX: t.spacing[3], paddingY: t.spacing[2], font: t.typography.body, label: t.typography.bodySm, gap: t.spacing[2], iconSize: t.sizing.icon.sm }
-    : { minHeight: 36, paddingX: t.spacing[3], paddingY: t.spacing[1], font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[2], iconSize: t.sizing.icon.xs };
+    : { minHeight: t.sizing.buttonHeight.sm, paddingX: t.spacing[3], paddingY: t.spacing[1], font: t.typography.bodySm, label: t.typography.label, gap: t.spacing[2], iconSize: t.sizing.icon.xs };
 }
 
 function useFieldDims(): { dims: FieldDims; isPlain: boolean; multiline: boolean; stretches: boolean } {

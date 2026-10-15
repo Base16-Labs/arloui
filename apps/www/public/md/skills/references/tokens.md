@@ -3,7 +3,7 @@
 ## Design Voice
 
 - Mobile-first and premium.
-- Dark-first, but light mode must feel intentional rather than inverted.
+- Neither mode is the default. Design light and dark in parallel; a dark mode that is the light mode inverted is a bug.
 - Disciplined and restrained by default — decoration is earned, never assumed.
 - Meticulous in interaction feel: the "why does this feel so clean?" layer of craft.
 
@@ -12,7 +12,7 @@
 Default families (shipped in `theme.fontFamilies`):
 
 - `sans`: `Manrope` — every UI and display size.
-- `mono`: `Space Mono` — numeric and status contexts (see rules below).
+- `mono`: `Space Mono` — opt-in, for prices and codes (see rules below).
 - `display`: `Manrope` — there is no separate display face; the display sizes are Manrope at semibold.
 
 Scale for mobile (token → size/line-height, weight, letter-spacing). These mirror the shipped `theme.typography` tokens — reference the token, never hardcode the numbers:
@@ -28,7 +28,9 @@ Scale for mobile (token → size/line-height, weight, letter-spacing). These mir
 
 Rules:
 
-- Use `Space Mono` for prices, timestamps, percentages, status labels, and tabular data.
+- `Manrope` is the UI face. `Badge`, `Chip`, `DatePicker`, list values, and `Toast` all use it. None of them switch to mono.
+- `Space Mono` is opt-in. `Button` takes `mono` for a price or a code. Chart axis labels and sparkline readouts use it. Do not set it on status labels.
+- Numbers that roll — `AnimatedCounter`, and `Stepper` through it — use `tabular-nums` on Manrope so the columns stay aligned.
 - Reserve the largest display sizes for a single hero element, never for body copy.
 - Let whitespace and scale create luxury before typography tries to.
 
@@ -57,6 +59,8 @@ Examples (camelCase in TS: `surfaceBackground`, `textPrimary`, …):
 | `text-tertiary` | Grey-400 |
 | `interactive-primary` | Primary-600 |
 | `interactive-primary-pressed` | Primary-700 |
+| `interactive-primary-glass` | Primary-400, both modes — primary and FAB glass tint |
+| `interactive-error-glass` | Error-400, both modes — danger glass tint |
 | `border-primary` | Grey-300 |
 | `border-secondary` | Grey-200 |
 | `feedback-*` | Success / Warning / Error scales (50 + 500/600 as in Figma) |
@@ -156,18 +160,26 @@ Rules:
 
 | Token | TS | Px |
 | --- | --- | --- |
-| button-sm | `sizing.buttonHeight.sm` | 36 |
+| button-sm | `sizing.buttonHeight.sm` | 32 |
 | button-md | `sizing.buttonHeight.md` | 40 |
 | button-lg | `sizing.buttonHeight.lg` | 48 |
 | button-xl | `sizing.buttonHeight.xl` | 52 |
 
-Registry `Button` maps **`sm` | `md` | `lg` | `xl`** to these heights and uses **`radii.full`** for the pill outline.
+Registry `Button` maps **`sm` | `md` | `lg` | `xl`** to these heights. Every appearance uses **`radii.full`**. The visual can be shorter than the 44pt touch target; the press area still meets it.
+
+### Tabs
+
+| Token | TS | Px |
+| --- | --- | --- |
+| tab-min-width | `sizing.tab.minWidth` | 52 |
+
+Content-width tabs. Segmented items share the track and ignore this width. A segmented item's height is the 44pt touch target minus the 4pt track padding on each side (`sizing.touchTarget.minimum - spacing[1] * 2`), so it is not its own token.
 
 ## Borders, shadows, and focus
 
 - Default to `1px` borders with subtle contrast changes between layers.
 - Depth comes from layering and spacing first, not shadows.
-- Blur / liquid-glass treatments (`backdrop-filter`) are experimental — reserve for sheets, frosted chrome, or rare expressive surfaces.
+- Liquid Glass is a shipped material (`GlassBackdrop`), used by `Button`, `FabButton`, segmented `Tabs`, and `TabBar`. It follows light and dark with the theme. Glass draws an edge, not a glow. Disabled controls are never glass.
 
 ### Drop shadows (Figma Shadows frame)
 
@@ -207,7 +219,8 @@ Rules:
 - Use a strong ease-out or a restrained spring.
 - Never animate from `scale(0)`.
 - Avoid `transition: all` patterns.
-- Press states should feel immediate: `scale(0.97)` or slight opacity reduction (`opacity: 0.85`).
+- Press states should feel immediate: `scale(0.97)` or slight opacity reduction (`motion.pressed.opacity`, 0.85).
+- Disabled controls recede with `motion.disabled.opacity` (0.36). The fill stays the same color.
 - Entrance motion should usually start from `opacity: 0` plus `translateY(6-10)` or `scale(0.985)`.
 - Gesture-driven elements can use spring behavior, but standard UI controls should stay crisp.
 

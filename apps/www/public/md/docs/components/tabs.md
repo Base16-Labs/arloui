@@ -26,13 +26,15 @@
 
 - `colors.textPrimary`
 - `colors.textSecondary`
-- `colors.accent`
-- `colors.surfaceStrong`
+- `colors.interactivePrimary`
+- `colors.interactiveSecondary`
 - `materials.glassSmall`
 - `radii.full`
 - `motion.duration.fast`
 - `motion.pressed`
+- `motion.disabled.opacity`
 - `sizing.touchTarget.minimum`
+- `sizing.tab.minWidth`
 
 ## Links
 

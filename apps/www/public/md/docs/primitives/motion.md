@@ -31,6 +31,7 @@
 - `easing.easeSheet` — 0.32, 0.72, 0, 1 · Sheets and drawers
 - `spring.snappy` — 400 / 30 / 1 · Stiffness, damping, mass
 - `pressed.scale` — 0.97 · Pressed transform
+- `disabled.opacity` — 0.36 · Disabled control
 
 ## Code
 

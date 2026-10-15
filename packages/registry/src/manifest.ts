@@ -134,7 +134,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Button',
     description:
-      'Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.',
+      'Accessible action buttons: tone (primary, neutral, danger) by appearance (solid, soft, ghost, outline), sizes sm–xl, loading, and icon-only. surface="glass" is Liquid Glass for solid primary, solid danger, and neutral soft only. Outline and ghost have no glass. Disabled is never glass.',
     dependencies: ['expo-haptics', 'react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'haptics', 'glass', 'reduce-motion'],
     files: [
@@ -204,7 +204,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Stepper',
     description:
       'A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.',
-    dependencies: ['expo-haptics', 'react-native-svg'],
+    dependencies: ['expo-haptics', '@arloui/icons', 'react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'haptics', 'animated-counter'],
     files: [
       { source: 'components/stepper/stepper.tsx', target: 'stepper/stepper.tsx' },
@@ -386,7 +386,7 @@ export const COMPONENTS: RegistryEntry[] = [
     kind: 'primitive',
     title: 'Sheet',
     description:
-      'A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.',
+      'A bottom drawer with a grabber, drag-to-dismiss, snap points, and tunable motion. Padding sets the width. Stack morphs the screen behind the sheet into the card above it.',
     registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/sheet/sheet.tsx', target: 'sheet/sheet.tsx' },
@@ -571,7 +571,7 @@ export const COMPONENTS: RegistryEntry[] = [
     title: 'Toast',
     description:
       'A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.',
-    dependencies: ['react-native-svg'],
+    dependencies: ['@arloui/icons', 'react-native-svg'],
     registryDependencies: ['tokens', 'theme-provider', 'reduce-motion'],
     files: [
       { source: 'components/toast/toast.tsx', target: 'toast/toast.tsx' },

@@ -2,9 +2,13 @@
 
 Use these patterns as the system baseline. They should be easy to express in Figma, React Native, and SwiftUI without depending on a large external component library.
 
+Import only names listed in `SKILL.md` §3.5 and `references/usage.md`. Headings below that describe a screen (App Header, Metric Hero, Empty State) are recipes. Compose them. Do not import them.
+
 ## Core Primitives
 
 ### App Header
+
+Recipe, not a component. There is no `Header`.
 
 - Left side: screen title, context label, or profile.
 - Right side: 1-2 utility actions maximum.
@@ -12,13 +16,13 @@ Use these patterns as the system baseline. They should be easy to express in Fig
 
 ### Button Family
 
-Registry **`Button`** uses **`tone`** (`primary` | `neutral` | `danger`) × **`appearance`** (`solid` | `soft` | `ghost` | `outline`), sizes **`sm`–`xl`**, optional **`leadingIcon`** / **`trailingIcon`**, **`iconOnly`** (circle), and **`loading`**. **`surface`**: **`default`** (the tone's opaque fill) or **`glass`** (Liquid Glass — the real system material on iOS 26 via `expo-glass-effect`, and a translucent overlay over a host **`blurComponent`** everywhere else). The tone's fill becomes the material's tint, so a glass primary button still reads as primary. Legacy **`variant`** (`primary` | `secondary` | `ghost` | `danger`) still maps to tone + appearance.
+Registry **`Button`** uses **`tone`** (`primary` | `neutral` | `danger`) × **`appearance`** (`solid` | `soft` | `ghost` | `outline`), sizes **`sm`–`xl`**, optional **`leadingIcon`** / **`trailingIcon`**, **`iconOnly`** (circle), and **`loading`**. **`surface`**: **`default`** (the tone's opaque fill) or **`glass`**. Glass is only solid primary (`interactivePrimaryGlass`, label `textInteractivePrimary`), solid danger (`interactiveErrorGlass`, same label), and neutral soft (`interactiveSecondary`, label `textInteractiveSecondary`, press `interactiveSecondaryPressed`). Outline and ghost cannot take `surface="glass"`. Disabled is never glass. Legacy **`variant`** (`primary` | `secondary` | `ghost` | `danger`) still maps to tone + appearance.
 
 **`SocialAuthButton`** — pill OAuth rows for **`facebook`** | **`x`** with **`appearance`**: `brandSolid`, `brandSoft`, `brandOutline`, `neutralSolid`, `neutralOutline`. Default leading marks are minimal Text glyphs; use **`renderLeading`** for official SVGs.
 
-**`FabButton`** — circular FAB (`tone`: `primary` | `neutral`), diameter follows **`sizing.buttonHeight`**. Rest uses **`shadows.sm`**; pressed darkens the semantic fill; disabled opacity ~28%; on web, focus uses **`outline`** + offset and **`focusRingMain`**. **`accessibilityLabel`** is required.
+**`FabButton`** — circular FAB (`tone`: `primary` | `neutral`), diameter follows **`sizing.buttonHeight`**. Rest uses **`shadows.sm`**; pressed darkens the semantic fill; disabled opacity ~28%; on web, focus uses **`outline`** + offset and **`focusRingMain`**. **`surface="glass"`** uses the same Glass material as Button (primary glass, neutral glass) and draws no shadow. Disabled stays opaque. **`accessibilityLabel`** is required.
 
-Solid fills use rounded corners + pressed elevation; ghost & outline use pill radius (`radii.full`). See `references/tokens.md` for heights (`sizing.buttonHeight`).
+Every appearance is a pill (`radii.full`). Pass **`mono`** to set the label in Space Mono — prices and codes only. The default label is Manrope. See `references/tokens.md` for heights (`sizing.buttonHeight`).
 
 ### Card
 
@@ -43,23 +47,31 @@ Registry **`List`** is a compound stacked-row layout — **`List`** is the conta
 
 **`List.Row`** takes **`leading`** (an icon or media thumbnail), **`title`** over an optional **`subtitle`** node (a badge fits), and a trailing **`value`** (with **`valueCaption`** and directional **`valueTone`**) alongside an optional **`trailing`** icon — value and icon can coexist. 44pt min height, native background-highlight press.
 
-### Text Field and Search
+### Field, Input, and TextArea
 
-- Use quiet borders, strong cursor color, and generous vertical padding.
-- Leading icons are fine when they clarify purpose; trailing clutter is not.
-- Composer-style fields can stretch taller than standard inputs, but still need a clear resting state.
+Registry **`Field`** is the shared shell: **`Field.Label`**, **`Field.Control`**, **`Field.Icon`**, **`Field.Action`**, **`Field.Input`**, **`Field.Toolbar`**, **`Field.Helper`**. **`Input`** and **`TextArea`** are that shell with a text control already inside.
 
-### Chips and Pills
+- **`size`**: `sm` | `md`. **`appearance`**: `filled` | `plain`. **`state`**: `default` | `error`.
+- Leading icons clarify purpose. A trailing **`Field.Action`** is one control, not a cluster.
+- Search is an `Input` with a leading icon, not a separate component.
 
-- Best for filters, model selectors, tags, and small states.
-- Mono labels work well for status-like information.
-- A chip should read clearly with or without its icon.
+**`Checkbox`** and **`Radio`** are `sm` | `md` | `lg`. Radio **`appearance`** is `outlined` | `filled`. **`Toggle`** is `sm` | `md`.
+
+### Stepper
+
+Registry **`Stepper`** is a numeric input. **`appearance`**: `filled` | `plain`. **`size`**: `sm` | `md`. **`controls`**: `split` (default, one button each side), `start`, `end`, or `none`. Hold repeats. The value floors at **`min`** and steps by **`step`**. **`allowTyping`** makes the value a real field. The digits roll through **`AnimatedCounter`** with `tabular-nums` on Manrope.
+
+### DatePicker
+
+Registry **`DatePicker`** is the calendar. **`DateWheelPicker`** is the wheel, with **`mode`** `date` | `time` | `date-time` | `month-year`. Both set their figures in Manrope.
+
+### Chips
+
+Registry **`Chip`** is the compact control. **`type`**: `filter` | `input` | `assist`. **`chipStyle`**: `fill` | `outline`. **`size`**: `sm` | `md`. **`accent`**: `primary` | `neutral`. The label is Manrope. There is no `Pill` component — a chip-shaped action is a `Chip` or a `Button`.
 
 ### Segmented Control
 
-- Keep labels short and obvious.
-- Use strong container contrast and subtle selection motion.
-- Best for toggling between comparable views, not unrelated destinations.
+That control is **`Tabs`** with **`appearance="segmented"`**. See Tabs below.
 
 ### Sheet and Bottom Action Bar
 
@@ -143,7 +155,7 @@ Guidelines:
 
 ### Tabs
 
-Registry **`Tabs`** — in-screen navigation for sibling content, not primary destinations (those belong on **`TabBar`**). **`appearance`**: **`plain`**, **`underline`**, **`filled`**, or **`segmented`**. **`tone`**: **`neutral`** or **`accent`**. **`layout`**: **`content`** or **`equal`**. A segmented control is a fixed equal-width track and ignores `scrollable` / `content`. **`surface`** (segmented only): **`filled`** (opaque `surfaceStrong`) or **`glass`** (Liquid Glass — the same contract as Button and TabBar; a no-op on the other appearances). Compose with **`Tabs.Item`** (`value`, `label`, optional `disabled`).
+Registry **`Tabs`** — in-screen navigation for sibling content, not primary destinations (those belong on **`TabBar`**). **`appearance`**: **`plain`**, **`underline`**, **`filled`**, or **`segmented`**. **`tone`**: **`neutral`** or **`accent`**. **`layout`**: **`content`** or **`equal`**. A segmented control is a fixed equal-width track and ignores `scrollable` / `content`. **`surface`** (segmented only): **`filled`** (opaque `interactiveSecondary` track, `surfaceElevated` thumb) or **`glass`** (Liquid Glass track on `surfaceBleed`; a no-op on the other appearances). Compose with **`Tabs.Item`** (`value`, `label`, optional `disabled`).
 
 Guidelines:
 
@@ -154,13 +166,20 @@ Guidelines:
 
 ### Skeleton / Loading State
 
+Registry **`Skeleton`** — **`shape`**: `rectangle` | `text` | `circle`. **`animation`**: `shimmer` | `pulse` | `none`. Base fill is `surfaceRaised`. The sheen is `surfaceStrong`.
+
 - Match the shape and scale of the real content as closely as possible.
-- Use `--surface-raised` as the base fill and `--surface-strong` as the shimmer layer.
 - Animate with a slow horizontal shimmer sweep (a ~`1.2s` linear loop — ambient, never a fast flash) or a gentle opacity pulse (~`600ms` ease-in-out each way).
 - Do not skeleton-load interactive controls — disable or hide them instead.
 - Show skeleton for the first data load; use inline spinners or optimistic updates for subsequent refreshes.
 
+### Spinner
+
+Registry **`Spinner`** — **`appearance`**: `spokes` | `arc` | `dots` | `bars` | `pulse`. **`size`**: `sm` | `md` | `lg`. **`tone`**: `neutral` | `accent`. Reduced motion holds the mark still.
+
 ### Empty State
+
+Recipe, not a component. There is no `Empty`. Charts ship their own empty slot inside `chart-core`.
 
 - One concise headline, one short supporting sentence, one optional CTA.
 - Illustration or icon is acceptable but must not overpower the copy.
@@ -170,9 +189,9 @@ Guidelines:
 ### Error State
 
 - Distinguish network errors, permission errors, and empty-result errors visually and in copy.
-- Use `--danger` for critical errors; neutral surfaces for soft or recoverable states.
+- Use `textInteractiveError` for critical errors; neutral surfaces for soft or recoverable states.
 - Always offer a recovery action (retry, go back, contact support). Never dead-end the user.
-- Inline field errors live below the field and use `--danger` text at `body-sm` scale.
+- Inline field errors live below the field and use `textInteractiveError` at `bodySm`.
 
 ### Toast
 
@@ -188,10 +207,15 @@ Registry **`Toaster`** — the stacking host. Mount one near the app root inside
 
 ## Shared Utilities
 
-### Status Pill
+### Badge
 
-- Tiny but high-signal. Good for `Live`, `Syncing`, `Profitable`, `Needs Review`, `Draft`.
-- Works best with mono labels or compact icon-plus-label combos.
+Registry **`Badge`** is the status label. It is not interactive. **`tone`**: `neutral` | `info` | `success` | `warning` | `error`. **`appearance`**: `soft` | `solid` | `outline`. **`size`**: `sm` | `md`. Optional **`dot`** and **`leadingIcon`**. The label is Manrope. There is no mono prop.
+
+Good for `Live`, `Syncing`, `Profitable`, `Needs Review`, `Draft`.
+
+### Chart
+
+Registry **`Chart`** is the namespace. Install one form when you need one chart: **`chart-line`** (scrubbable plot), **`chart-bar`**, **`chart-sparkline`** (inline, no axes), **`chart-donut`**, **`chart-meter`** (bar, ring, or arc against a target), **`chart-heatmap`**. **`chart-plot`** is the old name for the line chart. A progress bar that is not a meter is not a component — use `Chart.Meter` or compose one.
 
 ### Inline Metric Capsule
 

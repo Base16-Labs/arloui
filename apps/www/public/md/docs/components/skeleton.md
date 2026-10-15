@@ -24,6 +24,7 @@
 
 ## Tokens used
 
+- `colors.surfaceRaised`
 - `colors.surfaceStrong`
 - `radii.md`
 - `radii.full`
