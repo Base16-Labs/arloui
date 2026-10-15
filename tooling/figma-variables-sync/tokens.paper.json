@@ -1654,6 +1654,18 @@
     },
     {
       "type": "color",
+      "name": "--color-interactive-primary-glass",
+      "value": "var(--color-primary-400)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
+      "name": "--color-interactive-error-glass",
+      "value": "var(--color-error-400)",
+      "description": "Semantic · light"
+    },
+    {
+      "type": "color",
       "name": "--color-interactive-secondary",
       "value": "rgba(229, 231, 235, 0.7)",
       "description": "Semantic · light"
@@ -1967,7 +1979,7 @@
     {
       "type": "color",
       "name": "--color-dark-surface-overlay",
-      "value": "var(--color-alpha-black-70)",
+      "value": "rgba(9, 9, 11, 0.7)",
       "description": "Semantic · dark"
     },
     {
@@ -2046,6 +2058,18 @@
       "type": "color",
       "name": "--color-dark-interactive-primary-pressed",
       "value": "var(--color-primary-600)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-interactive-primary-glass",
+      "value": "var(--color-primary-400)",
+      "description": "Semantic · dark"
+    },
+    {
+      "type": "color",
+      "name": "--color-dark-interactive-error-glass",
+      "value": "var(--color-error-400)",
       "description": "Semantic · dark"
     },
     {

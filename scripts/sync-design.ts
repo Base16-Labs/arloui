@@ -247,12 +247,14 @@ function buildFigma(): FigmaCollection[] {
     avatar: 'Avatars',
     buttonHeight: 'Button Heights',
     touchTarget: 'Touch Targets',
+    tab: 'Tabs',
   };
   const sizingLeaf: Record<string, string> = {
     icon: 'icon',
     avatar: 'avatar',
     buttonHeight: 'button',
     touchTarget: 'touch-target',
+    tab: 'tab',
   };
   const sizingVars: FigmaVariable[] = [];
   for (const [group, scale] of Object.entries(raw.sizing)) {
