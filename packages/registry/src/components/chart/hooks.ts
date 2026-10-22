@@ -281,7 +281,7 @@ export function useControllableIndex(
 export function useSkeletonPulse(
   durationMs: number,
   active = true,
-): Animated.AnimatedMultiplication<number> | number {
+): ReturnType<typeof Animated.multiply> | number {
   const exit = useContext(SkeletonExit);
   const reduceMotion = useReduceMotion();
   const [pulse] = useState(() => new Animated.Value(SKELETON_MIN_OPACITY));

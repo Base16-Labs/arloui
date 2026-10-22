@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useMemo } from 'react';
+import { forwardRef, useCallback, useMemo, type ComponentRef } from 'react';
 import {
   Animated,
   Pressable,
@@ -135,7 +135,7 @@ function CloseIcon({ size, color }: { size: number; color: string }) {
   );
 }
 
-export const Chip = forwardRef<View, ChipProps>(function Chip(
+export const Chip = forwardRef<ComponentRef<typeof View>, ChipProps>(function Chip(
   {
     children,
     type = 'filter',

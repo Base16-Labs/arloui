@@ -35,7 +35,7 @@
  * the counter draws every state, following the draft as you type so digits roll
  * under the caret.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentRef } from 'react';
 import {
   AccessibilityInfo,
   Platform,
@@ -337,7 +337,7 @@ export function Stepper({
    * `draft` is the raw string so a half-typed "1." survives; the field shows it
    * while focused and the formatted value the rest of the time.
    */
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
   /**

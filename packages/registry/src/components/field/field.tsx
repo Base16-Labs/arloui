@@ -17,7 +17,16 @@
  *
  * The high-level `Input` (see input.tsx) is a preset built from these parts.
  */
-import { createContext, forwardRef, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  forwardRef,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentRef,
+  type ReactNode,
+} from 'react';
 import {
   Platform,
   Pressable,
@@ -291,7 +300,7 @@ export type FieldInputProps = Omit<TextInputProps, 'style' | 'editable'> & {
 };
 
 /** The text entry itself. Reads color/size/focus from the surrounding Field. */
-const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
+const FieldInput = forwardRef<ComponentRef<typeof TextInput>, FieldInputProps>(function FieldInput(
   {
     insetLabel,
     style,
@@ -313,7 +322,7 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
   const { size, hasError, disabled, focused, setFocused } = useField();
   const { dims, isPlain, multiline: fieldMultiline, stretches } = useFieldDims();
   const multiline = multilineProp ?? fieldMultiline;
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? '');
   const currentText = value !== undefined ? value : uncontrolledValue;
   const hasValue = currentText.length > 0;
@@ -360,7 +369,7 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
     if (value === undefined) setUncontrolledValue(text);
     onChangeText?.(text);
   };
-  const setRefs = (node: TextInput | null) => {
+  const setRefs = (node: ComponentRef<typeof TextInput> | null) => {
     inputRef.current = node;
     if (typeof ref === 'function') ref(node);
     else if (ref) ref.current = node;
@@ -393,7 +402,10 @@ const FieldInput = forwardRef<TextInput, FieldInputProps>(function FieldInput(
         <Pressable
           accessible={false}
           disabled={disabled}
-          onPress={() => inputRef.current?.focus()}
+          onPress={() => {
+            const node = inputRef.current as { focus?: () => void } | null;
+            node?.focus?.();
+          }}
         >
           {label}
         </Pressable>

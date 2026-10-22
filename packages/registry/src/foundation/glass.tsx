@@ -240,6 +240,16 @@ export function useReduceTransparency(): boolean {
 }
 
 /**
+ * How strongly a coloured control paints its tone.
+ *
+ * The material's own tint is 0.55, and it sits on a 64% frost. On a flat
+ * surface that pair comes out pastel — a primary button reads as washed out
+ * rather than as its tone colour. A tone fill skips the frost and uses these.
+ */
+export const TONE_FILL_OPACITY = 0.92;
+export const TONE_FILL_OPACITY_PRESSED = 1;
+
+/**
  * `#RGB`, `#RRGGBB`, `#RRGGBBAA`, `rgb()`, and `rgba()` re-alpha'd.
  *
  * Tone colours arrive as opaque hex, and a tint has to be translucent or it
@@ -355,6 +365,7 @@ export function GlassBackdrop({
   tintColor,
   pressedTintColor,
   literalTint = false,
+  toneFill = false,
   pressed = false,
   borderRadius,
   children,
@@ -395,6 +406,13 @@ export function GlassBackdrop({
    */
   literalTint?: boolean;
   /**
+   * The tint is the fill. Clear glass paints its frost and then a weak tint,
+   * which leaves a coloured control looking muted. Set this on a primary or
+   * danger surface so the tone colour stays the colour and the edge stays the
+   * glass.
+   */
+  toneFill?: boolean;
+  /**
    * Deepens the tint to `tintOpacityPressed` while a control is held.
    *
    * This is the press response for a tinted glass surface, and it is a plain
@@ -415,17 +433,19 @@ export function GlassBackdrop({
   const surface = useGlassSurface(resolved);
   const tokens = t.materials[MATERIAL_TOKEN[resolved]];
 
+  const restingAlpha = toneFill ? TONE_FILL_OPACITY : tokens.tintOpacity;
+  const pressedAlpha = toneFill ? TONE_FILL_OPACITY_PRESSED : tokens.tintOpacityPressed;
   const resting = tintColor
     ? literalTint
       ? tintColor
-      : withAlpha(tintColor, tokens.tintOpacity)
+      : withAlpha(tintColor, restingAlpha)
     : undefined;
   const pressedSource = pressedTintColor ?? tintColor;
   const pressedFill =
     pressed && pressedSource
       ? literalTint && pressedTintColor
         ? pressedTintColor
-        : withAlpha(pressedSource, tokens.tintOpacityPressed)
+        : withAlpha(pressedSource, pressedAlpha)
       : undefined;
   const tint = pressed && pressedFill ? pressedFill : resting;
 
@@ -445,7 +465,9 @@ export function GlassBackdrop({
             // rebuilds it when either changes (a theme switch, a tone change),
             // never on a press, which rides on the overlay below instead.
             key={`${t.name}:${tintColor ?? 'none'}`}
-            glassEffectStyle={MATERIAL_GLASS_STYLE[resolved]}
+            // A tone fill sits on `regular`: `clear` lets the backdrop through and
+            // adds its own highlight, which washes a primary or danger tint out.
+            glassEffectStyle={toneFill ? 'regular' : MATERIAL_GLASS_STYLE[resolved]}
             colorScheme={t.name === 'dark' ? 'dark' : 'light'}
             isInteractive={interactive}
             // Fixed for the life of the surface — see `pressed` above. The tint
@@ -467,7 +489,7 @@ export function GlassBackdrop({
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
       {children}
-      {material ? (
+      {material && !toneFill ? (
         <View style={[StyleSheet.absoluteFill, { backgroundColor: surface.backgroundColor }]} />
       ) : null}
       {tint ? <View style={[StyleSheet.absoluteFill, { backgroundColor: tint }]} /> : null}

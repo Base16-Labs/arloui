@@ -33,9 +33,9 @@ export const lightSemanticColors = {
   textInteractiveError: '#E7000B',
   interactivePrimary: '#155DFC',
   interactivePrimaryPressed: '#1447E6',
-  // Glass tints stay on the 400 step in both modes. The material follows the theme.
-  interactivePrimaryGlass: '#51A2FF',
-  interactiveErrorGlass: '#FF6467',
+  // Glass tints use the solid button's step, so white labels keep their contrast.
+  interactivePrimaryGlass: '#155DFC',
+  interactiveErrorGlass: '#E7000B',
   interactiveSecondary: 'rgba(229,231,235,0.7)',
   interactiveSecondaryPressed: '#E5E7EB',
   interactiveTertiary: 'transparent',
@@ -117,8 +117,8 @@ export const darkSemanticColors = {
   textInteractiveError: '#FF6467',
   interactivePrimary: '#2B7FFF',
   interactivePrimaryPressed: '#155DFC',
-  interactivePrimaryGlass: '#51A2FF',
-  interactiveErrorGlass: '#FF6467',
+  interactivePrimaryGlass: '#2B7FFF',
+  interactiveErrorGlass: '#FB2C36',
   interactiveSecondary: 'rgba(39,39,42,0.7)',
   interactiveSecondaryPressed: '#3F3F46',
   interactiveTertiary: 'transparent',

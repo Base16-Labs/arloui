@@ -13,8 +13,8 @@
  * `Field` directly (see field.tsx) when you need a custom layout; reach for `Input`
  * when you want the batteries-included field.
  */
-import { forwardRef } from 'react';
-import { type TextInput, View, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle } from 'react-native';
+import { forwardRef, type ComponentRef } from 'react';
+import { TextInput, View, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
 import {
   Field,
@@ -51,7 +51,7 @@ export type InputProps = Omit<TextInputProps, 'style'> & {
   insetLabel?: boolean;
 };
 
-export const Input = forwardRef<TextInput, InputProps>(function Input(
+export const Input = forwardRef<ComponentRef<typeof TextInput>, InputProps>(function Input(
   {
     label,
     helperText,

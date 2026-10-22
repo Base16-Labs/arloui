@@ -14,14 +14,8 @@
  * Reach for `TextArea` when you want the batteries-included multiline field; drop
  * down to `<Field multiline>…</Field>` when you need a custom layout.
  */
-import { forwardRef, type ReactNode } from 'react';
-import type {
-  StyleProp,
-  TextInput,
-  TextInputProps,
-  TextStyle,
-  ViewStyle,
-} from 'react-native';
+import { forwardRef, type ComponentRef, type ReactNode } from 'react';
+import { TextInput, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle } from 'react-native';
 import {
   Field,
   type InputAppearance,
@@ -59,7 +53,7 @@ export type TextAreaProps = Omit<TextInputProps, 'style' | 'multiline'> & {
   fullWidth?: boolean;
 };
 
-export const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(
+export const TextArea = forwardRef<ComponentRef<typeof TextInput>, TextAreaProps>(function TextArea(
   {
     label,
     insetLabel = true,

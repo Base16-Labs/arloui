@@ -1655,13 +1655,13 @@
     {
       "type": "color",
       "name": "--color-interactive-primary-glass",
-      "value": "var(--color-primary-400)",
+      "value": "var(--color-primary-600)",
       "description": "Semantic · light"
     },
     {
       "type": "color",
       "name": "--color-interactive-error-glass",
-      "value": "var(--color-error-400)",
+      "value": "var(--color-error-600)",
       "description": "Semantic · light"
     },
     {
@@ -2063,13 +2063,13 @@
     {
       "type": "color",
       "name": "--color-dark-interactive-primary-glass",
-      "value": "var(--color-primary-400)",
+      "value": "var(--color-primary-500)",
       "description": "Semantic · dark"
     },
     {
       "type": "color",
       "name": "--color-dark-interactive-error-glass",
-      "value": "var(--color-error-400)",
+      "value": "var(--color-error-500)",
       "description": "Semantic · dark"
     },
     {

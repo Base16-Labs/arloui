@@ -8,7 +8,7 @@
  *
  * Every visual decision lives in `ghostVariants` below.
  */
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo, type ComponentRef } from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -82,7 +82,7 @@ function touchTargetInset(visualSize: number, minimumSize: number) {
   return { top: vertical, bottom: vertical, left: 12, right: 12 };
 }
 
-export const GhostButton = forwardRef<View, GhostButtonProps>(function GhostButton(
+export const GhostButton = forwardRef<ComponentRef<typeof View>, GhostButtonProps>(function GhostButton(
   {
     children,
     tone: toneProp,

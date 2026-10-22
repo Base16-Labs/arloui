@@ -54,10 +54,10 @@ export const lightSemanticColors = {
 
   interactivePrimary: P[600],
   interactivePrimaryPressed: P[700],
-  // Glass tints stay on the 400 step in both modes. The material follows the
-  // theme; the tint does not step darker in the dark palette.
-  interactivePrimaryGlass: P[400],
-  interactiveErrorGlass: E[400],
+  // Glass tints use the solid button's step. The 400 step read as pastel under
+  // the material and left white labels below 3:1.
+  interactivePrimaryGlass: P[600],
+  interactiveErrorGlass: E[600],
   interactiveSecondary: rgbaFromHex(G[200], 0.7),
   interactiveSecondaryPressed: G[200],
   interactiveTertiary: 'transparent',
@@ -155,8 +155,8 @@ export const darkSemanticColors = {
 
   interactivePrimary: P[500],
   interactivePrimaryPressed: P[600],
-  interactivePrimaryGlass: P[400],
-  interactiveErrorGlass: E[400],
+  interactivePrimaryGlass: P[500],
+  interactiveErrorGlass: E[500],
   interactiveSecondary: rgbaFromHex(Z[800], 0.7),
   interactiveSecondaryPressed: Z[700],
   interactiveTertiary: 'transparent',

@@ -16,7 +16,7 @@
  * Every visual decision lives in `buttonVariants` below — edit colors, sizes, and
  * spacing there in one place.
  */
-import { forwardRef, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useState, type ComponentRef } from 'react';
 import {
   Animated,
   Easing,
@@ -256,7 +256,7 @@ function ButtonSpinner({
   );
 }
 
-export const Button = forwardRef<View, ButtonProps>(function Button(
+export const Button = forwardRef<ComponentRef<typeof View>, ButtonProps>(function Button(
   {
     children,
     label: labelProp,
@@ -317,12 +317,15 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   const glass = useGlassSurface('small');
 
   /*
-   * Primary and danger glass tint with the 400-step glass tokens. The material's
-   * `tintOpacity` decides how much of that colour survives. Secondary glass is
-   * `interactiveSecondary` as specified — Grey 200 / Zinc 800 at 70% — so its
-   * alpha is left alone, and a press swaps in `interactiveSecondaryPressed`.
+   * Primary and danger glass use the solid button's tone colour as the fill
+   * (`toneFill`), not a weak 400-step tint on the frost — that pair is what
+   * made the button look muted and left white labels under 3:1.
+   * Secondary glass is `interactiveSecondary` as specified — Grey 200 / Zinc 800
+   * at 70% — so its alpha is left alone, and a press swaps in
+   * `interactiveSecondaryPressed`.
    */
   const glassLiteral = tone === 'neutral';
+  const glassToneFill = tone !== 'neutral';
   const glassTint =
     tone === 'danger'
       ? t.colors.interactiveErrorGlass
@@ -425,6 +428,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
             tintColor={glassTint}
             pressedTintColor={glassPressedTint}
             literalTint={glassLiteral}
+            toneFill={glassToneFill}
             pressed={pressed && !isPressDisabled}
             borderRadius={glassCornerRadius}
           >

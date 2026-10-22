@@ -19,7 +19,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Defs, LinearGradient, Path, Stop, Circle, Line, ClipPath, G } from 'react-native-svg';
+import Svg, { Defs, LinearGradient, Path, Stop, Circle, Line, G } from 'react-native-svg';
 import { rgbaFromHex } from '../../foundation/tokens';
 import { haptic } from '../../foundation/haptics';
 import { useTokens } from '../../foundation/theme-provider';
@@ -46,7 +46,7 @@ import { EmptyContent } from './empty';
 import { useChart } from './chart-context';
 import { allParts, collectParts, useReduceMotion, warnDroppedDefaults } from './hooks';
 import { useChartEntrance } from './hooks';
-import { ChartFill, ChartReveal } from './motion';
+import { ChartFill, useChartReveal } from './motion';
 import { ChartLegend } from './legend';
 import { PlotPlaceholder } from './skeleton';
 
@@ -603,6 +603,7 @@ export function ChartPlot({
   const drawable = !loading && count > 1 && width > 0;
   const entrance = useChartEntrance(drawable);
   const revealId = `${gradientId}-reveal`;
+  const reveal = useChartReveal({ id: revealId, progress: entrance, width, height, immediate: activeIndex != null });
 
   return (
     <View
@@ -619,8 +620,8 @@ export function ChartPlot({
 
       {drawable ? (
         <Svg width={width} height={height} style={{ position: 'absolute' }} pointerEvents="none">
-          <Defs><ClipPath id={revealId}><ChartReveal progress={entrance} width={width} height={height} immediate={activeIndex != null} /></ClipPath></Defs>
-          <G clipPath={`url(#${revealId})`}>
+          {reveal.defs}
+          <G clipPath={reveal.clipPath}>
           {/* Behind everything: a bar is context for the line, not a rival to it. */}
           {barShapes.map((mark, index) => (
             <Path
@@ -687,7 +688,7 @@ export function ChartPlot({
               ))
             : null}
 
-          <G clipPath={`url(#${revealId})`}>
+          <G clipPath={reveal.clipPath}>
           {linePaths.map((mark, index) => (
             <Path
               key={`line-${index}`}

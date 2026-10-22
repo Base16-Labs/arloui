@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState, type ComponentRef } from 'react';
 import {
   Animated,
   Easing,
@@ -56,7 +56,7 @@ function toggleColors(t: Tokens, disabled: boolean) {
   };
 }
 
-export const Toggle = forwardRef<View, ToggleProps>(function Toggle(
+export const Toggle = forwardRef<ComponentRef<typeof View>, ToggleProps>(function Toggle(
   {
     value,
     onValueChange,

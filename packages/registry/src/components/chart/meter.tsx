@@ -193,7 +193,7 @@ function Sweep({
   thickness: number;
   color: string;
   trackColor: string;
-  trackOpacity: Animated.Value | Animated.AnimatedMultiplication<number> | number;
+  trackOpacity: Animated.Value | ReturnType<typeof Animated.multiply> | number;
   progress: Animated.Value;
   /** `false` draws the full circle; `true` draws the gauge's 240-degree arc. */
   partial: boolean;
@@ -286,7 +286,7 @@ function ExtraRing({
   radius: number;
   thickness: number;
   trackColor: string;
-  trackOpacity: Animated.Value | Animated.AnimatedMultiplication<number> | number;
+  trackOpacity: Animated.Value | ReturnType<typeof Animated.multiply> | number;
   fallbackMin: number;
   fallbackMax: number;
   partial: boolean;

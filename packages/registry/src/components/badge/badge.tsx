@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo, type ComponentRef } from 'react';
 import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTokens } from '../../foundation/theme-provider';
 
@@ -92,7 +92,7 @@ function badgePalette(t: Tokens): Record<BadgeTone, Record<BadgeAppearance, Pale
   };
 }
 
-export const Badge = forwardRef<View, BadgeProps>(function Badge(
+export const Badge = forwardRef<ComponentRef<typeof View>, BadgeProps>(function Badge(
   {
     children,
     size = 'md',

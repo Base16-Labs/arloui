@@ -11,7 +11,12 @@ import { Button } from '../button/button';
 import { FAB } from '../button/fab-button';
 import { TabBar } from '../tab-bar/tab-bar';
 import { Tabs } from '../tabs/tabs';
-import { __resetGlassCacheForTests, withAlpha } from '../../foundation/glass';
+import {
+  __resetGlassCacheForTests,
+  TONE_FILL_OPACITY,
+  TONE_FILL_OPACITY_PRESSED,
+  withAlpha,
+} from '../../foundation/glass';
 import { materials, themes } from '../../foundation/tokens';
 import { fireEvent, renderWithTheme, screen } from '../../../test/render';
 
@@ -41,10 +46,9 @@ function fills(tree: unknown): string[] {
   return found;
 }
 
-/** A tone at the button material's resting or pressed tint strength. */
-function tint(color: string, state: 'resting' | 'pressed' = 'resting') {
-  const { tintOpacity, tintOpacityPressed } = materials.glassSmall;
-  return withAlpha(color, state === 'pressed' ? tintOpacityPressed : tintOpacity);
+/** Primary and danger glass paint the 400 step as the fill, not a wash on the frost. */
+function toneFill(color: string, state: 'resting' | 'pressed' = 'resting') {
+  return withAlpha(color, state === 'pressed' ? TONE_FILL_OPACITY_PRESSED : TONE_FILL_OPACITY);
 }
 
 // `require`, not `import`: the package is an optional peer that this workspace
@@ -109,7 +113,7 @@ describe('Button surface="glass"', () => {
     renderWithTheme(<Button surface="glass">Continue</Button>, { theme: 'light' });
 
     expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(
-      tint(themes.light.colors.interactivePrimaryGlass),
+      toneFill(themes.light.colors.interactivePrimaryGlass),
     );
   });
 
@@ -119,17 +123,28 @@ describe('Button surface="glass"', () => {
       theme: 'light',
     });
 
-    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimaryGlass));
+    expect(fills(toJSON())).toContain(toneFill(themes.light.colors.interactivePrimaryGlass));
+    expect(fills(toJSON())).not.toContain(materials.glassSmall.lightOverlay);
   });
 
-  it('keeps Primary 400 as the tint in dark mode', () => {
+  it('tints glass with the solid primary colour in both modes', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      expect(themes[theme].colors.interactivePrimaryGlass).toBe(themes[theme].colors.interactivePrimary);
+    }
     glassEffect.__setLiquidGlassAvailable(false);
     const { toJSON } = renderWithTheme(<Button surface="glass">Continue</Button>, {
       theme: 'dark',
     });
 
-    expect(fills(toJSON())).toContain(tint(themes.dark.colors.interactivePrimaryGlass));
-    expect(fills(toJSON())).not.toContain(tint(themes.dark.colors.interactivePrimary));
+    expect(fills(toJSON())).toContain(toneFill(themes.dark.colors.interactivePrimaryGlass));
+    expect(fills(toJSON())).not.toContain(materials.glassSmall.darkOverlay);
+  });
+
+  it('puts a tone fill on the regular material, not clear', () => {
+    glassEffect.__setLiquidGlassAvailable(true);
+    renderWithTheme(<Button surface="glass">Continue</Button>, { theme: 'light' });
+
+    expect(screen.getByTestId('native-glass-view').props.glassEffectStyle).toBe('regular');
   });
 
   it('tints a danger button with the error glass token, not with primary', () => {
@@ -142,8 +157,8 @@ describe('Button surface="glass"', () => {
     );
 
     const painted = fills(toJSON());
-    expect(painted).toContain(tint(themes.light.colors.interactiveErrorGlass));
-    expect(painted).not.toContain(tint(themes.light.colors.interactivePrimaryGlass));
+    expect(painted).toContain(toneFill(themes.light.colors.interactiveErrorGlass));
+    expect(painted).not.toContain(toneFill(themes.light.colors.interactivePrimaryGlass));
   });
 
   it('tints secondary glass with interactiveSecondary and presses to the pressed token', () => {
@@ -167,9 +182,12 @@ describe('Button surface="glass"', () => {
    */
   it('paints the material exactly once', () => {
     glassEffect.__setLiquidGlassAvailable(false);
-    const { toJSON } = renderWithTheme(<Button surface="glass">Continue</Button>, {
-      theme: 'light',
-    });
+    const { toJSON } = renderWithTheme(
+      <Button surface="glass" tone="neutral" appearance="soft">
+        Cancel
+      </Button>,
+      { theme: 'light' },
+    );
 
     const overlay = materials.glassSmall.lightOverlay;
     expect(fills(toJSON()).filter((fill) => fill === overlay)).toHaveLength(1);
@@ -188,7 +206,7 @@ describe('Button surface="glass"', () => {
     fireEvent(screen.getByRole('button', { name: 'Continue' }), 'pressIn');
 
     const painted = fills(toJSON());
-    expect(painted).toContain(tint(themes.light.colors.interactivePrimaryGlass, 'pressed'));
+    expect(painted).toContain(toneFill(themes.light.colors.interactivePrimaryGlass, 'pressed'));
     expect(painted).not.toContain(themes.light.colors.touchFeedbackMain);
   });
 
@@ -202,9 +220,9 @@ describe('Button surface="glass"', () => {
     // Re-assigning `tintColor` makes `GlassView` rebuild its effect, which
     // flashes. The native material's props stay put and the press rides above.
     expect(screen.getByTestId('native-glass-view').props.tintColor).toBe(
-      tint(themes.light.colors.interactivePrimaryGlass),
+      toneFill(themes.light.colors.interactivePrimaryGlass),
     );
-    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimaryGlass, 'pressed'));
+    expect(fills(toJSON())).toContain(toneFill(themes.light.colors.interactivePrimaryGlass, 'pressed'));
   });
 
   /**
@@ -253,7 +271,7 @@ describe('FAB surface="glass"', () => {
       <FAB surface="glass" icon={<Text>+</Text>} accessibilityLabel="Add" />,
       { theme: 'light' },
     );
-    expect(fills(toJSON())).toContain(tint(themes.light.colors.interactivePrimaryGlass));
+    expect(fills(toJSON())).toContain(toneFill(themes.light.colors.interactivePrimaryGlass));
     const style = StyleSheet.flatten(
       (toJSON() as { children?: Array<{ props?: { style?: unknown } }> }).children?.[0]?.props
         ?.style as never,

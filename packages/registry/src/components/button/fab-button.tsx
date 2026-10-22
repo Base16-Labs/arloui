@@ -5,7 +5,7 @@
  * Shadow on rest, no shadow on press or on glass. Reduced opacity (~28%) when disabled.
  * Export `FAB` is the canonical name; `FabButton` kept for backward compatibility.
  */
-import { forwardRef, useMemo, useState, type ReactNode } from 'react';
+import { forwardRef, useMemo, useState, type ComponentRef, type ReactNode } from 'react';
 import {
   Animated,
   Platform,
@@ -59,7 +59,7 @@ export type FabButtonProps = FABProps;
 const FAB_SIZE = 48;
 const FAB_ICON_SIZE = 24;
 
-export const FAB = forwardRef<View, FABProps>(function FAB(
+export const FAB = forwardRef<ComponentRef<typeof View>, FABProps>(function FAB(
   {
     icon,
     children,
@@ -92,6 +92,7 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
   const isGlass = surface === 'glass' && !disabled;
   const glass = useGlassSurface('small');
   const glassLiteral = tone === 'neutral';
+  const glassToneFill = tone !== 'neutral';
   const glassTint = tone === 'neutral' ? t.colors.interactiveSecondary : t.colors.interactivePrimaryGlass;
   const glassPressedTint = tone === 'neutral' ? t.colors.interactiveSecondaryPressed : undefined;
 
@@ -151,6 +152,7 @@ export const FAB = forwardRef<View, FABProps>(function FAB(
             tintColor={glassTint}
             pressedTintColor={glassPressedTint}
             literalTint={glassLiteral}
+            toneFill={glassToneFill}
             pressed={pressed}
             borderRadius={FAB_SIZE / 2}
           >
