@@ -105,6 +105,8 @@ Nav, Header, Breadcrumb
 
 ### Skill pack
 Markdown document teaching AI assistants the full design system.
+Install the whole pack (SKILL.md and references/) without cloning the repo:
+\`npx arloui skill install\` (Cursor) or \`npx arloui skill install --agent claude\` (Claude Code).
 
 ### MCP
 Model Context Protocol server for programmatic token/component access.

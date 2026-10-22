@@ -1366,6 +1366,39 @@ import { Input, InputAction } from "@/components/ui/input";
 />`}</CodeBlock>
         </Section>
 
+        <Section id="props" title="Props" sub="What Input adds on top of TextInput.">
+          <div className="overflow-x-auto rounded-lg border border-line">
+            <table className="w-full text-left text-[14px]">
+              <thead>
+                <tr className="border-b border-line text-ink-3">
+                  <th className="px-4 py-2 font-medium">Prop</th>
+                  <th className="px-4 py-2 font-medium">Type</th>
+                  <th className="px-4 py-2 font-medium">Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ['label', 'string', '—'],
+                  ['helperText', 'string', '—'],
+                  ['errorText', 'string', '—'],
+                  ['appearance', "'filled' | 'plain'", 'filled'],
+                  ['size', "'sm' | 'md'", 'md'],
+                  ['insetLabel', 'boolean', 'true'],
+                  ['leadingIcon / trailingIcon', 'ReactNode', '—'],
+                  ['leadingAction / trailingAction', 'ReactNode', '—'],
+                  ['state', "'default' | 'error'", 'default'],
+                ].map(([prop, type, fallback]) => (
+                  <tr key={prop} className="border-b border-line last:border-0">
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink">{prop}</td>
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink-2">{type}</td>
+                    <td className="px-4 py-2 text-ink-2">{fallback}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
         <Section
           id="tokens"
           title="Tokens used"
@@ -2125,6 +2158,50 @@ function FormControlDocPage({
           </div>
         </Section>
 
+        <Section id="props" title="Props" sub="The props this control adds on top of Pressable.">
+          <div className="overflow-x-auto rounded-lg border border-line">
+            <table className="w-full text-left text-[14px]">
+              <thead>
+                <tr className="border-b border-line text-ink-3">
+                  <th className="px-4 py-2 font-medium">Prop</th>
+                  <th className="px-4 py-2 font-medium">Type</th>
+                  <th className="px-4 py-2 font-medium">Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(isToggle
+                  ? [
+                      ['value', 'boolean', '—'],
+                      ['onValueChange', '(value: boolean) => void', '—'],
+                      ['size', "'sm' | 'md'", 'md'],
+                      ['disabled', 'boolean', 'false'],
+                    ]
+                  : isCheckbox
+                    ? [
+                        ['checked', 'boolean', '—'],
+                        ['onCheckedChange', '(checked: boolean) => void', '—'],
+                        ['size', "'sm' | 'md' | 'lg'", 'md'],
+                        ['disabled', 'boolean', 'false'],
+                      ]
+                    : [
+                        ['selected', 'boolean', '—'],
+                        ['onSelect', '() => void', '—'],
+                        ['appearance', "'outlined' | 'filled'", 'outlined'],
+                        ['size', "'sm' | 'md' | 'lg'", 'md'],
+                        ['disabled', 'boolean', 'false'],
+                      ]
+                ).map(([prop, type, fallback]) => (
+                  <tr key={prop} className="border-b border-line last:border-0">
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink">{prop}</td>
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink-2">{type}</td>
+                    <td className="px-4 py-2 text-ink-2">{fallback}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
         <Section
           id="tokens"
           title="Tokens used"
@@ -2291,7 +2368,11 @@ function CardDocPage() {
           <div className="space-y-3">
             <CodeBlock language="tsx">{`npx arloui add card
 
+import { Text } from "react-native";
 import { Card } from "@/components/ui/card";
+import { useTokens } from "@/lib/arloui/theme-provider";
+
+const t = useTokens();
 
 <Card surface="elevated" elevation="md">
   <Card.Header>
@@ -2299,7 +2380,9 @@ import { Card } from "@/components/ui/card";
     <Card.Subtitle>Your week at a glance</Card.Subtitle>
   </Card.Header>
   <Card.Body>
-    <Text>Depth comes from layering before shadows.</Text>
+    <Text style={{ color: t.colors.textSecondary }}>
+      Depth comes from layering before shadows.
+    </Text>
   </Card.Body>
   <Card.Footer>
     <Button appearance="ghost" size="sm">Dismiss</Button>

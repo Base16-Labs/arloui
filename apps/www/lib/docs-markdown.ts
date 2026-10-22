@@ -1139,8 +1139,104 @@ function primitiveMarkdown(doc: PrimitiveDoc): string {
  * Archetype pages render as sections of a single index route, but agents ask for
  * them one at a time (`arlo_get_archetype`), so each gets its own markdown doc.
  */
+const ARCHETYPE_COMPOSITION: Record<string, { hierarchy: string[]; primitives: string; example: string }> = {
+  question: {
+    hierarchy: [
+      'Title — `typography.headingMediumEmphasized`, `textPrimary`.',
+      'Body — `typography.bodyMedium`, `textSecondary`. One or two sentences.',
+      'Actions — one primary solid Button, and a ghost or soft Button when there is a second choice.',
+    ],
+    primitives: 'Button, Text styled from the type scale, and `spacing[6]` around the stack with `spacing[3]` between the lines.',
+    example: `const t = useTokens();
+
+<View style={{ padding: t.spacing[6], gap: t.spacing[3] }}>
+  <Text style={[t.typography.headingMediumEmphasized, { color: t.colors.textPrimary, fontFamily: t.fontFamilies.sans }]}>
+    Confirm payment?
+  </Text>
+  <Text style={[t.typography.bodyMedium, { color: t.colors.textSecondary, fontFamily: t.fontFamilies.sans }]}>
+    $12.00 will be charged to your card.
+  </Text>
+  <Button onPress={onConfirm}>Confirm</Button>
+  <Button appearance="ghost" onPress={onCancel}>Cancel</Button>
+</View>`,
+  },
+  settings: {
+    hierarchy: [
+      'Groups — a short label, then a List of rows. Separate groups with `spacing[8]`.',
+      'A row is a label, an optional value, and one trailing control.',
+      'Instant settings use Toggle. Choices that need a submit use Checkbox. Navigation rows use a chevron and push a new screen.',
+    ],
+    primitives: 'List, List.Item, Toggle, and Button for a destructive row at the end of the account group.',
+    example: `<List>
+  <List.Item title="Notifications" trailing={<Toggle value={on} onValueChange={setOn} accessibilityLabel="Notifications" />} />
+  <List.Item title="Appearance" value="System" onPress={openAppearance} />
+</List>`,
+  },
+  decision: {
+    hierarchy: [
+      'A title that names the choice.',
+      'Two to six options, each a row or a card with a Radio.',
+      'One primary Button that confirms the selected option.',
+    ],
+    primitives: 'Radio, Card or List.Item, Button.',
+    example: `<Radio selected={plan === 'pro'} onSelect={() => setPlan('pro')} accessibilityLabel="Pro plan" />`,
+  },
+  status: {
+    hierarchy: [
+      'A status title and one line of context.',
+      'A progress indicator while the process is running.',
+      'A single next action once it settles.',
+    ],
+    primitives: 'Spinner or a chart meter, Text, Button.',
+    example: `<Spinner />`,
+  },
+  feed: {
+    hierarchy: [
+      'A scrolling list of rows in time order.',
+      'Each row has a title, a secondary line, and an optional trailing value.',
+    ],
+    primitives: 'List, List.Item.',
+    example: `<List><List.Item title="Payment received" value="$12.00" /></List>`,
+  },
+  detail: {
+    hierarchy: [
+      'A title for the entity, then grouped facts.',
+      'Primary actions sit at the end of the first group, not in a floating bar, unless the screen is a flow.',
+    ],
+    primitives: 'Card or List, Button.',
+    example: `<Card><Card.Title>Receipt</Card.Title><Card.Subtitle>Today</Card.Subtitle></Card>`,
+  },
+  creation: {
+    hierarchy: [
+      'One question per step.',
+      'A field, then a primary Button that advances.',
+      'Back is a ghost Button or the navigation bar, not a second solid.',
+    ],
+    primitives: 'Input, Button, Stepper when the value is a number.',
+    example: `<Input label="Email" value={email} onChangeText={setEmail} />`,
+  },
+  onboarding: {
+    hierarchy: [
+      'One idea per screen: a title, a short body, one primary Button.',
+      'Permission prompts use the Question shape.',
+    ],
+    primitives: 'Button, Text from the type scale.',
+    example: `<Button onPress={next}>Continue</Button>`,
+  },
+  empty: {
+    hierarchy: [
+      'A title that says what is missing.',
+      'One sentence of context.',
+      'One Button that creates the first item or clears the filter.',
+    ],
+    primitives: 'Text, Button.',
+    example: `<Button onPress={create}>Add the first one</Button>`,
+  },
+};
+
 function archetypeMarkdown(slug: string, label: string, index: number): string {
-  return [
+  const composition = ARCHETYPE_COMPOSITION[slug];
+  const lines = [
     `# ${label}`,
     '',
     `> ${archetypeDescriptions[slug]}`,
@@ -1152,6 +1248,13 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
     '',
     'Archetypes are compositional patterns, not components — each describes how',
     'primitives, tokens, and motion wire together to make one shape of screen.',
+  ];
+  if (composition) {
+    lines.push('', '## Hierarchy', '');
+    for (const line of composition.hierarchy) lines.push(`- ${line}`);
+    lines.push('', '## Primitives', '', composition.primitives, '', '## Example', '', '```tsx', composition.example, '```');
+  }
+  lines.push(
     '',
     '## Related',
     '',
@@ -1163,7 +1266,8 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
     '---',
     `Source: ${SITE}/docs/archetypes#${slug}`,
     '',
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 export const stepperData = {

@@ -71,7 +71,11 @@ function tokensUsed(entry: RegistryEntry): string[] {
   return [...found].sort();
 }
 
-export function componentMarkdown(entry: RegistryEntry, prose: string | null): string {
+export function componentMarkdown(
+  entry: RegistryEntry,
+  prose: string | null,
+  options?: { source?: boolean },
+): string {
   const meta: string[] = [
     `- **id**: \`${entry.name}\``,
     `- **kind**: ${entry.kind}`,
@@ -90,7 +94,8 @@ export function componentMarkdown(entry: RegistryEntry, prose: string | null): s
 
   const parts = [`# ${entry.title}`, '', entry.description, '', meta.join('\n')];
   if (prose) parts.push('', '---', '', prose.trim());
-  parts.push('', '## Source', '', files.join('\n\n'));
+  if (options?.source !== false) parts.push('', '## Source', '', files.join('\n\n'));
+  else parts.push('', 'Source omitted. Call again with `source: true` for the React Native files.');
   return parts.join('\n');
 }
 
@@ -107,14 +112,43 @@ function readKey(block: string | null, key: string): string | undefined {
   return m ? m[1] : undefined;
 }
 
-/** Resolve a semantic colour token to its light + dark values from tokens source. */
+const SCALE_EXPORTS = ['spacing', 'radii', 'fontWeights', 'fontFamilies'] as const;
+
+function readScalar(block: string | null, key: string): string | undefined {
+  if (!block) return undefined;
+  const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = block.match(
+    new RegExp(`(?:^|[\\n,{])\\s*(?:'${escaped}'|"${escaped}"|${escaped})\\s*:\\s*([^,\\n]+)`),
+  );
+  return match?.[1]?.trim().replace(/,$/, '');
+}
+
+/** Resolve a colour token, or a top-level scale token such as `spacing.6`. */
 export function tokenMarkdown(source: string, path: string): string {
-  const key = path.replace(/^colors\./, '').trim();
+  const trimmed = path.trim();
+  const [group, scaleKey] = trimmed.split('.');
+  if (group && scaleKey && (SCALE_EXPORTS as readonly string[]).includes(group)) {
+    const value = readScalar(extractBlock(source, group), scaleKey);
+    if (value == null) {
+      return `Token \`${trimmed}\` was not found on \`${group}\`.`;
+    }
+    return [
+      `# Token \`${trimmed}\``,
+      '',
+      `| | value |`,
+      `| --- | --- |`,
+      `| ${group}.${scaleKey} | \`${value}\` |`,
+      '',
+      `Access in a component as \`t.${group}[${/^\d/.test(scaleKey) ? scaleKey : `'${scaleKey}'`}]\`.`,
+    ].join('\n');
+  }
+
+  const key = trimmed.replace(/^colors\./, '');
   const light = readKey(extractBlock(source, 'lightSemanticColors'), key);
   const dark = readKey(extractBlock(source, 'darkSemanticColors'), key);
 
   if (light == null && dark == null) {
-    return `Token \`${path}\` was not found among the semantic colour tokens.\n\nFor sizing, spacing, radii, typography or motion tokens, use \`arlo_get_foundation\` with topic \`spacing\`, \`type\`, or \`motion\`.`;
+    return `Token \`${path}\` was not found among the semantic colour tokens or the spacing, radii, and font scales.\n\nFor sizing, typography, or motion, use \`arlo_get_foundation\` with topic \`spacing\`, \`type\`, or \`motion\`.`;
   }
   return [
     `# Token \`${key}\``,
