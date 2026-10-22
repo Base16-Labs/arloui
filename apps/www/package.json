@@ -24,7 +24,7 @@
   "dependencies": {
     "@arloui/tokens": "file:../../packages/tokens",
     "@fontsource-variable/manrope": "^5.2.8",
-    "@opennextjs/cloudflare": "^1.20.1",
+    "@opennextjs/cloudflare": "^1.20.13",
     "esbuild": "^0.27.7",
     "fuse.js": "^7.1.0",
     "next": "16.4.2",
@@ -43,6 +43,6 @@
     "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "wrangler": "^4.111.0"
+    "wrangler": "^4.148.0"
   }
 }
