@@ -1,6 +1,6 @@
 {
   "name": "@arloui/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read-only Model Context Protocol server that exposes Arlo UI components, tokens, and docs to coding agents.",
   "license": "MIT",
   "repository": {
