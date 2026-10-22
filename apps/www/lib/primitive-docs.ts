@@ -292,6 +292,7 @@ const styles = StyleSheet.create({
       { name: 'easing.easeSheet', value: '0.32, 0.72, 0, 1', note: 'Sheets and drawers' },
       { name: 'spring.snappy', value: '400 / 30 / 1', note: 'Stiffness, damping, mass' },
       { name: 'pressed.scale', value: '0.97', note: 'Pressed transform' },
+      { name: 'disabled.opacity', value: '0.36', note: 'Disabled control' },
     ],
     snippet: `<Pressable style={({ pressed }) => ({
   opacity: pressed ? theme.motion.pressed.opacity : 1,

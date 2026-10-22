@@ -95,7 +95,7 @@
       "name": "button",
       "kind": "primitive",
       "title": "Button",
-      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.",
+      "description": "Accessible action buttons: tone (primary, neutral, danger) by appearance (solid, soft, ghost, outline), sizes sm–xl, loading, and icon-only. surface=\"glass\" is Liquid Glass for solid primary, solid danger, and neutral soft only. Outline and ghost have no glass. Disabled is never glass.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
@@ -173,6 +173,7 @@
       ],
       "dependencies": [
         "expo-haptics",
+        "@arloui/icons",
         "react-native-svg"
       ],
       "tags": [
@@ -427,7 +428,7 @@
       "name": "sheet",
       "kind": "primitive",
       "title": "Sheet",
-      "description": "A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.",
+      "description": "A bottom drawer with a grabber, drag-to-dismiss, snap points, and tunable motion. Padding sets the width. Stack morphs the screen behind the sheet into the card above it.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
@@ -644,6 +645,7 @@
         "reduce-motion"
       ],
       "dependencies": [
+        "@arloui/icons",
         "react-native-svg"
       ],
       "tags": [

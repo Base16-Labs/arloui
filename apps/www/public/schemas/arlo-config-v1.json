@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arloui.com/schemas/arlo-config-v1.json",
+  "title": "Arlo UI config",
+  "description": "arlo.json written by `npx arloui init`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "registry", "aliases", "style"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "This schema."
+    },
+    "registry": {
+      "type": "string",
+      "format": "uri",
+      "description": "Registry index URL. The public registry is https://arloui.com/r."
+    },
+    "aliases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["components", "tokens", "theme", "lib"],
+      "properties": {
+        "components": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Directory for copied components, relative to the project root."
+        },
+        "tokens": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Directory for tokens.ts."
+        },
+        "theme": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Directory for theme-provider.tsx."
+        },
+        "lib": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Directory for shared modules such as fonts.ts."
+        }
+      }
+    },
+    "style": {
+      "type": "string",
+      "const": "default"
+    }
+  }
+}

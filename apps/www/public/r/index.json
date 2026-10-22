@@ -105,7 +105,7 @@
       "name": "button",
       "kind": "primitive",
       "title": "Button",
-      "description": "Accessible action buttons for primary, secondary, ghost, outline, danger, loading, and icon-only use cases, on an opaque or Liquid Glass surface.",
+      "description": "Accessible action buttons: tone (primary, neutral, danger) by appearance (solid, soft, ghost, outline), sizes sm–xl, loading, and icon-only. surface=\"glass\" is Liquid Glass for solid primary, solid danger, and neutral soft only. Outline and ghost have no glass. Disabled is never glass.",
       "dependencies": [
         "expo-haptics",
         "react-native-svg"
@@ -183,6 +183,7 @@
       "description": "A numeric stepper with hold-to-repeat, a `min` floor, and a rolling counter animation. Ships in both input appearances: the filled field row and the large plain amount display.",
       "dependencies": [
         "expo-haptics",
+        "@arloui/icons",
         "react-native-svg"
       ],
       "registryDependencies": [
@@ -463,7 +464,7 @@
       "name": "sheet",
       "kind": "primitive",
       "title": "Sheet",
-      "description": "A bottom drawer with a grabber, drag-to-dismiss, snap points, tunable motion/gesture, default or stacked width, and token-based height and padding.",
+      "description": "A bottom drawer with a grabber, drag-to-dismiss, snap points, and tunable motion. Padding sets the width. Stack morphs the screen behind the sheet into the card above it.",
       "registryDependencies": [
         "tokens",
         "theme-provider",
@@ -692,6 +693,7 @@
       "title": "Toast",
       "description": "A transient notification surface with contrast or same-as-background color styles, optional icon and dismiss, swipe-to-dismiss, and auto-dismiss. Mount the Toaster and call useToast() to stack several into a deck.",
       "dependencies": [
+        "@arloui/icons",
         "react-native-svg"
       ],
       "registryDependencies": [

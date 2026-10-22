@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { Skeleton } from '../skeleton';
-import { radii, sizing, spacing } from '../../../foundation/tokens';
-import { renderWithTheme, screen } from '../../../../test/render';
+import { radii, sizing, spacing, themes } from '../../../foundation/tokens';
+import { fireEvent, renderWithTheme, screen } from '../../../../test/render';
 
 describe('Skeleton', () => {
   it('renders custom geometry', () => {
@@ -30,6 +30,28 @@ describe('Skeleton', () => {
     expect(circle.width).toBe(sizing.buttonHeight.md);
     expect(circle.height).toBe(sizing.buttonHeight.md);
     expect(circle.borderRadius).toBe(radii.full);
+  });
+
+  it('fills with the raised surface and sweeps the strong surface', () => {
+    for (const name of ['light', 'dark'] as const) {
+      const { unmount } = renderWithTheme(
+        <Skeleton testID="skeleton" width={180} height={24} />,
+        { theme: name },
+      );
+      const skeleton = screen.getByTestId('skeleton', { includeHiddenElements: true });
+      expect(StyleSheet.flatten(skeleton.props.style).backgroundColor).toBe(
+        themes[name].colors.surfaceRaised,
+      );
+      fireEvent(skeleton, 'layout', {
+        nativeEvent: { layout: { width: 180, height: 24, x: 0, y: 0 } },
+      });
+      const sheen = skeleton.children[0];
+      expect(sheen).toBeTruthy();
+      expect(StyleSheet.flatten(sheen.props.style).backgroundColor).toBe(
+        themes[name].colors.surfaceStrong,
+      );
+      unmount();
+    }
   });
 
   it('stays out of the accessibility tree', () => {

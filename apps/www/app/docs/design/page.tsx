@@ -13,7 +13,7 @@ const descriptions: Record<string, string> = {
 };
 
 /** Pages with nothing behind them yet render as a card, not a dead link. */
-const comingSoon = new Set(["figma-library"]);
+const comingSoon = new Set<string>();
 
 export default function DesignIndexPage() {
   return (

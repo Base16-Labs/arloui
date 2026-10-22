@@ -29,6 +29,11 @@
 ## Tokens used
 
 - `colors.interactivePrimary`
+- `colors.interactivePrimaryGlass`
+- `colors.interactiveErrorGlass`
+- `colors.interactiveSecondary`
+- `colors.interactiveSecondaryPressed`
+- `colors.textInteractiveSecondary`
 - `colors.feedbackError`
 - `colors.feedbackErrorBg`
 - `colors.feedbackInfoBg`
@@ -70,7 +75,7 @@
 
 ## Links
 
-- [Figma](https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=266-4982)
+- [Figma](https://www.figma.com/design/zoopBam4dC975x8E1xrrPt/Arlo-UI?node-id=266-4982)
 - [Source](https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/button)
 - [Edit on GitHub](https://github.com/Base16-Labs/arloui)
 

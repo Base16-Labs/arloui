@@ -3,6 +3,7 @@ import { add } from './commands/add';
 import { diff } from './commands/diff';
 import { init } from './commands/init';
 import { list } from './commands/list';
+import { installSkill, type SkillAgent } from './commands/skill';
 
 declare const __ARLOUI_VERSION__: string;
 
@@ -34,7 +35,7 @@ export function buildProgram(): Command {
   program
     .command('add [components...]')
     .description('add one or more components from the registry')
-    .option('-y, --yes', 'skip confirmation prompts and overwrite existing files', false)
+    .option('-y, --yes', 'skip confirmation prompts and leave existing files in place', false)
     .option('--overwrite', 'replace existing files without asking', false)
     .action(async (names: string[], opts: { yes?: boolean; overwrite?: boolean }) => {
       await add({ cwd: process.cwd(), names, yes: opts.yes, overwrite: opts.overwrite });
@@ -45,6 +46,16 @@ export function buildProgram(): Command {
     .description('list every available registry entry')
     .action(async () => {
       await list({ cwd: process.cwd() });
+    });
+
+  const skill = program.command('skill').description('agent skill pack');
+  skill
+    .command('install')
+    .description('download the Arlo UI skill pack (SKILL.md and references/) without cloning the repo')
+    .option('-a, --agent <name>', 'agent to install for: cursor (~/.cursor/skills-cursor/arloui) or claude (~/.claude/skills/arloui)', 'cursor')
+    .option('-d, --dir <path>', 'directory to write the pack into (overrides --agent)')
+    .action(async (opts: { dir?: string; agent: SkillAgent }) => {
+      await installSkill({ cwd: process.cwd(), dir: opts.dir, agent: opts.agent });
     });
 
   program

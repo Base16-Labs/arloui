@@ -26,16 +26,19 @@
 
 - `colors.textPrimary`
 - `colors.textSecondary`
-- `colors.accent`
-- `colors.surfaceStrong`
+- `colors.interactivePrimary`
+- `colors.interactiveSecondary`
 - `materials.glassSmall`
 - `radii.full`
 - `motion.duration.fast`
 - `motion.pressed`
+- `motion.disabled.opacity`
 - `sizing.touchTarget.minimum`
+- `sizing.tab.minWidth`
 
 ## Links
 
+- [Figma](https://www.figma.com/design/zoopBam4dC975x8E1xrrPt/Arlo-UI?node-id=2383-2)
 - [Source](https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tabs)
 
 ---

@@ -37,6 +37,10 @@ export const motion = {
     scale: 0.97,
     opacity: 0.85,
   },
+  /** Disabled controls recede in place. Opacity, so the fill stays the same color. */
+  disabled: {
+    opacity: 0.36,
+  },
   /**
    * Chart recipes. A chart animates two different things and they are not on the
    * same clock, so the split is a token rather than a number chosen per component.

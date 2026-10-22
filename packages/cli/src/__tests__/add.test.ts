@@ -305,4 +305,89 @@ describe('add (end-to-end with a fake registry)', () => {
     const outro = vi.mocked(p.outro).mock.calls.at(-1)?.[0] ?? '';
     expect(outro).toContain('expo-haptics');
   });
+
+  it('does not overwrite foundation files when --overwrite is set on a component', async () => {
+    await writeFile(join(dir, 'arlo.json'), JSON.stringify(config));
+    await mkdir(join(dir, 'lib/arloui'), { recursive: true });
+    await writeFile(join(dir, 'lib/arloui/tokens.ts'), 'LOCAL THEME');
+    stubRegistry([
+      makeEntry({
+        name: 'button',
+        registryDependencies: ['tokens'],
+        files: [{ source: 'button.tsx', target: 'button.tsx', content: 'BTN' }],
+      }),
+      makeEntry({
+        name: 'tokens',
+        kind: 'foundation',
+        files: [{ source: 'tokens.ts', target: 'tokens.ts', type: 'tokens', content: 'REGISTRY' }],
+      }),
+    ]);
+
+    await add({ cwd: dir, names: ['button'], overwrite: true });
+
+    expect(await readFile(join(dir, 'components/ui/button.tsx'), 'utf8')).toBe('BTN');
+    expect(await readFile(join(dir, 'lib/arloui/tokens.ts'), 'utf8')).toBe('LOCAL THEME');
+  });
+
+  it('suggests a close match when the component name 404s', async () => {
+    await writeFile(join(dir, 'arlo.json'), JSON.stringify(config));
+    const routes: Record<string, unknown> = {
+      [`${DEFAULT_CONFIG.registry}/index.json`]: {
+        version: '0.1.0',
+        items: [{ name: 'button', kind: 'primitive', title: 'Button', description: 'btn' }],
+      },
+    };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        if (!(url in routes)) {
+          return { ok: false, status: 404, statusText: 'Not Found', json: async () => ({}) };
+        }
+        return { ok: true, status: 200, statusText: 'OK', json: async () => routes[url] };
+      }),
+    );
+    await expect(add({ cwd: dir, names: ['buton'], yes: true })).rejects.toThrow(/Did you mean `button`/);
+  });
+});
+
+describe('add without a terminal (pipe or CI log)', () => {
+  beforeEach(() => {
+    // A pipe leaves `isTTY` undefined rather than false.
+    Object.defineProperty(process.stdout, 'isTTY', { value: undefined, configurable: true, writable: true });
+  });
+  afterEach(() => {
+    process.exitCode = undefined;
+  });
+
+  it('refuses to open the picker and asks for names', async () => {
+    await writeFile(join(dir, 'arlo.json'), JSON.stringify(config));
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const exit = vi.spyOn(process, 'exit').mockImplementation((code) => {
+      throw new Error(`exit:${code}`);
+    });
+    await expect(add({ cwd: dir, names: [] })).rejects.toThrow('exit:1');
+    expect(p.multiselect).not.toHaveBeenCalled();
+    expect(error.mock.calls[0]?.[0]).toMatch(/not a terminal/);
+    exit.mockRestore();
+    error.mockRestore();
+  });
+
+  it('skips an installed component without prompting and fails the run', async () => {
+    await writeFile(join(dir, 'arlo.json'), JSON.stringify(config));
+    await mkdir(join(dir, 'components/ui'), { recursive: true });
+    await writeFile(join(dir, 'components/ui/button.tsx'), 'OLD');
+    stubRegistry([makeEntry({ name: 'button', files: [{ source: 'b.tsx', target: 'button.tsx', content: 'NEW' }] })]);
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await add({ cwd: dir, names: ['button'] });
+
+    expect(p.confirm).not.toHaveBeenCalled();
+    expect(await readFile(join(dir, 'components/ui/button.tsx'), 'utf8')).toBe('OLD');
+    expect(process.exitCode).toBe(1);
+    // The plain-text spinner stand-in prints lines, never cursor escapes.
+    expect(log.mock.calls.flat().join('\n')).not.toContain(`${String.fromCharCode(27)}[`);
+    log.mockRestore();
+    error.mockRestore();
+  });
 });

@@ -64,14 +64,17 @@ server.tool(
 
 server.tool(
   'arlo_get_component',
-  'Full spec for one Arlo UI component: description, variants/props, dependencies, the design tokens it uses, and the React Native source. Pass the component id (e.g. "button", "sheet").',
-  { name: z.string().describe('component id, e.g. "button"') },
-  async ({ name }) =>
+  'Spec for one Arlo UI component: description, variants, dependencies, and the tokens it uses. Pass source:false to skip the React Native files when you only need the summary.',
+  {
+    name: z.string().describe('component id, e.g. "button"'),
+    source: z.boolean().optional().describe('Include the source files. Defaults to true.'),
+  },
+  async ({ name, source }) =>
     guard(async () => {
       const entry = await getEntry(name).catch(() => null);
       if (!entry) return notYet('component', name, '/docs/components');
       const prose = await getMarkdown(pagePathFor(entry)).catch(() => null);
-      return text(componentMarkdown(entry, prose));
+      return text(componentMarkdown(entry, prose, { source }));
     }),
 );
 
@@ -88,8 +91,8 @@ server.tool(
 
 server.tool(
   'arlo_get_token',
-  'Resolve an Arlo UI semantic colour token to its light and dark values (e.g. "surfaceInput", "interactiveSecondary").',
-  { path: z.string().describe('token name, e.g. "surfaceInputActive" or "colors.interactivePrimary"') },
+  'Resolve an Arlo UI token. Colour tokens return light and dark values (e.g. "surfaceInput"). Scale tokens return the number (e.g. "spacing.6", "radii.lg").',
+  { path: z.string().describe('token name, e.g. "surfaceInput", "colors.interactivePrimary", or "spacing.6"') },
   async ({ path }) =>
     guard(async () => {
       const tokens = await getEntry('tokens').catch(() => null);

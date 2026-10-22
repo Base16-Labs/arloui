@@ -1,6 +1,6 @@
 # Sheet
 
-> A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, tunable motion and gesture, default or stacked width, and token-based outer padding. The backdrop stays composable, from scrim modal to pass-through.
+> A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, and tunable motion. Padding sets the width. Stack morphs the screen behind the sheet into the card above it. The backdrop stays composable, from scrim modal to pass-through.
 
 **Type:** Component  
 **Category:** Layout & surface  
@@ -32,13 +32,13 @@
 - `spacing.6`
 - `radii.xl`
 - `radii.2xl`
-- `shadows.xl`
 - `motion.easing.easeSheet`
 - `motion.duration.base`
 - `motion.spring.gentle`
 
 ## Links
 
+- [Figma](https://www.figma.com/design/zoopBam4dC975x8E1xrrPt/Arlo-UI?node-id=2319-719)
 - [Source](https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet)
 
 ---

@@ -1,12 +1,18 @@
 import { jest } from '@jest/globals';
-import { Animated } from 'react-native';
-import { Circle, G, Path, Rect } from 'react-native-svg';
+import { Animated, Platform } from 'react-native';
+import { Circle, ClipPath, G, Path, Rect } from 'react-native-svg';
 import * as Reanimated from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
-import { ChartBarGrow, ChartFill, ChartReveal, ChartSweep, BAR_ENTER_STAGGER } from '../motion';
+import { ChartBarGrow, ChartFill, ChartSweep, BAR_ENTER_STAGGER, useChartReveal } from '../motion';
 import { Chart, ChartEntranceGate } from '../index';
 import { act, fireEvent, renderWithTheme, screen } from '../../../../test/render';
 import { __setReduceMotionForTests } from '../../../foundation/reduce-motion';
+
+/** Renders the reveal's defs plus one clipped group, the way Plot and Sparkline do. */
+function RevealHarness({ progress, width = 200 }: { progress: SharedValue<number>; width?: number }) {
+  const reveal = useChartReveal({ id: 'reveal', progress, width, height: 100 });
+  return <>{reveal.defs}<G testID="clipped" clipPath={reveal.clipPath} /></>;
+}
 
 const slices = [{ label: 'One', value: 60 }, { label: 'Two', value: 40 }];
 const paths = () => screen.UNSAFE_getAllByType(Path).map((node) => node.props.d);
@@ -76,13 +82,36 @@ it('finishes immediately when motion is disabled mid-sweep', () => {
 it.each([0, 0.5, 1])('maps progress %s to continuous SVG masks and supporting fill', (value) => {
   const progress = { value } as SharedValue<number>;
   renderWithTheme(<>
-    <ChartReveal progress={progress} width={200} height={100} />
+    <RevealHarness progress={progress} />
     <ChartSweep progress={progress} center={50} radius={40} thickness={20} />
     <ChartFill progress={progress}><Path d="M0 0 L20 20" /></ChartFill>
   </>);
   expect(screen.UNSAFE_getByType(Rect).props.width).toBe(value * 200);
   expect(screen.UNSAFE_getByType(Circle).props.strokeDashoffset).toBeCloseTo((1 - value) * 80 * Math.PI);
-  expect(screen.UNSAFE_getByType(G).props.opacity).toBeCloseTo(Math.min(1, Math.max(0, (value - 0.3) / 0.7)));
+  expect(screen.UNSAFE_getAllByType(G).at(-1)!.props.opacity).toBeCloseTo(Math.min(1, Math.max(0, (value - 0.3) / 0.7)));
+});
+
+describe('reveal on Android', () => {
+  const os = Platform.OS;
+  beforeEach(() => { Platform.OS = 'android'; });
+  afterEach(() => { Platform.OS = os; });
+
+  // react-native-svg on Android resolves a ClipPath once and ignores later
+  // changes to the rect inside it, so the clip must change identity to move.
+  it('gives the clip a new id as it widens', () => {
+    const progress = { value: 0.25 } as SharedValue<number>;
+    renderWithTheme(<RevealHarness progress={progress} />);
+    expect(screen.UNSAFE_getByType(Rect).props.width).toBe(50);
+    expect(screen.UNSAFE_getByType(ClipPath).props.id).toBe('reveal-50');
+    expect(String(screen.getByTestId('clipped').props.clipPath)).toContain('reveal-50');
+  });
+
+  it('drops the clip once the reveal is complete', () => {
+    const progress = { value: 1 } as SharedValue<number>;
+    renderWithTheme(<RevealHarness progress={progress} />);
+    expect(screen.UNSAFE_queryByType(ClipPath)).toBeNull();
+    expect(screen.getByTestId('clipped').props.clipPath).toBeUndefined();
+  });
 });
 
 it('retargets a meter from its displayed value without resetting to zero', () => {

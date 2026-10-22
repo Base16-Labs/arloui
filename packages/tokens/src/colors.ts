@@ -26,8 +26,9 @@ const E = error;
 /** Light — Figma utility tokens (camelCase). */
 export const lightSemanticColors = {
   surfaceBackground: G[50],
-  // Card fill — a step greyer than the background and the (white) elevated surface.
-  surfaceCard: G[100],
+  // Card fill — greyer than the background and the (white) elevated surface, and a
+  // half step darker than surfaceInput so an input reads on a card.
+  surfaceCard: G[150],
   surfaceInput: G[100],
   surfaceInputActive: G[200],
   surfaceElevated: base.white,
@@ -53,6 +54,10 @@ export const lightSemanticColors = {
 
   interactivePrimary: P[600],
   interactivePrimaryPressed: P[700],
+  // Glass tints use the solid button's step. The 400 step read as pastel under
+  // the material and left white labels below 3:1.
+  interactivePrimaryGlass: P[600],
+  interactiveErrorGlass: E[600],
   interactiveSecondary: rgbaFromHex(G[200], 0.7),
   interactiveSecondaryPressed: G[200],
   interactiveTertiary: 'transparent',
@@ -123,15 +128,18 @@ export const lightSemanticColors = {
 /** Dark — same token names; neutrals run on Zinc (see `Z` above), accents on the Main palette. */
 export const darkSemanticColors = {
   surfaceBackground: Z[950],
-  // Card fill — sits between the background and the elevated surface.
-  surfaceCard: Z[900],
+  // Card fill — between the background and surfaceInput, a half step darker than an
+  // input so the input reads on a card.
+  surfaceCard: Z[925],
   surfaceInput: Z[900],
   surfaceInputActive: Z[800],
   surfaceElevated: Z[800],
   // Translucent fill — the app background at 50%, so a coloured backdrop shows
   // through as a subtle frost.
   surfaceBleed: rgbaFromHex(Z[950], 0.5),
-  surfaceOverlay: alphaRamp.black[70],
+  // Zinc-950, not the grey-900 ramp. Grey-900 is blue (#101828) and the dim
+  // reads as navy over a zinc page.
+  surfaceOverlay: rgbaFromHex(Z[950], 0.7),
   surfaceInverse: Z[50],
 
   textPrimary: Z[50],
@@ -147,6 +155,8 @@ export const darkSemanticColors = {
 
   interactivePrimary: P[500],
   interactivePrimaryPressed: P[600],
+  interactivePrimaryGlass: P[500],
+  interactiveErrorGlass: E[500],
   interactiveSecondary: rgbaFromHex(Z[800], 0.7),
   interactiveSecondaryPressed: Z[700],
   interactiveTertiary: 'transparent',

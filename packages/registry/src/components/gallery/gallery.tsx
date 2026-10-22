@@ -1,4 +1,4 @@
-import { Children, forwardRef, isValidElement, useState, type ReactNode } from 'react';
+import { Children, forwardRef, isValidElement, useState, type ComponentRef, type ReactNode } from 'react';
 import {
   ScrollView,
   View,
@@ -23,7 +23,7 @@ export type GalleryProps = {
   accessibilityLabel?: string;
 } & Pick<ScrollViewProps, 'showsVerticalScrollIndicator' | 'onScroll' | 'scrollEventThrottle'>;
 
-export const Gallery = forwardRef<ScrollView, GalleryProps>(function Gallery(
+export const Gallery = forwardRef<ComponentRef<typeof ScrollView>, GalleryProps>(function Gallery(
   {
     children,
     columns = 2,

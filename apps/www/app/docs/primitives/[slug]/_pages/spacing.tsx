@@ -6,6 +6,7 @@ import { RightRail } from '@/components/nav/RightRail';
 import { CodeBlock } from '@/components/ui/CodeBlock';
 import { Icon } from '@/components/ui/Icon';
 import { Section } from '../_shared';
+import { FIGMA_NODES, figmaNode } from '@/lib/figma';
 
 const spacingScale = [
   [0, 0],
@@ -82,7 +83,7 @@ const avatarSizes = [
 ] as const;
 
 const buttonHeights = [
-  ['sm', 36],
+  ['sm', 32],
   ['md', 40],
   ['lg', 48],
   ['xl', 52],
@@ -277,7 +278,7 @@ export function SpacingPage() {
   const actions = [
     {
       label: 'Figma',
-      href: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=226-1271',
+      href: figmaNode(FIGMA_NODES.spacing),
     },
     {
       label: 'Source',
@@ -292,6 +293,7 @@ export function SpacingPage() {
     ...buttonHeights.map(([key]) => `sizing.buttonHeight.${key}`),
     'sizing.touchTarget.minimum',
     'sizing.touchTarget.comfortable',
+    'sizing.tab.minWidth',
   ];
 
   return (

@@ -56,7 +56,7 @@ export function ChartOverviewPage() {
 
       <section id="install" className="mt-14 scroll-mt-24">
         <h2 className="text-[22px] font-medium">Get started</h2>
-        <p className="mb-4 mt-3 text-[13px] leading-relaxed text-ink-2">{chartQuickStart.intro} Follow the <Link href="/docs/getting-started" className="text-ink underline underline-offset-4">setup guide</Link> for the theme provider and fonts.</p>
+        <p className="mb-4 mt-3 text-[13px] leading-relaxed text-ink-2">{chartQuickStart.intro} Follow the <Link href="/docs/getting-started/install" className="text-ink underline underline-offset-4">setup guide</Link> for the theme provider and fonts.</p>
         <CodeBlock language="bash">{chartQuickStart.command}</CodeBlock>
         <p className="mb-4 mt-4 text-[13px] leading-relaxed text-ink-2">{chartQuickStart.dependencies} <a href="https://docs.expo.dev/versions/latest/sdk/reanimated/" className="text-ink underline underline-offset-4">Expo setup</a> and <a href="https://docs.swmansion.com/react-native-reanimated/docs/guides/compatibility/" className="text-ink underline underline-offset-4">version compatibility</a>.</p>
         <CodeBlock language="bash">{chartQuickStart.expoCommand}</CodeBlock>

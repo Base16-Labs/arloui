@@ -2,9 +2,24 @@ import { TextArea } from '../text-area';
 import { fireEvent, renderWithTheme, screen } from '../../../../test/render';
 
 describe('TextArea', () => {
-  it('renders a label', () => {
+  it('floats the label inside an empty field', () => {
     renderWithTheme(<TextArea label="Bio" placeholder="Write a short bio" />);
+    expect(screen.getByText('Bio', { includeHiddenElements: true })).toBeTruthy();
+    expect(screen.queryByPlaceholderText('Write a short bio')).toBeNull();
+  });
+
+  it('lifts the label once the field has a value', () => {
+    renderWithTheme(
+      <TextArea label="Bio" placeholder="Write a short bio" value="Hello" onChangeText={() => {}} />,
+    );
+    expect(screen.getByText('Bio', { includeHiddenElements: true })).toBeTruthy();
+    expect(screen.getByDisplayValue('Hello')).toBeTruthy();
+  });
+
+  it('renders the label above the field when insetLabel is false', () => {
+    renderWithTheme(<TextArea label="Bio" placeholder="Write a short bio" insetLabel={false} />);
     expect(screen.getByText('Bio')).toBeTruthy();
+    expect(screen.getByPlaceholderText('Write a short bio')).toBeTruthy();
   });
 
   it('prefers error text over helper text', () => {

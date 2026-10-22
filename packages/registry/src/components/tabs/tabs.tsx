@@ -34,7 +34,6 @@ const PLATTER_SHADOW = {
   shadowRadius: 6,
   shadowOffset: { width: 0, height: 2 },
 } as const;
-
 export type TabsAppearance = 'plain' | 'underline' | 'filled' | 'segmented';
 export type TabsTone = 'neutral' | 'accent';
 export type TabsLayout = 'content' | 'equal';
@@ -193,8 +192,8 @@ function TabsRoot({
             alignItems: 'stretch',
             padding: segPadding,
             borderRadius: t.radii.full,
-            // GlassBackdrop paints the well. A fill here would stack under it.
-            backgroundColor: isGlass ? 'transparent' : t.colors.surfaceStrong,
+            // Glass sits on a bleed fill so the track still reads when the material is clear.
+            backgroundColor: isGlass ? t.colors.surfaceBleed : t.colors.interactiveSecondary,
             borderWidth: isGlass ? glass.borderWidth : 0,
             borderColor: isGlass ? glass.borderColor : undefined,
           },
@@ -282,7 +281,7 @@ function TabsRoot({
                   left: segPadding,
                   width: thumbWidth,
                   borderRadius: t.radii.full,
-                  backgroundColor: t.name === 'dark' ? t.colors.borderStrong : t.colors.surface,
+                  backgroundColor: t.colors.surfaceElevated,
                   transform: [{ translateX: Animated.multiply(selection, thumbWidth) }],
                 },
                 isGlass
@@ -318,7 +317,7 @@ function TabsRoot({
           gap: appearance === 'filled' ? t.spacing[2] : t.spacing[1],
         },
         appearance === 'underline'
-          ? { borderBottomWidth: 1, borderBottomColor: t.colors.border }
+          ? { borderBottomWidth: 1, borderBottomColor: t.colors.borderSecondary }
           : null,
         !scrollable ? style : null,
       ]}
@@ -384,7 +383,8 @@ function TabsItemView({
   // On glass the selected label is primary ink whatever the tone: the accent sat
   // too close in brightness to the lens it rides on, and the lens plus the
   // heavier weight already mark the selection — as on the iOS 26 control.
-  const selectedColor = tone === 'accent' && !onGlass ? t.colors.accent : t.colors.textPrimary;
+  const selectedColor =
+    tone === 'accent' && !onGlass ? t.colors.interactivePrimary : t.colors.textPrimary;
 
   useEffect(() => {
     if (reduceMotion) {
@@ -407,13 +407,17 @@ function TabsItemView({
       onPress={onPress}
       style={({ pressed }) => ({
         flex: equal ? 1 : undefined,
-        minWidth: equal ? 0 : 52,
-        minHeight: t.sizing.touchTarget.minimum,
+        minWidth: equal ? 0 : t.sizing.tab.minWidth,
+        // Segmented items sit inside the track's 4pt padding, so the control stays the touch target.
+        minHeight:
+          appearance === 'segmented'
+            ? t.sizing.touchTarget.minimum - t.spacing[1] * 2
+            : t.sizing.touchTarget.minimum,
         paddingHorizontal: appearance === 'filled' ? t.spacing[4] : t.spacing[3],
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: appearance === 'filled' ? t.radii.full : 0,
-        opacity: disabled ? 0.36 : pressed ? t.motion.pressed.opacity : 1,
+        opacity: disabled ? t.motion.disabled.opacity : pressed ? t.motion.pressed.opacity : 1,
         transform: [{ scale: pressed ? t.motion.pressed.scale : 1 }],
         overflow: 'hidden',
       })}
@@ -428,7 +432,8 @@ function TabsItemView({
             bottom: 0,
             left: 0,
             borderRadius: t.radii.full,
-            backgroundColor: tone === 'accent' ? t.colors.accent : t.colors.surfaceStrong,
+            backgroundColor:
+              tone === 'accent' ? t.colors.interactivePrimary : t.colors.interactiveSecondary,
             opacity: selection,
             transform: [
               {
@@ -467,11 +472,11 @@ function TabsItemView({
           pointerEvents="none"
           style={{
             position: 'absolute',
-            right: 10,
+            right: t.spacing[2],
             bottom: -1,
-            left: 10,
-            height: 2.5,
-            borderRadius: 2,
+            left: t.spacing[2],
+            height: 2,
+            borderRadius: t.radii.full,
             backgroundColor: selectedColor,
             opacity: selection,
             transform: [

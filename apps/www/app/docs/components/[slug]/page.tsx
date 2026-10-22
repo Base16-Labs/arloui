@@ -56,6 +56,17 @@ import {
   stepperData,
 } from '@/lib/docs-markdown';
 
+/** Figma link pill — renders nothing for a component with no Figma counterpart. */
+function FigmaPill({ href }: { href?: string }) {
+  if (!href || href === '#') return null;
+  return (
+    <Pill as="a" href={href}>
+      <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
+      <span className="opacity-50">↗</span>
+    </Pill>
+  );
+}
+
 export function generateStaticParams() {
   return [
     { slug: 'chart' },
@@ -188,6 +199,7 @@ function TabsDocPage() {
         <Lede>{tabsData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={tabsData.figma} />
           <Pill as="a" href={tabsData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -353,6 +365,7 @@ function SkeletonDocPage() {
         <Lede>{skeletonData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={skeletonData.figma} />
           <Pill as="a" href={skeletonData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -507,6 +520,7 @@ function SpinnerDocPage() {
         <Lede>{spinnerData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={spinnerData.figma} />
           <Pill as="a" href={spinnerData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>
@@ -660,6 +674,7 @@ function TabBarDocPage() {
         <Lede>{tabBarData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={tabBarData.figma} />
           <Pill as="a" href={tabBarData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -826,6 +841,7 @@ function DatePickerDocPage() {
         <Lede>{datePickerData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={datePickerData.figma} />
           <Pill as="a" href={datePickerData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -989,10 +1005,7 @@ function SheetDocPage() {
 
         {/* Action pills */}
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={sheetData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={sheetData.figma} />
           <Pill as="a" href={sheetData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1100,37 +1113,30 @@ function SheetDocPage() {
         <Section id="code" title="Code" sub="React Native, copy-paste.">
           <CodeBlock language="tsx">{`npx arloui add sheet
 
-import { BlurView } from "expo-blur";
-import { StyleSheet } from "react-native";
 import { Sheet } from "@/components/ui/sheet";
 
-<Sheet
-  visible={open}
-  onClose={() => setOpen(false)}
-  backdrop="passthrough"
-  surface="glass"
-  width="stack"
-  snapPoints={[0.4, 0.92]}
-  padding="md"
-  handleHeight={3}
-  motion="gentle"
-  gesture={{ dismissDistance: 0.35, dismissVelocity: 0.75 }}
-  blurComponent={
-    <BlurView
-      intensity={34}
-      tint="systemMaterial"
-      style={StyleSheet.absoluteFill}
-    />
-  }
->
-  <Sheet.Header title="Add to collection" />
-  <Sheet.Body>
-    {/* Your content */}
-  </Sheet.Body>
-  <Sheet.Footer>
-    {/* Primary action */}
-  </Sheet.Footer>
-</Sheet>`}</CodeBlock>
+<Sheet.Stack>
+  <Sheet.Screen>{/* The screen, or the sheet underneath. */}</Sheet.Screen>
+  <Sheet
+    visible={open}
+    onClose={() => setOpen(false)}
+    backdrop="passthrough"
+    stack
+    snapPoints={[0.4, 0.92]}
+    padding="md"
+    handleHeight={3}
+    motion="gentle"
+    gesture={{ dismissDistance: 0.35, dismissVelocity: 0.75 }}
+  >
+    <Sheet.Header title="Add to collection" />
+    <Sheet.Body>
+      {/* Your content */}
+    </Sheet.Body>
+    <Sheet.Footer>
+      {/* Primary action */}
+    </Sheet.Footer>
+  </Sheet>
+</Sheet.Stack>`}</CodeBlock>
         </Section>
 
         <Section
@@ -1140,7 +1146,7 @@ import { Sheet } from "@/components/ui/sheet";
         >
           <ul className="list-disc list-inside space-y-1.5 text-[15px] leading-relaxed text-ink-2 marker:text-ink-3 [&>li]:pl-[1.4em] [&>li]:indent-[-1.4em]">
             <li>
-              Layout axes stay token-driven: <code className="font-mono text-[13px]">width</code>,{' '}
+              Layout axes stay token-driven: <code className="font-mono text-[13px]">stack</code>,{' '}
               <code className="font-mono text-[13px]">height</code> (or a fraction like{' '}
               <code className="font-mono text-[13px]">0.4</code>),{' '}
               <code className="font-mono text-[13px]">padding</code>,{' '}
@@ -1152,9 +1158,11 @@ import { Sheet } from "@/components/ui/sheet";
               to snap between resting heights; drag past the smallest to dismiss.
             </li>
             <li>
-              Material axes compose: <code className="font-mono text-[13px]">backdrop</code> ×{' '}
-              <code className="font-mono text-[13px]">surface</code>, plus optional{' '}
-              <code className="font-mono text-[13px]">blurComponent</code>.
+              <code className="font-mono text-[13px]">backdrop</code> is{' '}
+              <code className="font-mono text-[13px]">scrim</code> or{' '}
+              <code className="font-mono text-[13px]">passthrough</code>.{' '}
+              <code className="font-mono text-[13px]">stack</code> morphs{' '}
+              <code className="font-mono text-[13px]">Sheet.Screen</code> into the card above the sheet.
             </li>
             <li>
               Motion recipes: <code className="font-mono text-[13px]">motion=&quot;gentle&quot; | &quot;snappy&quot; | &quot;heavy&quot;</code>{' '}
@@ -1242,10 +1250,7 @@ function InputDocPage() {
         <Lede>{inputData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={inputData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={inputData.figma} />
           <Pill as="a" href={inputData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1361,6 +1366,39 @@ import { Input, InputAction } from "@/components/ui/input";
 />`}</CodeBlock>
         </Section>
 
+        <Section id="props" title="Props" sub="What Input adds on top of TextInput.">
+          <div className="overflow-x-auto rounded-lg border border-line">
+            <table className="w-full text-left text-[14px]">
+              <thead>
+                <tr className="border-b border-line text-ink-3">
+                  <th className="px-4 py-2 font-medium">Prop</th>
+                  <th className="px-4 py-2 font-medium">Type</th>
+                  <th className="px-4 py-2 font-medium">Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ['label', 'string', '—'],
+                  ['helperText', 'string', '—'],
+                  ['errorText', 'string', '—'],
+                  ['appearance', "'filled' | 'plain'", 'filled'],
+                  ['size', "'sm' | 'md'", 'md'],
+                  ['insetLabel', 'boolean', 'true'],
+                  ['leadingIcon / trailingIcon', 'ReactNode', '—'],
+                  ['leadingAction / trailingAction', 'ReactNode', '—'],
+                  ['state', "'default' | 'error'", 'default'],
+                ].map(([prop, type, fallback]) => (
+                  <tr key={prop} className="border-b border-line last:border-0">
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink">{prop}</td>
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink-2">{type}</td>
+                    <td className="px-4 py-2 text-ink-2">{fallback}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
         <Section
           id="tokens"
           title="Tokens used"
@@ -1439,10 +1477,7 @@ function TextAreaDocPage() {
         <Lede>{textAreaData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={textAreaData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={textAreaData.figma} />
           <Pill as="a" href={textAreaData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1622,10 +1657,7 @@ function ButtonDocPage() {
         <Lede>{buttonData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={buttonData.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={buttonData.figma} />
           <Pill as="a" href={buttonData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -1663,7 +1695,7 @@ function ButtonDocPage() {
               {[
                 ['Label', 'typography.body · weight 600'],
                 ['Leading / trailing icon', 'sizing.icon.xs–md'],
-                ['Height', 'sizing.buttonHeight.sm–xl · 36–52'],
+                ['Height', 'sizing.buttonHeight.sm–xl · 32–52'],
                 ['Corner radius', 'radii.full (pill)'],
                 ['Horizontal padding', 'spacing.3–6 by size'],
                 ['Icon ↔ label gap', 'spacing.1–3 by size'],
@@ -1764,9 +1796,10 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
 <Button loading>Submit</Button>
 <Button fullWidth>Continue</Button>
 
-// Liquid Glass — the tone's fill becomes the material's tint
+// Liquid Glass — primary solid, danger solid, and neutral soft only
 <Button surface="glass">Continue</Button>
-<Button surface="glass" tone="danger">Delete</Button>`}</CodeBlock>
+<Button surface="glass" tone="danger">Delete</Button>
+<Button surface="glass" tone="neutral" appearance="soft">Cancel</Button>`}</CodeBlock>
 
             <CodeBlock language="tsx">{`// Ghost - chromeless, low emphasis
 <GhostButton type="primary">Learn more</GhostButton>
@@ -1774,6 +1807,8 @@ import { Button, GhostButton, FAB, SocialAuthButton } from "@/components/ui/butt
 
 // FAB - floating action, requires accessibilityLabel
 <FAB tone="primary" icon={<Plus />} accessibilityLabel="Add item" onPress={handleAdd} />
+<FAB surface="glass" tone="primary" icon={<Plus />} accessibilityLabel="Add item" />
+<FAB surface="glass" tone="neutral" icon={<Plus />} accessibilityLabel="Add item" />
 
 // Social auth - fixed provider styling, four platforms
 <SocialAuthButton platform="google" type="fill" onPress={handleGoogle} />
@@ -1986,10 +2021,7 @@ function FormControlDocPage({
         <Lede>{data.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
-          <Pill as="a" href={data.figma}>
-            <img src="/icons/figma.svg" alt="" className="h-3.5 w-3.5" aria-hidden="true" /> Figma{' '}
-            <span className="opacity-50">↗</span>
-          </Pill>
+          <FigmaPill href={data.figma} />
           <Pill as="a" href={data.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -2126,6 +2158,50 @@ function FormControlDocPage({
           </div>
         </Section>
 
+        <Section id="props" title="Props" sub="The props this control adds on top of Pressable.">
+          <div className="overflow-x-auto rounded-lg border border-line">
+            <table className="w-full text-left text-[14px]">
+              <thead>
+                <tr className="border-b border-line text-ink-3">
+                  <th className="px-4 py-2 font-medium">Prop</th>
+                  <th className="px-4 py-2 font-medium">Type</th>
+                  <th className="px-4 py-2 font-medium">Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(isToggle
+                  ? [
+                      ['value', 'boolean', '—'],
+                      ['onValueChange', '(value: boolean) => void', '—'],
+                      ['size', "'sm' | 'md'", 'md'],
+                      ['disabled', 'boolean', 'false'],
+                    ]
+                  : isCheckbox
+                    ? [
+                        ['checked', 'boolean', '—'],
+                        ['onCheckedChange', '(checked: boolean) => void', '—'],
+                        ['size', "'sm' | 'md' | 'lg'", 'md'],
+                        ['disabled', 'boolean', 'false'],
+                      ]
+                    : [
+                        ['selected', 'boolean', '—'],
+                        ['onSelect', '() => void', '—'],
+                        ['appearance', "'outlined' | 'filled'", 'outlined'],
+                        ['size', "'sm' | 'md' | 'lg'", 'md'],
+                        ['disabled', 'boolean', 'false'],
+                      ]
+                ).map(([prop, type, fallback]) => (
+                  <tr key={prop} className="border-b border-line last:border-0">
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink">{prop}</td>
+                    <td className="px-4 py-2 font-mono text-[13px] text-ink-2">{type}</td>
+                    <td className="px-4 py-2 text-ink-2">{fallback}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
         <Section
           id="tokens"
           title="Tokens used"
@@ -2181,6 +2257,7 @@ function CardDocPage() {
         <Lede>{cardData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={cardData.figma} />
           <Pill as="a" href={cardData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>
@@ -2291,7 +2368,11 @@ function CardDocPage() {
           <div className="space-y-3">
             <CodeBlock language="tsx">{`npx arloui add card
 
+import { Text } from "react-native";
 import { Card } from "@/components/ui/card";
+import { useTokens } from "@/lib/arloui/theme-provider";
+
+const t = useTokens();
 
 <Card surface="elevated" elevation="md">
   <Card.Header>
@@ -2299,7 +2380,9 @@ import { Card } from "@/components/ui/card";
     <Card.Subtitle>Your week at a glance</Card.Subtitle>
   </Card.Header>
   <Card.Body>
-    <Text>Depth comes from layering before shadows.</Text>
+    <Text style={{ color: t.colors.textSecondary }}>
+      Depth comes from layering before shadows.
+    </Text>
   </Card.Body>
   <Card.Footer>
     <Button appearance="ghost" size="sm">Dismiss</Button>
@@ -2386,6 +2469,7 @@ function ListDocPage() {
         <Lede>{listData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={listData.figma} />
           <Pill as="a" href={listData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>
@@ -2576,6 +2660,7 @@ function CarouselDocPage() {
         <Lede>{carouselData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={carouselData.figma} />
           <Pill as="a" href={carouselData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -2759,6 +2844,7 @@ function GalleryDocPage() {
         <Lede>{galleryData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={galleryData.figma} />
           <Pill as="a" href={galleryData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -2927,6 +3013,7 @@ function BadgeDocPage() {
         <Lede>{badgeData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={badgeData.figma} />
           <Pill as="a" href={badgeData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -3077,6 +3164,7 @@ function ChipDocPage() {
         <Lede>{chipData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={chipData.figma} />
           <Pill as="a" href={chipData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -3256,6 +3344,7 @@ function ToastDocPage() {
         <Lede>{toastData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={toastData.figma} />
           <Pill as="a" href={toastData.source}>
             <GithubMark size={14} /> Source{' '}
             <span className="opacity-50">↗</span>
@@ -3463,6 +3552,7 @@ function StepperDocPage() {
         <Lede>{stepperData.lede}</Lede>
 
         <div className="mb-9 flex gap-2">
+          <FigmaPill href={stepperData.figma} />
           <Pill as="a" href={stepperData.source}>
             <GithubMark size={14} /> Source <span className="opacity-50">↗</span>
           </Pill>

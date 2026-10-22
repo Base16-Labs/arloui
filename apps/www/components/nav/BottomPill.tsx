@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { GithubMark } from '@/components/ui/GithubMark';
+import { FIGMA_COMMUNITY_URL } from '@/lib/figma';
 import { useSearch } from '@/components/search/search-provider';
 import { useTheme } from '@/lib/theme';
 import { markdownForPath } from '@/lib/docs-markdown';
@@ -216,7 +217,9 @@ export function BottomPill() {
             <div className="mt-3 flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <a
-                  href="#"
+                  href={FIGMA_COMMUNITY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex h-7 w-7 items-center justify-center rounded-full text-ink-2 transition hover:bg-ink/[0.06] hover:text-ink"
                   aria-label="Open Figma"
                 >

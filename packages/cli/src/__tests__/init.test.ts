@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile, access } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile, access } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -130,6 +130,33 @@ describe('init', () => {
     expect(await exists(join(dir, 'lib/arloui/tokens.ts'))).toBe(false);
   });
 
+  it('writes aliases under src/ when tsconfig maps @/* to ./src/*', async () => {
+    stubRegistry();
+    await writeFile(
+      join(dir, 'tsconfig.json'),
+      JSON.stringify({ compilerOptions: { paths: { '@/*': ['./src/*'] } } }),
+    );
+    await init({ cwd: dir, yes: true });
+
+    const written = JSON.parse(await readFile(join(dir, 'arlo.json'), 'utf8'));
+    expect(written.aliases).toEqual({
+      components: 'src/components/ui',
+      tokens: 'src/lib/arloui',
+      theme: 'src/lib/arloui',
+      lib: 'src/lib/arloui',
+    });
+    expect(await readFile(join(dir, 'src/lib/arloui/tokens.ts'), 'utf8')).toBe('// tokens');
+    expect(await readFile(join(dir, 'src/lib/arloui/fonts.ts'), 'utf8')).toContain('Space Mono');
+  });
+
+  it('writes aliases under src/ when the Expo src/app layout is present', async () => {
+    stubRegistry();
+    await mkdir(join(dir, 'src/app'), { recursive: true });
+    await init({ cwd: dir, yes: true });
+    const written = JSON.parse(await readFile(join(dir, 'arlo.json'), 'utf8'));
+    expect(written.aliases.components).toBe('src/components/ui');
+  });
+
   it('installs each foundation entry only once (tokens shared by theme-provider)', async () => {
     stubRegistry();
     await init({ cwd: dir, yes: true });
@@ -139,5 +166,19 @@ describe('init', () => {
     // tokens is a dep of theme-provider and resolved on its own — fetched but written once
     expect(await readFile(join(dir, 'lib/arloui/tokens.ts'), 'utf8')).toBe('// tokens');
     expect(calls.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('stops without prompting when arlo.json exists and there is no terminal', async () => {
+    await writeFile(join(dir, 'arlo.json'), JSON.stringify(DEFAULT_CONFIG));
+    Object.defineProperty(process.stdout, 'isTTY', { value: undefined, configurable: true, writable: true });
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const exit = vi.spyOn(process, 'exit').mockImplementation((code) => {
+      throw new Error(`exit:${code}`);
+    });
+    await expect(init({ cwd: dir })).rejects.toThrow('exit:1');
+    expect(p.confirm).not.toHaveBeenCalled();
+    expect(error.mock.calls[0]?.[0]).toMatch(/pass -y/);
+    exit.mockRestore();
+    error.mockRestore();
   });
 });

@@ -15,6 +15,7 @@ import { CHART_PROPS, CHART_PROPS_MD } from './generated/chart-props';
 import { chartChoices, chartForms, chartPitfalls, chartQuickStart } from './chart-forms';
 import { primitiveDocs, type PrimitiveDoc } from './primitive-docs';
 import { archetypeDescriptions, archetypeItems } from './routes';
+import { FIGMA_NODES, figmaNode } from './figma';
 
 const SITE = 'https://arloui.com';
 
@@ -239,8 +240,8 @@ export const sheetData = {
   slug: 'sheet',
   category: 'Layout & surface',
   title: 'Sheet',
-  lede: 'A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, tunable motion and gesture, default or stacked width, and token-based outer padding. The backdrop stays composable, from scrim modal to pass-through.',
-  figma: '#',
+  lede: 'A bottom drawer with a slim grabber, drag-to-dismiss, optional snap points, and tunable motion. Padding sets the width. Stack morphs the screen behind the sheet into the card above it. The backdrop stays composable, from scrim modal to pass-through.',
+  figma: figmaNode(FIGMA_NODES.sheet),
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/sheet',
   states: ['open', 'dragging', 'dismissing', 'scrim', 'passthrough', 'long content'],
   tokens: [
@@ -250,7 +251,6 @@ export const sheetData = {
     'spacing.6',
     'radii.xl',
     'radii.2xl',
-    'shadows.xl',
     'motion.easing.easeSheet',
     'motion.duration.base',
     'motion.spring.gentle',
@@ -282,7 +282,7 @@ export const tabBarData = {
   category: 'Navigation',
   title: 'Tab Bar',
   lede: "Bottom navigation for switching between an app's primary destinations, with full-width and floating layouts, filled or Liquid Glass surfaces, directional selection motion, and scroll-aware visibility.",
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.tabBar),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tab-bar',
   states: ['default', 'selected', 'pressed', 'disabled', 'glass', 'hidden on scroll'],
@@ -328,7 +328,7 @@ export const cardData = {
   category: 'Layout & surface',
   title: 'Card',
   lede: 'The surface primitive: a bordered, rounded container with Media, Header, Title, Subtitle, Body, and Footer slots. Five variant axes off token scales — surface, elevation, border, padding, radius — and optional whole-card press with a haptic. It ships no baked-in layouts; a metric, media, prompt, list, or carousel card is a composition, not a component.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.card),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/card',
   states: ['default', 'elevated', 'bleed', 'inverse', 'elevation', 'border', 'pressable'],
@@ -370,7 +370,7 @@ export const listData = {
   category: 'Layout & surface',
   title: 'List',
   lede: 'A compound stacked-row layout: List is the container, List.Row is the item. Rows take a leading icon or media, a title over an optional subtitle, and a trailing value alongside an optional icon. It draws no surface of its own — set separated to space rows onto their own surfaces, or keep them contiguous with an inset, balanced, edge, or no hairline.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.list),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/list',
   states: ['separated', 'inset', 'balanced', 'edge', 'none', 'comfortable', 'compact'],
@@ -416,6 +416,7 @@ export const skeletonData = {
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/skeleton',
   states: ['shimmer', 'pulse', 'static', 'reduced motion'],
   tokens: [
+    'colors.surfaceRaised',
     'colors.surfaceStrong',
     'radii.md',
     'radii.full',
@@ -447,7 +448,7 @@ export const spinnerData = {
   category: 'Feedback',
   title: 'Spinner',
   lede: 'An activity indicator for work with no measurable progress, in five iOS idioms — stepped spokes, a sweeping arc, staggered dots, breathing bars, or radar pulses.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.spinner),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/spinner',
   states: ['spokes', 'arc', 'dots', 'bars', 'pulse', 'reduced motion'],
@@ -482,19 +483,21 @@ export const tabsData = {
   category: 'Navigation',
   title: 'Tabs',
   lede: 'Secondary navigation for categorising content or switching views within the current screen, with plain, underline, filled, and segmented presentations, plus a filled or Liquid Glass surface on the segmented track.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.tabs),
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/tabs',
   states: ['default', 'selected', 'pressed', 'disabled', 'overflow', 'glass'],
   tokens: [
     'colors.textPrimary',
     'colors.textSecondary',
-    'colors.accent',
-    'colors.surfaceStrong',
+    'colors.interactivePrimary',
+    'colors.interactiveSecondary',
     'materials.glassSmall',
     'radii.full',
     'motion.duration.fast',
     'motion.pressed',
+    'motion.disabled.opacity',
     'sizing.touchTarget.minimum',
+    'sizing.tab.minWidth',
   ],
   headings: [
     { id: 'anatomy', label: 'Anatomy' },
@@ -521,7 +524,7 @@ export const buttonData = {
   category: 'Controls',
   title: 'Button',
   lede: 'The primary commitment surface on a mobile screen — strong defaults across three tones and four appearances, with press feedback that earns the tap.',
-  figma: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=266-4982',
+  figma: figmaNode(FIGMA_NODES.button),
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/button',
   states: [
     'default',
@@ -538,6 +541,11 @@ export const buttonData = {
   ],
   tokens: [
     'colors.interactivePrimary',
+    'colors.interactivePrimaryGlass',
+    'colors.interactiveErrorGlass',
+    'colors.interactiveSecondary',
+    'colors.interactiveSecondaryPressed',
+    'colors.textInteractiveSecondary',
     'colors.feedbackError',
     'colors.feedbackErrorBg',
     'colors.feedbackInfoBg',
@@ -600,7 +608,7 @@ export const datePickerData = {
   category: 'Controls',
   title: 'Date Picker',
   lede: 'Calendar and wheel surfaces for choosing dates and times. Use the calendar for visual comparison, or the snapping wheel for compact date, time, date-time, and month-year selection.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.datePicker),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/date-picker',
   states: ['default', 'selected', 'today', 'disabled', 'weekends disabled'],
@@ -642,7 +650,7 @@ export const inputData = {
   category: 'Controls',
   title: 'Input',
   lede: 'A token-driven text input for forms, search, passwords, and compact no-background fields. Use filled inputs when the field needs a clear touch surface; use plain inputs when the surrounding layout already provides structure.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.input),
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/input',
   states: [
     'empty',
@@ -695,7 +703,7 @@ export const toggleData = {
   category: 'Controls',
   title: 'Toggle',
   lede: 'An animated on/off switch for binary settings — smooth thumb slide with track color transition, two sizes, and a disabled state.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.toggle),
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/toggle',
   states: ['off', 'on', 'disabled off', 'disabled on', 'dark mode'],
   tokens: [
@@ -734,7 +742,7 @@ export const checkboxData = {
   category: 'Controls',
   title: 'Checkbox',
   lede: 'An animated check box for multi-select forms — fill transition with an SVG check icon, three sizes, and a disabled state.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.checkbox),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/checkbox',
   states: ['unchecked', 'checked', 'disabled unchecked', 'disabled checked', 'dark mode'],
@@ -776,7 +784,7 @@ export const radioData = {
   category: 'Controls',
   title: 'Radio',
   lede: 'An animated radio button for single-select groups — two appearances (outlined ring, filled dot), three sizes, and a disabled state.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.radio),
   source: 'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/radio',
   states: ['unselected', 'selected', 'disabled unselected', 'disabled selected', 'dark mode'],
   tokens: [
@@ -816,7 +824,7 @@ export const badgeData = {
   title: "Badge",
   lede:
     "A non-interactive status label — five semantic tones, three appearances, optional dot and leading icon, with a subtle solid inset border for craft. Use it to surface state without demanding a tap.",
-  figma: "#",
+  figma: figmaNode(FIGMA_NODES.badge),
   source:
     "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/badge",
   states: [
@@ -868,7 +876,7 @@ export const chipData = {
   title: "Chip",
   lede:
     "An interactive compact element for filtering, tokenised input, and one-tap actions. Three types — filter, input, assist — with press feedback, selection indicators, and icon-only mode.",
-  figma: "#",
+  figma: figmaNode(FIGMA_NODES.chip),
   source:
     "https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chip",
   states: [
@@ -924,7 +932,7 @@ export const textAreaData = {
   category: 'Controls',
   title: 'TextArea',
   lede: "A multiline field for messages, notes, bios, and support forms. It shares Input's filled and no-background language while keeping longer text top-aligned and easy to scan.",
-  figma: 'https://www.figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=875-2658&m=dev',
+  figma: figmaNode(FIGMA_NODES.textArea),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/text-area',
   states: [
@@ -980,7 +988,7 @@ export const carouselData = {
   category: 'Layout & surface',
   title: 'Carousel',
   lede: 'A gesture-driven horizontal carousel for swiping through cards, images, or any content with spring physics, peek, pagination dots, and loop support.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.carousel),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/carousel',
   states: ['default', 'swiping', 'settling', 'auto-play'],
@@ -1018,7 +1026,7 @@ export const galleryData = {
   category: 'Layout & surface',
   title: 'Gallery',
   lede: 'A flexible grid layout for displaying collections of images, cards, or content with 1–4 columns, optional masonry mode, and token-based gap and corner radius.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.gallery),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/gallery',
   states: ['default', '1-col', '2-col', '3-col', '4-col', 'masonry'],
@@ -1054,6 +1062,7 @@ export const galleryData = {
 
 export const toastData = {
   slug: 'toast',
+  figma: figmaNode(FIGMA_NODES.toast),
   category: 'Feedback',
   title: 'Toast',
   lede: 'A transient notification surface that appears from the top or bottom edge. Two color styles — contrast and same — with optional icon, dismiss button, swipe-to-dismiss, and auto-dismiss. Mount the Toaster to stack several into a deck.',
@@ -1130,8 +1139,104 @@ function primitiveMarkdown(doc: PrimitiveDoc): string {
  * Archetype pages render as sections of a single index route, but agents ask for
  * them one at a time (`arlo_get_archetype`), so each gets its own markdown doc.
  */
+const ARCHETYPE_COMPOSITION: Record<string, { hierarchy: string[]; primitives: string; example: string }> = {
+  question: {
+    hierarchy: [
+      'Title — `typography.headingMediumEmphasized`, `textPrimary`.',
+      'Body — `typography.bodyMedium`, `textSecondary`. One or two sentences.',
+      'Actions — one primary solid Button, and a ghost or soft Button when there is a second choice.',
+    ],
+    primitives: 'Button, Text styled from the type scale, and `spacing[6]` around the stack with `spacing[3]` between the lines.',
+    example: `const t = useTokens();
+
+<View style={{ padding: t.spacing[6], gap: t.spacing[3] }}>
+  <Text style={[t.typography.headingMediumEmphasized, { color: t.colors.textPrimary, fontFamily: t.fontFamilies.sans }]}>
+    Confirm payment?
+  </Text>
+  <Text style={[t.typography.bodyMedium, { color: t.colors.textSecondary, fontFamily: t.fontFamilies.sans }]}>
+    $12.00 will be charged to your card.
+  </Text>
+  <Button onPress={onConfirm}>Confirm</Button>
+  <Button appearance="ghost" onPress={onCancel}>Cancel</Button>
+</View>`,
+  },
+  settings: {
+    hierarchy: [
+      'Groups — a short label, then a List of rows. Separate groups with `spacing[8]`.',
+      'A row is a label, an optional value, and one trailing control.',
+      'Instant settings use Toggle. Choices that need a submit use Checkbox. Navigation rows use a chevron and push a new screen.',
+    ],
+    primitives: 'List, List.Item, Toggle, and Button for a destructive row at the end of the account group.',
+    example: `<List>
+  <List.Item title="Notifications" trailing={<Toggle value={on} onValueChange={setOn} accessibilityLabel="Notifications" />} />
+  <List.Item title="Appearance" value="System" onPress={openAppearance} />
+</List>`,
+  },
+  decision: {
+    hierarchy: [
+      'A title that names the choice.',
+      'Two to six options, each a row or a card with a Radio.',
+      'One primary Button that confirms the selected option.',
+    ],
+    primitives: 'Radio, Card or List.Item, Button.',
+    example: `<Radio selected={plan === 'pro'} onSelect={() => setPlan('pro')} accessibilityLabel="Pro plan" />`,
+  },
+  status: {
+    hierarchy: [
+      'A status title and one line of context.',
+      'A progress indicator while the process is running.',
+      'A single next action once it settles.',
+    ],
+    primitives: 'Spinner or a chart meter, Text, Button.',
+    example: `<Spinner />`,
+  },
+  feed: {
+    hierarchy: [
+      'A scrolling list of rows in time order.',
+      'Each row has a title, a secondary line, and an optional trailing value.',
+    ],
+    primitives: 'List, List.Item.',
+    example: `<List><List.Item title="Payment received" value="$12.00" /></List>`,
+  },
+  detail: {
+    hierarchy: [
+      'A title for the entity, then grouped facts.',
+      'Primary actions sit at the end of the first group, not in a floating bar, unless the screen is a flow.',
+    ],
+    primitives: 'Card or List, Button.',
+    example: `<Card><Card.Title>Receipt</Card.Title><Card.Subtitle>Today</Card.Subtitle></Card>`,
+  },
+  creation: {
+    hierarchy: [
+      'One question per step.',
+      'A field, then a primary Button that advances.',
+      'Back is a ghost Button or the navigation bar, not a second solid.',
+    ],
+    primitives: 'Input, Button, Stepper when the value is a number.',
+    example: `<Input label="Email" value={email} onChangeText={setEmail} />`,
+  },
+  onboarding: {
+    hierarchy: [
+      'One idea per screen: a title, a short body, one primary Button.',
+      'Permission prompts use the Question shape.',
+    ],
+    primitives: 'Button, Text from the type scale.',
+    example: `<Button onPress={next}>Continue</Button>`,
+  },
+  empty: {
+    hierarchy: [
+      'A title that says what is missing.',
+      'One sentence of context.',
+      'One Button that creates the first item or clears the filter.',
+    ],
+    primitives: 'Text, Button.',
+    example: `<Button onPress={create}>Add the first one</Button>`,
+  },
+};
+
 function archetypeMarkdown(slug: string, label: string, index: number): string {
-  return [
+  const composition = ARCHETYPE_COMPOSITION[slug];
+  const lines = [
     `# ${label}`,
     '',
     `> ${archetypeDescriptions[slug]}`,
@@ -1143,6 +1248,13 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
     '',
     'Archetypes are compositional patterns, not components — each describes how',
     'primitives, tokens, and motion wire together to make one shape of screen.',
+  ];
+  if (composition) {
+    lines.push('', '## Hierarchy', '');
+    for (const line of composition.hierarchy) lines.push(`- ${line}`);
+    lines.push('', '## Primitives', '', composition.primitives, '', '## Example', '', '```tsx', composition.example, '```');
+  }
+  lines.push(
     '',
     '## Related',
     '',
@@ -1154,7 +1266,8 @@ function archetypeMarkdown(slug: string, label: string, index: number): string {
     '---',
     `Source: ${SITE}/docs/archetypes#${slug}`,
     '',
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 export const stepperData = {
@@ -1162,7 +1275,7 @@ export const stepperData = {
   category: 'Controls',
   title: 'Stepper',
   lede: 'A numeric control with decrement and increment affordances whose value rolls between numbers instead of snapping, in both input appearances, with the buttons either straddling the value or grouped at one edge beside a value you can tap to type.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.stepper),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/stepper',
   states: ['filled', 'plain', 'split', 'grouped', 'editable', 'disabled', 'error', 'at min', 'hold to repeat'],
@@ -1273,7 +1386,7 @@ export const chartData = {
   category: 'Data',
   title: 'Chart',
   lede: 'Charts for trends, category comparisons, proportions, progress toward a target, and daily activity. Install each chart separately or use the complete Chart namespace.',
-  figma: '#',
+  figma: figmaNode(FIGMA_NODES.chart),
   source:
     'https://github.com/Base16-Labs/arloui/tree/main/packages/registry/src/components/chart',
   states: [

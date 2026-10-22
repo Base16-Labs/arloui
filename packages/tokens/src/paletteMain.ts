@@ -1,6 +1,6 @@
 /**
  * Figma **Main palette** — Base, Grey, Primary, Success, Warning, Error (50–950).
- * Source: Main Palette frame. Primary 950 matches Grey 950 per Figma (#09090B).
+ * Source: Main Palette frame. Primary 950 is Blue 950 (#162456) — it previously duplicated Grey 950.
  */
 export const base = {
   white: '#FFFFFF',
@@ -10,6 +10,9 @@ export const base = {
 export const grey = {
   50: '#F9FAFB',
   100: '#F3F4F6',
+  // Half step (midpoint of 100 and 200) — the light card fill, so an input
+  // (100) always reads a half step lighter than the card it sits on.
+  150: '#ECEEF1',
   200: '#E5E7EB',
   300: '#D1D5DC',
   400: '#99A1AF',
@@ -32,7 +35,7 @@ export const primary = {
   700: '#1447E6',
   800: '#193CB8',
   900: '#1C398E',
-  950: '#09090B',
+  950: '#162456',
 } as const;
 
 export const success = {

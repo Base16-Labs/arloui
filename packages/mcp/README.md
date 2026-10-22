@@ -35,7 +35,7 @@ or any MCP client:
 | --- | --- |
 | `arlo_search` | Ranked components + foundations for a natural-language query |
 | `arlo_get_component` | Full spec for one component: variants, deps, tokens, and RN source |
-| `arlo_get_token` | A semantic colour token resolved to its light + dark values |
+| `arlo_get_token` | A colour token (light + dark) or a scale token such as `spacing.6` |
 | `arlo_get_archetype` | One of the nine screen archetypes: hierarchy, composition, gotchas |
 | `arlo_get_foundation` | A foundation topic as markdown (spacing, type, motion, color, …) |
 | `arlo_list_docs` | Every docs page that has markdown, grouped by section |

@@ -59,7 +59,7 @@ describe('Spinner', () => {
     expect(diameter()).toBe(44);
   });
 
-  it('draws 12 spokes with a descending opacity ramp', () => {
+  it('draws 12 spokes with the fade trailing behind the bright spoke', () => {
     renderWithTheme(<Spinner appearance="spokes" size={24} testID="spinner" />);
     const spokes = styles().filter(
       (style) => style?.position === 'absolute' && style?.backgroundColor,
@@ -67,7 +67,9 @@ describe('Spinner', () => {
 
     expect(spokes).toHaveLength(12);
     expect(spokes[0].opacity).toBeCloseTo(1);
-    expect(spokes[11].opacity).toBeLessThan(spokes[0].opacity);
+    // Spoke 1 is clockwise of the head, so it is the dim end. Spoke 11 sits just behind it.
+    expect(spokes[1].opacity).toBeCloseTo(1 - (11 / 12) * 0.85);
+    expect(spokes[11].opacity).toBeCloseTo(1 - (1 / 12) * 0.85);
   });
 
   it('tints from the tone, and lets an explicit color override it', () => {

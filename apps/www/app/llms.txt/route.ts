@@ -29,6 +29,7 @@ const CONTENT = `# ArloUI
 - 9 archetypes: Question, Decision, Status, Feed, Detail, Creation, Settings, Onboarding, Empty
 - AI-native: skill pack, MCP server, prompt cookbook
 - Skill pack (raw): [/md/skills/SKILL.md](/md/skills/SKILL.md)
+- Fetch a page as markdown with \`?as=md\` (for example /docs/components/button?as=md) or from /md/docs/... — do not scrape the HTML page
 
 ## Full docs
 

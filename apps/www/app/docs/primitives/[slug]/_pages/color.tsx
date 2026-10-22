@@ -14,6 +14,7 @@ import {
   paletteSecondary,
 } from '@/lib/color-tokens';
 import { Section } from '../_shared';
+import { FIGMA_NODES, figmaNode } from '@/lib/figma';
 
 const colorThemeCode = `import { useTheme } from '@/foundation/theme-provider';
 
@@ -123,7 +124,7 @@ export function ColorPage() {
   const actions = [
     {
       label: 'Figma',
-      href: 'https://figma.com/design/WRSHkSNQqCYLEhSYJnyVGb/Arlo-UI-v1.0?node-id=16-2033',
+      href: figmaNode(FIGMA_NODES.color),
     },
     {
       label: 'Source',
@@ -462,6 +463,13 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         usage: 'Pressed state',
       },
       {
+        token: 'interactive-primary-glass',
+        semanticKey: 'interactivePrimaryGlass',
+        palette: 'Primary-400',
+        darkPalette: 'Primary-400',
+        usage: 'Primary glass button and FAB tint',
+      },
+      {
         token: 'interactive-secondary',
         semanticKey: 'interactiveSecondary',
         palette: 'Grey-200 @ 70%',
@@ -502,6 +510,13 @@ const utilitySemanticPalette: { section: string; rows: UtilitySemanticRow[] }[] 
         palette: 'Error-500',
         darkPalette: 'Error-500',
         usage: 'Error state backgrounds',
+      },
+      {
+        token: 'interactive-error-glass',
+        semanticKey: 'interactiveErrorGlass',
+        palette: 'Error-400',
+        darkPalette: 'Error-400',
+        usage: 'Danger glass button tint',
       },
       {
         token: 'focus-ring-main',

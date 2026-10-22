@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react';
-import { Circle, G, Rect } from 'react-native-svg';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Platform } from 'react-native';
+import { Circle, ClipPath, Defs, G, Rect } from 'react-native-svg';
 import Animated, { useAnimatedProps, type SharedValue } from 'react-native-reanimated';
 
 const Reveal = Animated.createAnimatedComponent(Rect);
@@ -24,12 +25,68 @@ function bezierY(t: number, x1: number, y1: number, x2: number, y2: number) {
   return 3 * one * one * u * y1 + 3 * one * u * u * y2 + u * u * u;
 }
 
-/** SVG geometry is static; only the mask updates on the UI thread. */
-export function ChartReveal({ progress, width, height, immediate = false }: {
-  progress: SharedValue<number>; width: number; height: number; immediate?: boolean;
-}) {
-  const animatedProps = useAnimatedProps(() => ({ width: immediate ? width : progress.value * width }));
-  return <Reveal x={0} y={0} height={height} animatedProps={animatedProps} />;
+/**
+ * Reveals the plot by widening a clip rect. Returns the `<Defs>` to render
+ * inside the `Svg` and the `clipPath` value for each group it should clip.
+ *
+ * iOS widens the rect on the UI thread. Android's react-native-svg resolves a
+ * `ClipPath` once and never re-applies it when the rect inside changes —
+ * animated prop or plain prop alike — so the clip stayed at 0 and the line,
+ * area and scrub crosshair never appeared. On Android the width is React state
+ * copied from the shared value each frame, the clip gets a new id whenever the
+ * width moves (a new id is a new clip, which Android does resolve), and once
+ * the reveal is complete the clip is dropped so nothing can stay hidden.
+ */
+export function useChartReveal({ id, progress, width, height, immediate = false }: {
+  id: string; progress: SharedValue<number>; width: number; height: number; immediate?: boolean;
+}): { defs: ReactNode; clipPath: string | undefined } {
+  const android = Platform.OS === 'android';
+  const [clipWidth, setClipWidth] = useState(() => (immediate ? width : 0));
+  const animatedProps = useAnimatedProps(() => ({
+    width: immediate ? width : progress.value * width,
+  }));
+  useEffect(() => {
+    if (!android) return;
+    let frame = 0;
+    let stopped = false;
+    const tick = () => {
+      if (stopped) return;
+      const next = immediate ? width : progress.value * width;
+      setClipWidth((prev) => (Math.abs(prev - next) < 0.5 ? prev : next));
+      if (immediate || progress.value >= 1) return;
+      frame = requestAnimationFrame(tick);
+    };
+    tick();
+    return () => {
+      stopped = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [android, immediate, progress, width]);
+
+  if (android) {
+    if (clipWidth >= width - 0.5) return { defs: null, clipPath: undefined };
+    const frameId = `${id}-${Math.round(clipWidth)}`;
+    return {
+      defs: (
+        <Defs>
+          <ClipPath id={frameId}>
+            <Rect x={0} y={0} width={clipWidth} height={height} />
+          </ClipPath>
+        </Defs>
+      ),
+      clipPath: `url(#${frameId})`,
+    };
+  }
+  return {
+    defs: (
+      <Defs>
+        <ClipPath id={id}>
+          <Reveal x={0} y={0} height={height} animatedProps={animatedProps} />
+        </ClipPath>
+      </Defs>
+    ),
+    clipPath: `url(#${id})`,
+  };
 }
 
 export function ChartSweep({ progress, center, radius, thickness }: {

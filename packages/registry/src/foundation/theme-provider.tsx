@@ -28,11 +28,17 @@ export function ThemeProvider({
 
   useEffect(() => {
     if (pref !== 'system') return;
+    // Re-read on the way back to system. The listener only fires on later
+    // changes, so setName('dark') then setName('system') would otherwise keep
+    // the scheme from when the provider mounted.
+    setSystem(Appearance.getColorScheme());
     const sub = Appearance.addChangeListener(({ colorScheme }) => setSystem(colorScheme));
     return () => sub.remove();
   }, [pref]);
 
   const value = useMemo<Ctx>(() => {
+    // A null or unspecified system scheme resolves to dark. Appearance reports
+    // null before the OS has a preference, and on web when none is set.
     const resolved: ThemeName = pref === 'system' ? (system === 'light' ? 'light' : 'dark') : pref;
     return { theme: themes[resolved], name: resolved, setName: setPref };
   }, [pref, system]);

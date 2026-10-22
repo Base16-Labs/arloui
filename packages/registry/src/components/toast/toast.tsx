@@ -9,7 +9,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { OutlineX } from '@arloui/icons/OutlineX';
 import { useTokens } from '../../foundation/theme-provider';
 import { useReduceMotion } from '../../foundation/reduce-motion';
 
@@ -348,14 +348,7 @@ export const ToastItem = forwardRef<ToastItemRef, ToastItemProps>(function Toast
             opacity: pressed ? 0.6 : 1,
           })}
         >
-          <Svg width={14} height={14} viewBox="0 0 14 14" fill="none">
-            <Path
-              d="M10.5 3.5L3.5 10.5M3.5 3.5L10.5 10.5"
-              stroke={fg}
-              strokeWidth={1.5}
-              strokeLinecap="round"
-            />
-          </Svg>
+          <OutlineX width={t.sizing.icon.xs} height={t.sizing.icon.xs} color={fg} />
         </Pressable>
       ) : null}
     </Animated.View>

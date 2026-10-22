@@ -24,10 +24,10 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import Svg, { Circle, Defs, LinearGradient, Path, Stop, ClipPath, G } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient, Path, Stop, G } from 'react-native-svg';
 import { useTokens } from '../../foundation/theme-provider';
 import { ChartLoading, ChartMotion, useChartEntrance } from './hooks';
-import { ChartFill, ChartReveal } from './motion';
+import { ChartFill, useChartReveal } from './motion';
 import {
   areaPath,
   densityMetrics,
@@ -177,6 +177,7 @@ function SparklineInner({
   const gradientId = `arloSparkFill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   const entrance = useChartEntrance(!loading && width > 0 && plotted.length > 0);
   const revealId = `${gradientId}-reveal`;
+  const reveal = useChartReveal({ id: revealId, progress: entrance, width, height });
 
   /*
    * The composed slot replaces the mark outright, exactly as it does on the
@@ -283,8 +284,8 @@ function SparklineInner({
 
       {!loading && width > 0 && plotted.length > 0 ? (
         <Svg width={width} height={height}>
-          <Defs><ClipPath id={revealId}><ChartReveal progress={entrance} width={width} height={height} /></ClipPath></Defs>
-          <G clipPath={`url(#${revealId})`}>
+          {reveal.defs}
+          <G clipPath={reveal.clipPath}>
           {area ? (
             <>
               <Defs>

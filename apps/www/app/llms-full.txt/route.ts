@@ -52,7 +52,7 @@ Font-agnostic type scale with 16 roles across display, heading, body, label, and
 Three-layer system: raw palette (Grey/Primary/Success/Warning/Error) → 45 semantic tokens → components. Components read \`theme.colors.*\` only and never raw palette values, so roles resolve correctly in both light and dark. Both modes are first-class — neither is derived from the other. One accent per screen; the accent is an event (CTA, live status, selection). Use \`feedback-*-bg\` tints for status surfaces and reserve saturated feedback colors for text and icons.
 
 ### Spacing
-4px grid as the primary tool for showing relationships — reach for spacing before a divider. 14-step numeric scale keyed by suffix (\`spacing[4]\` = 16px) spanning 0–96px. Semantic heuristics: 4–8px belongs together, 12–16px siblings, 20–24px new group, 32–48px major blocks, 56–96px new context. 7-step radius (\`radii.none\`→\`radii.full\`, 0–9999px pill) and fixed component sizing (\`sizing.icon\` 16–32, \`sizing.avatar\` 16–40, \`sizing.buttonHeight\` 36–52, \`sizing.touchTarget\` 44/48). Keep a 44×44pt minimum hit area.
+4px grid as the primary tool for showing relationships — reach for spacing before a divider. 14-step numeric scale keyed by suffix (\`spacing[4]\` = 16px) spanning 0–96px. Semantic heuristics: 4–8px belongs together, 12–16px siblings, 20–24px new group, 32–48px major blocks, 56–96px new context. 7-step radius (\`radii.none\`→\`radii.full\`, 0–9999px pill) and fixed component sizing (\`sizing.icon\` 16–32, \`sizing.avatar\` 16–40, \`sizing.buttonHeight\` 32–52, \`sizing.touchTarget\` 44/48). Keep a 44×44pt minimum hit area.
 
 ### Motion
 Easing curves, durations, spring configs. Never animate from scale(0). Pressables respond instantly.
@@ -105,6 +105,8 @@ Nav, Header, Breadcrumb
 
 ### Skill pack
 Markdown document teaching AI assistants the full design system.
+Install the whole pack (SKILL.md and references/) without cloning the repo:
+\`npx arloui skill install\` (Cursor) or \`npx arloui skill install --agent claude\` (Claude Code).
 
 ### MCP
 Model Context Protocol server for programmatic token/component access.

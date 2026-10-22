@@ -8,7 +8,6 @@ import {
   type SheetBackdrop,
   type SheetHeight,
   type SheetPadding,
-  type SheetWidth,
 } from '@arloui/registry';
 import { CanvasPill } from '@/components/playground/canvas-pill';
 import { LiveBadge } from '@/components/playground/live-badge';
@@ -19,7 +18,7 @@ import { VariantSheet } from '@/components/playground/variant-sheet';
 type PreviewState = 'open' | 'closed' | 'no handle' | 'locked';
 
 const BACKDROPS: SheetBackdrop[] = ['scrim', 'passthrough'];
-const WIDTHS: SheetWidth[] = ['default', 'stack'];
+const STACKS = [false, true] as const;
 const HEIGHTS: SheetHeight[] = ['auto', 'half', 'full'];
 const PADDINGS: SheetPadding[] = ['none', 'md', 'lg'];
 const STATES: PreviewState[] = ['open', 'closed', 'no handle', 'locked'];
@@ -31,7 +30,7 @@ export default function SheetCanvas() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(true);
   const [backdrop, setBackdrop] = useState<SheetBackdrop>('passthrough');
-  const [width, setWidth] = useState<SheetWidth>('stack');
+  const [stack, setStack] = useState(true);
   const [height, setHeight] = useState<SheetHeight>('auto');
   const [padding, setPadding] = useState<SheetPadding>('md');
   const [state, setState] = useState<PreviewState>('open');
@@ -99,6 +98,8 @@ export default function SheetCanvas() {
                 backgroundColor: t.colors.bg,
               }}
             >
+              <Sheet.Stack>
+              <Sheet.Screen>
               <View style={{ paddingHorizontal: t.spacing[5], paddingTop: t.spacing[6] }}>
                 <Text
                   style={{
@@ -131,13 +132,14 @@ export default function SheetCanvas() {
                   ))}
                 </View>
               </View>
+              </Sheet.Screen>
 
               {previewVisible ? (
                 <Sheet
                   visible={previewVisible}
                   onClose={() => setPreviewVisible(false)}
                   backdrop={backdrop}
-                  width={width}
+                  stack={stack}
                   height={height}
                   padding={padding}
                   handleHeight={3}
@@ -249,6 +251,7 @@ export default function SheetCanvas() {
                   </Pressable>
                 </View>
               )}
+              </Sheet.Stack>
             </View>
           </Animated.View>
 
@@ -294,14 +297,14 @@ export default function SheetCanvas() {
                   />
                 ))}
               </VariantControlRow>
-              <VariantControlRow label="Width">
-                {WIDTHS.map((option) => (
+              <VariantControlRow label="Stack">
+                {STACKS.map((option) => (
                   <VariantChip
-                    key={option}
-                    label={option}
-                    active={width === option}
+                    key={option ? 'stack' : 'off'}
+                    label={option ? 'stack' : 'off'}
+                    active={stack === option}
                     onPress={() => {
-                      setWidth(option);
+                      setStack(option);
                       setPreviewVisible(true);
                     }}
                   />

@@ -17,14 +17,14 @@ import { VariantChip, VariantControlRow } from '@/components/playground/variant-
 import { VariantSheet } from '@/components/playground/variant-sheet';
 
 type InputType = 'text' | 'email' | 'password' | 'search';
-type LabelMode = 'none' | 'inset';
+type LabelMode = 'none' | 'inset' | 'above';
 type InputSize = 'sm' | 'md';
 type IconMode = 'none' | 'leading' | 'trailing' | 'both';
 type ContentMode = 'empty' | 'filled';
 type FieldState = 'default' | 'helper' | 'error' | 'disabled';
 
 const TYPES: InputType[] = ['text', 'email', 'password', 'search'];
-const LABELS: LabelMode[] = ['none', 'inset'];
+const LABELS: LabelMode[] = ['none', 'inset', 'above'];
 const SIZES: InputSize[] = ['sm', 'md'];
 const ICONS: IconMode[] = ['none', 'leading', 'trailing', 'both'];
 const CONTENT: ContentMode[] = ['empty', 'filled'];
@@ -128,7 +128,7 @@ export default function InputCanvas() {
     size,
     appearance,
     label: labelMode === 'none' ? undefined : inputLabel,
-    insetLabel: labelMode === 'inset',
+    insetLabel: labelMode !== 'above',
     placeholder: inputLabel,
     keyboardType: type === 'email' ? 'email-address' : 'default',
     autoCapitalize: type === 'email' || type === 'search' ? 'none' : 'words',

@@ -55,11 +55,11 @@ const TOOLS: Array<{ name: string; desc: string }> = [
   },
   {
     name: "arlo_get_component",
-    desc: "Full spec for one component: description, variants, dependencies, the tokens it uses, and the React Native source.",
+    desc: "Spec for one component: description, variants, dependencies, and the tokens it uses. The React Native source is included unless you pass source:false.",
   },
   {
     name: "arlo_get_token",
-    desc: "Resolve a semantic colour token (e.g. surfaceInput, interactivePrimary) to its light and dark values.",
+    desc: "Resolve a colour token to its light and dark values, or a scale token such as spacing.6 or radii.lg to its number.",
   },
   {
     name: "arlo_get_archetype",
@@ -369,13 +369,26 @@ curl -fsSL https://arloui.com/md/skills/SKILL.md -o SKILL.md`}</CodeBlock>
             Install
           </h2>
           <p className="mb-6 text-[17px] leading-relaxed text-ink-2">
-            Copy the repo&apos;s <code className={inlineCode}>skills</code> folder
-            into your agent&apos;s skills directory as{" "}
-            <code className={inlineCode}>arloui</code>. From the repo root,{" "}
+            You do not need to clone the repo. This downloads{" "}
+            <code className={inlineCode}>SKILL.md</code> and the{" "}
+            <code className={inlineCode}>references/</code> folder into{" "}
+            <code className={inlineCode}>~/.cursor/skills-cursor/arloui</code>.
+            Pass <code className={inlineCode}>--agent claude</code> for{" "}
+            <code className={inlineCode}>~/.claude/skills/arloui</code>, or{" "}
+            <code className={inlineCode}>--dir</code> for any other folder:
+          </p>
+          <CodeBlock language="bash">npx arloui skill install</CodeBlock>
+          <div className="mt-3">
+            <CodeBlock language="bash">npx arloui skill install --agent claude</CodeBlock>
+          </div>
+          <p className="mt-4 mb-6 text-[17px] leading-relaxed text-ink-2">
+            If you already have the repo, copying the{" "}
+            <code className={inlineCode}>skills</code> folder does the same
+            thing. From the repo root,{" "}
             <code className={inlineCode}>
               node scripts/install-skill.mjs cursor --symlink
             </code>{" "}
-            does the same thing.
+            keeps that copy updated.
           </p>
           <div className="space-y-6">
             {CLIENTS.map((c) => (

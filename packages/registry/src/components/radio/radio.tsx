@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState, type ComponentRef } from 'react';
 import {
   Animated,
   Easing,
@@ -34,7 +34,7 @@ function radioDims(): Record<RadioSize, Dims> {
   };
 }
 
-export const Radio = forwardRef<View, RadioProps>(function Radio(
+export const Radio = forwardRef<ComponentRef<typeof View>, RadioProps>(function Radio(
   {
     selected,
     onSelect,

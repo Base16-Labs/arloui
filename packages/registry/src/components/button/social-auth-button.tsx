@@ -5,7 +5,7 @@
  * Two types: `fill` (brand background, white text) and `secondary` (outlined, brand icon, text-primary label).
  * Labels are not customizable per spec: "Sign in with {Platform}".
  */
-import { forwardRef, useMemo, useState, type ReactNode } from 'react';
+import { forwardRef, useMemo, useState, type ComponentRef, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -147,7 +147,7 @@ function DefaultGlyph({ platform, color, iconPx }: { platform: SocialPlatform; c
   }
 }
 
-export const SocialAuthButton = forwardRef<View, SocialAuthButtonProps>(function SocialAuthButton(
+export const SocialAuthButton = forwardRef<ComponentRef<typeof View>, SocialAuthButtonProps>(function SocialAuthButton(
   {
     platform: platformProp,
     provider,

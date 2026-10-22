@@ -9,9 +9,10 @@
 
 export const lightSemanticColors = {
   surfaceBackground: '#F9FAFB',
-  // Card fill — a step greyer than the background and the (white) elevated surface,
-  // so a resting card reads as its own plane without a shadow. Grey-100.
-  surfaceCard: '#F3F4F6',
+  // Card fill — greyer than the background and the (white) elevated surface, so a
+  // resting card reads as its own plane without a shadow, and a half step darker
+  // than surfaceInput so an input reads on a card. Grey-150.
+  surfaceCard: '#ECEEF1',
   surfaceInput: '#F3F4F6',
   surfaceInputActive: '#E5E7EB',
   surfaceElevated: '#FFFFFF',
@@ -32,6 +33,9 @@ export const lightSemanticColors = {
   textInteractiveError: '#E7000B',
   interactivePrimary: '#155DFC',
   interactivePrimaryPressed: '#1447E6',
+  // Glass tints use the solid button's step, so white labels keep their contrast.
+  interactivePrimaryGlass: '#155DFC',
+  interactiveErrorGlass: '#E7000B',
   interactiveSecondary: 'rgba(229,231,235,0.7)',
   interactiveSecondaryPressed: '#E5E7EB',
   interactiveTertiary: 'transparent',
@@ -90,14 +94,16 @@ export const lightSemanticColors = {
 
 export const darkSemanticColors = {
   surfaceBackground: '#09090B',
-  // Card fill — sits between the background and the elevated surface.
-  surfaceCard: '#18181B',
+  // Card fill — between the background and surfaceInput, a half step darker than
+  // an input so the input reads on a card. Zinc-925.
+  surfaceCard: '#111113',
   surfaceInput: '#18181B',
   surfaceInputActive: '#27272A',
   surfaceElevated: '#27272A',
   // Translucent fill — the app background at 50%, a subtle frost over colour.
   surfaceBleed: 'rgba(9,9,11,0.5)',
-  surfaceOverlay: 'rgba(16,24,40,0.7)',
+  // Zinc-950 at 70%. Grey-900 (#101828) casts navy over a zinc page.
+  surfaceOverlay: 'rgba(9,9,11,0.7)',
   surfaceInverse: '#FAFAFA',
   textPrimary: '#FAFAFA',
   textSecondary: '#A1A1AA',
@@ -111,6 +117,8 @@ export const darkSemanticColors = {
   textInteractiveError: '#FF6467',
   interactivePrimary: '#2B7FFF',
   interactivePrimaryPressed: '#155DFC',
+  interactivePrimaryGlass: '#2B7FFF',
+  interactiveErrorGlass: '#FB2C36',
   interactiveSecondary: 'rgba(39,39,42,0.7)',
   interactiveSecondaryPressed: '#3F3F46',
   interactiveTertiary: 'transparent',
@@ -132,7 +140,7 @@ export const darkSemanticColors = {
   feedbackError: '#FB2C36',
   feedbackErrorBg: '#460809',
   feedbackInfo: '#51A2FF',
-  feedbackInfoBg: '#09090B',
+  feedbackInfoBg: '#162456',
   /**
    * Dark keeps the brighter Success-400: against Error-500 on a dark surface it
    * separates by ΔE 14.0 under deuteranopia — the widest of any pair tested — and
@@ -202,7 +210,7 @@ export const typography = {
   displayLarge: {
     fontSize: 34,
     lineHeight: 42.5,
-    fontWeight: '400' as const,
+    fontWeight: '500' as const,
     letterSpacing: -0.68,
   },
   displayLargeEmphasized: {
@@ -211,21 +219,21 @@ export const typography = {
     fontWeight: '600' as const,
     letterSpacing: -0.68,
   },
-  displayMedium: { fontSize: 28, lineHeight: 35, fontWeight: '400' as const, letterSpacing: -0.56 },
+  displayMedium: { fontSize: 28, lineHeight: 35, fontWeight: '500' as const, letterSpacing: -0.56 },
   displayMediumEmphasized: {
     fontSize: 28,
     lineHeight: 35,
     fontWeight: '600' as const,
     letterSpacing: -0.56,
   },
-  displaySmall: { fontSize: 24, lineHeight: 30, fontWeight: '400' as const, letterSpacing: -0.48 },
+  displaySmall: { fontSize: 24, lineHeight: 30, fontWeight: '500' as const, letterSpacing: -0.48 },
   displaySmallEmphasized: {
     fontSize: 24,
     lineHeight: 30,
     fontWeight: '600' as const,
     letterSpacing: -0.48,
   },
-  headingLarge: { fontSize: 20, lineHeight: 26, fontWeight: '400' as const, letterSpacing: -0.2 },
+  headingLarge: { fontSize: 20, lineHeight: 26, fontWeight: '500' as const, letterSpacing: -0.2 },
   headingLargeEmphasized: {
     fontSize: 20,
     lineHeight: 26,
@@ -235,7 +243,7 @@ export const typography = {
   headingMedium: {
     fontSize: 17,
     lineHeight: 22.1,
-    fontWeight: '400' as const,
+    fontWeight: '500' as const,
     letterSpacing: -0.17,
   },
   headingMediumEmphasized: {
@@ -247,7 +255,7 @@ export const typography = {
   headingSmall: {
     fontSize: 14,
     lineHeight: 18.2,
-    fontWeight: '400' as const,
+    fontWeight: '500' as const,
     letterSpacing: -0.14,
   },
   headingSmallEmphasized: {
@@ -259,9 +267,9 @@ export const typography = {
   bodyLarge: { fontSize: 17, lineHeight: 23.8, fontWeight: '400' as const, letterSpacing: 0 },
   bodyMedium: { fontSize: 14, lineHeight: 19.6, fontWeight: '400' as const, letterSpacing: 0 },
   bodySmall: { fontSize: 12, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
-  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: '400' as const, letterSpacing: 0 },
-  labelMedium: { fontSize: 12, lineHeight: 14.4, fontWeight: '400' as const, letterSpacing: 0 },
-  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: '400' as const, letterSpacing: 0 },
+  labelLarge: { fontSize: 14, lineHeight: 16.8, fontWeight: '500' as const, letterSpacing: 0 },
+  labelMedium: { fontSize: 12, lineHeight: 14.4, fontWeight: '500' as const, letterSpacing: 0 },
+  labelSmall: { fontSize: 11, lineHeight: 13.2, fontWeight: '500' as const, letterSpacing: 0 },
   overline: {
     fontSize: 11,
     lineHeight: 13.2,
@@ -306,6 +314,7 @@ export const sizing = {
   avatar: { xs: 16, sm: 24, md: 32, lg: 40 },
   buttonHeight: { sm: 32, md: 40, lg: 48, xl: 52 },
   touchTarget: { minimum: 44, comfortable: 48 },
+  tab: { minWidth: 52 },
 } as const;
 
 /**
@@ -331,6 +340,7 @@ export const motion = {
     heavy: { stiffness: 300, damping: 40, mass: 1.2 }, // drag-to-dismiss commit, large surface
   },
   pressed: { scale: 0.97, opacity: 0.85 },
+  disabled: { opacity: 0.36 },
   /**
    * Chart recipes. A chart animates two things on two clocks: `control` is the
    * period pill answering a tap (press feedback), `data` is the series morphing

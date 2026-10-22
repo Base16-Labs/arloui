@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState, type ComponentRef } from 'react';
 import {
   Animated,
   Easing,
@@ -48,7 +48,7 @@ function CheckIcon({ size, color, strokeWidth }: { size: number; color: string; 
   );
 }
 
-export const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
+export const Checkbox = forwardRef<ComponentRef<typeof View>, CheckboxProps>(function Checkbox(
   {
     checked,
     onCheckedChange,

@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     // E2E specs run separately (they need the built bundle) — see vitest.e2e.config.ts.
     exclude: ['**/node_modules/**', '**/*.e2e.test.ts'],
+    setupFiles: ['./vitest.setup.ts'],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.ts'],

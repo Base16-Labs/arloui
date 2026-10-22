@@ -26,6 +26,10 @@ export const sizing = {
     minimum: 44,
     comfortable: 48,
   },
+  /** Content tabs. Segmented items share the track and ignore this width. */
+  tab: {
+    minWidth: 52,
+  },
 } as const;
 
 export type SizingTokens = typeof sizing;
