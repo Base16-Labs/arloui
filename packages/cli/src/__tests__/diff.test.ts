@@ -2,7 +2,7 @@ import { mkdtemp, rm, writeFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { diff } from '../commands/diff';
+import { diff, unifiedDiff } from '../commands/diff';
 import { DEFAULT_CONFIG } from '../config';
 
 const BASE = DEFAULT_CONFIG.registry;
@@ -40,6 +40,7 @@ let logSpy: ReturnType<typeof vi.spyOn>;
 let errSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(async () => {
+  process.exitCode = undefined;
   dir = await mkdtemp(join(tmpdir(), 'arloui-diff-'));
   await writeFile(join(dir, 'arlo.json'), JSON.stringify(DEFAULT_CONFIG));
   logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -79,6 +80,10 @@ describe('diff', () => {
     await installButton('BUTTON_V1_OLD');
     await diff({ cwd: dir });
     expect(output()).toMatch(/button.*1 of 1 files drifted/s);
+    expect(output()).toContain('components/ui/button.tsx');
+    expect(output()).toContain('-BUTTON_V1_OLD');
+    expect(output()).toContain('+BUTTON_V2');
+    expect(process.exitCode).toBe(1);
   });
 
   it('skips components that are not installed locally', async () => {
@@ -93,10 +98,46 @@ describe('diff', () => {
     expect(errSpy).toHaveBeenCalledWith(expect.stringMatching(/Unknown component/));
   });
 
+  it('suggests the closest component name for a typo', async () => {
+    stubRegistry();
+    await expect(diff({ cwd: dir, name: 'buton' })).rejects.toThrow('exit:1');
+    expect(errSpy).toHaveBeenCalledWith(expect.stringMatching(/Did you mean `button`/));
+  });
+
   it('errors and exits when no arlo.json is present', async () => {
     await rm(join(dir, 'arlo.json'));
     stubRegistry();
     await expect(diff({ cwd: dir })).rejects.toThrow('exit:1');
     expect(errSpy).toHaveBeenCalledWith(expect.stringMatching(/No arlo\.json/));
+  });
+});
+
+describe('unifiedDiff', () => {
+  const strip = (s: string) => s.replace(new RegExp(String.fromCharCode(27) + '\\[[0-9;]*m', 'g'), '');
+  const lines = (n: number) => Array.from({ length: n }, (_, i) => `line ${i + 1}`);
+
+  it('shows one inserted line as one addition, not a shifted file', () => {
+    const local = lines(20).join('\n');
+    const registry = [...lines(10), 'inserted', ...lines(20).slice(10)].join('\n');
+    const out = strip(unifiedDiff('a.tsx', local, registry)).split('\n');
+    expect(out.filter((l) => l.startsWith('+') && !l.startsWith('+++'))).toEqual(['+inserted']);
+    expect(out.filter((l) => l.startsWith('-') && !l.startsWith('---'))).toEqual([]);
+    expect(out).toContain('@@ -8,6 +8,7 @@');
+  });
+
+  it('splits distant changes into separate hunks with context', () => {
+    const local = lines(40);
+    const registry = [...local];
+    registry[2] = 'changed near top';
+    registry[35] = 'changed near bottom';
+    const out = strip(unifiedDiff('a.tsx', local.join('\n'), registry.join('\n')));
+    expect(out.match(/^@@/gm)).toHaveLength(2);
+    expect(out).toContain('-line 3');
+    expect(out).toContain('+changed near bottom');
+  });
+
+  it('caps very large diffs', () => {
+    const out = strip(unifiedDiff('a.tsx', lines(200).join('\n'), lines(200).map((l) => `${l}!`).join('\n')));
+    expect(out).toMatch(/more changes not shown/);
   });
 });

@@ -2,10 +2,12 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import * as p from '@clack/prompts';
 import kleur from 'kleur';
+import { detectAliases } from '../aliases';
 import { DEFAULT_CONFIG, CONFIG_FILE, saveConfig, type ArloConfig } from '../config';
 import { RegistryClient } from '../registry-client';
 import { buildSourceTargetMap } from '../rewrite-imports';
 import { FONTS_MODULE, FONT_PACKAGES, FONT_PLUGIN_SNIPPET } from '../fonts';
+import { isInteractive, spinner as makeSpinner } from '../tty';
 import { fileExists, resolveWithin, writeFileEnsuringDir } from '../fs-utils';
 import { writeComponent } from './add';
 
@@ -18,6 +20,12 @@ export async function init({ cwd, yes }: Options): Promise<void> {
   p.intro(kleur.bgCyan(kleur.black(' arloui ')) + kleur.dim(' init'));
 
   if (existsSync(resolve(cwd, CONFIG_FILE)) && !yes) {
+    if (!isInteractive()) {
+      console.error(
+        `${CONFIG_FILE} already exists. Re-run in a terminal to confirm, or pass -y to keep going with the detected defaults.`,
+      );
+      process.exit(1);
+    }
     const overwrite = await p.confirm({
       message: `${CONFIG_FILE} already exists. Overwrite it?`,
       initialValue: false,
@@ -28,14 +36,16 @@ export async function init({ cwd, yes }: Options): Promise<void> {
     }
   }
 
-  const config: ArloConfig = yes
-    ? DEFAULT_CONFIG
-    : await promptConfig();
+  const detected = await detectAliases(cwd);
+  const config: ArloConfig =
+    yes || !isInteractive()
+      ? { ...DEFAULT_CONFIG, aliases: detected }
+      : await promptConfig(detected);
 
   await saveConfig(cwd, config);
   p.log.success(`wrote ${kleur.cyan(CONFIG_FILE)}`);
 
-  const spinner = p.spinner();
+  const spinner = makeSpinner();
   spinner.start('installing foundation (tokens + theme provider)');
   const client = new RegistryClient(config.registry);
   try {
@@ -79,24 +89,26 @@ export async function init({ cwd, yes }: Options): Promise<void> {
       `     ${kleur.dim('or')} add this to ${kleur.cyan('app.json')} under ${kleur.cyan('expo.plugins')} and skip the hook:`,
       kleur.dim(FONT_PLUGIN_SNIPPET.split('\n').map((l) => '       ' + l).join('\n')),
       `  ${kleur.dim('3.')} Wrap your app with ${kleur.cyan('<ThemeProvider>')} from ${kleur.cyan(config.aliases.theme + '/theme-provider')}`,
+      `     ${kleur.dim('Expo Router already exports a ThemeProvider, so import ours under another name:')}`,
+      `     ${kleur.cyan(`import { ThemeProvider as ArloThemeProvider } from '@/${config.aliases.theme.replace(/^src\//, '')}/theme-provider'`)}`,
       `  ${kleur.dim('4.')} Add a component:   ${kleur.cyan('npx arloui add button')}`,
       `  ${kleur.dim('5.')} Browse all:        ${kleur.cyan('npx arloui list')}`,
     ].join('\n'),
   );
 }
 
-async function promptConfig(): Promise<ArloConfig> {
+async function promptConfig(detected: ArloConfig['aliases']): Promise<ArloConfig> {
   const components = await p.text({
     message: 'Where should components live?',
-    placeholder: DEFAULT_CONFIG.aliases.components,
-    initialValue: DEFAULT_CONFIG.aliases.components,
+    placeholder: detected.components,
+    initialValue: detected.components,
   });
   if (p.isCancel(components)) process.exit(0);
 
   const lib = await p.text({
     message: 'Where should tokens / theme provider live?',
-    placeholder: DEFAULT_CONFIG.aliases.lib,
-    initialValue: DEFAULT_CONFIG.aliases.lib,
+    placeholder: detected.lib,
+    initialValue: detected.lib,
   });
   if (p.isCancel(lib)) process.exit(0);
 

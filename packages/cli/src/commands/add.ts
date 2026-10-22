@@ -1,10 +1,13 @@
-import { relative } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { join, relative } from 'node:path';
 import * as p from '@clack/prompts';
 import kleur from 'kleur';
 import { aliasFor, loadConfig, type ArloConfig } from '../config';
+import { FONTS_MODULE } from '../fonts';
 import { fileExists, resolveWithin, writeFileEnsuringDir } from '../fs-utils';
 import { RegistryClient, type ResolvedRegistryEntry } from '../registry-client';
 import { buildSourceTargetMap, rewriteFileImports } from '../rewrite-imports';
+import { isInteractive, spinner as makeSpinner } from '../tty';
 
 type Options = {
   cwd: string;
@@ -25,6 +28,12 @@ export async function add({ cwd, names, yes, overwrite }: Options): Promise<void
   const client = new RegistryClient(config.registry);
 
   let toAdd = names;
+  if (toAdd.length === 0 && !isInteractive()) {
+    console.error(
+      'No component names, and this is not a terminal. Pass the names and -y, for example: npx arloui add button -y',
+    );
+    process.exit(1);
+  }
   if (toAdd.length === 0) {
     const index = await client.index();
     const choice = await p.multiselect({
@@ -42,7 +51,7 @@ export async function add({ cwd, names, yes, overwrite }: Options): Promise<void
   }
 
   const allEntries = new Map<string, ResolvedRegistryEntry>();
-  const spinner = p.spinner();
+  const spinner = makeSpinner();
   spinner.start('resolving registry');
   try {
     for (const name of toAdd) {
@@ -54,13 +63,28 @@ export async function add({ cwd, names, yes, overwrite }: Options): Promise<void
     spinner.stop(`resolved ${allEntries.size} entr${allEntries.size === 1 ? 'y' : 'ies'}`);
   } catch (err) {
     spinner.stop('resolution failed');
-    throw err;
+    throw await unknownComponentError(client, toAdd, err);
   }
 
   const sourceTargetMap = buildSourceTargetMap(cwd, config, [...allEntries.values()]);
+  const named = new Set(toAdd);
   for (const entry of allEntries.values()) {
-    await writeComponent({ cwd, config, entry, overwrite, yes, sourceTargetMap });
+    const asked = named.has(entry.name);
+    // `--overwrite` replaces the components you named. Foundation files that
+    // came along as dependencies are left in place, so a theme you edited is
+    // not wiped by `add button --overwrite`. Missing foundation files are
+    // still written.
+    await writeComponent({
+      cwd,
+      config,
+      entry,
+      sourceTargetMap,
+      overwrite: Boolean(overwrite && asked),
+      yes: asked ? yes : true,
+    });
   }
+
+  await ensureFonts(cwd, config);
 
   const npmDeps = new Set<string>();
   const nativeDeps: Array<{ name: string; setup: string }> = [];
@@ -70,12 +94,9 @@ export async function add({ cwd, names, yes, overwrite }: Options): Promise<void
   }
 
   const lines: string[] = [kleur.green('Done.')];
-  if (npmDeps.size > 0) {
-    lines.push(
-      '',
-      `Install npm dependencies:`,
-      `  ${kleur.cyan(`npm i ${[...npmDeps].join(' ')}`)}`,
-    );
+  const install = await installCommand(cwd, [...npmDeps]);
+  if (install) {
+    lines.push('', `Install npm dependencies:`, `  ${kleur.cyan(install)}`);
   }
   if (nativeDeps.length > 0) {
     lines.push('', `Native modules:`);
@@ -139,6 +160,14 @@ export async function writeComponent({
       return;
     }
 
+    if (!isInteractive()) {
+      console.error(
+        `skip ${entry.name} — already installed. Pass -y to leave existing files, or --overwrite to replace them.`,
+      );
+      process.exitCode = 1;
+      return;
+    }
+
     const replace = await p.confirm({
       message: `${entry.name} is already installed. Overwrite all ${targets.length} file${targets.length === 1 ? '' : 's'}?`,
       initialValue: false,
@@ -157,4 +186,97 @@ export async function writeComponent({
 
 function rel(from: string, to: string): string {
   return relative(from, to) || to;
+}
+
+/** `fonts.ts` is written by init. `add` creates it when the alias moved or init never ran the font step. */
+async function ensureFonts(cwd: string, config: ArloConfig): Promise<void> {
+  const target = resolveWithin(cwd, config.aliases.lib, 'fonts.ts');
+  if (await fileExists(target)) return;
+  await writeFileEnsuringDir(target, FONTS_MODULE);
+  p.log.success(`wrote ${kleur.cyan(rel(cwd, target))}`);
+}
+
+/**
+ * Expo projects should use `npx expo install` so the versions match the SDK.
+ * Packages already listed in package.json are left out.
+ */
+async function installCommand(cwd: string, deps: string[]): Promise<string | null> {
+  if (deps.length === 0) return null;
+  let installed = new Set<string>();
+  let expo = false;
+  try {
+    const pkg = JSON.parse(await readFile(join(cwd, 'package.json'), 'utf8')) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    installed = new Set([
+      ...Object.keys(pkg.dependencies ?? {}),
+      ...Object.keys(pkg.devDependencies ?? {}),
+    ]);
+    expo = Boolean(pkg.dependencies?.expo || pkg.devDependencies?.expo);
+  } catch {
+    // No package.json — print every dependency.
+  }
+  if (await fileExists(join(cwd, 'app.json'))) expo = true;
+  const pending = deps.filter((dep) => !installed.has(dep));
+  if (pending.length === 0) return null;
+  const bins = pending.join(' ');
+  return expo ? `npx expo install ${bins}` : `npm i ${bins}`;
+}
+
+async function unknownComponentError(
+  client: RegistryClient,
+  names: string[],
+  err: unknown,
+): Promise<Error> {
+  const message = err instanceof Error ? err.message : String(err);
+  if (!/\b404\b/.test(message)) return err instanceof Error ? err : new Error(message);
+  const failed = names.find(
+    (name) => message.includes(`/${encodeURIComponent(name)}.json`) || message.includes(`/${name}.json`),
+  );
+  const suggestion = failed ? await suggestName(client, failed) : undefined;
+  const who = failed ? `"${failed}"` : 'that name';
+  const hint = suggestion ? ` Did you mean \`${suggestion}\`?` : '';
+  return new Error(
+    `Unknown component ${who}.${hint} Run \`npx arloui list\` to see what's available.`,
+  );
+}
+
+async function suggestName(client: RegistryClient, input: string): Promise<string | undefined> {
+  try {
+    const index = await client.index();
+    return closestName(
+      input,
+      index.items.map((item) => item.name),
+    );
+  } catch {
+    return undefined;
+  }
+}
+
+function closestName(input: string, names: string[]): string | undefined {
+  let best: { name: string; score: number } | undefined;
+  for (const name of names) {
+    const score = editDistance(input, name);
+    if (!best || score < best.score) best = { name, score };
+  }
+  if (!best || best.score > 2) return undefined;
+  return best.name;
+}
+
+function editDistance(a: string, b: string): number {
+  const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let corner = prev[0]!;
+    prev[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const next = prev[j]!;
+      prev[j] =
+        a[i - 1] === b[j - 1]
+          ? corner
+          : 1 + Math.min(corner, next, prev[j - 1]!);
+      corner = next;
+    }
+  }
+  return prev[b.length]!;
 }
